@@ -63,9 +63,11 @@ const CanvasNode = ({ data }) => {
         setOpen(true)
     }
 
-    const nodeOutdatedMessage = (oldVersion, newVersion) => `Node version ${oldVersion} outdated\nUpdate to latest version ${newVersion}`
+    const nodeOutdatedMessage = (oldVersion, newVersion) => `Версия узла ${oldVersion}устарела
+    Обновление до последней версии ${newVersion}`
 
-    const nodeVersionEmptyMessage = (newVersion) => `Node outdated\nUpdate to latest version ${newVersion}`
+    const nodeVersionEmptyMessage = (newVersion) => `устарела
+    Обновление до последней версии ${newVersion}`
 
     const onDialogClicked = () => {
         const dialogProps = {

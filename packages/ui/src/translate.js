@@ -1014,5 +1014,32 @@ export const translationObject = {
     'Waiting for response...': 'Ожидание ответа...',
     'Type your question...': 'Введите вопрос...',
     'Past conversation history between user and AI': 'История прошлых разговоров между пользователем и ИИ',
-    "User's question from chatbox": 'Вопрос пользователя из чата'
+    "User's question from chatbox": 'Вопрос пользователя из чата',
+    'You can get your API key from official <a target="_blank" href="https://console.mistral.ai/">console</a> here.':
+        'Вы можете получить ключ API на официальной <a target="_blank" href="https://console.mistral.ai/">консоли</a> здесь',
+    'You can get your API key from official <a target="_blank" href="https://ai.google.dev/tutorials/setup">page</a> here.':
+        'Вы можете получить ключ API на официальной <a target="_blank" href="https://ai.google.dev/tutorials/setup">странице</a> здесь.',
+    'If provided, will override model selected from Model Name option':
+        'Если указано, будет переопределена модель, выбранная в параметре «Название модели».',
+    'Wrapper around Google Gemini large language models that use the Chat endpoint':
+        'Оболочка больших языковых моделей Google Gemini, использующих конечную точку Chat',
+    'Max Output Tokens': 'Максимальное количество токенов вывода',
+    'Wrapper around Mistral large language models that use the Chat endpoint':
+        'Оболочка больших языковых моделей Mistral, использующих конечную точку Chat',
+    'What sampling temperature to use, between 0.0 and 1.0. Higher values like 0.8 will make the output more random, while lower values like 0.2 will make it more focused and deterministic.':
+        'Какую температуру отбора проб использовать: от 0,0 до 1,0. Более высокие значения, например 0,8, сделают результат более случайным, а более низкие значения, например 0,2, сделают его более целенаправленным и детерминированным.',
+    'The maximum number of tokens to generate in the completion.':
+        'Максимальное количество токенов, которые можно сгенерировать при завершении.',
+    'Nucleus sampling, where the model considers the results of the tokens with top_p probability mass. So 0.1 means only the tokens comprising the top 10% probability mass are considered.':
+        'Ядерная выборка, где модель учитывает результаты токенов с массой вероятности top_p. Таким образом, 0,1 означает, что учитываются только токены, составляющие 10% верхней массы вероятности.',
+    'The seed to use for random sampling. If set, different calls will generate deterministic results.':
+        'Начальное значение, используемое для случайной выборки. Если установлено, разные вызовы будут генерировать детерминированные результаты.',
+    'Whether to inject a safety prompt before all conversations.': 'Вводить ли подсказку о безопасности перед всеми разговорами.',
+    'Google Generative API to generate embeddings for a given text': 'Google Generative API для создания вложений для заданного текста',
+    'Google Generative AI credential.': 'Учетные данные Google Generative AI.',
+    'Type of task for which the embedding will be used': 'Тип задачи, для которой будет использоваться встраивание',
+    'MistralAI API to generate embeddings for a given text': 'MistralAI API для генерации вложений для заданного текста',
+    'Override Endpoint': 'Переопределить конечную точку',
+    'Window of size k to surface the last k back-and-forth to use as memory.':
+        'Окно размера k для отображения последнего k туда и обратно для использования в качестве памяти.'
 }
