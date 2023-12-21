@@ -44,7 +44,6 @@ export const theme = (customization) => {
             color = colors
             break
     }
-    console.log(color, window.location.hostname)
     const themeOption = customization.isDarkMode
         ? {
               colors: color,

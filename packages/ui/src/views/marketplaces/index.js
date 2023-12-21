@@ -22,6 +22,7 @@ import useApi from 'hooks/useApi'
 
 // const
 import { baseURL } from 'store/constant'
+import { translationObject } from 'translate'
 
 function TabPanel(props) {
     const { children, value, index, ...other } = props
@@ -160,7 +161,7 @@ const Marketplace = () => {
                                                                     right: 20
                                                                 }
                                                             }}
-                                                            badgeContent={data.badge}
+                                                            badgeContent={translationObject[data.badge] || data.badge}
                                                             color={data.badge === 'POPULAR' ? 'success' : 'warning'}
                                                         >
                                                             <ItemCard
@@ -191,7 +192,7 @@ const Marketplace = () => {
                                                             right: 20
                                                         }
                                                     }}
-                                                    badgeContent={data.badge}
+                                                    badgeContent={translationObject[data.badge] || data.badge}
                                                     color={data.badge === 'POPULAR' ? 'success' : 'warning'}
                                                 >
                                                     <ItemCard data={data} onClick={() => goToTool(data)} />
