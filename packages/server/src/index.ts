@@ -1661,6 +1661,9 @@ export async function start(): Promise<void> {
         case 'STARTAI_EIGHT':
                 port = parseInt(process.env.PORT_EIGHT || '', 10) || 3029
                 break
+        case 'STARTAI_NINE':
+                port = parseInt(process.env.PORT_NINE || '', 10) || 3030
+                break
         default:
             // Действия по умолчанию, если NODE_ENV не соответствует ни одному из условий
             break
