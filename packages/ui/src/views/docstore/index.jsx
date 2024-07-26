@@ -225,12 +225,12 @@ const Documents = () => {
                                 >
                                     <TableRow>
                                         <TableCell>&nbsp;</TableCell>
-                                        <TableCell>Name</TableCell>
-                                        <TableCell>Description</TableCell>
-                                        <TableCell>Connected flows</TableCell>
-                                        <TableCell>Total characters</TableCell>
-                                        <TableCell>Total chunks</TableCell>
-                                        <TableCell>Loader types</TableCell>
+                                        <TableCell>Название</TableCell>
+                                        <TableCell>Описание</TableCell>
+                                        <TableCell>Подключенные чаты</TableCell>
+                                        <TableCell>Всего символов</TableCell>
+                                        <TableCell>Всего чанков</TableCell>
+                                        <TableCell>Тип загрузчика</TableCell>
                                     </TableRow>
                                 </TableHead>
                                 <TableBody>
