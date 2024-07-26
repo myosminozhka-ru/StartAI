@@ -35,6 +35,7 @@ const CanvasNode = ({ data }) => {
     const [infoDialogProps, setInfoDialogProps] = useState({})
     const [warningMessage, setWarningMessage] = useState('')
     const [open, setOpen] = useState(false)
+    const [isForceCloseNodeInfo, setIsForceCloseNodeInfo] = useState(null)
 
     const handleClose = () => {
         setOpen(false)
@@ -42,6 +43,11 @@ const CanvasNode = ({ data }) => {
 
     const handleOpen = () => {
         setOpen(true)
+    }
+
+    const getNodeInfoOpenStatus = () => {
+        if (isForceCloseNodeInfo) return false
+        else return !canvas.canvasDialogShow && open
     }
 
     const nodeOutdatedMessage = (oldVersion, newVersion) =>
@@ -88,7 +94,7 @@ const CanvasNode = ({ data }) => {
                 border={false}
             >
                 <NodeTooltip
-                    open={!canvas.canvasDialogShow && open}
+                    open={getNodeInfoOpenStatus()}
                     onClose={handleClose}
                     onOpen={handleOpen}
                     disableFocusListener={true}
@@ -214,7 +220,18 @@ const CanvasNode = ({ data }) => {
                         {data.inputParams
                             .filter((inputParam) => !inputParam.hidden)
                             .map((inputParam, index) => (
-                                <NodeInputHandler key={index} inputParam={inputParam} data={data} />
+                                <NodeInputHandler
+                                    key={index}
+                                    inputParam={inputParam}
+                                    data={data}
+                                    onHideNodeInfoDialog={(status) => {
+                                        if (status) {
+                                            setIsForceCloseNodeInfo(true)
+                                        } else {
+                                            setIsForceCloseNodeInfo(null)
+                                        }
+                                    }}
+                                />
                             ))}
                         {data.inputParams.find((param) => param.additionalParams) && (
                             <div

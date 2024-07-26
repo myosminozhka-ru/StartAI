@@ -8,7 +8,7 @@
 
 ### - pnpm start
 
-English | [中文](./README-ZH.md) | [日本語](./README-JA.md) | [한국어](./README-KR.md)
+English | [中文](./i18n/README-ZH.md) | [日本語](./i18n/README-JA.md) | [한국어](./i18n/README-KR.md)
 
 ## PM2
 
