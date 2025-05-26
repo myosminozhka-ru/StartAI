@@ -1,8 +1,6 @@
 {
     "name": "todays_date_time",
-    "framework": "Langchain",
-    "description": "Получение текущего дня, даты и времени.",
-    "title": "Получить текущие дату и время",
+    "description": "Useful to get todays day, date and time.",
     "color": "linear-gradient(rgb(117,118,129), rgb(230,10,250))",
     "iconSrc": "https://raw.githubusercontent.com/gilbarbara/logos/main/logos/javascript.svg",
     "schema": "[]",

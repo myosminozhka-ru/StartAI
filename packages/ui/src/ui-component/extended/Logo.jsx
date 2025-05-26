@@ -1,4 +1,5 @@
-import startLogo from '@/assets/images/start_logo.png'
+import logo from '@/assets/images/flowise_white.svg'
+import logoDark from '@/assets/images/flowise_dark.svg'
 
 import { useSelector } from 'react-redux'
 
@@ -8,11 +9,11 @@ const Logo = () => {
     const customization = useSelector((state) => state.customization)
 
     return (
-        <div style={{ alignItems: 'center', display: 'flex', flexDirection: 'row' }}>
+        <div style={{ alignItems: 'center', display: 'flex', flexDirection: 'row', marginLeft: '10px' }}>
             <img
-                style={{ objectFit: 'contain', height: 'auto', width: 110 }}
-                src={customization.isDarkMode ? startLogo : startLogo}
-                alt='StartAI'
+                style={{ objectFit: 'contain', height: 'auto', width: 150 }}
+                src={customization.isDarkMode ? logoDark : logo}
+                alt='Flowise'
             />
         </div>
     )

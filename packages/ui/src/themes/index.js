@@ -2,7 +2,6 @@ import { createTheme } from '@mui/material/styles'
 
 // assets
 import colors from '@/assets/scss/_themes-vars.module.scss'
-import colorsStartAI from '@/assets/scss/_themes-vars-StartAI.module.scss'
 
 // project imports
 import componentStyleOverrides from './compStyleOverride'
@@ -15,62 +14,8 @@ import themeTypography from './typography'
  */
 
 export const theme = (customization) => {
-    let color
+    const color = colors
 
-    switch (window.location.hostname) {
-        case 'app.start-ai.ru':
-            color = colorsStartAI
-            break
-        case 'u1.start-ai.ru':
-            color = colorsStartAI
-            break
-        case 'u2.start-ai.ru':
-            color = colorsStartAI
-            break
-        case 'u3.start-ai.ru':
-            color = colorsStartAI
-            break
-        case 'u4.start-ai.ru':
-            color = colorsStartAI
-            break
-        case 'u5.start-ai.ru':
-            color = colorsStartAI
-            break
-        case 'u6.start-ai.ru':
-            color = colorsStartAI
-            break
-        case 'u7.start-ai.ru':
-            color = colorsStartAI
-            break
-        case 'u8.start-ai.ru':
-            color = colorsStartAI
-            break
-        case 'u9.start-ai.ru':
-            color = colorsStartAI
-            break
-        case 'u10.start-ai.ru':
-            color = colorsStartAI
-            break
-        case 'u11.start-ai.ru':
-            color = colorsStartAI
-            break
-        case 'u12.start-ai.ru':
-            color = colorsStartAI
-            break
-        case 'test.start-ai.ru':
-            color = colorsStartAI
-            break
-        case 'dev.start-ai.ru':
-            color = colorsStartAI
-            break
-        case 'localhost':
-            color = colorsStartAI
-            break
-        default:
-            // Действия по умолчанию, если NODE_ENV не соответствует ни одному из условий
-            color = colors
-            break
-    }
     const themeOption = customization.isDarkMode
         ? {
               colors: color,
@@ -91,7 +36,7 @@ export const theme = (customization) => {
               heading: color.grey900,
               paper: color.paper,
               backgroundDefault: color.paper,
-              background: color.paper,
+              background: color.primaryLight,
               darkTextPrimary: color.grey700,
               darkTextSecondary: color.grey500,
               textDark: color.grey900,

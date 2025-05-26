@@ -14,9 +14,10 @@ import DeleteIcon from '@mui/icons-material/Delete'
 import ConfirmDialog from '@/ui-component/dialog/ConfirmDialog'
 import { CodeEditor } from '@/ui-component/editor/CodeEditor'
 import HowToUseFunctionDialog from './HowToUseFunctionDialog'
+import PasteJSONDialog from './PasteJSONDialog'
 
 // Icons
-import { IconX, IconFileDownload, IconPlus } from '@tabler/icons-react'
+import { IconX, IconFileDownload, IconPlus, IconTemplate, IconCode } from '@tabler/icons-react'
 
 // API
 import toolsApi from '@/api/tools'
@@ -29,14 +30,14 @@ import useApi from '@/hooks/useApi'
 import useNotifier from '@/utils/useNotifier'
 import { generateRandomGradient, formatDataGridRows } from '@/utils/genericHelper'
 import { HIDE_CANVAS_DIALOG, SHOW_CANVAS_DIALOG } from '@/store/actions'
-import { translationObject } from '@/translate'
+import ExportAsTemplateDialog from '@/ui-component/dialog/ExportAsTemplateDialog'
 
 const exampleAPIFunc = `/*
-* Вы можете использовать любые библиотеки, импортированные в StartAI.
-* Вы можете использовать свойства, указанные в схеме вывода, в качестве переменных. Пример: Свойство = идентификатор пользователя, переменная = $userid.
-* Вы можете получить конфигурацию потока по умолчанию: $flow.sessionId, $flow.chatId, $flow.chatflowId, $flow.input.
-* Вы можете получить пользовательские переменные: $vars.<имя-переменной>
-* Должно возвращать строковое значение в конце функции.
+* You can use any libraries imported in Flowise
+* You can use properties specified in Input Schema as variables. Ex: Property = userid, Variable = $userid
+* You can get default flow config: $flow.sessionId, $flow.chatId, $flow.chatflowId, $flow.input, $flow.state
+* You can get custom variables: $vars.<variable-name>
+* Must return a string value at the end of function
 */
 
 const fetch = require('node-fetch');
@@ -80,6 +81,11 @@ const ToolDialog = ({ show, dialogProps, onUseTemplate, onCancel, onConfirm, set
     const [toolFunc, setToolFunc] = useState('')
     const [showHowToDialog, setShowHowToDialog] = useState(false)
 
+    const [exportAsTemplateDialogOpen, setExportAsTemplateDialogOpen] = useState(false)
+    const [exportAsTemplateDialogProps, setExportAsTemplateDialogProps] = useState({})
+
+    const [showPasteJSONDialog, setShowPasteJSONDialog] = useState(false)
+
     const deleteItem = useCallback(
         (id) => () => {
             setTimeout(() => {
@@ -106,6 +112,20 @@ const ToolDialog = ({ show, dialogProps, onUseTemplate, onCancel, onConfirm, set
         })
     }
 
+    const onSaveAsTemplate = () => {
+        setExportAsTemplateDialogProps({
+            title: 'Export As Template',
+            tool: {
+                name: toolName,
+                description: toolDesc,
+                iconSrc: toolIcon,
+                schema: toolSchema,
+                func: toolFunc
+            }
+        })
+        setExportAsTemplateDialogOpen(true)
+    }
+
     const onRowUpdate = (newRow) => {
         setTimeout(() => {
             setToolSchema((prevRows) => {
@@ -121,17 +141,17 @@ const ToolDialog = ({ show, dialogProps, onUseTemplate, onCancel, onConfirm, set
 
     const columns = useMemo(
         () => [
-            { field: 'property', headerName: 'Свойство', editable: true, flex: 1 },
+            { field: 'property', headerName: 'Property', editable: true, flex: 1 },
             {
                 field: 'type',
-                headerName: 'Тип',
+                headerName: 'Type',
                 type: 'singleSelect',
                 valueOptions: ['string', 'number', 'boolean', 'date'],
                 editable: true,
                 width: 120
             },
-            { field: 'description', headerName: 'Описание', editable: true, flex: 1 },
-            { field: 'required', headerName: 'Обязательное', type: 'boolean', editable: true, width: 80 },
+            { field: 'description', headerName: 'Description', editable: true, flex: 1 },
+            { field: 'required', headerName: 'Required', type: 'boolean', editable: true, width: 80 },
             {
                 field: 'actions',
                 type: 'actions',
@@ -162,7 +182,7 @@ const ToolDialog = ({ show, dialogProps, onUseTemplate, onCancel, onConfirm, set
     }, [getSpecificToolApi.data])
 
     useEffect(() => {
-        if (getSpecificToolApi.error) {
+        if (getSpecificToolApi.error && setError) {
             setError(getSpecificToolApi.error)
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -223,7 +243,9 @@ const ToolDialog = ({ show, dialogProps, onUseTemplate, onCancel, onConfirm, set
                 delete toolData.createdDate
                 delete toolData.updatedDate
                 let dataStr = JSON.stringify(toolData, null, 2)
-                let dataUri = 'data:application/json;charset=utf-8,' + encodeURIComponent(dataStr)
+                //let dataUri = 'data:application/json;charset=utf-8,' + encodeURIComponent(dataStr)
+                const blob = new Blob([dataStr], { type: 'application/json' })
+                const dataUri = URL.createObjectURL(blob)
 
                 let exportFileDefaultName = `${toolName}-CustomTool.json`
 
@@ -234,7 +256,7 @@ const ToolDialog = ({ show, dialogProps, onUseTemplate, onCancel, onConfirm, set
             }
         } catch (error) {
             enqueueSnackbar({
-                message: `Ошибка отправки инструмента: ${
+                message: `Failed to export Tool: ${
                     typeof error.response.data === 'object' ? error.response.data.message : error.response.data
                 }`,
                 options: {
@@ -265,7 +287,7 @@ const ToolDialog = ({ show, dialogProps, onUseTemplate, onCancel, onConfirm, set
             const createResp = await toolsApi.createNewTool(obj)
             if (createResp.data) {
                 enqueueSnackbar({
-                    message: 'Новый инструмент добавлен',
+                    message: 'New Tool added',
                     options: {
                         key: new Date().getTime() + Math.random(),
                         variant: 'success',
@@ -280,7 +302,7 @@ const ToolDialog = ({ show, dialogProps, onUseTemplate, onCancel, onConfirm, set
             }
         } catch (error) {
             enqueueSnackbar({
-                message: `Ошибка удаления инструмента: ${
+                message: `Failed to add new Tool: ${
                     typeof error.response.data === 'object' ? error.response.data.message : error.response.data
                 }`,
                 options: {
@@ -344,10 +366,10 @@ const ToolDialog = ({ show, dialogProps, onUseTemplate, onCancel, onConfirm, set
 
     const deleteTool = async () => {
         const confirmPayload = {
-            title: `Удалить инструмент`,
-            description: `Удалить инструмент ${toolName}?`,
-            confirmButtonName: 'Удалить',
-            cancelButtonName: 'Отмена'
+            title: `Delete Tool`,
+            description: `Delete tool ${toolName}?`,
+            confirmButtonName: 'Delete',
+            cancelButtonName: 'Cancel'
         }
         const isConfirmed = await confirm(confirmPayload)
 
@@ -356,7 +378,7 @@ const ToolDialog = ({ show, dialogProps, onUseTemplate, onCancel, onConfirm, set
                 const delResp = await toolsApi.deleteTool(toolId)
                 if (delResp.data) {
                     enqueueSnackbar({
-                        message: 'Инструмент удален',
+                        message: 'Tool deleted',
                         options: {
                             key: new Date().getTime() + Math.random(),
                             variant: 'success',
@@ -371,7 +393,7 @@ const ToolDialog = ({ show, dialogProps, onUseTemplate, onCancel, onConfirm, set
                 }
             } catch (error) {
                 enqueueSnackbar({
-                    message: `Ошибка удаления инструмента: ${
+                    message: `Failed to delete Tool: ${
                         typeof error.response.data === 'object' ? error.response.data.message : error.response.data
                     }`,
                     options: {
@@ -390,6 +412,11 @@ const ToolDialog = ({ show, dialogProps, onUseTemplate, onCancel, onConfirm, set
         }
     }
 
+    const handlePastedJSON = (formattedData) => {
+        setToolSchema(formattedData)
+        setShowPasteJSONDialog(false)
+    }
+
     const component = show ? (
         <Dialog
             fullWidth
@@ -402,11 +429,24 @@ const ToolDialog = ({ show, dialogProps, onUseTemplate, onCancel, onConfirm, set
             <DialogTitle sx={{ fontSize: '1rem', p: 3, pb: 0 }} id='alert-dialog-title'>
                 <Box sx={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }}>
                     {dialogProps.title}
-                    {dialogProps.type === 'EDIT' && (
-                        <Button variant='outlined' onClick={() => exportTool()} startIcon={<IconFileDownload />}>
-                            Отправить
-                        </Button>
-                    )}
+                    <Box>
+                        {dialogProps.type === 'EDIT' && (
+                            <>
+                                <Button
+                                    style={{ marginRight: '10px' }}
+                                    variant='outlined'
+                                    onClick={() => onSaveAsTemplate()}
+                                    startIcon={<IconTemplate />}
+                                    color='secondary'
+                                >
+                                    Save As Template
+                                </Button>
+                                <Button variant='outlined' onClick={() => exportTool()} startIcon={<IconFileDownload />}>
+                                    Export
+                                </Button>
+                            </>
+                        )}
+                    </Box>
                 </Box>
             </DialogTitle>
             <DialogContent sx={{ display: 'flex', flexDirection: 'column', gap: 2, maxHeight: '75vh', position: 'relative', px: 3, pb: 3 }}>
@@ -418,7 +458,7 @@ const ToolDialog = ({ show, dialogProps, onUseTemplate, onCancel, onConfirm, set
                                 <span style={{ color: 'red' }}>&nbsp;*</span>
                             </Typography>
                             <TooltipWithParser
-                                title={'Название инструмента должно состоять из маленькой заглавной буквы и подчеркивания. Пример: мой_инструмент'}
+                                title={'Название инструмента должно быть маленькими буквами с подчеркиванием. Например: my_tool'}
                             />
                         </Stack>
                         <OutlinedInput
@@ -426,7 +466,7 @@ const ToolDialog = ({ show, dialogProps, onUseTemplate, onCancel, onConfirm, set
                             type='string'
                             fullWidth
                             disabled={dialogProps.type === 'TEMPLATE'}
-                            placeholder='Мой новый инструмент'
+                            placeholder='My New Tool'
                             value={toolName}
                             name='toolName'
                             onChange={(e) => setToolName(e.target.value)}
@@ -435,11 +475,13 @@ const ToolDialog = ({ show, dialogProps, onUseTemplate, onCancel, onConfirm, set
                     <Box>
                         <Stack sx={{ position: 'relative', alignItems: 'center' }} direction='row'>
                             <Typography variant='overline'>
-                                Описание команды
+                                Описание инструмента
                                 <span style={{ color: 'red' }}>&nbsp;*</span>
                             </Typography>
                             <TooltipWithParser
-                                title={'Описание того, что делает инструмент. ChatGPT определяет, когда использовать этот инструмент.'}
+                                title={
+                                    'Описание того, что делает инструмент. Это используется для определения, когда использовать этот инструмент.'
+                                }
                             />
                         </Stack>
                         <OutlinedInput
@@ -447,7 +489,7 @@ const ToolDialog = ({ show, dialogProps, onUseTemplate, onCancel, onConfirm, set
                             type='string'
                             fullWidth
                             disabled={dialogProps.type === 'TEMPLATE'}
-                            placeholder='Описание того, что делает инструмент. ChatGPT определяет, когда использовать этот инструмент.'
+                            placeholder='Описание того, что делает инструмент. Это используется для определения, когда использовать этот инструмент.'
                             multiline={true}
                             rows={3}
                             value={toolDesc}
@@ -457,7 +499,7 @@ const ToolDialog = ({ show, dialogProps, onUseTemplate, onCancel, onConfirm, set
                     </Box>
                     <Box>
                         <Stack sx={{ position: 'relative' }} direction='row'>
-                            <Typography variant='overline'>Иконка команды</Typography>
+                            <Typography variant='overline'>Источник иконки инструмента</Typography>
                         </Stack>
                         <OutlinedInput
                             id='toolIcon'
@@ -473,13 +515,18 @@ const ToolDialog = ({ show, dialogProps, onUseTemplate, onCancel, onConfirm, set
                     <Box>
                         <Stack sx={{ position: 'relative', justifyContent: 'space-between' }} direction='row'>
                             <Stack sx={{ position: 'relative', alignItems: 'center' }} direction='row'>
-                                <Typography variant='overline'>Схема вывода</Typography>
-                                <TooltipWithParser title={'Каким должен быть выходной ответ в формате JSON?'} />
+                                <Typography variant='overline'>Схема ввода</Typography>
+                                <TooltipWithParser title={'Какой формат ввода в JSON?'} />
                             </Stack>
                             {dialogProps.type !== 'TEMPLATE' && (
-                                <Button variant='outlined' onClick={addNewRow} startIcon={<IconPlus />}>
-                                    Добавить
-                                </Button>
+                                <Stack direction='row' spacing={1}>
+                                    <Button variant='outlined' onClick={() => setShowPasteJSONDialog(true)} startIcon={<IconCode />}>
+                                        Вставить JSON
+                                    </Button>
+                                    <Button variant='outlined' onClick={addNewRow} startIcon={<IconPlus />}>
+                                        Добавить элемент
+                                    </Button>
+                                </Stack>
                             )}
                         </Stack>
                         <Grid columns={columns} rows={toolSchema} disabled={dialogProps.type === 'TEMPLATE'} onRowUpdate={onRowUpdate} />
@@ -487,8 +534,8 @@ const ToolDialog = ({ show, dialogProps, onUseTemplate, onCancel, onConfirm, set
                     <Box>
                         <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                             <Stack sx={{ position: 'relative', alignItems: 'center' }} direction='row'>
-                                <Typography variant='overline'>Функция Javascript</Typography>
-                                <TooltipWithParser title='Функция, выполняемая при использовании инструмента. Вы можете использовать свойства, указанные в схеме вывода, в качестве переменных. Например, если свойство имеет вид <code>userid</code>, вы можете использовать его как <code>$userid</code>. Возвращаемое значение должно быть строкой.' />
+                                <Typography variant='overline'>Javascript Функция</Typography>
+                                <TooltipWithParser title='Функция для выполнения при использовании инструмента. Вы можете использовать свойства, указанные в схеме ввода, как переменные. Например, если свойство <code>userid</code>, вы можете использовать как <code>$userid</code>. Возвращаемое значение должно быть строкой. Вы можете переопределить код из API, следуя этой <a target="_blank" href="https://docs.flowiseai.com/tools/custom-tool#override-function-from-api">инструкции</a>' />
                             </Stack>
                             <Stack direction='row'>
                                 <Button
@@ -501,7 +548,7 @@ const ToolDialog = ({ show, dialogProps, onUseTemplate, onCancel, onConfirm, set
                                 </Button>
                                 {dialogProps.type !== 'TEMPLATE' && (
                                     <Button style={{ marginBottom: 10 }} variant='outlined' onClick={() => setToolFunc(exampleAPIFunc)}>
-                                        Показать пример
+                                        Пример
                                     </Button>
                                 )}
                             </Stack>
@@ -533,12 +580,29 @@ const ToolDialog = ({ show, dialogProps, onUseTemplate, onCancel, onConfirm, set
                         variant='contained'
                         onClick={() => (dialogProps.type === 'ADD' || dialogProps.type === 'IMPORT' ? addNewTool() : saveTool())}
                     >
-                        Добавить
+                        {dialogProps.confirmButtonName}
                     </StyledButton>
                 )}
             </DialogActions>
             <ConfirmDialog />
+            {exportAsTemplateDialogOpen && (
+                <ExportAsTemplateDialog
+                    show={exportAsTemplateDialogOpen}
+                    dialogProps={exportAsTemplateDialogProps}
+                    onCancel={() => setExportAsTemplateDialogOpen(false)}
+                />
+            )}
+
             <HowToUseFunctionDialog show={showHowToDialog} onCancel={() => setShowHowToDialog(false)} />
+
+            {showPasteJSONDialog && (
+                <PasteJSONDialog
+                    show={showPasteJSONDialog}
+                    onCancel={() => setShowPasteJSONDialog(false)}
+                    onConfirm={handlePastedJSON}
+                    customization={customization}
+                />
+            )}
         </Dialog>
     ) : null
 

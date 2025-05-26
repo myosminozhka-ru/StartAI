@@ -1,61 +1,59 @@
 {
-    "title": "Расширенный парсер структурированных данных",
-    "description": "Возвращает ответ в виде структуры JSON, указанной в схеме Zod",
-    "categories": "AdvancedStructuredOutputParser,ChatOpenAI,LLM Chain,Langchain",
-    "framework": "Langchain",
-    "badge": "NEW",
+    "description": "Возвращает ответ в виде структуры JSON, определенной схемой Zod",
+    "framework": ["Langchain"],
+    "usecases": ["Извлечение"],
     "nodes": [
         {
             "width": 300,
             "height": 508,
             "id": "llmChain_0",
             "position": {
-                "x": 1229.1699649849293,
-                "y": 245.55173505632646
+                "x": 1224.5123724068537,
+                "y": 203.63340185364572
             },
             "type": "customNode",
             "data": {
                 "id": "llmChain_0",
-                "label": "LLM Chain",
+                "label": "LLM Цепочка",
                 "version": 3,
                 "name": "llmChain",
                 "type": "LLMChain",
                 "baseClasses": ["LLMChain", "BaseChain", "Runnable"],
-                "category": "Chains",
-                "description": "Chain to run queries against LLMs",
+                "category": "Цепочки",
+                "description": "Цепочка для выполнения запросов к LLM",
                 "inputParams": [
                     {
-                        "label": "Chain Name",
+                        "label": "Название цепочки",
                         "name": "chainName",
                         "type": "string",
-                        "placeholder": "Name Your Chain",
+                        "placeholder": "Назовите вашу цепочку",
                         "optional": true,
                         "id": "llmChain_0-input-chainName-string"
                     }
                 ],
                 "inputAnchors": [
                     {
-                        "label": "Language Model",
+                        "label": "Языковая модель",
                         "name": "model",
                         "type": "BaseLanguageModel",
                         "id": "llmChain_0-input-model-BaseLanguageModel"
                     },
                     {
-                        "label": "Prompt",
+                        "label": "Промпт",
                         "name": "prompt",
                         "type": "BasePromptTemplate",
                         "id": "llmChain_0-input-prompt-BasePromptTemplate"
                     },
                     {
-                        "label": "Output Parser",
+                        "label": "Парсер вывода",
                         "name": "outputParser",
                         "type": "BaseLLMOutputParser",
                         "optional": true,
                         "id": "llmChain_0-input-outputParser-BaseLLMOutputParser"
                     },
                     {
-                        "label": "Input Moderation",
-                        "description": "Detect text that could generate harmful output and prevent it from being sent to the language model",
+                        "label": "Модерация ввода",
+                        "description": "Обнаруживает текст, который может генерировать вредоносный вывод, и предотвращает его отправку в языковую модель",
                         "name": "inputModeration",
                         "type": "Moderation",
                         "optional": true,
@@ -73,19 +71,19 @@
                 "outputAnchors": [
                     {
                         "name": "output",
-                        "label": "Output",
+                        "label": "Вывод",
                         "type": "options",
                         "options": [
                             {
                                 "id": "llmChain_0-output-llmChain-LLMChain|BaseChain|Runnable",
                                 "name": "llmChain",
-                                "label": "LLM Chain",
+                                "label": "LLM Цепочка",
                                 "type": "LLMChain | BaseChain | Runnable"
                             },
                             {
                                 "id": "llmChain_0-output-outputPrediction-string|json",
                                 "name": "outputPrediction",
-                                "label": "Output Prediction",
+                                "label": "Предсказание вывода",
                                 "type": "string | json"
                             }
                         ],
@@ -98,40 +96,41 @@
                 "selected": false
             },
             "positionAbsolute": {
-                "x": 1229.1699649849293,
-                "y": 245.55173505632646
+                "x": 1224.5123724068537,
+                "y": 203.63340185364572
             },
-            "selected": false
+            "selected": false,
+            "dragging": false
         },
         {
             "width": 300,
             "height": 690,
             "id": "chatPromptTemplate_0",
             "position": {
-                "x": 493.26582927222483,
-                "y": -156.20470841335592
+                "x": 62.32815086916713,
+                "y": -173.7208464588945
             },
             "type": "customNode",
             "data": {
                 "id": "chatPromptTemplate_0",
-                "label": "Chat Prompt Template",
+                "label": "Шаблон чат-промпта",
                 "version": 1,
                 "name": "chatPromptTemplate",
                 "type": "ChatPromptTemplate",
                 "baseClasses": ["ChatPromptTemplate", "BaseChatPromptTemplate", "BasePromptTemplate", "Runnable"],
-                "category": "Prompts",
-                "description": "Schema to represent a chat prompt",
+                "category": "Промпты",
+                "description": "Схема для представления чат-промпта",
                 "inputParams": [
                     {
-                        "label": "System Message",
+                        "label": "Системное сообщение",
                         "name": "systemMessagePrompt",
                         "type": "string",
                         "rows": 4,
-                        "placeholder": "You are a helpful assistant that translates {input_language} to {output_language}.",
+                        "placeholder": "Вы - полезный ассистент, который переводит с {input_language} на {output_language}.",
                         "id": "chatPromptTemplate_0-input-systemMessagePrompt-string"
                     },
                     {
-                        "label": "Human Message",
+                        "label": "Сообщение пользователя",
                         "name": "humanMessagePrompt",
                         "type": "string",
                         "rows": 4,
@@ -139,7 +138,7 @@
                         "id": "chatPromptTemplate_0-input-humanMessagePrompt-string"
                     },
                     {
-                        "label": "Format Prompt Values",
+                        "label": "Формат значений промпта",
                         "name": "promptValues",
                         "type": "json",
                         "optional": true,
@@ -150,7 +149,7 @@
                 ],
                 "inputAnchors": [],
                 "inputs": {
-                    "systemMessagePrompt": "This AI is designed to only output information in JSON format without exception. This AI can only output JSON and will never output any other text.\n\nWhen asked to correct itself, this AI will only output the corrected JSON and never any other text.",
+                    "systemMessagePrompt": "Этот ИИ предназначен только для вывода информации в формате JSON без исключений. Этот ИИ может выводить только JSON и никогда не будет выводить какой-либо другой текст.\n\nПри запросе на исправление, этот ИИ будет выводить только исправленный JSON и никогда никакой другой текст.",
                     "humanMessagePrompt": "{text}",
                     "promptValues": ""
                 },
@@ -167,39 +166,39 @@
             },
             "selected": false,
             "positionAbsolute": {
-                "x": 493.26582927222483,
-                "y": -156.20470841335592
+                "x": 62.32815086916713,
+                "y": -173.7208464588945
             },
             "dragging": false
         },
         {
             "width": 300,
-            "height": 576,
+            "height": 670,
             "id": "chatOpenAI_0",
             "position": {
-                "x": 860.555928011636,
-                "y": -355.71028569475095
+                "x": 851.2457594432603,
+                "y": -352.1518756201128
             },
             "type": "customNode",
             "data": {
                 "id": "chatOpenAI_0",
                 "label": "ChatOpenAI",
-                "version": 6.0,
+                "version": 6,
                 "name": "chatOpenAI",
                 "type": "ChatOpenAI",
                 "baseClasses": ["ChatOpenAI", "BaseChatModel", "BaseLanguageModel", "Runnable"],
-                "category": "Chat Models",
-                "description": "Wrapper around OpenAI large language models that use the Chat endpoint",
+                "category": "Чат-модели",
+                "description": "Обертка вокруг больших языковых моделей OpenAI, использующих Chat endpoint",
                 "inputParams": [
                     {
-                        "label": "Connect Credential",
+                        "label": "Подключить учетные данные",
                         "name": "credential",
                         "type": "credential",
                         "credentialNames": ["openAIApi"],
                         "id": "chatOpenAI_0-input-credential-credential"
                     },
                     {
-                        "label": "Model Name",
+                        "label": "Название модели",
                         "name": "modelName",
                         "type": "asyncOptions",
                         "loadMethod": "listModels",
@@ -207,7 +206,7 @@
                         "id": "chatOpenAI_0-input-modelName-options"
                     },
                     {
-                        "label": "Temperature",
+                        "label": "Температура",
                         "name": "temperature",
                         "type": "number",
                         "step": 0.1,
@@ -216,7 +215,7 @@
                         "id": "chatOpenAI_0-input-temperature-number"
                     },
                     {
-                        "label": "Max Tokens",
+                        "label": "Максимум токенов",
                         "name": "maxTokens",
                         "type": "number",
                         "step": 1,
@@ -225,7 +224,7 @@
                         "id": "chatOpenAI_0-input-maxTokens-number"
                     },
                     {
-                        "label": "Top Probability",
+                        "label": "Вероятность Top P",
                         "name": "topP",
                         "type": "number",
                         "step": 0.1,
@@ -234,7 +233,7 @@
                         "id": "chatOpenAI_0-input-topP-number"
                     },
                     {
-                        "label": "Frequency Penalty",
+                        "label": "Штраф частоты",
                         "name": "frequencyPenalty",
                         "type": "number",
                         "step": 0.1,
@@ -243,7 +242,7 @@
                         "id": "chatOpenAI_0-input-frequencyPenalty-number"
                     },
                     {
-                        "label": "Presence Penalty",
+                        "label": "Штраф присутствия",
                         "name": "presencePenalty",
                         "type": "number",
                         "step": 0.1,
@@ -252,7 +251,7 @@
                         "id": "chatOpenAI_0-input-presencePenalty-number"
                     },
                     {
-                        "label": "Timeout",
+                        "label": "Таймаут",
                         "name": "timeout",
                         "type": "number",
                         "step": 1,
@@ -261,7 +260,7 @@
                         "id": "chatOpenAI_0-input-timeout-number"
                     },
                     {
-                        "label": "BasePath",
+                        "label": "Базовый путь",
                         "name": "basepath",
                         "type": "string",
                         "optional": true,
@@ -269,7 +268,7 @@
                         "id": "chatOpenAI_0-input-basepath-string"
                     },
                     {
-                        "label": "BaseOptions",
+                        "label": "Базовые опции",
                         "name": "baseOptions",
                         "type": "json",
                         "optional": true,
@@ -277,30 +276,30 @@
                         "id": "chatOpenAI_0-input-baseOptions-json"
                     },
                     {
-                        "label": "Allow Image Uploads",
+                        "label": "Разрешить загрузку изображений",
                         "name": "allowImageUploads",
                         "type": "boolean",
-                        "description": "Automatically uses gpt-4-vision-preview when image is being uploaded from chat. Only works with LLMChain, Conversation Chain, ReAct Agent, and Conversational Agent",
+                        "description": "Автоматически использует gpt-4-vision-preview при загрузке изображения из чата. Работает только с LLMChain, Conversation Chain, ReAct Agent и Conversational Agent",
                         "default": false,
                         "optional": true,
                         "id": "chatOpenAI_0-input-allowImageUploads-boolean"
                     },
                     {
-                        "label": "Image Resolution",
-                        "description": "This parameter controls the resolution in which the model views the image.",
+                        "label": "Разрешение изображения",
+                        "description": "Этот параметр контролирует разрешение, в котором модель просматривает изображение.",
                         "name": "imageResolution",
                         "type": "options",
                         "options": [
                             {
-                                "label": "Low",
+                                "label": "Низкое",
                                 "name": "low"
                             },
                             {
-                                "label": "High",
+                                "label": "Высокое",
                                 "name": "high"
                             },
                             {
-                                "label": "Auto",
+                                "label": "Авто",
                                 "name": "auto"
                             }
                         ],
@@ -312,7 +311,7 @@
                 ],
                 "inputAnchors": [
                     {
-                        "label": "Cache",
+                        "label": "Кэш",
                         "name": "cache",
                         "type": "BaseCache",
                         "optional": true,
@@ -321,7 +320,7 @@
                 ],
                 "inputs": {
                     "cache": "",
-                    "modelName": "",
+                    "modelName": "gpt-4-turbo",
                     "temperature": "0",
                     "maxTokens": "",
                     "topP": "",
@@ -346,8 +345,8 @@
             },
             "selected": false,
             "positionAbsolute": {
-                "x": 860.555928011636,
-                "y": -355.71028569475095
+                "x": 851.2457594432603,
+                "y": -352.1518756201128
             },
             "dragging": false
         },
@@ -356,42 +355,42 @@
             "height": 454,
             "id": "advancedStructuredOutputParser_0",
             "position": {
-                "x": 489.3637511211284,
-                "y": 580.0628053662244
+                "x": 449.77421420748544,
+                "y": -72.00015556436546
             },
             "type": "customNode",
             "data": {
                 "id": "advancedStructuredOutputParser_0",
-                "label": "Advanced Structured Output Parser",
+                "label": "Расширенный структурированный парсер вывода",
                 "version": 1,
                 "name": "advancedStructuredOutputParser",
                 "type": "AdvancedStructuredOutputParser",
                 "baseClasses": ["AdvancedStructuredOutputParser", "BaseLLMOutputParser", "Runnable"],
-                "category": "Output Parsers",
-                "description": "Parse the output of an LLM call into a given structure by providing a Zod schema.",
+                "category": "Парсеры вывода",
+                "description": "Преобразует вывод вызова LLM в заданную структуру с помощью схемы Zod.",
                 "inputParams": [
                     {
-                        "label": "Autofix",
+                        "label": "Автоисправление",
                         "name": "autofixParser",
                         "type": "boolean",
                         "optional": true,
-                        "description": "In the event that the first call fails, will make another call to the model to fix any errors.",
+                        "description": "В случае неудачи первого вызова, сделает еще один вызов модели для исправления любых ошибок.",
                         "id": "advancedStructuredOutputParser_0-input-autofixParser-boolean"
                     },
                     {
-                        "label": "Example JSON",
+                        "label": "Пример JSON",
                         "name": "exampleJson",
                         "type": "string",
-                        "description": "Zod schema for the output of the model",
+                        "description": "Схема Zod для вывода модели",
                         "rows": 10,
-                        "default": "z.object({\n    title: z.string(), // Title of the movie as a string\n    yearOfRelease: z.number().int(), // Release year as an integer number,\n    genres: z.enum([\n        \"Action\", \"Comedy\", \"Drama\", \"Fantasy\", \"Horror\",\n        \"Mystery\", \"Romance\", \"Science Fiction\", \"Thriller\", \"Documentary\"\n    ]).array().max(2), // Array of genres, max of 2 from the defined enum\n    shortDescription: z.string().max(500) // Short description, max 500 characters\n})",
+                        "default": "z.object({\n    title: z.string(), // Название фильма как строка\n    yearOfRelease: z.number().int(), // Год выпуска как целое число,\n    genres: z.enum([\n        \"Боевик\", \"Комедия\", \"Драма\", \"Фэнтези\", \"Ужасы\",\n        \"Мистика\", \"Романтика\", \"Научная фантастика\", \"Триллер\", \"Документальный\"\n    ]).array().max(2), // Массив жанров, максимум 2 из определенного перечисления\n    shortDescription: z.string().max(500) // Краткое описание, максимум 500 символов\n})",
                         "id": "advancedStructuredOutputParser_0-input-exampleJson-string"
                     }
                 ],
                 "inputAnchors": [],
                 "inputs": {
-                    "autofixParser": "",
-                    "exampleJson": "z.object({\n    title: z.string(), // Title of the movie as a string\n    yearOfRelease: z.number().int(), // Release year as an integer number,\n    genres: z.enum([\n        \"Action\", \"Comedy\", \"Drama\", \"Fantasy\", \"Horror\",\n        \"Mystery\", \"Romance\", \"Science Fiction\", \"Thriller\", \"Documentary\"\n    ]).array().max(2), // Array of genres, max of 2 from the defined enum\n    shortDescription: z.string().max(500) // Short description, max 500 characters\n})"
+                    "autofixParser": true,
+                    "exampleJson": "z.array(z.object({\n    title: z.string(), // Название фильма как строка\n    yearOfRelease: z.number().int(), // Год выпуска как целое число,\n    genres: z.enum([\n        \"Боевик\", \"Комедия\", \"Драма\", \"Фэнтези\", \"Ужасы\",\n        \"Мистика\", \"Романтика\", \"Научная фантастика\", \"Триллер\", \"Документальный\"\n    ]).array().max(2), // Массив жанров, максимум 2 из определенного перечисления\n    shortDescription: z.string().max(500) // Краткое описание, максимум 500 символов\n}))"
                 },
                 "outputAnchors": [
                     {
@@ -407,9 +406,62 @@
             "selected": false,
             "dragging": false,
             "positionAbsolute": {
-                "x": 489.3637511211284,
-                "y": 580.0628053662244
+                "x": 449.77421420748544,
+                "y": -72.00015556436546
             }
+        },
+        {
+            "id": "stickyNote_0",
+            "position": {
+                "x": 1224.8602820360084,
+                "y": 45.252502534529725
+            },
+            "type": "stickyNote",
+            "data": {
+                "id": "stickyNote_0",
+                "label": "Заметка",
+                "version": 2,
+                "name": "stickyNote",
+                "type": "StickyNote",
+                "baseClasses": ["StickyNote"],
+                "tags": ["Утилиты"],
+                "category": "Утилиты",
+                "description": "Добавить заметку",
+                "inputParams": [
+                    {
+                        "label": "",
+                        "name": "note",
+                        "type": "string",
+                        "rows": 1,
+                        "placeholder": "Введите что-нибудь здесь",
+                        "optional": true,
+                        "id": "stickyNote_0-input-note-string"
+                    }
+                ],
+                "inputAnchors": [],
+                "inputs": {
+                    "note": "Этот шаблон предназначен для вывода в формате JSON, определенном в Парсере вывода.\n\nПример вопроса:\nТоп-5 фильмов всех времен"
+                },
+                "outputAnchors": [
+                    {
+                        "id": "stickyNote_0-output-stickyNote-StickyNote",
+                        "name": "stickyNote",
+                        "label": "Заметка",
+                        "description": "Добавить заметку",
+                        "type": "StickyNote"
+                    }
+                ],
+                "outputs": {},
+                "selected": false
+            },
+            "width": 300,
+            "height": 123,
+            "selected": false,
+            "positionAbsolute": {
+                "x": 1224.8602820360084,
+                "y": 45.252502534529725
+            },
+            "dragging": false
         }
     ],
     "edges": [

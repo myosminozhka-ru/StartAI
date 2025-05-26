@@ -2,6 +2,7 @@ import { createPortal } from 'react-dom'
 import { useState, useEffect } from 'react'
 import PropTypes from 'prop-types'
 import { Dialog, DialogContent, DialogTitle, TableContainer, Table, TableHead, TableRow, TableCell, TableBody, Paper } from '@mui/material'
+import moment from 'moment'
 import axios from 'axios'
 import { baseURL } from '@/store/constant'
 
@@ -20,6 +21,10 @@ const AboutDialog = ({ show, onCancel }) => {
                 config.auth = {
                     username,
                     password
+                }
+                config.headers = {
+                    'Content-type': 'application/json',
+                    'x-request-from': 'internal'
                 }
             }
             const latestReleaseReq = axios.get('https://api.github.com/repos/FlowiseAI/Flowise/releases/latest')
@@ -50,7 +55,9 @@ const AboutDialog = ({ show, onCancel }) => {
             aria-labelledby='alert-dialog-title'
             aria-describedby='alert-dialog-description'
         >
-            <DialogTitle sx={{ fontSize: '1rem' }} id='alert-dialog-title'></DialogTitle>
+            <DialogTitle sx={{ fontSize: '1rem' }} id='alert-dialog-title'>
+                Версия Flowise
+            </DialogTitle>
             <DialogContent>
                 {data && (
                     <TableContainer component={Paper}>
@@ -59,6 +66,7 @@ const AboutDialog = ({ show, onCancel }) => {
                                 <TableRow>
                                     <TableCell>Текущая версия</TableCell>
                                     <TableCell>Последняя версия</TableCell>
+                                    <TableCell>Дата публикации</TableCell>
                                 </TableRow>
                             </TableHead>
                             <TableBody>
@@ -67,10 +75,11 @@ const AboutDialog = ({ show, onCancel }) => {
                                         {data.currentVersion}
                                     </TableCell>
                                     <TableCell component='th' scope='row'>
-                                        <span target='_blank' rel='noreferrer'>
-                                            {data.name?.replace('flowise', 'startai')}
-                                        </span>
+                                        <a target='_blank' rel='noreferrer' href={data.html_url}>
+                                            {data.name}
+                                        </a>
                                     </TableCell>
+                                    <TableCell>{moment(data.published_at).format('DD.MM.YYYY')}</TableCell>
                                 </TableRow>
                             </TableBody>
                         </Table>

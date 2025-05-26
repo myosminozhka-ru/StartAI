@@ -15,24 +15,24 @@ const HowToUseFunctionDialog = ({ show, onCancel }) => {
             aria-describedby='alert-dialog-description'
         >
             <DialogTitle sx={{ fontSize: '1rem' }} id='alert-dialog-title'>
-                Как использовать функцию
+                How To Use Function
             </DialogTitle>
             <DialogContent>
                 <ul>
-                    <li style={{ marginTop: 10 }}>Вы можете использовать любые библиотеки, импортированные во StartAI.</li>
+                    <li style={{ marginTop: 10 }}>You can use any libraries imported in Flowise</li>
                     <li style={{ marginTop: 10 }}>
                         You can use properties specified in Input Schema as variables with prefix $:
                         <ul style={{ marginTop: 10 }}>
                             <li>
-                                Свойство = <code>userid</code>
+                                Property = <code>userid</code>
                             </li>
                             <li>
-                                Переменная = <code>$userid</code>
+                                Variable = <code>$userid</code>
                             </li>
                         </ul>
                     </li>
                     <li style={{ marginTop: 10 }}>
-                        Вы можете получить конфигурацию потока по умолчанию:
+                        You can get default flow config:
                         <ul style={{ marginTop: 10 }}>
                             <li>
                                 <code>$flow.sessionId</code>
@@ -46,12 +46,15 @@ const HowToUseFunctionDialog = ({ show, onCancel }) => {
                             <li>
                                 <code>$flow.input</code>
                             </li>
+                            <li>
+                                <code>$flow.state</code>
+                            </li>
                         </ul>
                     </li>
                     <li style={{ marginTop: 10 }}>
-                        Вы можете получить пользовательские переменные:&nbsp;<code>{`$vars.<variable-name>`}</code>
+                        You can get custom variables:&nbsp;<code>{`$vars.<variable-name>`}</code>
                     </li>
-                    <li style={{ marginTop: 10 }}>Должно возвращать строковое значение в конце функции</li>
+                    <li style={{ marginTop: 10 }}>Must return a string value at the end of function</li>
                 </ul>
             </DialogContent>
         </Dialog>

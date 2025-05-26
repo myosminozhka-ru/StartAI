@@ -5,6 +5,7 @@ import { getNodeModulesPackagePath } from './utils'
 import { promises } from 'fs'
 import { ICommonObject } from 'flowise-components'
 import logger from './utils/logger'
+import { appConfig } from './AppConfig'
 
 export class NodesPool {
     componentNodes: IComponentNodes = {}
@@ -23,6 +24,7 @@ export class NodesPool {
      * Initialize nodes
      */
     private async initializeNodes() {
+        const disabled_nodes = process.env.DISABLED_NODES ? process.env.DISABLED_NODES.split(',') : []
         const packagePath = getNodeModulesPackagePath('flowise-components')
         const nodesPath = path.join(packagePath, 'dist', 'nodes')
         const nodeFiles = await this.getFiles(nodesPath)
@@ -57,7 +59,16 @@ export class NodesPool {
                             }
 
                             const skipCategories = ['Analytic', 'SpeechToText']
-                            if (!skipCategories.includes(newNodeInstance.category)) {
+                            const conditionOne = !skipCategories.includes(newNodeInstance.category)
+
+                            const isCommunityNodesAllowed = appConfig.showCommunityNodes
+                            const isAuthorPresent = newNodeInstance.author
+                            let conditionTwo = true
+                            if (!isCommunityNodesAllowed && isAuthorPresent) conditionTwo = false
+
+                            const isDisabled = disabled_nodes.includes(newNodeInstance.name)
+
+                            if (conditionOne && conditionTwo && !isDisabled) {
                                 this.componentNodes[newNodeInstance.name] = newNodeInstance
                             }
                         }

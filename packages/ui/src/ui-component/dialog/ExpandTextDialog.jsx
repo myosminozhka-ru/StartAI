@@ -8,7 +8,7 @@ import PerfectScrollbar from 'react-perfect-scrollbar'
 import { Button, Dialog, DialogActions, DialogContent, Typography } from '@mui/material'
 import { useTheme } from '@mui/material/styles'
 import { LoadingButton } from '@mui/lab'
-import { translationObject } from '@/translate'
+
 // Project Import
 import { StyledButton } from '@/ui-component/button/StyledButton'
 import { CodeEditor } from '@/ui-component/editor/CodeEditor'
@@ -22,7 +22,7 @@ import useApi from '@/hooks/useApi'
 
 import './ExpandTextDialog.css'
 
-const ExpandTextDialog = ({ show, dialogProps, onCancel, onConfirm }) => {
+const ExpandTextDialog = ({ show, dialogProps, onCancel, onInputHintDialogClicked, onConfirm }) => {
     const portalElement = document.getElementById('portal')
 
     const theme = useTheme()
@@ -38,12 +38,17 @@ const ExpandTextDialog = ({ show, dialogProps, onCancel, onConfirm }) => {
     const executeCustomFunctionNodeApi = useApi(nodesApi.executeCustomFunctionNode)
 
     useEffect(() => {
-        if (dialogProps.value) setInputValue(dialogProps.value)
+        if (dialogProps.value) {
+            setInputValue(dialogProps.value)
+        }
         if (dialogProps.inputParam) {
             setInputParam(dialogProps.inputParam)
             if (dialogProps.inputParam.type === 'code') {
                 setLanguageType('js')
             }
+        }
+        if (dialogProps.languageType) {
+            setLanguageType(dialogProps.languageType)
         }
 
         return () => {
@@ -78,7 +83,7 @@ const ExpandTextDialog = ({ show, dialogProps, onCancel, onConfirm }) => {
     useEffect(() => {
         if (executeCustomFunctionNodeApi.error) {
             if (typeof executeCustomFunctionNodeApi.error === 'object' && executeCustomFunctionNodeApi.error?.response?.data) {
-                setCodeExecutedResult(executeCustomFunctionNodeApi.error?.response?.data)
+                setCodeExecutedResult(JSON.stringify(executeCustomFunctionNodeApi.error?.response?.data, null, 2))
             } else if (typeof executeCustomFunctionNodeApi.error === 'string') {
                 setCodeExecutedResult(executeCustomFunctionNodeApi.error)
             }
@@ -91,16 +96,29 @@ const ExpandTextDialog = ({ show, dialogProps, onCancel, onConfirm }) => {
                 <div style={{ display: 'flex', flexDirection: 'row' }}>
                     {inputParam && (inputParam.type === 'string' || inputParam.type === 'code') && (
                         <div style={{ flex: 70 }}>
-                            <Typography sx={{ mb: 2, ml: 1 }} variant='h4'>
-                                {translationObject[inputParam.label] || inputParam.label}
-                            </Typography>
+                            <div style={{ marginBottom: '10px', display: 'flex', flexDirection: 'row' }}>
+                                <Typography variant='h4'>{inputParam.label}</Typography>
+                                <div style={{ flex: 1 }} />
+                                {inputParam.hint && (
+                                    <Button
+                                        sx={{ p: 0, px: 2 }}
+                                        color='secondary'
+                                        variant='text'
+                                        onClick={() => {
+                                            onInputHintDialogClicked(inputParam.hint)
+                                        }}
+                                    >
+                                        {inputParam.hint.label}
+                                    </Button>
+                                )}
+                            </div>
                             <PerfectScrollbar
                                 style={{
                                     border: '1px solid',
                                     borderColor: theme.palette.grey['500'],
                                     borderRadius: '12px',
                                     height: '100%',
-                                    maxHeight: languageType === 'js' ? 'calc(100vh - 250px)' : 'calc(100vh - 220px)',
+                                    maxHeight: languageType === 'js' ? 'calc(100vh - 330px)' : 'calc(100vh - 220px)',
                                     overflowX: 'hidden',
                                     backgroundColor: 'white'
                                 }}
@@ -108,13 +126,18 @@ const ExpandTextDialog = ({ show, dialogProps, onCancel, onConfirm }) => {
                                 <CodeEditor
                                     disabled={dialogProps.disabled}
                                     value={inputValue}
-                                    height={languageType === 'js' ? 'calc(100vh - 250px)' : 'calc(100vh - 220px)'}
+                                    height={languageType === 'js' ? 'calc(100vh - 330px)' : 'calc(100vh - 220px)'}
                                     theme={customization.isDarkMode ? 'dark' : 'light'}
                                     lang={languageType}
-                                    placeholder={translationObject[inputParam.placeholder] || inputParam.placeholder}
+                                    placeholder={inputParam.placeholder}
                                     basicSetup={
                                         languageType !== 'js'
-                                            ? { lineNumbers: false, foldGutter: false, autocompletion: false, highlightActiveLine: false }
+                                            ? {
+                                                  lineNumbers: false,
+                                                  foldGutter: false,
+                                                  autocompletion: false,
+                                                  highlightActiveLine: false
+                                              }
                                             : {}
                                     }
                                     onValueChange={(code) => setInputValue(code)}
@@ -123,7 +146,7 @@ const ExpandTextDialog = ({ show, dialogProps, onCancel, onConfirm }) => {
                         </div>
                     )}
                 </div>
-                {languageType === 'js' && (
+                {languageType === 'js' && !inputParam.hideCodeExecute && (
                     <LoadingButton
                         sx={{
                             mt: 2,
@@ -145,14 +168,14 @@ const ExpandTextDialog = ({ show, dialogProps, onCancel, onConfirm }) => {
                             executeCustomFunctionNodeApi.request({ javascriptFunction: inputValue })
                         }}
                     >
-                        Выполнить
+                        Execute
                     </LoadingButton>
                 )}
                 {codeExecutedResult && (
                     <div style={{ marginTop: '15px' }}>
                         <CodeEditor
                             disabled={true}
-                            value={codeExecutedResult}
+                            value={codeExecutedResult.toString()}
                             height='max-content'
                             theme={customization.isDarkMode ? 'dark' : 'light'}
                             lang={'js'}
@@ -162,9 +185,9 @@ const ExpandTextDialog = ({ show, dialogProps, onCancel, onConfirm }) => {
                 )}
             </DialogContent>
             <DialogActions>
-                <Button onClick={onCancel}>{translationObject[dialogProps.cancelButtonName] || dialogProps.cancelButtonName}</Button>
+                <Button onClick={onCancel}>{dialogProps.cancelButtonName}</Button>
                 <StyledButton disabled={dialogProps.disabled} variant='contained' onClick={() => onConfirm(inputValue, inputParam.name)}>
-                    {translationObject[dialogProps.confirmButtonName] || dialogProps.confirmButtonName}
+                    {dialogProps.confirmButtonName}
                 </StyledButton>
             </DialogActions>
         </Dialog>
@@ -177,7 +200,8 @@ ExpandTextDialog.propTypes = {
     show: PropTypes.bool,
     dialogProps: PropTypes.object,
     onCancel: PropTypes.func,
-    onConfirm: PropTypes.func
+    onConfirm: PropTypes.func,
+    onInputHintDialogClicked: PropTypes.func
 }
 
 export default ExpandTextDialog

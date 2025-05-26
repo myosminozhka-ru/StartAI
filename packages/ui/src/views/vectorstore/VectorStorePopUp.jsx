@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from 'react'
+import { useState, useRef, useEffect, memo } from 'react'
 import PropTypes from 'prop-types'
 
 import { IconDatabaseImport, IconX } from '@tabler/icons-react'
@@ -8,7 +8,7 @@ import { StyledFab } from '@/ui-component/button/StyledFab'
 import VectorStoreDialog from './VectorStoreDialog'
 import UpsertResultDialog from './UpsertResultDialog'
 
-export const VectorStorePopUp = ({ chatflowid }) => {
+const VectorStorePopUp = ({ chatflowid }) => {
     const [open, setOpen] = useState(false)
     const [showExpandDialog, setShowExpandDialog] = useState(false)
     const [expandDialogProps, setExpandDialogProps] = useState({})
@@ -22,7 +22,7 @@ export const VectorStorePopUp = ({ chatflowid }) => {
         setOpen((prevopen) => !prevopen)
         const props = {
             open: true,
-            title: 'Обновление векторного хранилища',
+            title: 'Upsert Vector Store',
             chatflowid
         }
         setExpandDialogProps(props)
@@ -46,7 +46,7 @@ export const VectorStorePopUp = ({ chatflowid }) => {
                 size='small'
                 color='teal'
                 aria-label='upsert'
-                title='Обновление базы данных векторов'
+                title='Upsert Vector Database'
                 onClick={handleToggle}
             >
                 {open ? <IconX /> : <IconDatabaseImport />}
@@ -77,3 +77,5 @@ export const VectorStorePopUp = ({ chatflowid }) => {
 }
 
 VectorStorePopUp.propTypes = { chatflowid: PropTypes.string }
+
+export default memo(VectorStorePopUp)

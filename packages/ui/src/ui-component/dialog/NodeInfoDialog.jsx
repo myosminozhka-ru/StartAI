@@ -4,13 +4,15 @@ import { useEffect } from 'react'
 import PropTypes from 'prop-types'
 
 // Material
-import { Dialog, DialogContent, DialogTitle } from '@mui/material'
+import { Button, Dialog, DialogContent, DialogTitle } from '@mui/material'
 import { TableViewOnly } from '@/ui-component/table/Table'
+import { IconBook2 } from '@tabler/icons-react'
+import { useTheme } from '@mui/material/styles'
 
 // Store
 import { HIDE_CANVAS_DIALOG, SHOW_CANVAS_DIALOG } from '@/store/actions'
-import { baseURL } from '@/store/constant'
-import { translationObject } from '@/translate'
+import { baseURL, AGENTFLOW_ICONS } from '@/store/constant'
+
 // API
 import configApi from '@/api/config'
 import useApi from '@/hooks/useApi'
@@ -18,8 +20,16 @@ import useApi from '@/hooks/useApi'
 const NodeInfoDialog = ({ show, dialogProps, onCancel }) => {
     const portalElement = document.getElementById('portal')
     const dispatch = useDispatch()
+    const theme = useTheme()
 
     const getNodeConfigApi = useApi(configApi.getNodeConfig)
+
+    const renderIcon = (node) => {
+        const foundIcon = AGENTFLOW_ICONS.find((icon) => icon.name === node.name)
+
+        if (!foundIcon) return null
+        return <foundIcon.icon size={24} color={'white'} />
+    }
 
     useEffect(() => {
         if (dialogProps.data) {
@@ -47,29 +57,48 @@ const NodeInfoDialog = ({ show, dialogProps, onCancel }) => {
             <DialogTitle sx={{ fontSize: '1rem' }} id='alert-dialog-title'>
                 {dialogProps.data && dialogProps.data.name && dialogProps.data.label && (
                     <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
-                        <div
-                            style={{
-                                width: 50,
-                                height: 50,
-                                marginRight: 10,
-                                borderRadius: '50%',
-                                backgroundColor: 'white'
-                            }}
-                        >
-                            <img
+                        {dialogProps.data.color && !dialogProps.data.icon ? (
+                            <div
                                 style={{
-                                    width: '100%',
-                                    height: '100%',
-                                    padding: 7,
-                                    borderRadius: '50%',
-                                    objectFit: 'contain'
+                                    ...theme.typography.commonAvatar,
+                                    ...theme.typography.largeAvatar,
+                                    borderRadius: '15px',
+                                    backgroundColor: dialogProps.data.color,
+                                    cursor: 'grab',
+                                    display: 'flex',
+                                    justifyContent: 'center',
+                                    alignItems: 'center',
+                                    background: dialogProps.data.color,
+                                    marginRight: 10
                                 }}
-                                alt={dialogProps.data.name}
-                                src={`${baseURL}/api/v1/node-icon/${dialogProps.data.name}`}
-                            />
-                        </div>
+                            >
+                                {renderIcon(dialogProps.data)}
+                            </div>
+                        ) : (
+                            <div
+                                style={{
+                                    width: 50,
+                                    height: 50,
+                                    marginRight: 10,
+                                    borderRadius: '50%',
+                                    backgroundColor: 'white'
+                                }}
+                            >
+                                <img
+                                    style={{
+                                        width: '100%',
+                                        height: '100%',
+                                        padding: 7,
+                                        borderRadius: '50%',
+                                        objectFit: 'contain'
+                                    }}
+                                    alt={dialogProps.data.name}
+                                    src={`${baseURL}/api/v1/node-icon/${dialogProps.data.name}`}
+                                />
+                            </div>
+                        )}
                         <div style={{ display: 'flex', flexDirection: 'column', marginLeft: 10 }}>
-                            {translationObject[dialogProps.data.label] || dialogProps.data.label}
+                            {dialogProps.data.label}
                             <div style={{ display: 'flex', flexDirection: 'row' }}>
                                 <div
                                     style={{
@@ -103,7 +132,7 @@ const NodeInfoDialog = ({ show, dialogProps, onCancel }) => {
                                             marginBottom: 5
                                         }}
                                     >
-                                        <span style={{ color: '#606c38', fontSize: '0.825rem' }}>версия {dialogProps.data.version}</span>
+                                        <span style={{ color: '#606c38', fontSize: '0.825rem' }}>version {dialogProps.data.version}</span>
                                     </div>
                                 )}
                                 {dialogProps.data.badge && (
@@ -163,6 +192,20 @@ const NodeInfoDialog = ({ show, dialogProps, onCancel }) => {
                                     ))}
                             </div>
                         </div>
+                        <div style={{ flex: 1 }}></div>
+                        {dialogProps.data.documentation && (
+                            <Button
+                                variant='outlined'
+                                color='primary'
+                                title='Open Documentation'
+                                onClick={() => {
+                                    window.open(dialogProps.data.documentation, '_blank', 'noopener,noreferrer')
+                                }}
+                                startIcon={<IconBook2 />}
+                            >
+                                Documentation
+                            </Button>
+                        )}
                     </div>
                 )}
             </DialogTitle>
@@ -174,7 +217,7 @@ const NodeInfoDialog = ({ show, dialogProps, onCancel }) => {
                             marginBottom: 10
                         }}
                     >
-                        <span>{translationObject[dialogProps.data.description] || dialogProps.data.description}</span>
+                        <span>{dialogProps.data.description}</span>
                     </div>
                 )}
                 {getNodeConfigApi.data && getNodeConfigApi.data.length > 0 && (

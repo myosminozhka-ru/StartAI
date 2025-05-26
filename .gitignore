@@ -11,6 +11,9 @@
 **/logs
 **/*.log
 
+## pnpm
+.pnpm-store/
+
 ## build
 **/dist
 **/build
@@ -45,9 +48,6 @@
 ## compressed
 **/*.tgz
 
-## pm2 config
-.ecosystem.config.js
-ecosystem.config.js
 ## vscode
 .vscode/*
 !.vscode/settings.json

@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from 'react'
+import { useState, useRef, useEffect, memo } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
 import PropTypes from 'prop-types'
 
@@ -35,74 +35,19 @@ import PerfectScrollbar from 'react-perfect-scrollbar'
 import MainCard from '@/ui-component/cards/MainCard'
 import Transitions from '@/ui-component/extended/Transitions'
 import { StyledFab } from '@/ui-component/button/StyledFab'
+import AgentflowGeneratorDialog from '@/ui-component/dialog/AgentflowGeneratorDialog'
 
 // icons
-import { IconPlus, IconSearch, IconMinus, IconX } from '@tabler/icons-react'
+import { IconPlus, IconSearch, IconMinus, IconX, IconSparkles } from '@tabler/icons-react'
 import LlamaindexPNG from '@/assets/images/llamaindex.png'
 import LangChainPNG from '@/assets/images/langchain.png'
+import utilNodesPNG from '@/assets/images/utilNodes.png'
 
 // const
-import { baseURL } from '@/store/constant'
+import { baseURL, AGENTFLOW_ICONS } from '@/store/constant'
 import { SET_COMPONENT_NODES } from '@/store/actions'
-import { translationObject } from '@/translate'
+
 // ==============================|| ADD NODES||============================== //
-
-const translationsNodes = {
-    Agents: 'Агенты',
-    Cache: 'Кэш',
-    Chains: 'Цепочки',
-    'Chat Models': 'Языковая модель для чатов',
-    'Document Loaders': 'Работа с документами',
-    Embeddings: 'Вложения',
-    LLMs: 'Языковая модель для агентов',
-    Memory: 'Типы памяти',
-    'Multi Agents': 'Мульти агенты',
-    'Output Parsers': 'Выходные парсеры',
-    Prompts: 'Подсказки для модели',
-    Retrievers: 'Ретриверы',
-    'Text Splitters': 'Обработчики текста',
-    Tools: 'Дополнительные инструменты',
-    'Vector Stores': 'Векторные хранилища',
-    Utilities: 'Утилиты',
-    Moderation: 'Модерация',
-    Engine: 'Двигатели',
-    'Response Synthesizer': 'Синтезатор ответов'
-}
-const excludedNodesByLable = [
-    'Airtable',
-    'Apify Website Content Crawler',
-    'Confluence',
-    'VectorStore to Document',
-    'AWS Bedrock',
-    'Azure ChatOpenAi',
-    'NIBittensorChat',
-    'ChatAntrophic',
-    'ChatGooglePaLM',
-    'ChatGoogleVertexAI',
-    'ChatLocalAI',
-    'AWS Bedrock Embeddings',
-    'Azure OpenAI Embeddings',
-    'Google PaLM Embeddings',
-    'Google VertexAI Embeddings',
-    'LocalAI Embeddings',
-    'AWS Bedrock',
-    'Azure OpenAI',
-    'NIBittersorLLM',
-    'GooglePaLM',
-    'GoogleVertexAI',
-    'Motorheard Memory',
-    'Upstash Redis-Backed Chat Memory',
-    'BraveSearchAPI',
-    'SerpAPI',
-    'Milvus',
-    'OpenSearch',
-    'Pinecone',
-    'Singlestore',
-    'Supabase',
-    'Vectara',
-    'Weaviate'
-]
-
 function a11yProps(index) {
     return {
         id: `attachment-tab-${index}`,
@@ -110,10 +55,22 @@ function a11yProps(index) {
     }
 }
 
-const blacklistCategoriesForAgentCanvas = ['Agents', 'Memory', 'Record Manager']
-const allowedAgentModel = {}
+const blacklistCategoriesForAgentCanvas = ['Agents', 'Memory', 'Record Manager', 'Utilities']
 
-const AddNodes = ({ nodesData, node, isAgentCanvas }) => {
+const agentMemoryNodes = ['agentMemory', 'sqliteAgentMemory', 'postgresAgentMemory', 'mySQLAgentMemory']
+
+// Show blacklisted nodes (exceptions) for agent canvas
+const exceptionsForAgentCanvas = {
+    Memory: agentMemoryNodes,
+    Utilities: ['getVariable', 'setVariable', 'stickyNote']
+}
+
+// Hide some nodes from the chatflow canvas
+const blacklistForChatflowCanvas = {
+    Memory: agentMemoryNodes
+}
+
+const AddNodes = ({ nodesData, node, isAgentCanvas, isAgentflowv2, onFlowGenerated }) => {
     const theme = useTheme()
     const customization = useSelector((state) => state.customization)
     const dispatch = useDispatch()
@@ -124,31 +81,14 @@ const AddNodes = ({ nodesData, node, isAgentCanvas }) => {
     const [categoryExpanded, setCategoryExpanded] = useState({})
     const [tabValue, setTabValue] = useState(0)
 
+    const [openDialog, setOpenDialog] = useState(false)
+    const [dialogProps, setDialogProps] = useState({})
+
+    const isAgentCanvasV2 = window.location.pathname.includes('/v2/agentcanvas')
+
     const anchorRef = useRef(null)
     const prevOpen = useRef(open)
     const ps = useRef()
-
-    // Temporary method to handle Deprecating Vector Store and New ones
-    const categorizeVectorStores = (nodes, accordianCategories, isFilter) => {
-        const obj = { ...nodes }
-        const vsNodes = obj['Vector Stores'] ?? []
-        const deprecatingNodes = []
-        const newNodes = []
-        for (const vsNode of vsNodes) {
-            if (vsNode.badge === 'DEPRECATING') deprecatingNodes.push(vsNode)
-            else newNodes.push(vsNode)
-        }
-        delete obj['Vector Stores']
-        if (deprecatingNodes.length) {
-            obj['Векторные хранилища;DEPRECATING'] = deprecatingNodes
-            accordianCategories['Vector Stores;DEPRECATING'] = isFilter ? true : false
-        }
-        if (newNodes.length) {
-            obj['Векторные хранилища;NEW'] = newNodes
-            accordianCategories['Vector Stores;NEW'] = isFilter ? true : false
-        }
-        setNodes(obj)
-    }
 
     const scrollTop = () => {
         const curr = ps.current
@@ -162,21 +102,44 @@ const AddNodes = ({ nodesData, node, isAgentCanvas }) => {
         filterSearch(searchValue, newValue)
     }
 
+    const addException = (category) => {
+        let nodes = []
+        if (category) {
+            const nodeNames = exceptionsForAgentCanvas[category] || []
+            nodes = nodesData.filter((nd) => nd.category === category && nodeNames.includes(nd.name))
+        } else {
+            for (const category in exceptionsForAgentCanvas) {
+                const nodeNames = exceptionsForAgentCanvas[category]
+                nodes.push(...nodesData.filter((nd) => nd.category === category && nodeNames.includes(nd.name)))
+            }
+        }
+        return nodes
+    }
+
     const getSearchedNodes = (value) => {
         if (isAgentCanvas) {
             const nodes = nodesData.filter((nd) => !blacklistCategoriesForAgentCanvas.includes(nd.category))
+            nodes.push(...addException())
             const passed = nodes.filter((nd) => {
-                const passesQuery = nd.name.toLowerCase().includes(value.toLowerCase())
+                const passesName = nd.name.toLowerCase().includes(value.toLowerCase())
+                const passesLabel = nd.label.toLowerCase().includes(value.toLowerCase())
                 const passesCategory = nd.category.toLowerCase().includes(value.toLowerCase())
-                return passesQuery || passesCategory
+                return passesName || passesCategory || passesLabel
             })
             return passed
         }
-        const nodes = nodesData.filter((nd) => nd.category !== 'Multi Agents')
+        let nodes = nodesData.filter((nd) => nd.category !== 'Multi Agents' && nd.category !== 'Sequential Agents')
+
+        for (const category in blacklistForChatflowCanvas) {
+            const nodeNames = blacklistForChatflowCanvas[category]
+            nodes = nodes.filter((nd) => !nodeNames.includes(nd.name))
+        }
+
         const passed = nodes.filter((nd) => {
-            const passesQuery = nd.name.toLowerCase().includes(value.toLowerCase())
+            const passesName = nd.name.toLowerCase().includes(value.toLowerCase())
+            const passesLabel = nd.label.toLowerCase().includes(value.toLowerCase())
             const passesCategory = nd.category.toLowerCase().includes(value.toLowerCase())
-            return passesQuery || passesCategory
+            return passesName || passesCategory || passesLabel
         })
         return passed
     }
@@ -198,10 +161,13 @@ const AddNodes = ({ nodesData, node, isAgentCanvas }) => {
     const groupByTags = (nodes, newTabValue = 0) => {
         const langchainNodes = nodes.filter((nd) => !nd.tags)
         const llmaindexNodes = nodes.filter((nd) => nd.tags && nd.tags.includes('LlamaIndex'))
+        const utilitiesNodes = nodes.filter((nd) => nd.tags && nd.tags.includes('Utilities'))
         if (newTabValue === 0) {
             return langchainNodes
-        } else {
+        } else if (newTabValue === 1) {
             return llmaindexNodes
+        } else {
+            return utilitiesNodes
         }
     }
 
@@ -217,24 +183,34 @@ const AddNodes = ({ nodesData, node, isAgentCanvas }) => {
 
             const filteredResult = {}
             for (const category in result) {
+                if (isAgentCanvasV2) {
+                    if (category !== 'Agent Flows') {
+                        continue
+                    }
+                } else {
+                    if (category === 'Agent Flows') {
+                        continue
+                    }
+                }
                 // Filter out blacklisted categories
                 if (!blacklistCategoriesForAgentCanvas.includes(category)) {
                     // Filter out LlamaIndex nodes
                     const nodes = result[category].filter((nd) => !nd.tags || !nd.tags.includes('LlamaIndex'))
                     if (!nodes.length) continue
 
-                    // Only allow specific models for specific categories
-                    if (Object.keys(allowedAgentModel).includes(category)) {
-                        const allowedModels = allowedAgentModel[category]
-                        filteredResult[category] = nodes.filter((nd) => allowedModels.includes(nd.name))
-                    } else {
-                        filteredResult[category] = nodes
-                    }
+                    filteredResult[category] = nodes
+                }
+
+                // Allow exceptionsForAgentCanvas
+                if (Object.keys(exceptionsForAgentCanvas).includes(category)) {
+                    filteredResult[category] = addException(category)
                 }
             }
             setNodes(filteredResult)
-            categorizeVectorStores(filteredResult, accordianCategories, isFilter)
             accordianCategories['Multi Agents'] = true
+            accordianCategories['Sequential Agents'] = true
+            accordianCategories['Memory'] = true
+            accordianCategories['Agent Flows'] = true
             setCategoryExpanded(accordianCategories)
         } else {
             const taggedNodes = groupByTags(nodes, newTabValue)
@@ -248,13 +224,17 @@ const AddNodes = ({ nodesData, node, isAgentCanvas }) => {
 
             const filteredResult = {}
             for (const category in result) {
-                if (category === 'Multi Agents') {
+                if (category === 'Agent Flows' || category === 'Multi Agents' || category === 'Sequential Agents') {
                     continue
+                }
+                if (Object.keys(blacklistForChatflowCanvas).includes(category)) {
+                    const nodes = blacklistForChatflowCanvas[category]
+                    result[category] = result[category].filter((nd) => !nodes.includes(nd.name))
                 }
                 filteredResult[category] = result[category]
             }
+
             setNodes(filteredResult)
-            categorizeVectorStores(filteredResult, accordianCategories, isFilter)
             setCategoryExpanded(accordianCategories)
         }
     }
@@ -281,6 +261,23 @@ const AddNodes = ({ nodesData, node, isAgentCanvas }) => {
         event.dataTransfer.effectAllowed = 'move'
     }
 
+    const getImage = (tabValue) => {
+        if (tabValue === 0) {
+            return LangChainPNG
+        } else if (tabValue === 1) {
+            return LlamaindexPNG
+        } else {
+            return utilNodesPNG
+        }
+    }
+
+    const renderIcon = (node) => {
+        const foundIcon = AGENTFLOW_ICONS.find((icon) => icon.name === node.name)
+
+        if (!foundIcon) return null
+        return <foundIcon.icon size={30} color={node.color} />
+    }
+
     useEffect(() => {
         if (prevOpen.current === true && open === false) {
             anchorRef.current.focus()
@@ -302,19 +299,65 @@ const AddNodes = ({ nodesData, node, isAgentCanvas }) => {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [nodesData, dispatch])
 
+    // Handle dialog open/close
+    const handleOpenDialog = () => {
+        setOpenDialog(true)
+        setDialogProps({
+            title: 'What would you like to build?',
+            description:
+                'Enter your prompt to generate an agentflow. Performance may vary with different models. Only nodes and edges are generated, you will need to fill in the input fields for each node.'
+        })
+    }
+
+    const handleCloseDialog = () => {
+        setOpenDialog(false)
+    }
+
+    const handleConfirmDialog = () => {
+        setOpenDialog(false)
+        onFlowGenerated()
+    }
+
     return (
         <>
             <StyledFab
                 sx={{ left: 20, top: 20 }}
                 ref={anchorRef}
                 size='small'
+                color='primary'
                 aria-label='add'
-                title='Добавить Узел'
+                title='Add Node'
                 onClick={handleToggle}
-                color='secondary'
             >
                 {open ? <IconMinus /> : <IconPlus />}
             </StyledFab>
+            {isAgentflowv2 && (
+                <StyledFab
+                    sx={{
+                        left: 40,
+                        top: 20,
+                        background: 'linear-gradient(45deg, #FF6B6B 30%, #FF8E53 90%)',
+                        '&:hover': {
+                            background: 'linear-gradient(45deg, #FF8E53 30%, #FF6B6B 90%)'
+                        }
+                    }}
+                    onClick={handleOpenDialog}
+                    size='small'
+                    color='primary'
+                    aria-label='generate'
+                    title='Generate Agentflow'
+                >
+                    <IconSparkles />
+                </StyledFab>
+            )}
+
+            <AgentflowGeneratorDialog
+                show={openDialog}
+                dialogProps={dialogProps}
+                onCancel={handleCloseDialog}
+                onConfirm={handleConfirmDialog}
+            />
+
             <Popper
                 placement='bottom-end'
                 open={open}
@@ -341,14 +384,16 @@ const AddNodes = ({ nodesData, node, isAgentCanvas }) => {
                                 <MainCard border={false} elevation={16} content={false} boxShadow shadow={theme.shadows[16]}>
                                     <Box sx={{ p: 2 }}>
                                         <Stack>
-                                            <Typography variant='h4'>Узлы</Typography>
+                                            <Typography variant='h4'>Add Nodes</Typography>
                                         </Stack>
                                         <OutlinedInput
+                                            // eslint-disable-next-line
+                                            autoFocus
                                             sx={{ width: '100%', pr: 2, pl: 2, my: 2 }}
                                             id='input-search-node'
                                             value={searchValue}
                                             onChange={(e) => filterSearch(e.target.value)}
-                                            placeholder='Поиск Узлов'
+                                            placeholder='Search nodes'
                                             startAdornment={
                                                 <InputAdornment position='start'>
                                                     <IconSearch stroke={1.5} size='1rem' color={theme.palette.grey[500]} />
@@ -364,7 +409,7 @@ const AddNodes = ({ nodesData, node, isAgentCanvas }) => {
                                                             color: theme.palette.grey[900]
                                                         }
                                                     }}
-                                                    title='Очистить поиск'
+                                                    title='Clear Search'
                                                 >
                                                     <IconX
                                                         stroke={1.5}
@@ -389,7 +434,7 @@ const AddNodes = ({ nodesData, node, isAgentCanvas }) => {
                                                 onChange={handleTabChange}
                                                 aria-label='tabs'
                                             >
-                                                {['LangChain', 'LlamaIndex'].map((item, index) => (
+                                                {['LangChain', 'LlamaIndex', 'Utilities'].map((item, index) => (
                                                     <Tab
                                                         icon={
                                                             <div
@@ -399,12 +444,12 @@ const AddNodes = ({ nodesData, node, isAgentCanvas }) => {
                                                             >
                                                                 <img
                                                                     style={{
-                                                                        width: '25px',
-                                                                        height: '25px',
+                                                                        width: '20px',
+                                                                        height: '20px',
                                                                         borderRadius: '50%',
                                                                         objectFit: 'contain'
                                                                     }}
-                                                                    src={index === 0 ? LangChainPNG : LlamaindexPNG}
+                                                                    src={getImage(index)}
                                                                     alt={item}
                                                                 />
                                                             </div>
@@ -416,27 +461,6 @@ const AddNodes = ({ nodesData, node, isAgentCanvas }) => {
                                                         {...a11yProps(index)}
                                                     ></Tab>
                                                 ))}
-                                                <div
-                                                    style={{
-                                                        display: 'flex',
-                                                        flexDirection: 'row',
-                                                        alignItems: 'center',
-                                                        borderRadius: 10,
-                                                        background: 'rgb(254,252,191)',
-                                                        paddingLeft: 6,
-                                                        paddingRight: 6,
-                                                        paddingTop: 1,
-                                                        paddingBottom: 1,
-                                                        width: 'max-content',
-                                                        position: 'absolute',
-                                                        top: 0,
-                                                        right: 0,
-                                                        fontSize: '0.65rem',
-                                                        fontWeight: 700
-                                                    }}
-                                                >
-                                                    <span style={{ color: 'rgb(116,66,16)' }}>BETA</span>
-                                                </div>
                                             </Tabs>
                                         )}
 
@@ -475,163 +499,159 @@ const AddNodes = ({ nodesData, node, isAgentCanvas }) => {
                                             >
                                                 {Object.keys(nodes)
                                                     .sort()
-                                                    .map((category) =>
-                                                        category === 'Vector Stores' ? (
-                                                            <></>
-                                                        ) : (
-                                                            <Accordion
-                                                                expanded={categoryExpanded[category] || false}
-                                                                onChange={handleAccordionChange(category)}
-                                                                key={category}
-                                                                disableGutters
+                                                    .map((category) => (
+                                                        <Accordion
+                                                            expanded={categoryExpanded[category] || false}
+                                                            onChange={handleAccordionChange(category)}
+                                                            key={category}
+                                                            disableGutters
+                                                        >
+                                                            <AccordionSummary
+                                                                expandIcon={<ExpandMoreIcon />}
+                                                                aria-controls={`nodes-accordian-${category}`}
+                                                                id={`nodes-accordian-header-${category}`}
                                                             >
-                                                                <AccordionSummary
-                                                                    expandIcon={<ExpandMoreIcon />}
-                                                                    aria-controls={`nodes-accordian-${category}`}
-                                                                    id={`nodes-accordian-header-${category}`}
-                                                                >
-                                                                    {category.split(';').length > 1 ? (
-                                                                        <div
-                                                                            style={{
-                                                                                display: 'flex',
-                                                                                flexDirection: 'row',
-                                                                                alignItems: 'center'
+                                                                {category.split(';').length > 1 ? (
+                                                                    <div
+                                                                        style={{
+                                                                            display: 'flex',
+                                                                            flexDirection: 'row',
+                                                                            alignItems: 'center'
+                                                                        }}
+                                                                    >
+                                                                        <Typography variant='h5'>{category.split(';')[0]}</Typography>
+                                                                        &nbsp;
+                                                                        <Chip
+                                                                            sx={{
+                                                                                width: 'max-content',
+                                                                                fontWeight: 700,
+                                                                                fontSize: '0.65rem',
+                                                                                background:
+                                                                                    category.split(';')[1] === 'DEPRECATING'
+                                                                                        ? theme.palette.warning.main
+                                                                                        : theme.palette.teal.main,
+                                                                                color:
+                                                                                    category.split(';')[1] !== 'DEPRECATING'
+                                                                                        ? 'white'
+                                                                                        : 'inherit'
+                                                                            }}
+                                                                            size='small'
+                                                                            label={category.split(';')[1]}
+                                                                        />
+                                                                    </div>
+                                                                ) : (
+                                                                    <Typography variant='h5'>{category}</Typography>
+                                                                )}
+                                                            </AccordionSummary>
+                                                            <AccordionDetails>
+                                                                {nodes[category].map((node, index) => (
+                                                                    <div
+                                                                        key={node.name}
+                                                                        onDragStart={(event) => onDragStart(event, node)}
+                                                                        draggable
+                                                                    >
+                                                                        <ListItemButton
+                                                                            sx={{
+                                                                                p: 0,
+                                                                                borderRadius: `${customization.borderRadius}px`,
+                                                                                cursor: 'move'
                                                                             }}
                                                                         >
-                                                                            <Typography variant='h5'>{category.split(';')[0]}</Typography>
-                                                                            &nbsp;
-                                                                            <Chip
-                                                                                sx={{
-                                                                                    width: 'max-content',
-                                                                                    fontWeight: 700,
-                                                                                    fontSize: '0.65rem',
-                                                                                    background:
-                                                                                        category.split(';')[1] === 'DEPRECATING'
-                                                                                            ? theme.palette.warning.main
-                                                                                            : theme.palette.teal.main,
-                                                                                    color:
-                                                                                        category.split(';')[1] !== 'DEPRECATING'
-                                                                                            ? 'white'
-                                                                                            : 'inherit'
-                                                                                }}
-                                                                                size='small'
-                                                                                label={
-                                                                                    category.split(';')[1] === 'DEPRECATING'
-                                                                                        ? 'УСТАРЕЛ'
-                                                                                        : category.split(';')[1] === 'NEW'
-                                                                                        ? 'НОВЫЙ'
-                                                                                        : category.split(';')[1]
-                                                                                }
-                                                                            />
-                                                                        </div>
-                                                                    ) : (
-                                                                        <Typography variant='h5'>
-                                                                            {translationsNodes[category] || category}
-                                                                        </Typography>
-                                                                    )}
-                                                                </AccordionSummary>
-                                                                <AccordionDetails>
-                                                                    {nodes[category].map(
-                                                                        (node, index) =>
-                                                                            !excludedNodesByLable.includes(node.label) && (
-                                                                                <div
-                                                                                    key={node.name}
-                                                                                    onDragStart={(event) => onDragStart(event, node)}
-                                                                                    draggable
-                                                                                >
-                                                                                    <ListItemButton
-                                                                                        sx={{
-                                                                                            p: 0,
-                                                                                            borderRadius: `${customization.borderRadius}px`,
-                                                                                            cursor: 'move'
-                                                                                        }}
-                                                                                    >
-                                                                                        <ListItem alignItems='center'>
-                                                                                            <ListItemAvatar>
-                                                                                                <div
+                                                                            <ListItem alignItems='center'>
+                                                                                {node.color && !node.icon ? (
+                                                                                    <ListItemAvatar>
+                                                                                        <div
+                                                                                            style={{
+                                                                                                width: 50,
+                                                                                                height: 'auto',
+                                                                                                display: 'flex',
+                                                                                                alignItems: 'center',
+                                                                                                justifyContent: 'center'
+                                                                                            }}
+                                                                                        >
+                                                                                            {renderIcon(node)}
+                                                                                        </div>
+                                                                                    </ListItemAvatar>
+                                                                                ) : (
+                                                                                    <ListItemAvatar>
+                                                                                        <div
+                                                                                            style={{
+                                                                                                width: 50,
+                                                                                                height: 50,
+                                                                                                borderRadius: '50%',
+                                                                                                backgroundColor: 'white'
+                                                                                            }}
+                                                                                        >
+                                                                                            <img
+                                                                                                style={{
+                                                                                                    width: '100%',
+                                                                                                    height: '100%',
+                                                                                                    padding: 10,
+                                                                                                    objectFit: 'contain'
+                                                                                                }}
+                                                                                                alt={node.name}
+                                                                                                src={`${baseURL}/api/v1/node-icon/${node.name}`}
+                                                                                            />
+                                                                                        </div>
+                                                                                    </ListItemAvatar>
+                                                                                )}
+                                                                                <ListItemText
+                                                                                    sx={{ ml: 1 }}
+                                                                                    primary={
+                                                                                        <>
+                                                                                            <div
+                                                                                                style={{
+                                                                                                    display: 'flex',
+                                                                                                    flexDirection: 'row',
+                                                                                                    alignItems: 'center'
+                                                                                                }}
+                                                                                            >
+                                                                                                <span>{node.label}</span>
+                                                                                                &nbsp;
+                                                                                                {node.badge && (
+                                                                                                    <Chip
+                                                                                                        sx={{
+                                                                                                            width: 'max-content',
+                                                                                                            fontWeight: 700,
+                                                                                                            fontSize: '0.65rem',
+                                                                                                            background:
+                                                                                                                node.badge === 'DEPRECATING'
+                                                                                                                    ? theme.palette.warning
+                                                                                                                          .main
+                                                                                                                    : theme.palette.teal
+                                                                                                                          .main,
+                                                                                                            color:
+                                                                                                                node.badge !== 'DEPRECATING'
+                                                                                                                    ? 'white'
+                                                                                                                    : 'inherit'
+                                                                                                        }}
+                                                                                                        size='small'
+                                                                                                        label={node.badge}
+                                                                                                    />
+                                                                                                )}
+                                                                                            </div>
+                                                                                            {node.author && (
+                                                                                                <span
                                                                                                     style={{
-                                                                                                        width: 50,
-                                                                                                        height: 50,
-                                                                                                        borderRadius: '50%',
-                                                                                                        backgroundColor: 'white'
+                                                                                                        fontSize: '0.65rem',
+                                                                                                        fontWeight: 700
                                                                                                     }}
                                                                                                 >
-                                                                                                    <img
-                                                                                                        style={{
-                                                                                                            width: '100%',
-                                                                                                            height: '100%',
-                                                                                                            padding: 10,
-                                                                                                            objectFit: 'contain'
-                                                                                                        }}
-                                                                                                        alt={node.name}
-                                                                                                        src={`${baseURL}/api/v1/node-icon/${node.name}`}
-                                                                                                    />
-                                                                                                </div>
-                                                                                            </ListItemAvatar>
-                                                                                            <ListItemText
-                                                                                                sx={{ ml: 1 }}
-                                                                                                primary={
-                                                                                                    <div
-                                                                                                        style={{
-                                                                                                            display: 'flex',
-                                                                                                            flexDirection: 'row',
-                                                                                                            alignItems: 'center'
-                                                                                                        }}
-                                                                                                    >
-                                                                                                        <span>{node.label}</span>
-                                                                                                        &nbsp;
-                                                                                                        {node.badge && (
-                                                                                                            <Chip
-                                                                                                                sx={{
-                                                                                                                    width: 'max-content',
-                                                                                                                    fontWeight: 700,
-                                                                                                                    fontSize: '0.65rem',
-                                                                                                                    background:
-                                                                                                                        node.badge ===
-                                                                                                                        'DEPRECATING'
-                                                                                                                            ? theme.palette
-                                                                                                                                  .warning
-                                                                                                                                  .main
-                                                                                                                            : theme.palette
-                                                                                                                                  .teal
-                                                                                                                                  .main,
-                                                                                                                    color:
-                                                                                                                        node.badge !==
-                                                                                                                        'DEPRECATING'
-                                                                                                                            ? 'white'
-                                                                                                                            : 'inherit'
-                                                                                                                }}
-                                                                                                                size='small'
-                                                                                                                label={
-                                                                                                                    node.badge ===
-                                                                                                                    'DEPRECATING'
-                                                                                                                        ? 'УСТАРЕЛ'
-                                                                                                                        : node.badge ===
-                                                                                                                          'NEW'
-                                                                                                                        ? 'НОВЫЙ'
-                                                                                                                        : node.badge
-                                                                                                                }
-                                                                                                            />
-                                                                                                        )}
-                                                                                                    </div>
-                                                                                                }
-                                                                                                secondary={
-                                                                                                    translationObject[node.description] ||
-                                                                                                    node.description
-                                                                                                }
-                                                                                            />
-                                                                                        </ListItem>
-                                                                                    </ListItemButton>
-                                                                                    {index === nodes[category].length - 1 ? null : (
-                                                                                        <Divider />
-                                                                                    )}
-                                                                                </div>
-                                                                            )
-                                                                    )}
-                                                                </AccordionDetails>
-                                                            </Accordion>
-                                                        )
-                                                    )}
+                                                                                                    By {node.author}
+                                                                                                </span>
+                                                                                            )}
+                                                                                        </>
+                                                                                    }
+                                                                                    secondary={node.description}
+                                                                                />
+                                                                            </ListItem>
+                                                                        </ListItemButton>
+                                                                        {index === nodes[category].length - 1 ? null : <Divider />}
+                                                                    </div>
+                                                                ))}
+                                                            </AccordionDetails>
+                                                        </Accordion>
+                                                    ))}
                                             </List>
                                         </Box>
                                     </PerfectScrollbar>
@@ -648,7 +668,9 @@ const AddNodes = ({ nodesData, node, isAgentCanvas }) => {
 AddNodes.propTypes = {
     nodesData: PropTypes.array,
     node: PropTypes.object,
-    isAgentCanvas: PropTypes.bool
+    onFlowGenerated: PropTypes.func,
+    isAgentCanvas: PropTypes.bool,
+    isAgentflowv2: PropTypes.bool
 }
 
-export default AddNodes
+export default memo(AddNodes)

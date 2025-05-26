@@ -23,7 +23,7 @@ import { CheckboxInput } from '@/ui-component/checkbox/Checkbox'
 import { BackdropLoader } from '@/ui-component/loading/BackdropLoader'
 import { TableViewOnly } from '@/ui-component/table/Table'
 
-import { IconX, IconBulb } from '@tabler/icons-react'
+import { IconX, IconBulb, IconExclamationCircle } from '@tabler/icons-react'
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore'
 import pythonSVG from '@/assets/images/python.svg'
 import javascriptSVG from '@/assets/images/javascript.svg'
@@ -308,7 +308,7 @@ formData.append("openAIApiKey[openAIEmbeddings_0]", "sk-my-openai-2nd-key")`
         try {
             const res = await vectorstoreApi.upsertVectorStore(dialogProps.chatflowid, { stopNodeId: vectorStoreNode.data.id })
             enqueueSnackbar({
-                message: 'Успешно обновлено векторное хранилище. Вы можете начать переписываться!',
+                message: 'Succesfully upserted vector store. You can start chatting now!',
                 options: {
                     key: new Date().getTime() + Math.random(),
                     variant: 'success',
@@ -491,7 +491,7 @@ formData.append("openAIApiKey[openAIEmbeddings_0]", "sk-my-openai-2nd-key")`
                                     <Box sx={{ p: 2 }}>
                                         <CheckboxInput
                                             key={JSON.stringify(nodeCheckboxExpanded)}
-                                            label='Показать API'
+                                            label='Show API'
                                             value={nodeCheckboxExpanded[data.vectorNode.data.id]}
                                             onChange={() => onCheckBoxChanged(data.vectorNode.data.id)}
                                         />
@@ -550,6 +550,47 @@ formData.append("openAIApiKey[openAIEmbeddings_0]", "sk-my-openai-2nd-key")`
                                                                         display: 'flex',
                                                                         flexDirection: 'column',
                                                                         borderRadius: 10,
+                                                                        background: 'rgb(254,252,191)',
+                                                                        padding: 10,
+                                                                        marginTop: 20,
+                                                                        marginBottom: 20
+                                                                    }}
+                                                                >
+                                                                    <div
+                                                                        style={{
+                                                                            display: 'flex',
+                                                                            flexDirection: 'row',
+                                                                            alignItems: 'center'
+                                                                        }}
+                                                                    >
+                                                                        <IconExclamationCircle size={30} color='rgb(116,66,16)' />
+                                                                        <span
+                                                                            style={{
+                                                                                color: 'rgb(116,66,16)',
+                                                                                marginLeft: 10,
+                                                                                fontWeight: 500
+                                                                            }}
+                                                                        >
+                                                                            {
+                                                                                'For security reason, override config is disabled by default. You can change this by going into Chatflow Configuration -> Security tab, and enable the property you want to override.'
+                                                                            }
+                                                                            &nbsp;Refer{' '}
+                                                                            <a
+                                                                                rel='noreferrer'
+                                                                                target='_blank'
+                                                                                href='https://docs.flowiseai.com/using-flowise/api#override-config'
+                                                                            >
+                                                                                here
+                                                                            </a>{' '}
+                                                                            for more details
+                                                                        </span>
+                                                                    </div>
+                                                                </div>
+                                                                <div
+                                                                    style={{
+                                                                        display: 'flex',
+                                                                        flexDirection: 'column',
+                                                                        borderRadius: 10,
                                                                         background: '#d8f3dc',
                                                                         padding: 10,
                                                                         marginTop: 10,
@@ -600,7 +641,7 @@ formData.append("openAIApiKey[openAIEmbeddings_0]", "sk-my-openai-2nd-key")`
                                                 title='Upsert'
                                                 onClick={() => onUpsertClicked(data.vectorNode)}
                                             >
-                                                Обновить
+                                                Upsert
                                             </Button>
                                         )}
                                     </div>

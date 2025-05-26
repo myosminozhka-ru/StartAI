@@ -40,7 +40,7 @@ function a11yProps(index) {
 
 const embedPopupHtmlCode = (chatflowid) => {
     return `<script type="module">
-    import Chatbot from "https://cdn.jsdelivr.net/gh/myosminozhka-ru/FlowiseChatEmbed/dist/web.js"
+    import Chatbot from "https://cdn.jsdelivr.net/npm/flowise-embed/dist/web.js"
     Chatbot.init({
         chatflowid: "${chatflowid}",
         apiHost: "${baseURL}",
@@ -53,15 +53,18 @@ const embedPopupReactCode = (chatflowid) => {
 
 const App = () => {
     return (
-        <BubbleChat chatflowid="${chatflowid}" apiHost="${baseURL}" />
+        <BubbleChat
+            chatflowid="${chatflowid}"
+            apiHost="${baseURL}"
+        />
     );
 };`
 }
 
 const embedFullpageHtmlCode = (chatflowid) => {
-    return `<start-ai-fullchatbot></start-ai-fullchatbot>
+    return `<flowise-fullchatbot></flowise-fullchatbot>
 <script type="module">
-    import Chatbot from "https://cdn.jsdelivr.net/gh/myosminozhka-ru/FlowiseChatEmbed/dist/web.js"
+    import Chatbot from "https://cdn.jsdelivr.net/npm/flowise-embed/dist/web.js"
     Chatbot.initFull({
         chatflowid: "${chatflowid}",
         apiHost: "${baseURL}",
@@ -82,95 +85,126 @@ const App = () => {
 };`
 }
 
-const buttonConfig = (isReact = false) => {
-    return isReact
-        ? `button: {
-                    backgroundColor: "#3B81F6",
-                    right: 20,
-                    bottom: 20,
-                    size: "medium",
-                    iconColor: "white",
-                    customIconSrc: "https://raw.githubusercontent.com/walkxcode/dashboard-icons/main/svg/google-messages.svg",
-                }`
-        : `button: {
-                backgroundColor: "#3B81F6",
-                right: 20,
-                bottom: 20,
-                size: "medium",
-                iconColor: "white",
-                customIconSrc: "https://raw.githubusercontent.com/walkxcode/dashboard-icons/main/svg/google-messages.svg",
-            }`
+export const defaultThemeConfig = {
+    button: {
+        backgroundColor: '#3B81F6',
+        right: 20,
+        bottom: 20,
+        size: 48,
+        dragAndDrop: true,
+        iconColor: 'white',
+        customIconSrc: 'https://raw.githubusercontent.com/walkxcode/dashboard-icons/main/svg/google-messages.svg',
+        autoWindowOpen: {
+            autoOpen: true,
+            openDelay: 2,
+            autoOpenOnMobile: false
+        }
+    },
+    tooltip: {
+        showTooltip: true,
+        tooltipMessage: 'Привет 👋!',
+        tooltipBackgroundColor: 'black',
+        tooltipTextColor: 'white',
+        tooltipFontSize: 16
+    },
+    disclaimer: {
+        title: 'Отказ от ответственности',
+        message:
+            'Используя этого чат-бота, вы соглашаетесь с <a target="_blank" href="https://flowiseai.com/terms">Условиями использования</a>',
+        textColor: 'black',
+        buttonColor: '#3b82f6',
+        buttonText: 'Начать общение',
+        buttonTextColor: 'white',
+        blurredBackgroundColor: 'rgba(0, 0, 0, 0.4)',
+        backgroundColor: 'white'
+    },
+    customCSS: ``,
+    chatWindow: {
+        showTitle: true,
+        showAgentMessages: true,
+        title: 'Flowise Бот',
+        titleAvatarSrc: 'https://raw.githubusercontent.com/walkxcode/dashboard-icons/main/svg/google-messages.svg',
+        welcomeMessage: 'Привет! Это пользовательское приветственное сообщение',
+        errorMessage: 'Это пользовательское сообщение об ошибке',
+        backgroundColor: '#ffffff',
+        backgroundImage: 'введите путь или ссылку на изображение',
+        height: 700,
+        width: 400,
+        fontSize: 16,
+        starterPrompts: ['Что такое бот?', 'Кто ты?'],
+        starterPromptFontSize: 15,
+        clearChatOnReload: false,
+        sourceDocsTitle: 'Источники:',
+        renderHTML: true,
+        botMessage: {
+            backgroundColor: '#f7f8ff',
+            textColor: '#303235',
+            showAvatar: true,
+            avatarSrc: 'https://raw.githubusercontent.com/zahidkhawaja/langchain-chat-nextjs/main/public/parroticon.png'
+        },
+        userMessage: {
+            backgroundColor: '#3B81F6',
+            textColor: '#ffffff',
+            showAvatar: true,
+            avatarSrc: 'https://raw.githubusercontent.com/zahidkhawaja/langchain-chat-nextjs/main/public/usericon.png'
+        },
+        textInput: {
+            placeholder: 'Введите ваш вопрос',
+            backgroundColor: '#ffffff',
+            textColor: '#303235',
+            sendButtonColor: '#3B81F6',
+            maxChars: 50,
+            maxCharsWarningMessage: 'Вы превысили лимит символов. Пожалуйста, введите менее 50 символов.',
+            autoFocus: true,
+            sendMessageSound: true,
+            sendSoundLocation: 'send_message.mp3',
+            receiveMessageSound: true,
+            receiveSoundLocation: 'receive_message.mp3'
+        },
+        feedback: {
+            color: '#303235'
+        },
+        dateTimeToggle: {
+            date: true,
+            time: true
+        },
+        footer: {
+            textColor: '#303235',
+            text: 'Powered by',
+            company: 'Flowise',
+            companyLink: 'https://flowiseai.com'
+        }
+    }
 }
 
-const chatwindowConfig = (isReact = false) => {
-    return isReact
-        ? `chatWindow: {
-                    welcomeMessage: "Hello! This is custom welcome message",
-                    backgroundColor: "#ffffff",
-                    height: 700,
-                    width: 400,
-                    fontSize: 16,
-                    poweredByTextColor: "#303235",
-                    botMessage: {
-                        backgroundColor: "#f7f8ff",
-                        textColor: "#303235",
-                        showAvatar: true,
-                        avatarSrc: "https://raw.githubusercontent.com/zahidkhawaja/langchain-chat-nextjs/main/public/parroticon.png",
-                    },
-                    userMessage: {
-                        backgroundColor: "#3B81F6",
-                        textColor: "#ffffff",
-                        showAvatar: true,
-                        avatarSrc: "https://raw.githubusercontent.com/zahidkhawaja/langchain-chat-nextjs/main/public/usericon.png",
-                    },
-                    textInput: {
-                        placeholder: "Type your question",
-                        backgroundColor: "#ffffff",
-                        textColor: "#303235",
-                        sendButtonColor: "#3B81F6",
-                    }
-                }`
-        : `chatWindow: {
-                welcomeMessage: "Hello! This is custom welcome message",
-                backgroundColor: "#ffffff",
-                height: 700,
-                width: 400,
-                fontSize: 16,
-                poweredByTextColor: "#303235",
-                botMessage: {
-                    backgroundColor: "#f7f8ff",
-                    textColor: "#303235",
-                    showAvatar: true,
-                    avatarSrc: "https://raw.githubusercontent.com/zahidkhawaja/langchain-chat-nextjs/main/public/parroticon.png",
-                },
-                userMessage: {
-                    backgroundColor: "#3B81F6",
-                    textColor: "#ffffff",
-                    showAvatar: true,
-                    avatarSrc: "https://raw.githubusercontent.com/zahidkhawaja/langchain-chat-nextjs/main/public/usericon.png",
-                },
-                textInput: {
-                    placeholder: "Type your question",
-                    backgroundColor: "#ffffff",
-                    textColor: "#303235",
-                    sendButtonColor: "#3B81F6",
-                }
-            }`
+const customStringify = (obj) => {
+    let stringified = JSON.stringify(obj, null, 4)
+        .replace(/"([^"]+)":/g, '$1:')
+        .replace(/: "([^"]+)"/g, (match, value) => (value.includes('<') ? `: "${value}"` : `: '${value}'`))
+        .replace(/: "(true|false|\d+)"/g, ': $1')
+        .replace(/customCSS: ""/g, 'customCSS: ``')
+    return stringified
+        .split('\n')
+        .map((line, index) => {
+            if (index === 0) return line
+            return ' '.repeat(8) + line
+        })
+        .join('\n')
 }
 
 const embedPopupHtmlCodeCustomization = (chatflowid) => {
     return `<script type="module">
-    import Chatbot from "https://cdn.jsdelivr.net/gh/myosminozhka-ru/FlowiseChatEmbed/dist/web.js"
+    import Chatbot from "https://cdn.jsdelivr.net/npm/flowise-embed/dist/web.js"
     Chatbot.init({
         chatflowid: "${chatflowid}",
         apiHost: "${baseURL}",
         chatflowConfig: {
-            // topK: 2
+            /* Chatflow Config */
         },
-        theme: {
-            ${buttonConfig()},
-            ${chatwindowConfig()}
-        }
+        observersConfig: {
+            /* Observers Config */
+        },
+        theme: ${customStringify(defaultThemeConfig)}
     })
 </script>`
 }
@@ -183,43 +217,73 @@ const App = () => {
         <BubbleChat
             chatflowid="${chatflowid}"
             apiHost="${baseURL}"
-            theme={{
-                ${buttonConfig(true)},
-                ${chatwindowConfig(true)}
+            chatflowConfig={{
+                /* Chatflow Config */
             }}
+            observersConfig={{
+                /* Observers Config */
+            }}
+            theme={{${customStringify(defaultThemeConfig)
+                .substring(1)
+                .split('\n')
+                .map((line) => ' '.repeat(4) + line)
+                .join('\n')}
         />
-    );
-};`
+    )
+}`
+}
+
+const getFullPageThemeConfig = () => {
+    return {
+        ...defaultThemeConfig,
+        chatWindow: {
+            ...defaultThemeConfig.chatWindow,
+            height: '100%',
+            width: '100%'
+        }
+    }
 }
 
 const embedFullpageHtmlCodeCustomization = (chatflowid) => {
-    return `<start-ai-fullchatbot></start-ai-fullchatbot>
+    return `<flowise-fullchatbot></flowise-fullchatbot>
 <script type="module">
-    import Chatbot from "https://cdn.jsdelivr.net/gh/myosminozhka-ru/FlowiseChatEmbed/dist/web.js"
+    import Chatbot from "https://cdn.jsdelivr.net/npm/flowise-embed/dist/web.js"
     Chatbot.initFull({
         chatflowid: "${chatflowid}",
         apiHost: "${baseURL}",
-        theme: {
-            ${chatwindowConfig()}
-        }
+        chatflowConfig: {
+            /* Chatflow Config */
+        },
+        observersConfig: {
+            /* Observers Config */
+        },
+        theme: ${customStringify(getFullPageThemeConfig())}
     })
 </script>`
 }
 
 const embedFullpageReactCodeCustomization = (chatflowid) => {
-    return `import { FullPageChat } from "flowise-embed-react"
+    return `import { FullPageChat } from 'flowise-embed-react'
 
 const App = () => {
     return (
         <FullPageChat
             chatflowid="${chatflowid}"
             apiHost="${baseURL}"
-            theme={{
-                ${chatwindowConfig(true)}
+            chatflowConfig={{
+                /* Chatflow Config */
             }}
+            observersConfig={{
+                /* Observers Config */
+            }}
+            theme={{${customStringify(getFullPageThemeConfig())
+                .substring(1)
+                .split('\n')
+                .map((line) => ' '.repeat(4) + line)
+                .join('\n')}
         />
-    );
-};`
+    )
+}`
 }
 
 const EmbedChat = ({ chatflowid }) => {
@@ -261,7 +325,7 @@ const EmbedChat = ({ chatflowid }) => {
             case 'Fullpage React':
                 return embedFullpageReactCodeCustomization(chatflowid)
             default:
-                return ''
+                return embedPopupHtmlCodeCustomization(chatflowid)
         }
     }
 
@@ -282,15 +346,15 @@ const EmbedChat = ({ chatflowid }) => {
                     {(value === 0 || value === 1) && (
                         <>
                             <span>
-                                Вставьте это в любое место в <code>{`<body>`}</code> тег вашего html-файла.
+                                Paste this anywhere in the <code>{`<body>`}</code> tag of your html file.
                                 <p>
-                                    Вы также можете указать&nbsp;
+                                    You can also specify a&nbsp;
                                     <a
                                         rel='noreferrer'
                                         target='_blank'
                                         href='https://www.npmjs.com/package/flowise-embed?activeTab=versions'
                                     >
-                                        версию
+                                        version
                                     </a>
                                     :&nbsp;<code>{`https://cdn.jsdelivr.net/npm/flowise-embed@<version>/dist/web.js`}</code>
                                 </p>
@@ -300,11 +364,7 @@ const EmbedChat = ({ chatflowid }) => {
                     )}
                     <CopyBlock theme={atomOneDark} text={getCode(codeLang)} language='javascript' showLineNumbers={false} wrapLines />
 
-                    <CheckboxInput
-                        label='Показать конфигурацию встроенного чата'
-                        value={embedChatCheckboxVal}
-                        onChange={onCheckBoxEmbedChatChanged}
-                    />
+                    <CheckboxInput label='Show Embed Chat Config' value={embedChatCheckboxVal} onChange={onCheckBoxEmbedChatChanged} />
 
                     {embedChatCheckboxVal && (
                         <CopyBlock

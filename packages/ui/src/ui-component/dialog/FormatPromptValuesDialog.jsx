@@ -28,7 +28,7 @@ const FormatPromptValuesDialog = ({ show, dialogProps, onChange, onCancel }) => 
             aria-describedby='alert-dialog-description'
         >
             <DialogTitle sx={{ fontSize: '1rem' }} id='alert-dialog-title'>
-                {dialogProps.inputParam.label ?? 'Форматирование значений запроса'}
+                {dialogProps.inputParam.label ?? 'Format Prompt Values'}
             </DialogTitle>
             <DialogContent>
                 <PerfectScrollbar
@@ -46,6 +46,7 @@ const FormatPromptValuesDialog = ({ show, dialogProps, onChange, onCancel }) => 
                         nodes={dialogProps.nodes}
                         edges={dialogProps.edges}
                         nodeId={dialogProps.nodeId}
+                        isSequentialAgent={dialogProps.data.category === 'Sequential Agents'}
                     />
                 </PerfectScrollbar>
             </DialogContent>

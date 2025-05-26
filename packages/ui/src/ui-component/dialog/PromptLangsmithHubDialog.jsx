@@ -2,12 +2,6 @@ import { createPortal } from 'react-dom'
 import { useState, useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import PropTypes from 'prop-types'
-
-import rehypeMathjax from 'rehype-mathjax'
-import rehypeRaw from 'rehype-raw'
-import remarkGfm from 'remark-gfm'
-import remarkMath from 'remark-math'
-
 // MUI
 import {
     Box,
@@ -44,7 +38,6 @@ import { styled } from '@mui/material/styles'
 //Project Import
 import { StyledButton } from '@/ui-component/button/StyledButton'
 import { MemoizedReactMarkdown } from '@/ui-component/markdown/MemoizedReactMarkdown'
-import { CodeBlock } from '@/ui-component/markdown/CodeBlock'
 import promptEmptySVG from '@/assets/images/prompt_empty.svg'
 
 import useApi from '@/hooks/useApi'
@@ -165,12 +158,12 @@ const PromptLangsmithHubDialog = ({ promptType, show, onCancel, onSubmit }) => {
     const [usecase, setUsecase] = useState([])
 
     const languages = [
-        { id: 301, name: 'Chinese' },
-        { id: 302, name: 'English' },
-        { id: 303, name: 'French' },
-        { id: 304, name: 'German' },
-        { id: 305, name: 'Russian' },
-        { id: 306, name: 'Spanish' }
+        { id: 301, name: 'Китайский' },
+        { id: 302, name: 'Английский' },
+        { id: 303, name: 'Французский' },
+        { id: 304, name: 'Немецкий' },
+        { id: 305, name: 'Русский' },
+        { id: 306, name: 'Испанский' }
     ]
     const [language, setLanguage] = useState([])
     const [availablePrompNameList, setAvailablePrompNameList] = useState([])
@@ -261,13 +254,13 @@ const PromptLangsmithHubDialog = ({ promptType, show, onCancel, onSubmit }) => {
             aria-describedby='prompt-dialog-description'
         >
             <DialogTitle sx={{ fontSize: '1rem' }} id='prompt-dialog-title'>
-                Лангчейн Хаб ({promptType === 'Шаблон' ? 'Шаблон подсказки' : 'Шаблон подсказки для чата'})
+                Langchain Hub ({promptType === 'template' ? 'PromptTemplate' : 'ChatPromptTemplate'})
             </DialogTitle>
             <DialogContent dividers sx={{ p: 1 }}>
                 <Box sx={{ display: 'flex', flexDirection: 'row', p: 2, pt: 1, alignItems: 'center' }}>
                     <FormControl sx={{ mr: 1, width: '30%' }}>
                         <InputLabel size='small' id='model-checkbox-label'>
-                            Модель
+                            Model
                         </InputLabel>
                         <Select
                             id='model-checkbox'
@@ -304,7 +297,7 @@ const PromptLangsmithHubDialog = ({ promptType, show, onCancel, onSubmit }) => {
                     </FormControl>
                     <FormControl sx={{ mr: 1, width: '30%' }}>
                         <InputLabel size='small' id='usecase-checkbox-label'>
-                            Вариант использования
+                            Usecase
                         </InputLabel>
                         <Select
                             autoWidth={false}
@@ -342,7 +335,7 @@ const PromptLangsmithHubDialog = ({ promptType, show, onCancel, onSubmit }) => {
                     </FormControl>
                     <FormControl sx={{ mr: 1, width: '30%' }}>
                         <InputLabel size='small' id='language-checkbox-label'>
-                            Язык
+                            Language
                         </InputLabel>
                         <Select
                             labelId='language-checkbox-label'
@@ -389,7 +382,7 @@ const PromptLangsmithHubDialog = ({ promptType, show, onCancel, onSubmit }) => {
                         <Box sx={{ p: 5, height: 'auto' }}>
                             <img style={{ objectFit: 'cover', height: '20vh', width: 'auto' }} src={promptEmptySVG} alt='promptEmptySVG' />
                         </Box>
-                        <div>Пожалуйста, подождите....загрузка подсказок</div>
+                        <div>Please wait....loading Prompts</div>
                     </Stack>
                 )}
                 {!loading && availablePrompNameList && availablePrompNameList.length === 0 && (
@@ -397,7 +390,7 @@ const PromptLangsmithHubDialog = ({ promptType, show, onCancel, onSubmit }) => {
                         <Box sx={{ p: 5, height: 'auto' }}>
                             <img style={{ objectFit: 'cover', height: '20vh', width: 'auto' }} src={promptEmptySVG} alt='promptEmptySVG' />
                         </Box>
-                        <div>Нет доступных подсказок</div>
+                        <div>No Available Prompts</div>
                     </Stack>
                 )}
                 {!loading && availablePrompNameList && availablePrompNameList.length > 0 && (
@@ -409,7 +402,7 @@ const PromptLangsmithHubDialog = ({ promptType, show, onCancel, onSubmit }) => {
                                         <Card variant='outlined' sx={{ height: 470, overflow: 'auto', borderRadius: 0 }}>
                                             <CardContent sx={{ p: 1 }}>
                                                 <Typography sx={{ fontSize: 10 }} color='text.secondary' gutterBottom>
-                                                    Доступные подскаски
+                                                    Available Prompts
                                                 </Typography>
                                                 <List component='nav' aria-label='secondary mailbox folder'>
                                                     {availablePrompNameList.map((item, index) => (
@@ -459,7 +452,7 @@ const PromptLangsmithHubDialog = ({ promptType, show, onCancel, onSubmit }) => {
                                                         expandIcon={<ExpandMoreIcon />}
                                                         id='panel2d-header'
                                                     >
-                                                        <Typography>Подсказки</Typography>
+                                                        <Typography>Prompt</Typography>
                                                     </AccordionSummary>
                                                     <AccordionDetails>
                                                         <Typography sx={{ wordWrap: 'true' }} color='text.primary'>
@@ -515,7 +508,7 @@ const PromptLangsmithHubDialog = ({ promptType, show, onCancel, onSubmit }) => {
                                                         aria-controls='panel3d-content'
                                                         id='panel3d-header'
                                                     >
-                                                        <Typography>Ридми</Typography>
+                                                        <Typography>Readme</Typography>
                                                     </AccordionSummary>
                                                     <AccordionDetails>
                                                         <div
@@ -536,30 +529,7 @@ const PromptLangsmithHubDialog = ({ promptType, show, onCancel, onSubmit }) => {
                                                                 }
                                                             }}
                                                         >
-                                                            <MemoizedReactMarkdown
-                                                                remarkPlugins={[remarkGfm, remarkMath]}
-                                                                rehypePlugins={[rehypeMathjax, rehypeRaw]}
-                                                                components={{
-                                                                    code({ inline, className, children, ...props }) {
-                                                                        const match = /language-(\w+)/.exec(className || '')
-                                                                        return !inline ? (
-                                                                            <CodeBlock
-                                                                                key={Math.random()}
-                                                                                isDialog={true}
-                                                                                language={(match && match[1]) || ''}
-                                                                                value={String(children).replace(/\n$/, '')}
-                                                                                {...props}
-                                                                            />
-                                                                        ) : (
-                                                                            <code className={className} {...props}>
-                                                                                {children}
-                                                                            </code>
-                                                                        )
-                                                                    }
-                                                                }}
-                                                            >
-                                                                {selectedPrompt?.readme}
-                                                            </MemoizedReactMarkdown>
+                                                            <MemoizedReactMarkdown>{selectedPrompt?.readme}</MemoizedReactMarkdown>
                                                         </div>
                                                     </AccordionDetails>
                                                 </Accordion>
@@ -574,13 +544,13 @@ const PromptLangsmithHubDialog = ({ promptType, show, onCancel, onSubmit }) => {
             </DialogContent>
             {availablePrompNameList && availablePrompNameList.length > 0 && (
                 <DialogActions>
-                    <Button onClick={onCancel}>Отмена</Button>
+                    <Button onClick={onCancel}>Cancel</Button>
                     <StyledButton
                         disabled={!selectedPrompt?.detailed}
                         onClick={() => onSubmit(selectedPrompt.detailed)}
                         variant='contained'
                     >
-                        Загрузить
+                        Load
                     </StyledButton>
                 </DialogActions>
             )}

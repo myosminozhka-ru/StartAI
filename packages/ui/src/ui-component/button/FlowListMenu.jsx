@@ -15,6 +15,7 @@ import PictureInPictureAltIcon from '@mui/icons-material/PictureInPictureAlt'
 import ThumbsUpDownOutlinedIcon from '@mui/icons-material/ThumbsUpDownOutlined'
 import VpnLockOutlinedIcon from '@mui/icons-material/VpnLockOutlined'
 import MicNoneOutlinedIcon from '@mui/icons-material/MicNoneOutlined'
+import ExportTemplateOutlinedIcon from '@mui/icons-material/BookmarksOutlined'
 import Button from '@mui/material/Button'
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown'
 import { IconX } from '@tabler/icons-react'
@@ -35,6 +36,7 @@ import useNotifier from '@/utils/useNotifier'
 import ChatFeedbackDialog from '../dialog/ChatFeedbackDialog'
 import AllowedDomainsDialog from '../dialog/AllowedDomainsDialog'
 import SpeechToTextDialog from '../dialog/SpeechToTextDialog'
+import ExportAsTemplateDialog from '@/ui-component/dialog/ExportAsTemplateDialog'
 
 const StyledMenu = styled((props) => (
     <Menu
@@ -95,7 +97,10 @@ export default function FlowListMenu({ chatflow, isAgentCanvas, setError, update
     const [speechToTextDialogOpen, setSpeechToTextDialogOpen] = useState(false)
     const [speechToTextDialogProps, setSpeechToTextDialogProps] = useState({})
 
-    const title = isAgentCanvas ? 'Agents' : 'Chatflow'
+    const [exportTemplateDialogOpen, setExportTemplateDialogOpen] = useState(false)
+    const [exportTemplateDialogProps, setExportTemplateDialogProps] = useState({})
+
+    const title = isAgentCanvas ? 'Агенты' : 'Чат-поток'
 
     const handleClick = (event) => {
         setAnchorEl(event.currentTarget)
@@ -113,16 +118,24 @@ export default function FlowListMenu({ chatflow, isAgentCanvas, setError, update
     const handleFlowStarterPrompts = () => {
         setAnchorEl(null)
         setConversationStartersDialogProps({
-            title: 'Подсказки - ' + chatflow.name,
+            title: 'Стартовые подсказки - ' + chatflow.name,
             chatflow: chatflow
         })
         setConversationStartersDialogOpen(true)
     }
 
+    const handleExportTemplate = () => {
+        setAnchorEl(null)
+        setExportTemplateDialogProps({
+            chatflow: chatflow
+        })
+        setExportTemplateDialogOpen(true)
+    }
+
     const handleFlowChatFeedback = () => {
         setAnchorEl(null)
         setChatFeedbackDialogProps({
-            title: 'Обратная связь - ' + chatflow.name,
+            title: 'Обратная связь чата - ' + chatflow.name,
             chatflow: chatflow
         })
         setChatFeedbackDialogOpen(true)
@@ -131,7 +144,7 @@ export default function FlowListMenu({ chatflow, isAgentCanvas, setError, update
     const handleAllowedDomains = () => {
         setAnchorEl(null)
         setAllowedDomainsDialogProps({
-            title: 'Параметры доступа - ' + chatflow.name,
+            title: 'Разрешенные домены - ' + chatflow.name,
             chatflow: chatflow
         })
         setAllowedDomainsDialogOpen(true)
@@ -140,7 +153,7 @@ export default function FlowListMenu({ chatflow, isAgentCanvas, setError, update
     const handleSpeechToText = () => {
         setAnchorEl(null)
         setSpeechToTextDialogProps({
-            title: 'Голосовой доступ - ' + chatflow.name,
+            title: 'Речь в текст - ' + chatflow.name,
             chatflow: chatflow
         })
         setSpeechToTextDialogOpen(true)
@@ -153,9 +166,13 @@ export default function FlowListMenu({ chatflow, isAgentCanvas, setError, update
         }
         try {
             await updateChatflowApi.request(chatflow.id, updateBody)
-            await updateFlowsApi.request()
+            if (isAgentCanvas && localStorage.getItem('agentFlowVersion') === 'v2') {
+                await updateFlowsApi.request('AGENTFLOW')
+            } else {
+                await updateFlowsApi.request(isAgentCanvas ? 'MULTIAGENT' : undefined)
+            }
         } catch (error) {
-            setError(error)
+            if (setError) setError(error)
             enqueueSnackbar({
                 message: typeof error.response.data === 'object' ? error.response.data.message : error.response.data,
                 options: {
@@ -192,9 +209,9 @@ export default function FlowListMenu({ chatflow, isAgentCanvas, setError, update
         }
         try {
             await updateChatflowApi.request(chatflow.id, updateBody)
-            await updateFlowsApi.request()
+            await updateFlowsApi.request(isAgentCanvas ? 'AGENTFLOW' : undefined)
         } catch (error) {
-            setError(error)
+            if (setError) setError(error)
             enqueueSnackbar({
                 message: typeof error.response.data === 'object' ? error.response.data.message : error.response.data,
                 options: {
@@ -214,19 +231,23 @@ export default function FlowListMenu({ chatflow, isAgentCanvas, setError, update
     const handleDelete = async () => {
         setAnchorEl(null)
         const confirmPayload = {
-            title: `Удалить`,
-            description: `Удалить проект ${chatflow.name}?`,
-            confirmButtonName: 'Delete',
-            cancelButtonName: 'Cancel'
+            title: `Удаление`,
+            description: `Удалить ${title} ${chatflow.name}?`,
+            confirmButtonName: 'Удалить',
+            cancelButtonName: 'Отмена'
         }
         const isConfirmed = await confirm(confirmPayload)
 
         if (isConfirmed) {
             try {
                 await chatflowsApi.deleteChatflow(chatflow.id)
-                await updateFlowsApi.request()
+                if (isAgentCanvas && localStorage.getItem('agentFlowVersion') === 'v2') {
+                    await updateFlowsApi.request('AGENTFLOW')
+                } else {
+                    await updateFlowsApi.request(isAgentCanvas ? 'MULTIAGENT' : undefined)
+                }
             } catch (error) {
-                setError(error)
+                if (setError) setError(error)
                 enqueueSnackbar({
                     message: typeof error.response.data === 'object' ? error.response.data.message : error.response.data,
                     options: {
@@ -259,7 +280,9 @@ export default function FlowListMenu({ chatflow, isAgentCanvas, setError, update
         try {
             const flowData = JSON.parse(chatflow.flowData)
             let dataStr = JSON.stringify(generateExportFlowData(flowData), null, 2)
-            let dataUri = 'data:application/json;charset=utf-8,' + encodeURIComponent(dataStr)
+            //let dataUri = 'data:application/json;charset=utf-8,' + encodeURIComponent(dataStr)
+            const blob = new Blob([dataStr], { type: 'application/json' })
+            const dataUri = URL.createObjectURL(blob)
 
             let exportFileDefaultName = `${chatflow.name} ${title}.json`
 
@@ -283,7 +306,7 @@ export default function FlowListMenu({ chatflow, isAgentCanvas, setError, update
                 onClick={handleClick}
                 endIcon={<KeyboardArrowDownIcon />}
             >
-                Настройки
+                Опции
             </Button>
             <StyledMenu
                 id='demo-customized-menu'
@@ -300,28 +323,32 @@ export default function FlowListMenu({ chatflow, isAgentCanvas, setError, update
                 </MenuItem>
                 <MenuItem onClick={handleDuplicate} disableRipple>
                     <FileCopyIcon />
-                    Скопировать
+                    Дублировать
                 </MenuItem>
                 <MenuItem onClick={handleExport} disableRipple>
                     <FileDownloadIcon />
-                    Скачать
+                    Экспорт
+                </MenuItem>
+                <MenuItem onClick={handleExportTemplate} disableRipple>
+                    <ExportTemplateOutlinedIcon />
+                    Сохранить как шаблон
                 </MenuItem>
                 <Divider sx={{ my: 0.5 }} />
                 <MenuItem onClick={handleFlowStarterPrompts} disableRipple>
                     <PictureInPictureAltIcon />
-                    Подсказки
+                    Стартовые подсказки
                 </MenuItem>
                 <MenuItem onClick={handleFlowChatFeedback} disableRipple>
                     <ThumbsUpDownOutlinedIcon />
-                    Обратная связь
+                    Обратная связь чата
                 </MenuItem>
                 <MenuItem onClick={handleAllowedDomains} disableRipple>
                     <VpnLockOutlinedIcon />
-                    Параметры доступа
+                    Разрешенные домены
                 </MenuItem>
                 <MenuItem onClick={handleSpeechToText} disableRipple>
                     <MicNoneOutlinedIcon />
-                    Голосовой доступ
+                    Речь в текст
                 </MenuItem>
                 <MenuItem onClick={handleFlowCategory} disableRipple>
                     <FileCategoryIcon />
@@ -336,9 +363,9 @@ export default function FlowListMenu({ chatflow, isAgentCanvas, setError, update
             <SaveChatflowDialog
                 show={flowDialogOpen}
                 dialogProps={{
-                    title: `Переименовать проект`,
-                    confirmButtonName: 'Rename',
-                    cancelButtonName: 'Cancel'
+                    title: `Переименовать ${title}`,
+                    confirmButtonName: 'Переименовать',
+                    cancelButtonName: 'Отмена'
                 }}
                 onCancel={() => setFlowDialogOpen(false)}
                 onConfirm={saveFlowRename}
@@ -369,6 +396,13 @@ export default function FlowListMenu({ chatflow, isAgentCanvas, setError, update
                 dialogProps={speechToTextDialogProps}
                 onCancel={() => setSpeechToTextDialogOpen(false)}
             />
+            {exportTemplateDialogOpen && (
+                <ExportAsTemplateDialog
+                    show={exportTemplateDialogOpen}
+                    dialogProps={exportTemplateDialogProps}
+                    onCancel={() => setExportTemplateDialogOpen(false)}
+                />
+            )}
         </div>
     )
 }

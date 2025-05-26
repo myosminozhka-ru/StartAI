@@ -69,7 +69,7 @@ const ManageScrapedLinksDialog = ({ show, dialogProps, onCancel, onSave }) => {
             if (fetchLinksResp.data) {
                 setSelectedLinks(fetchLinksResp.data.links)
                 enqueueSnackbar({
-                    message: 'Ссылки успешно получены.',
+                    message: 'Successfully fetched links',
                     options: {
                         key: new Date().getTime() + Math.random(),
                         variant: 'success',
@@ -154,7 +154,7 @@ const ManageScrapedLinksDialog = ({ show, dialogProps, onCancel, onSave }) => {
                             variant='contained'
                             onClick={handleFetchLinks}
                         >
-                            Получить ссылки
+                            Fetch Links
                         </Button>
                     </Stack>
                 </Box>
@@ -169,7 +169,7 @@ const ManageScrapedLinksDialog = ({ show, dialogProps, onCancel, onSave }) => {
                             onClick={handleRemoveAllLinks}
                             startIcon={<IconEraser />}
                         >
-                            Очистить все
+                            Clear All
                         </Button>
                     ) : null}
                 </Box>
@@ -215,15 +215,15 @@ const ManageScrapedLinksDialog = ({ show, dialogProps, onCancel, onSave }) => {
                         </PerfectScrollbar>
                     ) : (
                         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                            <Typography sx={{ my: 2 }}>Здесь появятся ссылки, извлеченные из URL-адреса.</Typography>
+                            <Typography sx={{ my: 2 }}>Links scraped from the URL will appear here</Typography>
                         </div>
                     )}
                 </>
             </DialogContent>
             <DialogActions>
-                <Button onClick={onCancel}>Отменить</Button>
+                <Button onClick={onCancel}>Cancel</Button>
                 <StyledButton variant='contained' onClick={handleSaveLinks}>
-                    Сохранить
+                    Save
                 </StyledButton>
             </DialogActions>
         </Dialog>

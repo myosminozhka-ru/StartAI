@@ -1,5 +1,5 @@
 import PropTypes from 'prop-types'
-import { useContext, useState, useEffect } from 'react'
+import { useContext, useState, useEffect, memo } from 'react'
 import { useSelector } from 'react-redux'
 
 // material-ui
@@ -14,7 +14,6 @@ import NodeInputHandler from './NodeInputHandler'
 import NodeOutputHandler from './NodeOutputHandler'
 import AdditionalParamsDialog from '@/ui-component/dialog/AdditionalParamsDialog'
 import NodeInfoDialog from '@/ui-component/dialog/NodeInfoDialog'
-import { translationObject } from '@/translate'
 
 // const
 import { baseURL } from '@/store/constant'
@@ -35,6 +34,7 @@ const CanvasNode = ({ data }) => {
     const [infoDialogProps, setInfoDialogProps] = useState({})
     const [warningMessage, setWarningMessage] = useState('')
     const [open, setOpen] = useState(false)
+    const [isForceCloseNodeInfo, setIsForceCloseNodeInfo] = useState(null)
 
     const handleClose = () => {
         setOpen(false)
@@ -44,20 +44,30 @@ const CanvasNode = ({ data }) => {
         setOpen(true)
     }
 
-    const nodeOutdatedMessage = (oldVersion, newVersion) =>
-        `Версия Node ${oldVersion} устарела\nОбновление до последней версии  ${newVersion}`
+    const getNodeInfoOpenStatus = () => {
+        if (isForceCloseNodeInfo) return false
+        else return !canvas.canvasDialogShow && open
+    }
 
-    const nodeVersionEmptyMessage = (newVersion) => `Node устарел\nОбновить до последней версии ${newVersion}`
+    const nodeOutdatedMessage = (oldVersion, newVersion) => `Версия узла ${oldVersion} устарела\nОбновите до последней версии ${newVersion}`
+
+    const nodeVersionEmptyMessage = (newVersion) => `Узел устарел\nОбновите до последней версии ${newVersion}`
 
     const onDialogClicked = () => {
         const dialogProps = {
             data,
             inputParams: data.inputParams.filter((inputParam) => !inputParam.hidden).filter((param) => param.additionalParams),
-            confirmButtonName: 'Save',
-            cancelButtonName: 'Cancel'
+            confirmButtonName: 'Сохранить',
+            cancelButtonName: 'Отмена'
         }
         setDialogProps(dialogProps)
         setShowDialog(true)
+    }
+
+    const getBorderColor = () => {
+        if (data.selected) return theme.palette.primary.main
+        else if (theme?.customization?.isDarkMode) return theme.palette.grey[900] + 25
+        else return theme.palette.grey[900] + 50
     }
 
     useEffect(() => {
@@ -69,26 +79,27 @@ const CanvasNode = ({ data }) => {
                 setWarningMessage(nodeOutdatedMessage(data.version, componentNode.version))
             } else if (componentNode.badge === 'DEPRECATING') {
                 setWarningMessage(
-                    translationObject['This node will be deprecated in the next release. Change to a new node tagged with NEW'] ||
-                        'This node will be deprecated in the next release. Change to a new node tagged with NEW'
+                    componentNode?.deprecateMessage ??
+                        'Этот узел будет устаревшим в следующем выпуске. Перейдите на новый узел с меткой NEW'
                 )
             } else {
                 setWarningMessage('')
             }
         }
     }, [canvas.componentNodes, data.name, data.version])
+
     return (
         <>
             <NodeCardWrapper
                 content={false}
                 sx={{
                     padding: 0,
-                    borderColor: data.selected ? theme.palette.primary.main : theme.palette.text.secondary
+                    borderColor: getBorderColor()
                 }}
                 border={false}
             >
                 <NodeTooltip
-                    open={!canvas.canvasDialogShow && open}
+                    open={getNodeInfoOpenStatus()}
                     onClose={handleClose}
                     onOpen={handleOpen}
                     disableFocusListener={true}
@@ -137,14 +148,16 @@ const CanvasNode = ({ data }) => {
                 >
                     <Box>
                         <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
-                            <Box style={{ width: 50, marginRight: 10, padding: 5 }}>
+                            <Box style={{ width: 50, marginRight: 10, padding: 10 }}>
                                 <div
                                     style={{
                                         ...theme.typography.commonAvatar,
                                         ...theme.typography.largeAvatar,
                                         borderRadius: '50%',
                                         backgroundColor: 'white',
-                                        cursor: 'grab'
+                                        cursor: 'grab',
+                                        width: '40px',
+                                        height: '40px'
                                     }}
                                 >
                                     <img
@@ -162,7 +175,7 @@ const CanvasNode = ({ data }) => {
                                         mr: 2
                                     }}
                                 >
-                                    {translationObject[data.label] || data.label}
+                                    {data.label}
                                 </Typography>
                             </Box>
                             <div style={{ flexGrow: 1 }}></div>
@@ -213,8 +226,20 @@ const CanvasNode = ({ data }) => {
                         ))}
                         {data.inputParams
                             .filter((inputParam) => !inputParam.hidden)
+                            .filter((inputParam) => inputParam.display !== false)
                             .map((inputParam, index) => (
-                                <NodeInputHandler key={index} inputParam={inputParam} data={data} />
+                                <NodeInputHandler
+                                    key={index}
+                                    inputParam={inputParam}
+                                    data={data}
+                                    onHideNodeInfoDialog={(status) => {
+                                        if (status) {
+                                            setIsForceCloseNodeInfo(true)
+                                        } else {
+                                            setIsForceCloseNodeInfo(null)
+                                        }
+                                    }}
+                                />
                             ))}
                         {data.inputParams.find((param) => param.additionalParams) && (
                             <div
@@ -232,21 +257,24 @@ const CanvasNode = ({ data }) => {
                                 </Button>
                             </div>
                         )}
-                        <Divider />
-                        <Box sx={{ background: theme.palette.asyncSelect.main, p: 1 }}>
-                            <Typography
-                                sx={{
-                                    fontWeight: 500,
-                                    textAlign: 'center'
-                                }}
-                            >
-                                Выходные данные
-                            </Typography>
-                        </Box>
-                        <Divider />
-                        {data.outputAnchors.map((outputAnchor) => (
-                            <NodeOutputHandler key={JSON.stringify(data)} outputAnchor={outputAnchor} data={data} />
-                        ))}
+                        {data.outputAnchors.length > 0 && <Divider />}
+                        {data.outputAnchors.length > 0 && (
+                            <Box sx={{ background: theme.palette.asyncSelect.main, p: 1 }}>
+                                <Typography
+                                    sx={{
+                                        fontWeight: 500,
+                                        textAlign: 'center'
+                                    }}
+                                >
+                                    Выход
+                                </Typography>
+                            </Box>
+                        )}
+                        {data.outputAnchors.length > 0 && <Divider />}
+                        {data.outputAnchors.length > 0 &&
+                            data.outputAnchors.map((outputAnchor) => (
+                                <NodeOutputHandler key={JSON.stringify(data)} outputAnchor={outputAnchor} data={data} />
+                            ))}
                     </Box>
                 </NodeTooltip>
             </NodeCardWrapper>
@@ -264,4 +292,4 @@ CanvasNode.propTypes = {
     data: PropTypes.object
 }
 
-export default CanvasNode
+export default memo(CanvasNode)

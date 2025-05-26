@@ -1,15 +1,16 @@
 import { useEffect, useState, useRef } from 'react'
 
 // material-ui
-import { Box, Stack, Button, ButtonGroup, Skeleton } from '@mui/material'
+import { Box, Stack, Button, ButtonGroup, Skeleton, ToggleButtonGroup, ToggleButton } from '@mui/material'
 
 // project imports
 import MainCard from '@/ui-component/cards/MainCard'
 import ItemCard from '@/ui-component/cards/ItemCard'
 import { gridSpacing } from '@/store/constant'
-import ToolEmptySVG from '@/assets/images/tools_empty_startai.svg'
+import ToolEmptySVG from '@/assets/images/tools_empty.svg'
 import { StyledButton } from '@/ui-component/button/StyledButton'
 import ToolDialog from './ToolDialog'
+import { ToolsTable } from '@/ui-component/table/ToolsListTable'
 
 // API
 import toolsApi from '@/api/tools'
@@ -18,29 +19,38 @@ import toolsApi from '@/api/tools'
 import useApi from '@/hooks/useApi'
 
 // icons
-import { IconPlus, IconFileUpload } from '@tabler/icons-react'
+import { IconPlus, IconFileUpload, IconLayoutGrid, IconList } from '@tabler/icons-react'
 import ViewHeader from '@/layout/MainLayout/ViewHeader'
 import ErrorBoundary from '@/ErrorBoundary'
+import { useTheme } from '@mui/material/styles'
 
 // ==============================|| CHATFLOWS ||============================== //
 
 const Tools = () => {
+    const theme = useTheme()
     const getAllToolsApi = useApi(toolsApi.getAllTools)
 
     const [isLoading, setLoading] = useState(true)
     const [error, setError] = useState(null)
     const [showDialog, setShowDialog] = useState(false)
     const [dialogProps, setDialogProps] = useState({})
+    const [view, setView] = useState(localStorage.getItem('toolsDisplayStyle') || 'card')
 
     const inputRef = useRef(null)
+
+    const handleChange = (event, nextView) => {
+        if (nextView === null) return
+        localStorage.setItem('toolsDisplayStyle', nextView)
+        setView(nextView)
+    }
 
     const onUploadFile = (file) => {
         try {
             const dialogProp = {
-                title: 'Создать новую команду',
+                title: 'Добавить новый инструмент',
                 type: 'IMPORT',
-                cancelButtonName: 'Cancel',
-                confirmButtonName: 'Save',
+                cancelButtonName: 'Отмена',
+                confirmButtonName: 'Сохранить',
                 data: JSON.parse(file)
             }
             setDialogProps(dialogProp)
@@ -68,10 +78,10 @@ const Tools = () => {
 
     const addNew = () => {
         const dialogProp = {
-            title: 'Создать новую команду',
+            title: 'Добавить новый инструмент',
             type: 'ADD',
-            cancelButtonName: 'Cancel',
-            confirmButtonName: 'Add'
+            cancelButtonName: 'Отмена',
+            confirmButtonName: 'Добавить'
         }
         setDialogProps(dialogProp)
         setShowDialog(true)
@@ -79,10 +89,10 @@ const Tools = () => {
 
     const edit = (selectedTool) => {
         const dialogProp = {
-            title: 'Edit Tool',
+            title: 'Редактировать инструмент',
             type: 'EDIT',
-            cancelButtonName: 'Cancel',
-            confirmButtonName: 'Save',
+            cancelButtonName: 'Отмена',
+            confirmButtonName: 'Сохранить',
             data: selectedTool
         }
         setDialogProps(dialogProp)
@@ -92,6 +102,17 @@ const Tools = () => {
     const onConfirm = () => {
         setShowDialog(false)
         getAllToolsApi.request()
+    }
+
+    const [search, setSearch] = useState('')
+    const onSearchChange = (event) => {
+        setSearch(event.target.value)
+    }
+
+    function filterTools(data) {
+        return (
+            data.name.toLowerCase().indexOf(search.toLowerCase()) > -1 || data.description.toLowerCase().indexOf(search.toLowerCase()) > -1
+        )
     }
 
     useEffect(() => {
@@ -117,7 +138,45 @@ const Tools = () => {
                     <ErrorBoundary error={error} />
                 ) : (
                     <Stack flexDirection='column' sx={{ gap: 3 }}>
-                        <ViewHeader title='Tools'>
+                        <ViewHeader
+                            onSearchChange={onSearchChange}
+                            search={true}
+                            searchPlaceholder='Поиск инструментов'
+                            title='Инструменты'
+                            description='Внешние функции или API, которые агент может использовать для выполнения действий'
+                        >
+                            <ToggleButtonGroup
+                                sx={{ borderRadius: 2, maxHeight: 40 }}
+                                value={view}
+                                color='primary'
+                                exclusive
+                                onChange={handleChange}
+                            >
+                                <ToggleButton
+                                    sx={{
+                                        borderColor: theme.palette.grey[900] + 25,
+                                        borderRadius: 2,
+                                        color: theme?.customization?.isDarkMode ? 'white' : 'inherit'
+                                    }}
+                                    variant='contained'
+                                    value='card'
+                                    title='Вид карточек'
+                                >
+                                    <IconLayoutGrid />
+                                </ToggleButton>
+                                <ToggleButton
+                                    sx={{
+                                        borderColor: theme.palette.grey[900] + 25,
+                                        borderRadius: 2,
+                                        color: theme?.customization?.isDarkMode ? 'white' : 'inherit'
+                                    }}
+                                    variant='contained'
+                                    value='list'
+                                    title='Вид списка'
+                                >
+                                    <IconList />
+                                </ToggleButton>
+                            </ToggleButtonGroup>
                             <Box sx={{ display: 'flex', alignItems: 'center' }}>
                                 <Button
                                     variant='outlined'
@@ -147,19 +206,25 @@ const Tools = () => {
                                 </StyledButton>
                             </ButtonGroup>
                         </ViewHeader>
-                        {isLoading ? (
-                            <Box display='grid' gridTemplateColumns='repeat(3, 1fr)' gap={gridSpacing}>
-                                <Skeleton variant='rounded' height={160} />
-                                <Skeleton variant='rounded' height={160} />
-                                <Skeleton variant='rounded' height={160} />
-                            </Box>
+                        {!view || view === 'card' ? (
+                            <>
+                                {isLoading ? (
+                                    <Box display='grid' gridTemplateColumns='repeat(3, 1fr)' gap={gridSpacing}>
+                                        <Skeleton variant='rounded' height={160} />
+                                        <Skeleton variant='rounded' height={160} />
+                                        <Skeleton variant='rounded' height={160} />
+                                    </Box>
+                                ) : (
+                                    <Box display='grid' gridTemplateColumns='repeat(3, 1fr)' gap={gridSpacing}>
+                                        {getAllToolsApi.data &&
+                                            getAllToolsApi.data
+                                                ?.filter(filterTools)
+                                                .map((data, index) => <ItemCard data={data} key={index} onClick={() => edit(data)} />)}
+                                    </Box>
+                                )}
+                            </>
                         ) : (
-                            <Box display='grid' gridTemplateColumns='repeat(3, 1fr)' gap={gridSpacing}>
-                                {getAllToolsApi.data &&
-                                    getAllToolsApi.data.map((data, index) => (
-                                        <ItemCard data={data} key={index} onClick={() => edit(data)} />
-                                    ))}
-                            </Box>
+                            <ToolsTable data={getAllToolsApi.data} isLoading={isLoading} onSelect={edit} />
                         )}
                         {!isLoading && (!getAllToolsApi.data || getAllToolsApi.data.length === 0) && (
                             <Stack sx={{ alignItems: 'center', justifyContent: 'center' }} flexDirection='column'>
@@ -167,10 +232,10 @@ const Tools = () => {
                                     <img
                                         style={{ objectFit: 'cover', height: '20vh', width: 'auto' }}
                                         src={ToolEmptySVG}
-                                        alt='ToolEmptySVG'
+                                        alt='Нет инструментов'
                                     />
                                 </Box>
-                                <div>Нет созданных инструментов</div>
+                                <div>Инструменты еще не созданы</div>
                             </Stack>
                         )}
                     </Stack>

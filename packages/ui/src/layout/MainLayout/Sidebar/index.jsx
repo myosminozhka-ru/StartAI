@@ -52,6 +52,7 @@ const Sidebar = ({ drawerOpen, drawerToggle, window }) => {
     )
 
     const container = window !== undefined ? () => window.document.body : undefined
+
     return (
         <Box
             component='nav'
@@ -70,13 +71,14 @@ const Sidebar = ({ drawerOpen, drawerToggle, window }) => {
                 sx={{
                     '& .MuiDrawer-paper': {
                         width: drawerWidth,
-                        background: theme.palette.background.sidebar,
+                        background: theme.palette.background.default,
                         color: theme.palette.text.primary,
                         [theme.breakpoints.up('md')]: {
                             top: `${headerHeight}px`
                         },
                         borderRight: drawerOpen ? '1px solid' : 'none',
-                        borderColor: drawerOpen ? theme.palette.primary[200] + 75 : 'transparent'
+                        borderColor: drawerOpen ? theme.palette.primary[200] + 75 : 'transparent',
+                        zIndex: 1000
                     }
                 }}
                 ModalProps={{ keepMounted: true }}

@@ -1,13 +1,12 @@
 {
-    "description": "Вопросы и ответы в текстовых файлах с использованием цепочки вопросов и ответов с консультативным поиском",
-    "title": "Цепочка вопросов и ответов с консультативным поиском",
-    "categories": "TextFile,ChatOpenAI,Conversational Retrieval QA Chain,Pinecone,Langchain",
-    "badge": "POPULAR",
-    "framework": "Langchain",
+    "description": "Вопросно-ответная система для документов с использованием Retrieval Augmented Generation (RAG) с Mistral и FAISS для поиска по сходству",
+    "badge": "ПОПУЛЯРНЫЙ",
+    "usecases": ["Вопросно-ответная система для документов"],
+    "framework": ["Langchain"],
     "nodes": [
         {
             "width": 300,
-            "height": 329,
+            "height": 424,
             "id": "openAIEmbeddings_0",
             "position": {
                 "x": 795.6162477805387,
@@ -16,31 +15,31 @@
             "type": "customNode",
             "data": {
                 "id": "openAIEmbeddings_0",
-                "label": "OpenAI Embeddings",
-                "version": 3,
+                "label": "Встраивания OpenAI",
+                "version": 4,
                 "name": "openAIEmbeddings",
                 "type": "OpenAIEmbeddings",
                 "baseClasses": ["OpenAIEmbeddings", "Embeddings"],
-                "category": "Embeddings",
-                "description": "OpenAI API to generate embeddings for a given text",
+                "category": "Встраивания",
+                "description": "API OpenAI для генерации встраиваний для заданного текста",
                 "inputParams": [
                     {
-                        "label": "Connect Credential",
+                        "label": "Подключить учетные данные",
                         "name": "credential",
                         "type": "credential",
                         "credentialNames": ["openAIApi"],
                         "id": "openAIEmbeddings_0-input-credential-credential"
                     },
                     {
-                        "label": "Model Name",
+                        "label": "Название модели",
                         "name": "modelName",
                         "type": "asyncOptions",
                         "loadMethod": "listModels",
                         "default": "text-embedding-ada-002",
-                        "id": "openAIEmbeddings_0-input-modelName-options"
+                        "id": "openAIEmbeddings_0-input-modelName-asyncOptions"
                     },
                     {
-                        "label": "Strip New Lines",
+                        "label": "Удалить переносы строк",
                         "name": "stripNewLines",
                         "type": "boolean",
                         "optional": true,
@@ -48,7 +47,7 @@
                         "id": "openAIEmbeddings_0-input-stripNewLines-boolean"
                     },
                     {
-                        "label": "Batch Size",
+                        "label": "Размер пакета",
                         "name": "batchSize",
                         "type": "number",
                         "optional": true,
@@ -56,7 +55,7 @@
                         "id": "openAIEmbeddings_0-input-batchSize-number"
                     },
                     {
-                        "label": "Timeout",
+                        "label": "Таймаут",
                         "name": "timeout",
                         "type": "number",
                         "optional": true,
@@ -64,27 +63,37 @@
                         "id": "openAIEmbeddings_0-input-timeout-number"
                     },
                     {
-                        "label": "BasePath",
+                        "label": "Базовый путь",
                         "name": "basepath",
                         "type": "string",
                         "optional": true,
                         "additionalParams": true,
                         "id": "openAIEmbeddings_0-input-basepath-string"
+                    },
+                    {
+                        "label": "Размерность",
+                        "name": "dimensions",
+                        "type": "number",
+                        "optional": true,
+                        "additionalParams": true,
+                        "id": "openAIEmbeddings_0-input-dimensions-number"
                     }
                 ],
                 "inputAnchors": [],
                 "inputs": {
+                    "modelName": "text-embedding-ada-002",
                     "stripNewLines": "",
                     "batchSize": "",
                     "timeout": "",
                     "basepath": "",
-                    "modelName": "text-embedding-ada-002"
+                    "dimensions": ""
                 },
                 "outputAnchors": [
                     {
                         "id": "openAIEmbeddings_0-output-openAIEmbeddings-OpenAIEmbeddings|Embeddings",
                         "name": "openAIEmbeddings",
                         "label": "OpenAIEmbeddings",
+                        "description": "OpenAI API to generate embeddings for a given text",
                         "type": "OpenAIEmbeddings | Embeddings"
                     }
                 ],
@@ -100,7 +109,7 @@
         },
         {
             "width": 300,
-            "height": 429,
+            "height": 430,
             "id": "recursiveCharacterTextSplitter_0",
             "position": {
                 "x": 406.08456707531263,
@@ -109,16 +118,16 @@
             "type": "customNode",
             "data": {
                 "id": "recursiveCharacterTextSplitter_0",
-                "label": "Recursive Character Text Splitter",
+                "label": "Рекурсивный разделитель текста",
                 "version": 2,
                 "name": "recursiveCharacterTextSplitter",
                 "type": "RecursiveCharacterTextSplitter",
                 "baseClasses": ["RecursiveCharacterTextSplitter", "TextSplitter"],
-                "category": "Text Splitters",
-                "description": "Split documents recursively by different characters - starting with \"\\n\\n\", then \"\\n\", then \" \"",
+                "category": "Разделители текста",
+                "description": "Разделяет документы рекурсивно по разным символам - начиная с \"\\n\\n\", затем \"\\n\", затем \" \"",
                 "inputParams": [
                     {
-                        "label": "Chunk Size",
+                        "label": "Размер фрагмента",
                         "name": "chunkSize",
                         "type": "number",
                         "default": 1000,
@@ -126,18 +135,18 @@
                         "id": "recursiveCharacterTextSplitter_0-input-chunkSize-number"
                     },
                     {
-                        "label": "Chunk Overlap",
+                        "label": "Перекрытие фрагментов",
                         "name": "chunkOverlap",
                         "type": "number",
                         "optional": true,
                         "id": "recursiveCharacterTextSplitter_0-input-chunkOverlap-number"
                     },
                     {
-                        "label": "Custom Separators",
+                        "label": "Пользовательские разделители",
                         "name": "separators",
                         "type": "string",
                         "rows": 4,
-                        "description": "Array of custom separators to determine when to split the text, will override the default separators",
+                        "description": "Массив пользовательских разделителей для определения места разделения текста, переопределит стандартные разделители",
                         "placeholder": "[\"|\", \"##\", \">\", \"-\"]",
                         "additionalParams": true,
                         "optional": true,
@@ -169,7 +178,7 @@
         },
         {
             "width": 300,
-            "height": 419,
+            "height": 421,
             "id": "textFile_0",
             "position": {
                 "x": 786.5497697231324,
@@ -178,23 +187,23 @@
             "type": "customNode",
             "data": {
                 "id": "textFile_0",
-                "label": "Text File",
+                "label": "Текстовый файл",
                 "version": 3,
                 "name": "textFile",
                 "type": "Document",
                 "baseClasses": ["Document"],
-                "category": "Document Loaders",
-                "description": "Load data from text files",
+                "category": "Загрузчики документов",
+                "description": "Загрузка данных из текстовых файлов",
                 "inputParams": [
                     {
-                        "label": "Txt File",
+                        "label": "Текстовый файл",
                         "name": "txtFile",
                         "type": "file",
                         "fileType": ".txt, .html, .aspx, .asp, .cpp, .c, .cs, .css, .go, .h, .java, .js, .less, .ts, .php, .proto, .python, .py, .rst, .ruby, .rb, .rs, .scala, .sc, .scss, .sol, .sql, .swift, .markdown, .md, .tex, .ltx, .vb, .xml",
                         "id": "textFile_0-input-txtFile-file"
                     },
                     {
-                        "label": "Metadata",
+                        "label": "Метаданные",
                         "name": "metadata",
                         "type": "json",
                         "optional": true,
@@ -204,7 +213,7 @@
                 ],
                 "inputAnchors": [
                     {
-                        "label": "Text Splitter",
+                        "label": "Разделитель текста",
                         "name": "textSplitter",
                         "type": "TextSplitter",
                         "optional": true,
@@ -251,7 +260,7 @@
         },
         {
             "width": 300,
-            "height": 480,
+            "height": 532,
             "id": "conversationalRetrievalQAChain_0",
             "position": {
                 "x": 1558.6564094656787,
@@ -260,70 +269,70 @@
             "type": "customNode",
             "data": {
                 "id": "conversationalRetrievalQAChain_0",
-                "label": "Conversational Retrieval QA Chain",
+                "label": "Цепь вопросно-ответной системы с контекстом",
                 "version": 3,
                 "name": "conversationalRetrievalQAChain",
                 "type": "ConversationalRetrievalQAChain",
                 "baseClasses": ["ConversationalRetrievalQAChain", "BaseChain", "Runnable"],
-                "category": "Chains",
-                "description": "Document QA - built on RetrievalQAChain to provide a chat history component",
+                "category": "Цепи",
+                "description": "Вопросно-ответная система для документов - построена на основе RetrievalQAChain с добавлением компонента истории чата",
                 "inputParams": [
                     {
-                        "label": "Return Source Documents",
+                        "label": "Возвращать исходные документы",
                         "name": "returnSourceDocuments",
                         "type": "boolean",
                         "optional": true,
                         "id": "conversationalRetrievalQAChain_0-input-returnSourceDocuments-boolean"
                     },
                     {
-                        "label": "Rephrase Prompt",
+                        "label": "Шаблон перефразировки",
                         "name": "rephrasePrompt",
                         "type": "string",
-                        "description": "Using previous chat history, rephrase question into a standalone question",
-                        "warning": "Prompt must include input variables: {chat_history} and {question}",
+                        "description": "Используя предыдущую историю чата, перефразируйте вопрос в самостоятельный вопрос",
+                        "warning": "Шаблон должен включать входные переменные: {chat_history} и {question}",
                         "rows": 4,
                         "additionalParams": true,
                         "optional": true,
-                        "default": "Given the following conversation and a follow up question, rephrase the follow up question to be a standalone question.\n\nChat History:\n{chat_history}\nFollow Up Input: {question}\nStandalone Question:",
+                        "default": "Учитывая следующий диалог и последующий вопрос, перефразируйте последующий вопрос в самостоятельный вопрос.\n\nИстория чата:\n{chat_history}\nПоследующий вопрос: {question}\nСамостоятельный вопрос:",
                         "id": "conversationalRetrievalQAChain_0-input-rephrasePrompt-string"
                     },
                     {
-                        "label": "Response Prompt",
+                        "label": "Шаблон ответа",
                         "name": "responsePrompt",
                         "type": "string",
-                        "description": "Taking the rephrased question, search for answer from the provided context",
-                        "warning": "Prompt must include input variable: {context}",
+                        "description": "Используя перефразированный вопрос, найдите ответ в предоставленном контексте",
+                        "warning": "Шаблон должен включать входную переменную: {context}",
                         "rows": 4,
                         "additionalParams": true,
                         "optional": true,
-                        "default": "You are a helpful assistant. Using the provided context, answer the user's question to the best of your ability using the resources provided.\nIf there is nothing in the context relevant to the question at hand, just say \"Hmm, I'm not sure.\" Don't try to make up an answer.\n------------\n{context}\n------------\nREMEMBER: If there is no relevant information within the context, just say \"Hmm, I'm not sure.\" Don't try to make up an answer.",
+                        "default": "Вы - полезный ассистент. Используя предоставленный контекст, ответьте на вопрос пользователя наилучшим образом, используя предоставленные ресурсы.\nЕсли в контексте нет ничего, относящегося к заданному вопросу, просто скажите \"Хм, я не уверен.\" Не пытайтесь придумать ответ.\n------------\n{context}\n------------\nПОМНИТЕ: Если в контексте нет релевантной информации, просто скажите \"Хм, я не уверен.\" Не пытайтесь придумать ответ.",
                         "id": "conversationalRetrievalQAChain_0-input-responsePrompt-string"
                     }
                 ],
                 "inputAnchors": [
                     {
-                        "label": "Chat Model",
+                        "label": "Модель чата",
                         "name": "model",
                         "type": "BaseChatModel",
                         "id": "conversationalRetrievalQAChain_0-input-model-BaseChatModel"
                     },
                     {
-                        "label": "Vector Store Retriever",
+                        "label": "Извлекатель векторного хранилища",
                         "name": "vectorStoreRetriever",
                         "type": "BaseRetriever",
                         "id": "conversationalRetrievalQAChain_0-input-vectorStoreRetriever-BaseRetriever"
                     },
                     {
-                        "label": "Memory",
+                        "label": "Память",
                         "name": "memory",
                         "type": "BaseMemory",
                         "optional": true,
-                        "description": "If left empty, a default BufferMemory will be used",
+                        "description": "Если оставить пустым, будет использоваться BufferMemory по умолчанию",
                         "id": "conversationalRetrievalQAChain_0-input-memory-BaseMemory"
                     },
                     {
-                        "label": "Input Moderation",
-                        "description": "Detect text that could generate harmful output and prevent it from being sent to the language model",
+                        "label": "Модерация ввода",
+                        "description": "Обнаружение текста, который может генерировать вредоносный вывод, и предотвращение его отправки в языковую модель",
                         "name": "inputModeration",
                         "type": "Moderation",
                         "optional": true,
@@ -333,11 +342,11 @@
                 ],
                 "inputs": {
                     "inputModeration": "",
-                    "model": "{{chatOpenAI_0.data.instance}}",
-                    "vectorStoreRetriever": "{{pinecone_0.data.instance}}",
+                    "model": "{{chatMistralAI_0.data.instance}}",
+                    "vectorStoreRetriever": "{{faiss_0.data.instance}}",
                     "memory": "",
-                    "rephrasePrompt": "Given the following conversation and a follow up question, rephrase the follow up question to be a standalone question.\n\nChat History:\n{chat_history}\nFollow Up Input: {question}\nStandalone Question:",
-                    "responsePrompt": "You are a helpful assistant. Using the provided context, answer the user's question to the best of your ability using the resources provided.\nIf there is nothing in the context relevant to the question at hand, just say \"Hmm, I'm not sure.\" Don't try to make up an answer.\n------------\n{context}\n------------\nREMEMBER: If there is no relevant information within the context, just say \"Hmm, I'm not sure.\" Don't try to make up an answer."
+                    "rephrasePrompt": "Учитывая следующий диалог и последующий вопрос, перефразируйте последующий вопрос в самостоятельный вопрос.\n\nИстория чата:\n{chat_history}\nПоследующий вопрос: {question}\nСамостоятельный вопрос:",
+                    "responsePrompt": "Вы - полезный ассистент. Используя предоставленный контекст, ответьте на вопрос пользователя наилучшим образом, используя предоставленные ресурсы.\nЕсли в контексте нет ничего, относящегося к заданному вопросу, просто скажите \"Хм, я не уверен.\" Не пытайтесь придумать ответ.\n------------\n{context}\n------------\nПОМНИТЕ: Если в контексте нет релевантной информации, просто скажите \"Хм, я не уверен.\" Не пытайтесь придумать ответ."
                 },
                 "outputAnchors": [
                     {
@@ -354,330 +363,87 @@
                 "x": 1558.6564094656787,
                 "y": 386.60217819991124
             },
-            "selected": false
-        },
-        {
-            "width": 300,
-            "height": 574,
-            "id": "chatOpenAI_0",
-            "position": {
-                "x": 1194.3554779412727,
-                "y": -46.74877201166788
-            },
-            "type": "customNode",
-            "data": {
-                "id": "chatOpenAI_0",
-                "label": "ChatOpenAI",
-                "version": 6.0,
-                "name": "chatOpenAI",
-                "type": "ChatOpenAI",
-                "baseClasses": ["ChatOpenAI", "BaseChatModel", "BaseLanguageModel", "Runnable"],
-                "category": "Chat Models",
-                "description": "Wrapper around OpenAI large language models that use the Chat endpoint",
-                "inputParams": [
-                    {
-                        "label": "Connect Credential",
-                        "name": "credential",
-                        "type": "credential",
-                        "credentialNames": ["openAIApi"],
-                        "id": "chatOpenAI_0-input-credential-credential"
-                    },
-                    {
-                        "label": "Model Name",
-                        "name": "modelName",
-                        "type": "asyncOptions",
-                        "loadMethod": "listModels",
-                        "default": "gpt-3.5-turbo",
-                        "id": "chatOpenAI_0-input-modelName-options"
-                    },
-                    {
-                        "label": "Temperature",
-                        "name": "temperature",
-                        "type": "number",
-                        "step": 0.1,
-                        "default": 0.9,
-                        "optional": true,
-                        "id": "chatOpenAI_0-input-temperature-number"
-                    },
-                    {
-                        "label": "Max Tokens",
-                        "name": "maxTokens",
-                        "type": "number",
-                        "step": 1,
-                        "optional": true,
-                        "additionalParams": true,
-                        "id": "chatOpenAI_0-input-maxTokens-number"
-                    },
-                    {
-                        "label": "Top Probability",
-                        "name": "topP",
-                        "type": "number",
-                        "step": 0.1,
-                        "optional": true,
-                        "additionalParams": true,
-                        "id": "chatOpenAI_0-input-topP-number"
-                    },
-                    {
-                        "label": "Frequency Penalty",
-                        "name": "frequencyPenalty",
-                        "type": "number",
-                        "step": 0.1,
-                        "optional": true,
-                        "additionalParams": true,
-                        "id": "chatOpenAI_0-input-frequencyPenalty-number"
-                    },
-                    {
-                        "label": "Presence Penalty",
-                        "name": "presencePenalty",
-                        "type": "number",
-                        "step": 0.1,
-                        "optional": true,
-                        "additionalParams": true,
-                        "id": "chatOpenAI_0-input-presencePenalty-number"
-                    },
-                    {
-                        "label": "Timeout",
-                        "name": "timeout",
-                        "type": "number",
-                        "step": 1,
-                        "optional": true,
-                        "additionalParams": true,
-                        "id": "chatOpenAI_0-input-timeout-number"
-                    },
-                    {
-                        "label": "BasePath",
-                        "name": "basepath",
-                        "type": "string",
-                        "optional": true,
-                        "additionalParams": true,
-                        "id": "chatOpenAI_0-input-basepath-string"
-                    },
-                    {
-                        "label": "BaseOptions",
-                        "name": "baseOptions",
-                        "type": "json",
-                        "optional": true,
-                        "additionalParams": true,
-                        "id": "chatOpenAI_0-input-baseOptions-json"
-                    },
-                    {
-                        "label": "Allow Image Uploads",
-                        "name": "allowImageUploads",
-                        "type": "boolean",
-                        "description": "Automatically uses gpt-4-vision-preview when image is being uploaded from chat. Only works with LLMChain, Conversation Chain, ReAct Agent, and Conversational Agent",
-                        "default": false,
-                        "optional": true,
-                        "id": "chatOpenAI_0-input-allowImageUploads-boolean"
-                    },
-                    {
-                        "label": "Image Resolution",
-                        "description": "This parameter controls the resolution in which the model views the image.",
-                        "name": "imageResolution",
-                        "type": "options",
-                        "options": [
-                            {
-                                "label": "Low",
-                                "name": "low"
-                            },
-                            {
-                                "label": "High",
-                                "name": "high"
-                            },
-                            {
-                                "label": "Auto",
-                                "name": "auto"
-                            }
-                        ],
-                        "default": "low",
-                        "optional": false,
-                        "additionalParams": true,
-                        "id": "chatOpenAI_0-input-imageResolution-options"
-                    }
-                ],
-                "inputAnchors": [
-                    {
-                        "label": "Cache",
-                        "name": "cache",
-                        "type": "BaseCache",
-                        "optional": true,
-                        "id": "chatOpenAI_0-input-cache-BaseCache"
-                    }
-                ],
-                "inputs": {
-                    "cache": "",
-                    "modelName": "gpt-3.5-turbo-16k",
-                    "temperature": 0.9,
-                    "maxTokens": "",
-                    "topP": "",
-                    "frequencyPenalty": "",
-                    "presencePenalty": "",
-                    "timeout": "",
-                    "basepath": "",
-                    "baseOptions": "",
-                    "allowImageUploads": true,
-                    "imageResolution": "low"
-                },
-                "outputAnchors": [
-                    {
-                        "id": "chatOpenAI_0-output-chatOpenAI-ChatOpenAI|BaseChatModel|BaseLanguageModel|Runnable",
-                        "name": "chatOpenAI",
-                        "label": "ChatOpenAI",
-                        "type": "ChatOpenAI | BaseChatModel | BaseLanguageModel | Runnable"
-                    }
-                ],
-                "outputs": {},
-                "selected": false
-            },
             "selected": false,
-            "positionAbsolute": {
-                "x": 1194.3554779412727,
-                "y": -46.74877201166788
-            },
             "dragging": false
         },
         {
-            "width": 300,
-            "height": 555,
-            "id": "pinecone_0",
+            "id": "faiss_0",
             "position": {
-                "x": 1192.4771449209463,
-                "y": 552.43946147251
+                "x": 1193.61786387649,
+                "y": 559.055052045731
             },
             "type": "customNode",
             "data": {
-                "id": "pinecone_0",
-                "label": "Pinecone",
-                "version": 2,
-                "name": "pinecone",
-                "type": "Pinecone",
-                "baseClasses": ["Pinecone", "VectorStoreRetriever", "BaseRetriever"],
-                "category": "Vector Stores",
-                "description": "Upsert embedded data and perform similarity or mmr search using Pinecone, a leading fully managed hosted vector database",
+                "id": "faiss_0",
+                "label": "Faiss",
+                "version": 1,
+                "name": "faiss",
+                "type": "Faiss",
+                "baseClasses": ["Faiss", "VectorStoreRetriever", "BaseRetriever"],
+                "category": "Векторные хранилища",
+                "description": "Загружает встроенные данные и выполняет поиск по сходству при запросе с использованием библиотеки Faiss от Meta",
                 "inputParams": [
                     {
-                        "label": "Connect Credential",
-                        "name": "credential",
-                        "type": "credential",
-                        "credentialNames": ["pineconeApi"],
-                        "id": "pinecone_0-input-credential-credential"
-                    },
-                    {
-                        "label": "Pinecone Index",
-                        "name": "pineconeIndex",
+                        "label": "Базовый путь для загрузки",
+                        "name": "basePath",
+                        "description": "Путь для загрузки файла faiss.index",
+                        "placeholder": "C:\\Users\\User\\Desktop",
                         "type": "string",
-                        "id": "pinecone_0-input-pineconeIndex-string"
+                        "id": "faiss_0-input-basePath-string"
                     },
                     {
-                        "label": "Pinecone Namespace",
-                        "name": "pineconeNamespace",
-                        "type": "string",
-                        "placeholder": "my-first-namespace",
-                        "additionalParams": true,
-                        "optional": true,
-                        "id": "pinecone_0-input-pineconeNamespace-string"
-                    },
-                    {
-                        "label": "Pinecone Metadata Filter",
-                        "name": "pineconeMetadataFilter",
-                        "type": "json",
-                        "optional": true,
-                        "additionalParams": true,
-                        "id": "pinecone_0-input-pineconeMetadataFilter-json"
-                    },
-                    {
-                        "label": "Top K",
+                        "label": "Топ K",
                         "name": "topK",
-                        "description": "Number of top results to fetch. Default to 4",
+                        "description": "Количество лучших результатов для получения. По умолчанию 4",
                         "placeholder": "4",
                         "type": "number",
                         "additionalParams": true,
                         "optional": true,
-                        "id": "pinecone_0-input-topK-number"
-                    },
-                    {
-                        "label": "Search Type",
-                        "name": "searchType",
-                        "type": "options",
-                        "default": "similarity",
-                        "options": [
-                            {
-                                "label": "Similarity",
-                                "name": "similarity"
-                            },
-                            {
-                                "label": "Max Marginal Relevance",
-                                "name": "mmr"
-                            }
-                        ],
-                        "additionalParams": true,
-                        "optional": true,
-                        "id": "pinecone_0-input-searchType-options"
-                    },
-                    {
-                        "label": "Fetch K (for MMR Search)",
-                        "name": "fetchK",
-                        "description": "Number of initial documents to fetch for MMR reranking. Default to 20. Used only when the search type is MMR",
-                        "placeholder": "20",
-                        "type": "number",
-                        "additionalParams": true,
-                        "optional": true,
-                        "id": "pinecone_0-input-fetchK-number"
-                    },
-                    {
-                        "label": "Lambda (for MMR Search)",
-                        "name": "lambda",
-                        "description": "Number between 0 and 1 that determines the degree of diversity among the results, where 0 corresponds to maximum diversity and 1 to minimum diversity. Used only when the search type is MMR",
-                        "placeholder": "0.5",
-                        "type": "number",
-                        "additionalParams": true,
-                        "optional": true,
-                        "id": "pinecone_0-input-lambda-number"
+                        "id": "faiss_0-input-topK-number"
                     }
                 ],
                 "inputAnchors": [
                     {
-                        "label": "Document",
+                        "label": "Документ",
                         "name": "document",
                         "type": "Document",
                         "list": true,
                         "optional": true,
-                        "id": "pinecone_0-input-document-Document"
+                        "id": "faiss_0-input-document-Document"
                     },
                     {
-                        "label": "Embeddings",
+                        "label": "Встраивания",
                         "name": "embeddings",
                         "type": "Embeddings",
-                        "id": "pinecone_0-input-embeddings-Embeddings"
+                        "id": "faiss_0-input-embeddings-Embeddings"
                     }
                 ],
                 "inputs": {
-                    "document": ["{{textFile_0.data.instance}}"],
+                    "document": ["{{textFile_0.data.instance}}", "{{documentStore_0.data.instance}}"],
                     "embeddings": "{{openAIEmbeddings_0.data.instance}}",
-                    "pineconeIndex": "",
-                    "pineconeNamespace": "",
-                    "pineconeMetadataFilter": "",
-                    "topK": "",
-                    "searchType": "similarity",
-                    "fetchK": "",
-                    "lambda": ""
+                    "basePath": "",
+                    "topK": ""
                 },
                 "outputAnchors": [
                     {
                         "name": "output",
                         "label": "Output",
                         "type": "options",
+                        "description": "",
                         "options": [
                             {
-                                "id": "pinecone_0-output-retriever-Pinecone|VectorStoreRetriever|BaseRetriever",
+                                "id": "faiss_0-output-retriever-Faiss|VectorStoreRetriever|BaseRetriever",
                                 "name": "retriever",
-                                "label": "Pinecone Retriever",
-                                "type": "Pinecone | VectorStoreRetriever | BaseRetriever"
+                                "label": "Faiss Retriever",
+                                "description": "",
+                                "type": "Faiss | VectorStoreRetriever | BaseRetriever"
                             },
                             {
-                                "id": "pinecone_0-output-vectorStore-Pinecone|VectorStore",
+                                "id": "faiss_0-output-vectorStore-Faiss|SaveableVectorStore|VectorStore",
                                 "name": "vectorStore",
-                                "label": "Pinecone Vector Store",
-                                "type": "Pinecone | VectorStore"
+                                "label": "Faiss Vector Store",
+                                "description": "",
+                                "type": "Faiss | SaveableVectorStore | VectorStore"
                             }
                         ],
                         "default": "retriever"
@@ -688,11 +454,264 @@
                 },
                 "selected": false
             },
+            "width": 300,
+            "height": 459,
             "selected": false,
             "positionAbsolute": {
-                "x": 1192.4771449209463,
-                "y": 552.43946147251
+                "x": 1193.61786387649,
+                "y": 559.055052045731
             },
+            "dragging": false
+        },
+        {
+            "id": "documentStore_0",
+            "position": {
+                "x": 785.3020265031932,
+                "y": -215.72424937010018
+            },
+            "type": "customNode",
+            "data": {
+                "id": "documentStore_0",
+                "label": "Хранилище документов",
+                "version": 1,
+                "name": "documentStore",
+                "type": "Document",
+                "baseClasses": ["Document"],
+                "category": "Загрузчики документов",
+                "description": "Загрузка данных из предварительно настроенных хранилищ документов",
+                "inputParams": [
+                    {
+                        "label": "Выбрать хранилище",
+                        "name": "selectedStore",
+                        "type": "asyncOptions",
+                        "loadMethod": "listStores",
+                        "id": "documentStore_0-input-selectedStore-asyncOptions"
+                    }
+                ],
+                "inputAnchors": [],
+                "inputs": {
+                    "selectedStore": ""
+                },
+                "outputAnchors": [
+                    {
+                        "name": "output",
+                        "label": "Output",
+                        "type": "options",
+                        "description": "Array of document objects containing metadata and pageContent",
+                        "options": [
+                            {
+                                "id": "documentStore_0-output-document-Document|json",
+                                "name": "document",
+                                "label": "Document",
+                                "description": "Array of document objects containing metadata and pageContent",
+                                "type": "Document | json"
+                            },
+                            {
+                                "id": "documentStore_0-output-text-string|json",
+                                "name": "text",
+                                "label": "Text",
+                                "description": "Concatenated string from pageContent of documents",
+                                "type": "string | json"
+                            }
+                        ],
+                        "default": "document"
+                    }
+                ],
+                "outputs": {
+                    "output": "document"
+                },
+                "selected": false
+            },
+            "width": 300,
+            "height": 312,
+            "selected": false,
+            "positionAbsolute": {
+                "x": 785.3020265031932,
+                "y": -215.72424937010018
+            },
+            "dragging": false
+        },
+        {
+            "id": "stickyNote_0",
+            "position": {
+                "x": 1546.6369661154768,
+                "y": -107.3962162381467
+            },
+            "type": "stickyNote",
+            "data": {
+                "id": "stickyNote_0",
+                "label": "Стикер",
+                "version": 2,
+                "name": "stickyNote",
+                "type": "StickyNote",
+                "baseClasses": ["StickyNote"],
+                "tags": ["Утилиты"],
+                "category": "Утилиты",
+                "description": "Добавить стикер",
+                "inputParams": [
+                    {
+                        "label": "",
+                        "name": "note",
+                        "type": "string",
+                        "rows": 1,
+                        "placeholder": "Введите что-нибудь здесь",
+                        "optional": true,
+                        "id": "stickyNote_0-input-note-string"
+                    }
+                ],
+                "inputAnchors": [],
+                "inputs": {
+                    "note": "Цепь вопросно-ответной системы с контекстом состоит из 2 цепей:\n\n1. Цепь для перефразировки вопроса пользователя с использованием предыдущих диалогов\n2. Цепь для предоставления ответа на основе контекста, полученного из векторного хранилища.\n\nЗачем нужна перефразировка вопроса?\nЭто необходимо для обеспечения возможности задавать уточняющие вопросы. Например:\n\n- Какой адрес пекарни?\n- А часы работы?\n\nПерефразированный вопрос будет:\n- Какие часы работы пекарни?\n\nЭто обеспечивает лучший поиск в векторном хранилище, а значит, и лучшее качество вывода.\n"
+                },
+                "outputAnchors": [
+                    {
+                        "id": "stickyNote_0-output-stickyNote-StickyNote",
+                        "name": "stickyNote",
+                        "label": "StickyNote",
+                        "description": "Add a sticky note",
+                        "type": "StickyNote"
+                    }
+                ],
+                "outputs": {},
+                "selected": false
+            },
+            "width": 300,
+            "height": 465,
+            "selected": false,
+            "positionAbsolute": {
+                "x": 1546.6369661154768,
+                "y": -107.3962162381467
+            },
+            "dragging": false
+        },
+        {
+            "id": "chatMistralAI_0",
+            "position": {
+                "x": 1185.9624817228073,
+                "y": -60.75719138037451
+            },
+            "type": "customNode",
+            "data": {
+                "id": "chatMistralAI_0",
+                "label": "ChatMistralAI",
+                "version": 3,
+                "name": "chatMistralAI",
+                "type": "ChatMistralAI",
+                "baseClasses": ["ChatMistralAI", "BaseChatModel", "BaseLanguageModel", "Runnable"],
+                "category": "Модели чата",
+                "description": "Обертка вокруг больших языковых моделей Mistral, использующих конечную точку Chat",
+                "inputParams": [
+                    {
+                        "label": "Подключить учетные данные",
+                        "name": "credential",
+                        "type": "credential",
+                        "credentialNames": ["mistralAIApi"],
+                        "id": "chatMistralAI_0-input-credential-credential"
+                    },
+                    {
+                        "label": "Название модели",
+                        "name": "modelName",
+                        "type": "asyncOptions",
+                        "loadMethod": "listModels",
+                        "default": "mistral-tiny",
+                        "id": "chatMistralAI_0-input-modelName-asyncOptions"
+                    },
+                    {
+                        "label": "Температура",
+                        "name": "temperature",
+                        "type": "number",
+                        "description": "Какую температуру выборки использовать, от 0.0 до 1.0. Более высокие значения, такие как 0.8, сделают вывод более случайным, а более низкие значения, такие как 0.2, сделают его более сфокусированным и детерминированным.",
+                        "step": 0.1,
+                        "default": 0.9,
+                        "optional": true,
+                        "id": "chatMistralAI_0-input-temperature-number"
+                    },
+                    {
+                        "label": "Максимум выходных токенов",
+                        "name": "maxOutputTokens",
+                        "type": "number",
+                        "description": "Максимальное количество токенов для генерации в завершении.",
+                        "step": 1,
+                        "optional": true,
+                        "additionalParams": true,
+                        "id": "chatMistralAI_0-input-maxOutputTokens-number"
+                    },
+                    {
+                        "label": "Вероятность топ",
+                        "name": "topP",
+                        "type": "number",
+                        "description": "Ядерная выборка, где модель рассматривает результаты токенов с вероятностью top_p. Так, 0.1 означает, что рассматриваются только токены, составляющие верхние 10% вероятностной массы.",
+                        "step": 0.1,
+                        "optional": true,
+                        "additionalParams": true,
+                        "id": "chatMistralAI_0-input-topP-number"
+                    },
+                    {
+                        "label": "Случайное зерно",
+                        "name": "randomSeed",
+                        "type": "number",
+                        "description": "Зерно для использования при случайной выборке. Если установлено, разные вызовы будут генерировать детерминированные результаты.",
+                        "step": 1,
+                        "optional": true,
+                        "additionalParams": true,
+                        "id": "chatMistralAI_0-input-randomSeed-number"
+                    },
+                    {
+                        "label": "Безопасный режим",
+                        "name": "safeMode",
+                        "type": "boolean",
+                        "description": "Внедрять ли приглашение безопасности перед всеми диалогами.",
+                        "optional": true,
+                        "additionalParams": true,
+                        "id": "chatMistralAI_0-input-safeMode-boolean"
+                    },
+                    {
+                        "label": "Переопределить конечную точку",
+                        "name": "overrideEndpoint",
+                        "type": "string",
+                        "optional": true,
+                        "additionalParams": true,
+                        "id": "chatMistralAI_0-input-overrideEndpoint-string"
+                    }
+                ],
+                "inputAnchors": [
+                    {
+                        "label": "Кэш",
+                        "name": "cache",
+                        "type": "BaseCache",
+                        "optional": true,
+                        "id": "chatMistralAI_0-input-cache-BaseCache"
+                    }
+                ],
+                "inputs": {
+                    "cache": "",
+                    "modelName": "mistral-tiny",
+                    "temperature": 0.9,
+                    "maxOutputTokens": "",
+                    "topP": "",
+                    "randomSeed": "",
+                    "safeMode": "",
+                    "overrideEndpoint": ""
+                },
+                "outputAnchors": [
+                    {
+                        "id": "chatMistralAI_0-output-chatMistralAI-ChatMistralAI|BaseChatModel|BaseLanguageModel|Runnable",
+                        "name": "chatMistralAI",
+                        "label": "ChatMistralAI",
+                        "description": "Wrapper around Mistral large language models that use the Chat endpoint",
+                        "type": "ChatMistralAI | BaseChatModel | BaseLanguageModel | Runnable"
+                    }
+                ],
+                "outputs": {},
+                "selected": false
+            },
+            "width": 300,
+            "height": 574,
+            "positionAbsolute": {
+                "x": 1185.9624817228073,
+                "y": -60.75719138037451
+            },
+            "selected": false,
             "dragging": false
         }
     ],
@@ -711,46 +730,42 @@
         {
             "source": "textFile_0",
             "sourceHandle": "textFile_0-output-document-Document|json",
-            "target": "pinecone_0",
-            "targetHandle": "pinecone_0-input-document-Document",
+            "target": "faiss_0",
+            "targetHandle": "faiss_0-input-document-Document",
             "type": "buttonedge",
-            "id": "textFile_0-textFile_0-output-document-Document|json-pinecone_0-pinecone_0-input-document-Document",
-            "data": {
-                "label": ""
-            }
+            "id": "textFile_0-textFile_0-output-document-Document|json-faiss_0-faiss_0-input-document-Document"
         },
         {
             "source": "openAIEmbeddings_0",
             "sourceHandle": "openAIEmbeddings_0-output-openAIEmbeddings-OpenAIEmbeddings|Embeddings",
-            "target": "pinecone_0",
-            "targetHandle": "pinecone_0-input-embeddings-Embeddings",
+            "target": "faiss_0",
+            "targetHandle": "faiss_0-input-embeddings-Embeddings",
             "type": "buttonedge",
-            "id": "openAIEmbeddings_0-openAIEmbeddings_0-output-openAIEmbeddings-OpenAIEmbeddings|Embeddings-pinecone_0-pinecone_0-input-embeddings-Embeddings",
-            "data": {
-                "label": ""
-            }
+            "id": "openAIEmbeddings_0-openAIEmbeddings_0-output-openAIEmbeddings-OpenAIEmbeddings|Embeddings-faiss_0-faiss_0-input-embeddings-Embeddings"
         },
         {
-            "source": "pinecone_0",
-            "sourceHandle": "pinecone_0-output-retriever-Pinecone|VectorStoreRetriever|BaseRetriever",
+            "source": "documentStore_0",
+            "sourceHandle": "documentStore_0-output-document-Document|json",
+            "target": "faiss_0",
+            "targetHandle": "faiss_0-input-document-Document",
+            "type": "buttonedge",
+            "id": "documentStore_0-documentStore_0-output-document-Document|json-faiss_0-faiss_0-input-document-Document"
+        },
+        {
+            "source": "faiss_0",
+            "sourceHandle": "faiss_0-output-retriever-Faiss|VectorStoreRetriever|BaseRetriever",
             "target": "conversationalRetrievalQAChain_0",
             "targetHandle": "conversationalRetrievalQAChain_0-input-vectorStoreRetriever-BaseRetriever",
             "type": "buttonedge",
-            "id": "pinecone_0-pinecone_0-output-retriever-Pinecone|VectorStoreRetriever|BaseRetriever-conversationalRetrievalQAChain_0-conversationalRetrievalQAChain_0-input-vectorStoreRetriever-BaseRetriever",
-            "data": {
-                "label": ""
-            }
+            "id": "faiss_0-faiss_0-output-retriever-Faiss|VectorStoreRetriever|BaseRetriever-conversationalRetrievalQAChain_0-conversationalRetrievalQAChain_0-input-vectorStoreRetriever-BaseRetriever"
         },
         {
-            "source": "chatOpenAI_0",
-            "sourceHandle": "chatOpenAI_0-output-chatOpenAI-ChatOpenAI|BaseChatModel|BaseLanguageModel|Runnable",
+            "source": "chatMistralAI_0",
+            "sourceHandle": "chatMistralAI_0-output-chatMistralAI-ChatMistralAI|BaseChatModel|BaseLanguageModel|Runnable",
             "target": "conversationalRetrievalQAChain_0",
             "targetHandle": "conversationalRetrievalQAChain_0-input-model-BaseChatModel",
             "type": "buttonedge",
-            "id": "chatOpenAI_0-chatOpenAI_0-output-chatOpenAI-ChatOpenAI|BaseChatModel|BaseLanguageModel|Runnable-conversationalRetrievalQAChain_0-conversationalRetrievalQAChain_0-input-model-BaseChatModel",
-            "data": {
-                "label": ""
-            }
+            "id": "chatMistralAI_0-chatMistralAI_0-output-chatMistralAI-ChatMistralAI|BaseChatModel|BaseLanguageModel|Runnable-conversationalRetrievalQAChain_0-conversationalRetrievalQAChain_0-input-model-BaseChatModel"
         }
     ]
 }

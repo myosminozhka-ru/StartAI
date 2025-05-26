@@ -18,17 +18,48 @@ class CustomTool_Tools implements INode {
     constructor() {
         this.label = 'Custom Tool'
         this.name = 'customTool'
-        this.version = 1.0
+        this.version = 3.0
         this.type = 'CustomTool'
         this.icon = 'customtool.svg'
         this.category = 'Tools'
-        this.description = `Use custom tool you've created in StartAI within chatflow`
+        this.description = `Use custom tool you've created in Flowise within chatflow`
         this.inputs = [
             {
                 label: 'Select Tool',
                 name: 'selectedTool',
                 type: 'asyncOptions',
                 loadMethod: 'listTools'
+            },
+            {
+                label: 'Return Direct',
+                name: 'returnDirect',
+                description: 'Return the output of the tool directly to the user',
+                type: 'boolean',
+                optional: true
+            },
+            {
+                label: 'Пользовательское название инструмента',
+                name: 'customToolName',
+                type: 'string',
+                hidden: true
+            },
+            {
+                label: 'Custom Tool Description',
+                name: 'customToolDesc',
+                type: 'string',
+                hidden: true
+            },
+            {
+                label: 'Custom Tool Schema',
+                name: 'customToolSchema',
+                type: 'string',
+                hidden: true
+            },
+            {
+                label: 'Custom Tool Func',
+                name: 'customToolFunc',
+                type: 'string',
+                hidden: true
             }
         ]
         this.baseClasses = [this.type, 'Tool', ...getBaseClasses(DynamicStructuredTool)]
@@ -66,6 +97,7 @@ class CustomTool_Tools implements INode {
         const customToolName = nodeData.inputs?.customToolName as string
         const customToolDesc = nodeData.inputs?.customToolDesc as string
         const customToolSchema = nodeData.inputs?.customToolSchema as string
+        const customToolReturnDirect = nodeData.inputs?.returnDirect as boolean
 
         const appDataSource = options.appDataSource as DataSource
         const databaseEntities = options.databaseEntities as IDatabaseEntity
@@ -97,6 +129,7 @@ class CustomTool_Tools implements INode {
             let dynamicStructuredTool = new DynamicStructuredTool(obj)
             dynamicStructuredTool.setVariables(variables)
             dynamicStructuredTool.setFlowObject(flow)
+            dynamicStructuredTool.returnDirect = customToolReturnDirect
 
             return dynamicStructuredTool
         } catch (e) {

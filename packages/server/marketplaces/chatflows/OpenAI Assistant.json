@@ -1,9 +1,7 @@
 {
-    "description": "Ассистент OpenAI, который имеет инструкции и может использовать модели, инструменты и знания для ответа на запросы пользователей",
-    "title": "Ассистент OpenAI",
-    "categories": "Custom Tool, SerpAPI,OpenAI Assistant,Calculator Tool,Langchain",
-    "framework": "Langchain",
-    "badge": "NEW",
+    "description": "OpenAI Assistant that has instructions and can leverage models, tools, and knowledge to respond to user queries",
+    "usecases": ["Agent"],
+    "framework": ["Langchain"],
     "nodes": [
         {
             "id": "openAIAssistant_0",
@@ -187,7 +185,7 @@
                 "type": "CustomTool",
                 "baseClasses": ["CustomTool", "Tool", "StructuredTool", "Runnable"],
                 "category": "Tools",
-                "description": "Use custom tool you've created in StartAI within chatflow",
+                "description": "Use custom tool you've created in Flowise within chatflow",
                 "inputParams": [
                     {
                         "label": "Select Tool",

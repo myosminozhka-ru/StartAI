@@ -66,7 +66,7 @@ const StarterPrompts = ({ dialogProps }) => {
             })
             if (saveResp.data) {
                 enqueueSnackbar({
-                    message: 'Подсказки для начала беседы сохранены.',
+                    message: 'Conversation Starter Prompts Saved',
                     options: {
                         key: new Date().getTime() + Math.random(),
                         variant: 'success',
@@ -81,7 +81,7 @@ const StarterPrompts = ({ dialogProps }) => {
             }
         } catch (error) {
             enqueueSnackbar({
-                message: `Не удалось сохранить подсказки для начала разговора: ${
+                message: `Failed to save Conversation Starter Prompts: ${
                     typeof error.response.data === 'object' ? error.response.data.message : error.response.data
                 }`,
                 options: {
@@ -150,7 +150,7 @@ const StarterPrompts = ({ dialogProps }) => {
                 >
                     <IconBulb size={30} color='#2d6a4f' />
                     <span style={{ color: '#2d6a4f', marginLeft: 10, fontWeight: 500 }}>
-                        Стартовые подсказки будут отображаться только в том случае, если в чате нет сообщений.
+                        Стартовые приглашения будут отображаться только в том случае, если в чате нет сообщений
                     </span>
                 </div>
             </div>

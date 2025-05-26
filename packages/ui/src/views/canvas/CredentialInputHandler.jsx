@@ -12,12 +12,13 @@ import CredentialListDialog from '@/views/credentials/CredentialListDialog'
 
 // API
 import credentialsApi from '@/api/credentials'
+import { FLOWISE_CREDENTIAL_ID } from '@/store/constant'
 
 // ===========================|| CredentialInputHandler ||=========================== //
 
 const CredentialInputHandler = ({ inputParam, data, onSelect, disabled = false }) => {
     const ref = useRef(null)
-    const [credentialId, setCredentialId] = useState(data?.credential ?? '')
+    const [credentialId, setCredentialId] = useState(data?.credential || (data?.inputs && data.inputs[FLOWISE_CREDENTIAL_ID]) || '')
     const [showCredentialListDialog, setShowCredentialListDialog] = useState(false)
     const [credentialListDialogProps, setCredentialListDialogProps] = useState({})
     const [showSpecificCredentialDialog, setShowSpecificCredentialDialog] = useState(false)
@@ -27,8 +28,8 @@ const CredentialInputHandler = ({ inputParam, data, onSelect, disabled = false }
     const editCredential = (credentialId) => {
         const dialogProp = {
             type: 'EDIT',
-            cancelButtonName: 'Отмена',
-            confirmButtonName: 'Сохранить',
+            cancelButtonName: 'Cancel',
+            confirmButtonName: 'Save',
             credentialId
         }
         setSpecificCredentialDialogProps(dialogProp)
@@ -47,7 +48,7 @@ const CredentialInputHandler = ({ inputParam, data, onSelect, disabled = false }
             if (componentCredentialsResp.data) {
                 if (Array.isArray(componentCredentialsResp.data)) {
                     const dialogProp = {
-                        title: 'Добавить новые данные',
+                        title: 'Add New Credential',
                         componentsCredentials: componentCredentialsResp.data
                     }
                     setCredentialListDialogProps(dialogProp)
@@ -55,8 +56,8 @@ const CredentialInputHandler = ({ inputParam, data, onSelect, disabled = false }
                 } else {
                     const dialogProp = {
                         type: 'ADD',
-                        cancelButtonName: 'Отмена',
-                        confirmButtonName: 'Добавить',
+                        cancelButtonName: 'Cancel',
+                        confirmButtonName: 'Add',
                         credentialComponent: componentCredentialsResp.data
                     }
                     setSpecificCredentialDialogProps(dialogProp)
@@ -80,8 +81,8 @@ const CredentialInputHandler = ({ inputParam, data, onSelect, disabled = false }
         setShowCredentialListDialog(false)
         const dialogProp = {
             type: 'ADD',
-            cancelButtonName: 'Отмена',
-            confirmButtonName: 'Добавить',
+            cancelButtonName: 'Cancel',
+            confirmButtonName: 'Add',
             credentialComponent
         }
         setSpecificCredentialDialogProps(dialogProp)
@@ -89,7 +90,7 @@ const CredentialInputHandler = ({ inputParam, data, onSelect, disabled = false }
     }
 
     useEffect(() => {
-        setCredentialId(data?.credential ?? '')
+        setCredentialId(data?.credential || (data?.inputs && data.inputs[FLOWISE_CREDENTIAL_ID]) || '')
     }, [data])
 
     return (
@@ -112,7 +113,7 @@ const CredentialInputHandler = ({ inputParam, data, onSelect, disabled = false }
                                 onCreateNew={() => addAsyncOption(inputParam.name)}
                             />
                             {credentialId && (
-                                <IconButton title='Изменить' color='primary' size='small' onClick={() => editCredential(credentialId)}>
+                                <IconButton title='Edit' color='primary' size='small' onClick={() => editCredential(credentialId)}>
                                     <IconEdit />
                                 </IconButton>
                             )}

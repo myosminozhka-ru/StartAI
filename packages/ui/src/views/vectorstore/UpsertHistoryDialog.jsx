@@ -3,11 +3,8 @@ import { createPortal } from 'react-dom'
 import { useDispatch, useSelector } from 'react-redux'
 import { useEffect, useState, forwardRef } from 'react'
 import DatePicker from 'react-datepicker'
-import ru from 'date-fns/locale/ru'
-// import { registerLocale } from 'react-datepicker'
-// import * as ru from 'date-fns/locale/ru'
 import moment from 'moment/moment'
-// registerLocale('ru', ru)
+
 // MUI
 import {
     Stack,
@@ -200,7 +197,7 @@ const UpsertHistoryDialog = ({ show, dialogProps, onCancel }) => {
     const closeSnackbar = (...args) => dispatch(closeSnackbarAction(...args))
 
     const [chatflowUpsertHistory, setChatflowUpsertHistory] = useState([])
-    const [startDate, setStartDate] = useState(new Date().setMonth(new Date().getMonth() - 1))
+    const [startDate, setStartDate] = useState(new Date(new Date().setMonth(new Date().getMonth() - 1)))
     const [endDate, setEndDate] = useState(new Date())
     const [selected, setSelected] = useState([])
 
@@ -214,17 +211,21 @@ const UpsertHistoryDialog = ({ show, dialogProps, onCancel }) => {
     }
 
     const onStartDateSelected = (date) => {
-        setStartDate(date)
+        const updatedDate = new Date(date)
+        updatedDate.setHours(0, 0, 0, 0)
+        setStartDate(updatedDate)
         getUpsertHistoryApi.request(dialogProps.chatflow.id, {
-            startDate: date,
+            startDate: updatedDate,
             endDate: endDate
         })
     }
 
     const onEndDateSelected = (date) => {
-        setEndDate(date)
+        const updatedDate = new Date(date)
+        updatedDate.setHours(23, 59, 59, 999)
+        setEndDate(updatedDate)
         getUpsertHistoryApi.request(dialogProps.chatflow.id, {
-            endDate: date,
+            endDate: updatedDate,
             startDate: startDate
         })
     }
@@ -296,7 +297,7 @@ const UpsertHistoryDialog = ({ show, dialogProps, onCancel }) => {
 
         return () => {
             setChatflowUpsertHistory([])
-            setStartDate(new Date().setMonth(new Date().getMonth() - 1))
+            setStartDate(new Date(new Date().setMonth(new Date().getMonth() - 1)))
             setEndDate(new Date())
         }
 
@@ -325,7 +326,7 @@ const UpsertHistoryDialog = ({ show, dialogProps, onCancel }) => {
                 <>
                     <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', width: '100%', marginBottom: 10 }}>
                         <div style={{ marginRight: 10 }}>
-                            <b style={{ marginRight: 10 }}>Дата от:</b>
+                            <b style={{ marginRight: 10 }}>From Date</b>
                             <DatePicker
                                 selected={startDate}
                                 onChange={(date) => onStartDateSelected(date)}
@@ -333,11 +334,10 @@ const UpsertHistoryDialog = ({ show, dialogProps, onCancel }) => {
                                 startDate={startDate}
                                 endDate={endDate}
                                 customInput={<DatePickerCustomInput />}
-                                locale={ru}
                             />
                         </div>
                         <div style={{ marginRight: 10 }}>
-                            <b style={{ marginRight: 10 }}>Дата до:</b>
+                            <b style={{ marginRight: 10 }}>To Date</b>
                             <DatePicker
                                 selected={endDate}
                                 onChange={(date) => onEndDateSelected(date)}
@@ -347,7 +347,6 @@ const UpsertHistoryDialog = ({ show, dialogProps, onCancel }) => {
                                 minDate={startDate}
                                 maxDate={new Date()}
                                 customInput={<DatePickerCustomInput />}
-                                locale={ru}
                             />
                         </div>
                     </div>
@@ -371,7 +370,7 @@ const UpsertHistoryDialog = ({ show, dialogProps, onCancel }) => {
                                     alt='HistoryEmptySVG'
                                 />
                             </Box>
-                            <div>Пока нет вложенной истории</div>
+                            <div>No Upsert History Yet</div>
                         </Stack>
                     )}
                     {chatflowUpsertHistory.length > 0 && (
@@ -445,7 +444,7 @@ const UpsertHistoryDialog = ({ show, dialogProps, onCancel }) => {
                 </>
             </DialogContent>
             <DialogActions>
-                <Button onClick={onCancel}>Закрыть</Button>
+                <Button onClick={onCancel}>Close</Button>
             </DialogActions>
         </Dialog>
     ) : null

@@ -6,7 +6,17 @@ import SelectVariable from './SelectVariable'
 import { cloneDeep } from 'lodash'
 import { getAvailableNodesForVariable } from '@/utils/genericHelper'
 
-export const JsonEditorInput = ({ value, onChange, inputParam, nodes, edges, nodeId, disabled = false, isDarkMode = false }) => {
+export const JsonEditorInput = ({
+    value,
+    onChange,
+    inputParam,
+    nodes,
+    edges,
+    nodeId,
+    disabled = false,
+    isDarkMode = false,
+    isSequentialAgent = false
+}) => {
     const [myValue, setMyValue] = useState(value ? JSON.parse(value) : {})
     const [availableNodesForVariable, setAvailableNodesForVariable] = useState([])
     const [mouseUpKey, setMouseUpKey] = useState('')
@@ -59,7 +69,18 @@ export const JsonEditorInput = ({ value, onChange, inputParam, nodes, edges, nod
                     />
                 )}
                 {!disabled && (
-                    <div key={JSON.stringify(myValue)}>
+                    <div
+                        onClick={(e) => e.stopPropagation()}
+                        onKeyDown={(e) => {
+                            if (e.key === 'Enter' || e.key === ' ') {
+                                e.stopPropagation()
+                            }
+                        }}
+                        role='button'
+                        aria-label='JSON Editor'
+                        tabIndex={0}
+                        key={JSON.stringify(myValue)}
+                    >
                         <ReactJson
                             theme={isDarkMode ? 'ocean' : 'rjv-default'}
                             style={{ padding: 10, borderRadius: 10 }}
@@ -110,6 +131,7 @@ export const JsonEditorInput = ({ value, onChange, inputParam, nodes, edges, nod
                             setNewVal(val)
                             handleClosePopOver()
                         }}
+                        isSequentialAgent={isSequentialAgent}
                     />
                 </Popover>
             )}
@@ -125,5 +147,6 @@ JsonEditorInput.propTypes = {
     inputParam: PropTypes.object,
     nodes: PropTypes.array,
     edges: PropTypes.array,
-    nodeId: PropTypes.string
+    nodeId: PropTypes.string,
+    isSequentialAgent: PropTypes.bool
 }

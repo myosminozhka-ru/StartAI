@@ -3,7 +3,7 @@ import PropTypes from 'prop-types'
 import { useSelector } from 'react-redux'
 
 import { Dialog, DialogContent, DialogTitle, Button } from '@mui/material'
-import { ChatMessage } from './ChatMessage'
+import ChatMessage from './ChatMessage'
 import { StyledButton } from '@/ui-component/button/StyledButton'
 import { IconEraser } from '@tabler/icons-react'
 
@@ -33,12 +33,12 @@ const ChatExpandDialog = ({ show, dialogProps, isAgentCanvas, onClear, onCancel,
                             onClick={onClear}
                             startIcon={<IconEraser />}
                         >
-                            Очистить чат
+                            Clear Chat
                         </StyledButton>
                     )}
                     {!customization.isDarkMode && (
                         <Button variant='outlined' color='error' title='Clear Conversation' onClick={onClear} startIcon={<IconEraser />}>
-                            Очистить чат
+                            Clear Chat
                         </Button>
                     )}
                 </div>

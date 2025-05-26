@@ -1,11 +1,94 @@
 import * as path from 'path'
 import * as fs from 'fs'
+import { hostname } from 'node:os'
 import config from './config' // should be replaced by node-config or similar
 import { createLogger, transports, format } from 'winston'
 import { NextFunction, Request, Response } from 'express'
+import { S3ClientConfig } from '@aws-sdk/client-s3'
+import { LoggingWinston } from '@google-cloud/logging-winston'
+
+const { S3StreamLogger } = require('s3-streamlogger')
 
 const { combine, timestamp, printf, errors } = format
 
+let s3ServerStream: any
+let s3ErrorStream: any
+let s3ServerReqStream: any
+
+let gcsServerStream: any
+let gcsErrorStream: any
+let gcsServerReqStream: any
+
+if (process.env.STORAGE_TYPE === 's3') {
+    const accessKeyId = process.env.S3_STORAGE_ACCESS_KEY_ID
+    const secretAccessKey = process.env.S3_STORAGE_SECRET_ACCESS_KEY
+    const region = process.env.S3_STORAGE_REGION
+    const s3Bucket = process.env.S3_STORAGE_BUCKET_NAME
+    const customURL = process.env.S3_ENDPOINT_URL
+    const forcePathStyle = process.env.S3_FORCE_PATH_STYLE === 'true'
+
+    if (!region || !s3Bucket) {
+        throw new Error('S3 storage configuration is missing')
+    }
+
+    const s3Config: S3ClientConfig = {
+        region: region,
+        endpoint: customURL,
+        forcePathStyle: forcePathStyle
+    }
+
+    if (accessKeyId && secretAccessKey) {
+        s3Config.credentials = {
+            accessKeyId: accessKeyId,
+            secretAccessKey: secretAccessKey
+        }
+    }
+
+    s3ServerStream = new S3StreamLogger({
+        bucket: s3Bucket,
+        folder: 'logs/server',
+        name_format: `server-%Y-%m-%d-%H-%M-%S-%L-${hostname()}.log`,
+        config: s3Config
+    })
+
+    s3ErrorStream = new S3StreamLogger({
+        bucket: s3Bucket,
+        folder: 'logs/error',
+        name_format: `server-error-%Y-%m-%d-%H-%M-%S-%L-${hostname()}.log`,
+        config: s3Config
+    })
+
+    s3ServerReqStream = new S3StreamLogger({
+        bucket: s3Bucket,
+        folder: 'logs/requests',
+        name_format: `server-requests-%Y-%m-%d-%H-%M-%S-%L-${hostname()}.log.jsonl`,
+        config: s3Config
+    })
+}
+
+if (process.env.STORAGE_TYPE === 'gcs') {
+    const config = {
+        projectId: process.env.GOOGLE_CLOUD_STORAGE_PROJ_ID,
+        keyFilename: process.env.GOOGLE_CLOUD_STORAGE_CREDENTIAL,
+        defaultCallback: (err: any) => {
+            if (err) {
+                console.error('Error logging to GCS: ' + err)
+            }
+        }
+    }
+    gcsServerStream = new LoggingWinston({
+        ...config,
+        logName: 'server'
+    })
+    gcsErrorStream = new LoggingWinston({
+        ...config,
+        logName: 'error'
+    })
+    gcsServerReqStream = new LoggingWinston({
+        ...config,
+        logName: 'requests'
+    })
+}
 // expect the log dir be relative to the projects root
 const logDir = config.logging.dir
 
@@ -29,35 +112,65 @@ const logger = createLogger({
     },
     transports: [
         new transports.Console(),
-        new transports.File({
-            filename: path.join(logDir, config.logging.server.filename ?? 'server.log'),
-            level: config.logging.server.level ?? 'info'
-        }),
-        new transports.File({
-            filename: path.join(logDir, config.logging.server.errorFilename ?? 'server-error.log'),
-            level: 'error' // Log only errors to this file
-        })
+        ...(!process.env.STORAGE_TYPE || process.env.STORAGE_TYPE === 'local'
+            ? [
+                  new transports.File({
+                      filename: path.join(logDir, config.logging.server.filename ?? 'server.log'),
+                      level: config.logging.server.level ?? 'info'
+                  }),
+                  new transports.File({
+                      filename: path.join(logDir, config.logging.server.errorFilename ?? 'server-error.log'),
+                      level: 'error' // Log only errors to this file
+                  })
+              ]
+            : []),
+        ...(process.env.STORAGE_TYPE === 's3'
+            ? [
+                  new transports.Stream({
+                      stream: s3ServerStream
+                  })
+              ]
+            : []),
+        ...(process.env.STORAGE_TYPE === 'gcs' ? [gcsServerStream] : [])
     ],
     exceptionHandlers: [
-        new transports.File({
-            filename: path.join(logDir, config.logging.server.errorFilename ?? 'server-error.log')
-        })
+        ...(!process.env.STORAGE_TYPE || process.env.STORAGE_TYPE === 'local'
+            ? [
+                  new transports.File({
+                      filename: path.join(logDir, config.logging.server.errorFilename ?? 'server-error.log')
+                  })
+              ]
+            : []),
+        ...(process.env.STORAGE_TYPE === 's3'
+            ? [
+                  new transports.Stream({
+                      stream: s3ErrorStream
+                  })
+              ]
+            : []),
+        ...(process.env.STORAGE_TYPE === 'gcs' ? [gcsErrorStream] : [])
     ],
     rejectionHandlers: [
-        new transports.File({
-            filename: path.join(logDir, config.logging.server.errorFilename ?? 'server-error.log')
-        })
+        ...(!process.env.STORAGE_TYPE || process.env.STORAGE_TYPE === 'local'
+            ? [
+                  new transports.File({
+                      filename: path.join(logDir, config.logging.server.errorFilename ?? 'server-error.log')
+                  })
+              ]
+            : []),
+        ...(process.env.STORAGE_TYPE === 's3'
+            ? [
+                  new transports.Stream({
+                      stream: s3ErrorStream
+                  })
+              ]
+            : []),
+        ...(process.env.STORAGE_TYPE === 'gcs' ? [gcsErrorStream] : [])
     ]
 })
 
-/**
- * This function is used by express as a middleware.
- * @example
- *   this.app = express()
- *   this.app.use(expressRequestLogger)
- */
 export function expressRequestLogger(req: Request, res: Response, next: NextFunction): void {
-    const unwantedLogURLs = ['/api/v1/node-icon/', '/api/v1/components-credentials-icon/']
+    const unwantedLogURLs = ['/api/v1/node-icon/', '/api/v1/components-credentials-icon/', '/api/v1/ping']
     if (/\/api\/v1\//i.test(req.url) && !unwantedLogURLs.some((url) => new RegExp(url, 'i').test(req.url))) {
         const fileLogger = createLogger({
             format: combine(timestamp({ format: 'YYYY-MM-DD HH:mm:ss' }), format.json(), errors({ stack: true })),
@@ -73,10 +186,22 @@ export function expressRequestLogger(req: Request, res: Response, next: NextFunc
                 }
             },
             transports: [
-                new transports.File({
-                    filename: path.join(logDir, config.logging.express.filename ?? 'server-requests.log.jsonl'),
-                    level: config.logging.express.level ?? 'debug'
-                })
+                ...(!process.env.STORAGE_TYPE || process.env.STORAGE_TYPE === 'local'
+                    ? [
+                          new transports.File({
+                              filename: path.join(logDir, config.logging.express.filename ?? 'server-requests.log.jsonl'),
+                              level: config.logging.express.level ?? 'debug'
+                          })
+                      ]
+                    : []),
+                ...(process.env.STORAGE_TYPE === 's3'
+                    ? [
+                          new transports.Stream({
+                              stream: s3ServerReqStream
+                          })
+                      ]
+                    : []),
+                ...(process.env.STORAGE_TYPE === 'gcs' ? [gcsServerReqStream] : [])
             ]
         })
 

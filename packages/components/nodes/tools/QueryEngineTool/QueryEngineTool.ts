@@ -30,10 +30,10 @@ class QueryEngine_Tools implements INode {
                 type: 'BaseQueryEngine'
             },
             {
-                label: 'Tool Name',
+                label: 'Название инструмента',
                 name: 'toolName',
                 type: 'string',
-                description: 'Tool name must be small capital letter with underscore. Ex: my_tool'
+                description: 'Название инструмента должно быть написано строчными буквами с подчеркиванием. Например: my_tool'
             },
             {
                 label: 'Tool Description',

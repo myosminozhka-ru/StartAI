@@ -45,7 +45,7 @@ const ChatFeedback = ({ dialogProps }) => {
             })
             if (saveResp.data) {
                 enqueueSnackbar({
-                    message: 'Настройки обратной связи в чате сохранены.',
+                    message: 'Настройки обратной связи в чате сохранены',
                     options: {
                         key: new Date().getTime() + Math.random(),
                         variant: 'success',
@@ -92,7 +92,7 @@ const ChatFeedback = ({ dialogProps }) => {
     return (
         <>
             <Box sx={{ width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 2 }}>
-                <SwitchInput label='Включить функционал обратной связи' onChange={handleChange} value={chatFeedbackStatus} />
+                <SwitchInput label='Включить обратную связь в чате' onChange={handleChange} value={chatFeedbackStatus} />
             </Box>
             <StyledButton style={{ marginBottom: 10, marginTop: 10 }} variant='contained' onClick={onSave}>
                 Сохранить

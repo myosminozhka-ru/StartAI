@@ -7,7 +7,8 @@ import {
     IconMessage,
     IconDatabaseExport,
     IconAdjustmentsHorizontal,
-    IconUsers
+    IconUsers,
+    IconTemplate
 } from '@tabler/icons-react'
 
 // constant
@@ -19,7 +20,8 @@ const icons = {
     IconMessage,
     IconDatabaseExport,
     IconAdjustmentsHorizontal,
-    IconUsers
+    IconUsers,
+    IconTemplate
 }
 
 // ==============================|| SETTINGS MENU ITEMS ||============================== //
@@ -31,49 +33,56 @@ const agent_settings = {
     children: [
         {
             id: 'viewMessages',
-            title: 'Посмотреть сообщения',
+            title: 'View Messages',
             type: 'item',
             url: '',
             icon: icons.IconMessage
         },
         {
             id: 'viewLeads',
-            title: 'Посмотреть лидов',
+            title: 'View Leads',
             type: 'item',
             url: '',
             icon: icons.IconUsers
         },
         {
             id: 'chatflowConfiguration',
-            title: 'Конфигурация',
+            title: 'Configuration',
             type: 'item',
             url: '',
             icon: icons.IconAdjustmentsHorizontal
         },
         {
+            id: 'saveAsTemplate',
+            title: 'Save As Template',
+            type: 'item',
+            url: '',
+            icon: icons.IconTemplate
+        },
+        {
             id: 'duplicateChatflow',
-            title: 'Создать дубликат агентов',
+            title: 'Duplicate Agents',
             type: 'item',
             url: '',
             icon: icons.IconCopy
         },
         {
             id: 'loadChatflow',
-            title: 'Загрузить агентов',
+            title: 'Load Agents',
             type: 'item',
             url: '',
             icon: icons.IconFileUpload
         },
         {
             id: 'exportChatflow',
-            title: 'Экспортировать агентов',
+            title: 'Export Agents',
             type: 'item',
             url: '',
             icon: icons.IconFileExport
         },
         {
             id: 'deleteChatflow',
-            title: 'Удалить агентов',
+            title: 'Delete Agents',
             type: 'item',
             url: '',
             icon: icons.IconTrash

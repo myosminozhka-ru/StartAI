@@ -88,7 +88,7 @@ export const File = ({ value, formDataUpload, fileType, onChange, onFormDataChan
                         marginBottom: '1rem'
                     }}
                 >
-                    {myValue ? getFileName(myValue) : 'Выберите файлы для загрузки'}
+                    {myValue ? getFileName(myValue) : 'Choose a file to upload'}
                 </span>
             )}
             <Button
@@ -99,7 +99,7 @@ export const File = ({ value, formDataUpload, fileType, onChange, onFormDataChan
                 startIcon={<IconUpload />}
                 sx={{ marginRight: '1rem' }}
             >
-                {'Загрузить файлы'}
+                {'Upload File'}
                 <input
                     type='file'
                     multiple

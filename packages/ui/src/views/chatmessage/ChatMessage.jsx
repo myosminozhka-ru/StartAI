@@ -1,14 +1,10 @@
-import { useState, useRef, useEffect, useCallback, Fragment } from 'react'
+import { useState, useRef, useEffect, useCallback, Fragment, useContext, memo } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
 import PropTypes from 'prop-types'
-import socketIOClient from 'socket.io-client'
 import { cloneDeep } from 'lodash'
-import rehypeMathjax from 'rehype-mathjax'
-import rehypeRaw from 'rehype-raw'
-import remarkGfm from 'remark-gfm'
-import remarkMath from 'remark-math'
 import axios from 'axios'
 import { v4 as uuidv4 } from 'uuid'
+import { EventStreamContentType, fetchEventSource } from '@microsoft/fetch-event-source'
 
 import {
     Box,
@@ -22,10 +18,14 @@ import {
     InputAdornment,
     OutlinedInput,
     Typography,
-    CardContent,
-    Stack
+    Stack,
+    Dialog,
+    DialogTitle,
+    DialogContent,
+    DialogActions,
+    TextField
 } from '@mui/material'
-import { useTheme } from '@mui/material/styles'
+import { darken, useTheme } from '@mui/material/styles'
 import {
     IconCircleDot,
     IconDownload,
@@ -35,38 +35,46 @@ import {
     IconTrash,
     IconX,
     IconTool,
-    IconSquareFilled
+    IconSquareFilled,
+    IconCheck,
+    IconPaperclip,
+    IconSparkles
 } from '@tabler/icons-react'
 import robotPNG from '@/assets/images/robot.png'
 import userPNG from '@/assets/images/account.png'
 import multiagent_supervisorPNG from '@/assets/images/multiagent_supervisor.png'
 import multiagent_workerPNG from '@/assets/images/multiagent_worker.png'
 import audioUploadSVG from '@/assets/images/wave-sound.jpg'
-import nextAgentGIF from '@/assets/images/next-agent.gif'
 
 // project import
-import { CodeBlock } from '@/ui-component/markdown/CodeBlock'
+import NodeInputHandler from '@/views/canvas/NodeInputHandler'
 import { MemoizedReactMarkdown } from '@/ui-component/markdown/MemoizedReactMarkdown'
 import SourceDocDialog from '@/ui-component/dialog/SourceDocDialog'
 import ChatFeedbackContentDialog from '@/ui-component/dialog/ChatFeedbackContentDialog'
 import StarterPromptsCard from '@/ui-component/cards/StarterPromptsCard'
+import AgentReasoningCard from './AgentReasoningCard'
+import AgentExecutedDataCard from './AgentExecutedDataCard'
 import { ImageButton, ImageSrc, ImageBackdrop, ImageMarked } from '@/ui-component/button/ImageButton'
 import CopyToClipboardButton from '@/ui-component/button/CopyToClipboardButton'
 import ThumbsUpButton from '@/ui-component/button/ThumbsUpButton'
 import ThumbsDownButton from '@/ui-component/button/ThumbsDownButton'
-import './ChatMessage.css'
 import { cancelAudioRecording, startAudioRecording, stopAudioRecording } from './audio-recording'
 import './audio-recording.css'
+import './ChatMessage.css'
 
 // api
 import chatmessageApi from '@/api/chatmessage'
 import chatflowsApi from '@/api/chatflows'
 import predictionApi from '@/api/prediction'
+import vectorstoreApi from '@/api/vectorstore'
+import attachmentsApi from '@/api/attachments'
 import chatmessagefeedbackApi from '@/api/chatmessagefeedback'
 import leadsApi from '@/api/lead'
+import executionsApi from '@/api/executions'
 
 // Hooks
 import useApi from '@/hooks/useApi'
+import { flowContext } from '@/store/context/ReactFlowContext'
 
 // Const
 import { baseURL, maxScroll } from '@/store/constant'
@@ -75,6 +83,10 @@ import { enqueueSnackbar as enqueueSnackbarAction, closeSnackbar as closeSnackba
 // Utils
 import { isValidURL, removeDuplicateURL, setLocalStorageChatflow, getLocalStorageChatflow } from '@/utils/genericHelper'
 import useNotifier from '@/utils/useNotifier'
+import FollowUpPromptsCard from '@/ui-component/cards/FollowUpPromptsCard'
+
+// History
+import { ChatInputHistory } from './ChatInputHistory'
 
 const messageImageStyle = {
     width: '128px',
@@ -82,13 +94,81 @@ const messageImageStyle = {
     objectFit: 'cover'
 }
 
-export const ChatMessage = ({ open, chatflowid, isAgentCanvas, isDialog, previews, setPreviews }) => {
+const CardWithDeleteOverlay = ({ item, disabled, customization, onDelete }) => {
+    const [isHovered, setIsHovered] = useState(false)
+    const defaultBackgroundColor = customization.isDarkMode ? 'rgba(0, 0, 0, 0.3)' : 'transparent'
+
+    return (
+        <div
+            onMouseEnter={() => setIsHovered(true)}
+            onMouseLeave={() => setIsHovered(false)}
+            style={{ position: 'relative', display: 'inline-block' }}
+        >
+            <Card
+                sx={{
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    height: '48px',
+                    width: 'max-content',
+                    p: 2,
+                    mr: 1,
+                    flex: '0 0 auto',
+                    transition: 'opacity 0.3s',
+                    opacity: isHovered ? 1 : 1,
+                    backgroundColor: isHovered ? 'rgba(0, 0, 0, 0.3)' : defaultBackgroundColor
+                }}
+                variant='outlined'
+            >
+                <IconPaperclip size={20} style={{ transition: 'filter 0.3s', filter: isHovered ? 'blur(2px)' : 'none' }} />
+                <span
+                    style={{
+                        marginLeft: '5px',
+                        color: customization.isDarkMode ? 'white' : 'inherit',
+                        transition: 'filter 0.3s',
+                        filter: isHovered ? 'blur(2px)' : 'none'
+                    }}
+                >
+                    {item.name}
+                </span>
+            </Card>
+            {isHovered && !disabled && (
+                <Button
+                    disabled={disabled}
+                    onClick={() => onDelete(item)}
+                    startIcon={<IconTrash color='white' size={22} />}
+                    title='Remove attachment'
+                    sx={{
+                        position: 'absolute',
+                        top: 0,
+                        left: 0,
+                        right: 0,
+                        bottom: 0,
+                        backgroundColor: 'transparent',
+                        '&:hover': {
+                            backgroundColor: 'transparent'
+                        }
+                    }}
+                ></Button>
+            )}
+        </div>
+    )
+}
+
+CardWithDeleteOverlay.propTypes = {
+    item: PropTypes.object,
+    customization: PropTypes.object,
+    disabled: PropTypes.bool,
+    onDelete: PropTypes.func
+}
+
+const ChatMessage = ({ open, chatflowid, isAgentCanvas, isDialog, previews, setPreviews }) => {
     const theme = useTheme()
     const customization = useSelector((state) => state.customization)
 
     const ps = useRef()
 
     const dispatch = useDispatch()
+    const { onAgentflowNodeStatusUpdate, clearAgentflowNodeStatus } = useContext(flowContext)
 
     useNotifier()
     const enqueueSnackbar = (...args) => dispatch(enqueueSnackbarAction(...args))
@@ -98,25 +178,33 @@ export const ChatMessage = ({ open, chatflowid, isAgentCanvas, isDialog, preview
     const [loading, setLoading] = useState(false)
     const [messages, setMessages] = useState([
         {
-            message: 'Всем привет! Чем могу помочь?',
+            message: 'Hi there! How can I help?',
             type: 'apiMessage'
         }
     ])
-    const [socketIOClientId, setSocketIOClientId] = useState('')
     const [isChatFlowAvailableToStream, setIsChatFlowAvailableToStream] = useState(false)
     const [isChatFlowAvailableForSpeech, setIsChatFlowAvailableForSpeech] = useState(false)
     const [sourceDialogOpen, setSourceDialogOpen] = useState(false)
     const [sourceDialogProps, setSourceDialogProps] = useState({})
     const [chatId, setChatId] = useState(uuidv4())
     const [isMessageStopping, setIsMessageStopping] = useState(false)
+    const [uploadedFiles, setUploadedFiles] = useState([])
+    const [imageUploadAllowedTypes, setImageUploadAllowedTypes] = useState('')
+    const [fileUploadAllowedTypes, setFileUploadAllowedTypes] = useState('')
+    const [inputHistory] = useState(new ChatInputHistory(10))
 
     const inputRef = useRef(null)
     const getChatmessageApi = useApi(chatmessageApi.getInternalChatmessageFromChatflow)
+    const getAllExecutionsApi = useApi(executionsApi.getAllExecutions)
     const getIsChatflowStreamingApi = useApi(chatflowsApi.getIsChatflowStreaming)
     const getAllowChatFlowUploads = useApi(chatflowsApi.getAllowChatflowUploads)
     const getChatflowConfig = useApi(chatflowsApi.getSpecificChatflow)
 
     const [starterPrompts, setStarterPrompts] = useState([])
+
+    // full file upload
+    const [fullFileUpload, setFullFileUpload] = useState(false)
+    const [fullFileUploadAllowedTypes, setFullFileUploadAllowedTypes] = useState('*')
 
     // feedback
     const [chatFeedbackStatus, setChatFeedbackStatus] = useState(false)
@@ -131,9 +219,16 @@ export const ChatMessage = ({ open, chatflowid, isAgentCanvas, isDialog, preview
     const [isLeadSaving, setIsLeadSaving] = useState(false)
     const [isLeadSaved, setIsLeadSaved] = useState(false)
 
+    // follow-up prompts
+    const [followUpPromptsStatus, setFollowUpPromptsStatus] = useState(false)
+    const [followUpPrompts, setFollowUpPrompts] = useState([])
+
     // drag & drop and file input
+    const imgUploadRef = useRef(null)
     const fileUploadRef = useRef(null)
-    const [isChatFlowAvailableForUploads, setIsChatFlowAvailableForUploads] = useState(false)
+    const [isChatFlowAvailableForImageUploads, setIsChatFlowAvailableForImageUploads] = useState(false)
+    const [isChatFlowAvailableForFileUploads, setIsChatFlowAvailableForFileUploads] = useState(false)
+    const [isChatFlowAvailableForRAGFileUploads, setIsChatFlowAvailableForRAGFileUploads] = useState(false)
     const [isDragActive, setIsDragActive] = useState(false)
 
     // recording
@@ -141,34 +236,74 @@ export const ChatMessage = ({ open, chatflowid, isAgentCanvas, isDialog, preview
     const [recordingNotSupported, setRecordingNotSupported] = useState(false)
     const [isLoadingRecording, setIsLoadingRecording] = useState(false)
 
+    const [openFeedbackDialog, setOpenFeedbackDialog] = useState(false)
+    const [feedback, setFeedback] = useState('')
+    const [pendingActionData, setPendingActionData] = useState(null)
+    const [feedbackType, setFeedbackType] = useState('')
+
+    // start input type
+    const [startInputType, setStartInputType] = useState('')
+    const [formTitle, setFormTitle] = useState('')
+    const [formDescription, setFormDescription] = useState('')
+    const [formInputsData, setFormInputsData] = useState({})
+    const [formInputParams, setFormInputParams] = useState([])
+
+    const [isConfigLoading, setIsConfigLoading] = useState(true)
+
     const isFileAllowedForUpload = (file) => {
         const constraints = getAllowChatFlowUploads.data
         /**
          * {isImageUploadAllowed: boolean, imgUploadSizeAndTypes: Array<{ fileTypes: string[], maxUploadSize: number }>}
          */
         let acceptFile = false
+
+        // Early return if constraints are not available yet
+        if (!constraints) {
+            console.warn('Upload constraints not loaded yet')
+            return false
+        }
+
         if (constraints.isImageUploadAllowed) {
             const fileType = file.type
             const sizeInMB = file.size / 1024 / 1024
-            constraints.imgUploadSizeAndTypes.map((allowed) => {
-                if (allowed.fileTypes.includes(fileType) && sizeInMB <= allowed.maxUploadSize) {
-                    acceptFile = true
-                }
-            })
+            if (constraints.imgUploadSizeAndTypes && Array.isArray(constraints.imgUploadSizeAndTypes)) {
+                constraints.imgUploadSizeAndTypes.forEach((allowed) => {
+                    if (allowed.fileTypes && allowed.fileTypes.includes(fileType) && sizeInMB <= allowed.maxUploadSize) {
+                        acceptFile = true
+                    }
+                })
+            }
+        }
+
+        if (fullFileUpload) {
+            return true
+        } else if (constraints.isRAGFileUploadAllowed) {
+            const fileExt = file.name.split('.').pop()
+            if (fileExt && constraints.fileUploadSizeAndTypes && Array.isArray(constraints.fileUploadSizeAndTypes)) {
+                constraints.fileUploadSizeAndTypes.forEach((allowed) => {
+                    if (allowed.fileTypes && allowed.fileTypes.length === 1 && allowed.fileTypes[0] === '*') {
+                        acceptFile = true
+                    } else if (allowed.fileTypes && allowed.fileTypes.includes(`.${fileExt}`)) {
+                        acceptFile = true
+                    }
+                })
+            }
         }
         if (!acceptFile) {
-            alert(`Невозможно загрузить файл. Пожалуйста, проверьте разрешенные типы файлов и максимально допустимый размер.`)
+            alert(`Cannot upload file. Kindly check the allowed file types and maximum allowed size.`)
         }
         return acceptFile
     }
 
     const handleDrop = async (e) => {
-        if (!isChatFlowAvailableForUploads) {
+        if (!isChatFlowAvailableForImageUploads && !isChatFlowAvailableForFileUploads) {
             return
         }
         e.preventDefault()
         setIsDragActive(false)
         let files = []
+        let uploadedFiles = []
+
         if (e.dataTransfer.files.length > 0) {
             for (const file of e.dataTransfer.files) {
                 if (isFileAllowedForUpload(file) === false) {
@@ -176,6 +311,10 @@ export const ChatMessage = ({ open, chatflowid, isAgentCanvas, isDialog, preview
                 }
                 const reader = new FileReader()
                 const { name } = file
+                // Only add files
+                if (!file.type || !imageUploadAllowedTypes.includes(file.type)) {
+                    uploadedFiles.push({ file, type: fullFileUpload ? 'file:full' : 'file:rag' })
+                }
                 files.push(
                     new Promise((resolve) => {
                         reader.onload = (evt) => {
@@ -186,7 +325,7 @@ export const ChatMessage = ({ open, chatflowid, isAgentCanvas, isDialog, preview
                             let previewUrl
                             if (file.type.startsWith('audio/')) {
                                 previewUrl = audioUploadSVG
-                            } else if (file.type.startsWith('image/')) {
+                            } else {
                                 previewUrl = URL.createObjectURL(file)
                             }
                             resolve({
@@ -203,10 +342,12 @@ export const ChatMessage = ({ open, chatflowid, isAgentCanvas, isDialog, preview
             }
 
             const newFiles = await Promise.all(files)
+            setUploadedFiles(uploadedFiles)
             setPreviews((prevPreviews) => [...prevPreviews, ...newFiles])
         }
 
         if (e.dataTransfer.items) {
+            //TODO set files
             for (const item of e.dataTransfer.items) {
                 if (item.kind === 'string' && item.type.match('^text/uri-list')) {
                     item.getAsString((s) => {
@@ -214,7 +355,7 @@ export const ChatMessage = ({ open, chatflowid, isAgentCanvas, isDialog, preview
                             data: s,
                             preview: s,
                             type: 'url',
-                            name: s.substring(s.lastIndexOf('/') + 1)
+                            name: s ? s.substring(s.lastIndexOf('/') + 1) : ''
                         }
                         setPreviews((prevPreviews) => [...prevPreviews, upload])
                     })
@@ -222,14 +363,14 @@ export const ChatMessage = ({ open, chatflowid, isAgentCanvas, isDialog, preview
                     item.getAsString((s) => {
                         if (s.indexOf('href') === -1) return
                         //extract href
-                        let start = s.substring(s.indexOf('href') + 6)
+                        let start = s ? s.substring(s.indexOf('href') + 6) : ''
                         let hrefStr = start.substring(0, start.indexOf('"'))
 
                         let upload = {
                             data: hrefStr,
                             preview: hrefStr,
                             type: 'url',
-                            name: hrefStr.substring(hrefStr.lastIndexOf('/') + 1)
+                            name: hrefStr ? hrefStr.substring(hrefStr.lastIndexOf('/') + 1) : ''
                         }
                         setPreviews((prevPreviews) => [...prevPreviews, upload])
                     })
@@ -244,9 +385,14 @@ export const ChatMessage = ({ open, chatflowid, isAgentCanvas, isDialog, preview
             return
         }
         let files = []
+        let uploadedFiles = []
         for (const file of event.target.files) {
             if (isFileAllowedForUpload(file) === false) {
                 return
+            }
+            // Only add files
+            if (!file.type || !imageUploadAllowedTypes.includes(file.type)) {
+                uploadedFiles.push({ file, type: fullFileUpload ? 'file:full' : 'file:rag' })
             }
             const reader = new FileReader()
             const { name } = file
@@ -271,6 +417,7 @@ export const ChatMessage = ({ open, chatflowid, isAgentCanvas, isDialog, preview
         }
 
         const newFiles = await Promise.all(files)
+        setUploadedFiles(uploadedFiles)
         setPreviews((prevPreviews) => [...prevPreviews, ...newFiles])
         // 👇️ reset file input
         event.target.value = null
@@ -282,7 +429,7 @@ export const ChatMessage = ({ open, chatflowid, isAgentCanvas, isDialog, preview
         if (pos === -1) {
             mimeType = blob.type
         } else {
-            mimeType = blob.type.substring(0, pos)
+            mimeType = blob.type ? blob.type.substring(0, pos) : ''
         }
         // read blob and add to previews
         const reader = new FileReader()
@@ -301,7 +448,7 @@ export const ChatMessage = ({ open, chatflowid, isAgentCanvas, isDialog, preview
     }
 
     const handleDrag = (e) => {
-        if (isChatFlowAvailableForUploads) {
+        if (isChatFlowAvailableForImageUploads || isChatFlowAvailableForFileUploads) {
             e.preventDefault()
             e.stopPropagation()
             if (e.type === 'dragenter' || e.type === 'dragover') {
@@ -341,9 +488,14 @@ export const ChatMessage = ({ open, chatflowid, isAgentCanvas, isDialog, preview
         setPreviews(previews.filter((item) => item !== itemToDelete))
     }
 
-    const handleUploadClick = () => {
+    const handleFileUploadClick = () => {
         // 👇️ open file input box on click of another element
         fileUploadRef.current.click()
+    }
+
+    const handleImageUploadClick = () => {
+        // 👇️ open file input box on click of another element
+        imgUploadRef.current.click()
     }
 
     const clearPreviews = () => {
@@ -395,6 +547,14 @@ export const ChatMessage = ({ open, chatflowid, isAgentCanvas, isDialog, preview
         })
     }
 
+    const updateErrorMessage = (errorMessage) => {
+        setMessages((prevMessages) => {
+            let allMessages = [...cloneDeep(prevMessages)]
+            allMessages.push({ message: errorMessage, type: 'apiMessage' })
+            return allMessages
+        })
+    }
+
     const updateLastMessageSourceDocuments = (sourceDocuments) => {
         setMessages((prevMessages) => {
             let allMessages = [...cloneDeep(prevMessages)]
@@ -408,7 +568,55 @@ export const ChatMessage = ({ open, chatflowid, isAgentCanvas, isDialog, preview
         setMessages((prevMessages) => {
             let allMessages = [...cloneDeep(prevMessages)]
             if (allMessages[allMessages.length - 1].type === 'userMessage') return allMessages
-            allMessages[allMessages.length - 1].agentReasoning = JSON.parse(agentReasoning)
+            allMessages[allMessages.length - 1].agentReasoning = agentReasoning
+            return allMessages
+        })
+    }
+
+    const updateAgentFlowEvent = (event) => {
+        if (event === 'INPROGRESS') {
+            setMessages((prevMessages) => [...prevMessages, { message: '', type: 'apiMessage', agentFlowEventStatus: event }])
+        } else {
+            setMessages((prevMessages) => {
+                let allMessages = [...cloneDeep(prevMessages)]
+                if (allMessages[allMessages.length - 1].type === 'userMessage') return allMessages
+                allMessages[allMessages.length - 1].agentFlowEventStatus = event
+                return allMessages
+            })
+        }
+    }
+
+    const updateAgentFlowExecutedData = (agentFlowExecutedData) => {
+        setMessages((prevMessages) => {
+            let allMessages = [...cloneDeep(prevMessages)]
+            if (allMessages[allMessages.length - 1].type === 'userMessage') return allMessages
+            allMessages[allMessages.length - 1].agentFlowExecutedData = agentFlowExecutedData
+            return allMessages
+        })
+    }
+
+    const updateLastMessageAction = (action) => {
+        setMessages((prevMessages) => {
+            let allMessages = [...cloneDeep(prevMessages)]
+            if (allMessages[allMessages.length - 1].type === 'userMessage') return allMessages
+            allMessages[allMessages.length - 1].action = action
+            return allMessages
+        })
+    }
+
+    const updateLastMessageArtifacts = (artifacts) => {
+        artifacts.forEach((artifact) => {
+            if (artifact.type === 'png' || artifact.type === 'jpeg') {
+                artifact.data = `${baseURL}/api/v1/get-upload-file?chatflowId=${chatflowid}&chatId=${chatId}&fileName=${artifact.data.replace(
+                    'FILE-STORAGE::',
+                    ''
+                )}`
+            }
+        })
+        setMessages((prevMessages) => {
+            let allMessages = [...cloneDeep(prevMessages)]
+            if (allMessages[allMessages.length - 1].type === 'userMessage') return allMessages
+            allMessages[allMessages.length - 1].artifacts = artifacts
             return allMessages
         })
     }
@@ -422,6 +630,28 @@ export const ChatMessage = ({ open, chatflowid, isAgentCanvas, isDialog, preview
                 lastAgentReasoning.push({ nextAgent })
             }
             allMessages[allMessages.length - 1].agentReasoning = lastAgentReasoning
+            return allMessages
+        })
+    }
+
+    const updateLastMessageNextAgentFlow = (nextAgentFlow) => {
+        onAgentflowNodeStatusUpdate(nextAgentFlow)
+    }
+
+    const updateLastMessageUsedTools = (usedTools) => {
+        setMessages((prevMessages) => {
+            let allMessages = [...cloneDeep(prevMessages)]
+            if (allMessages[allMessages.length - 1].type === 'userMessage') return allMessages
+            allMessages[allMessages.length - 1].usedTools = usedTools
+            return allMessages
+        })
+    }
+
+    const updateLastMessageFileAnnotations = (fileAnnotations) => {
+        setMessages((prevMessages) => {
+            let allMessages = [...cloneDeep(prevMessages)]
+            if (allMessages[allMessages.length - 1].type === 'userMessage') return allMessages
+            allMessages[allMessages.length - 1].fileAnnotations = fileAnnotations
             return allMessages
         })
     }
@@ -454,30 +684,12 @@ export const ChatMessage = ({ open, chatflowid, isAgentCanvas, isDialog, preview
         })
     }
 
-    const updateLastMessageUsedTools = (usedTools) => {
-        setMessages((prevMessages) => {
-            let allMessages = [...cloneDeep(prevMessages)]
-            if (allMessages[allMessages.length - 1].type === 'userMessage') return allMessages
-            allMessages[allMessages.length - 1].usedTools = usedTools
-            return allMessages
-        })
-    }
-
-    const updateLastMessageFileAnnotations = (fileAnnotations) => {
-        setMessages((prevMessages) => {
-            let allMessages = [...cloneDeep(prevMessages)]
-            if (allMessages[allMessages.length - 1].type === 'userMessage') return allMessages
-            allMessages[allMessages.length - 1].fileAnnotations = fileAnnotations
-            return allMessages
-        })
-    }
-
-    // Handle errors
-    const handleError = (message = 'Упс! Кажется, произошла ошибка. Пожалуйста, попробуйте еще раз.') => {
-        message = message.replace(`Невозможно проанализировать ответ JSON от агента чата..\n\n`, '')
+    const handleError = (message = 'Oops! There seems to be an error. Please try again.') => {
+        message = message.replace(`Unable to parse JSON response from chat agent.\n\n`, '')
         setMessages((prevMessages) => [...prevMessages, { message, type: 'apiMessage' }])
         setLoading(false)
         setUserInput('')
+        setUploadedFiles([])
         setTimeout(() => {
             inputRef.current?.focus()
         }, 100)
@@ -488,23 +700,185 @@ export const ChatMessage = ({ open, chatflowid, isAgentCanvas, isDialog, preview
         handleSubmit(undefined, promptStarterInput)
     }
 
+    const handleFollowUpPromptClick = async (promptStarterInput) => {
+        setUserInput(promptStarterInput)
+        setFollowUpPrompts([])
+        handleSubmit(undefined, promptStarterInput)
+    }
+
+    const onSubmitResponse = (actionData, feedback = '', type = '') => {
+        let fbType = feedbackType
+        if (type) {
+            fbType = type
+        }
+        const question = feedback ? feedback : fbType.charAt(0).toUpperCase() + fbType.slice(1)
+        handleSubmit(undefined, question, undefined, {
+            type: fbType,
+            startNodeId: actionData?.nodeId,
+            feedback
+        })
+    }
+
+    const handleSubmitFeedback = () => {
+        if (pendingActionData) {
+            onSubmitResponse(pendingActionData, feedback)
+            setOpenFeedbackDialog(false)
+            setFeedback('')
+            setPendingActionData(null)
+            setFeedbackType('')
+        }
+    }
+
+    const handleActionClick = async (elem, action) => {
+        setUserInput(elem.label)
+        setMessages((prevMessages) => {
+            let allMessages = [...cloneDeep(prevMessages)]
+            if (allMessages[allMessages.length - 1].type === 'userMessage') return allMessages
+            allMessages[allMessages.length - 1].action = null
+            return allMessages
+        })
+        if (elem.type.includes('agentflowv2')) {
+            const type = elem.type.includes('approve') ? 'proceed' : 'reject'
+            setFeedbackType(type)
+
+            if (action.data && action.data.input && action.data.input.humanInputEnableFeedback) {
+                setPendingActionData(action.data)
+                setOpenFeedbackDialog(true)
+            } else {
+                onSubmitResponse(action.data, '', type)
+            }
+        } else {
+            handleSubmit(undefined, elem.label, action)
+        }
+    }
+
+    const updateMetadata = (data, input) => {
+        // set message id that is needed for feedback
+        if (data.chatMessageId) {
+            setMessages((prevMessages) => {
+                let allMessages = [...cloneDeep(prevMessages)]
+                if (allMessages[allMessages.length - 1].type === 'apiMessage') {
+                    allMessages[allMessages.length - 1].id = data.chatMessageId
+                }
+                return allMessages
+            })
+        }
+
+        if (data.chatId) {
+            setChatId(data.chatId)
+        }
+
+        if (input === '' && data.question) {
+            // the response contains the question even if it was in an audio format
+            // so if input is empty but the response contains the question, update the user message to show the question
+            setMessages((prevMessages) => {
+                let allMessages = [...cloneDeep(prevMessages)]
+                if (allMessages[allMessages.length - 2].type === 'apiMessage') return allMessages
+                allMessages[allMessages.length - 2].message = data.question
+                return allMessages
+            })
+        }
+
+        if (data.followUpPrompts) {
+            const followUpPrompts = JSON.parse(data.followUpPrompts)
+            if (typeof followUpPrompts === 'string') {
+                setFollowUpPrompts(JSON.parse(followUpPrompts))
+            } else {
+                setFollowUpPrompts(followUpPrompts)
+            }
+        }
+    }
+
+    const handleFileUploads = async (uploads) => {
+        if (!uploadedFiles.length) return uploads
+
+        if (fullFileUpload) {
+            const filesWithFullUploadType = uploadedFiles.filter((file) => file.type === 'file:full')
+            if (filesWithFullUploadType.length > 0) {
+                const formData = new FormData()
+                for (const file of filesWithFullUploadType) {
+                    formData.append('files', file.file)
+                }
+                formData.append('chatId', chatId)
+
+                const response = await attachmentsApi.createAttachment(chatflowid, chatId, formData)
+                const data = response.data
+
+                for (const extractedFileData of data) {
+                    const content = extractedFileData.content
+                    const fileName = extractedFileData.name
+
+                    // find matching name in previews and replace data with content
+                    const uploadIndex = uploads.findIndex((upload) => upload.name === fileName)
+
+                    if (uploadIndex !== -1) {
+                        uploads[uploadIndex] = {
+                            ...uploads[uploadIndex],
+                            data: content,
+                            name: fileName,
+                            type: 'file:full'
+                        }
+                    }
+                }
+            }
+        } else if (isChatFlowAvailableForRAGFileUploads) {
+            const filesWithRAGUploadType = uploadedFiles.filter((file) => file.type === 'file:rag')
+
+            if (filesWithRAGUploadType.length > 0) {
+                const formData = new FormData()
+                for (const file of filesWithRAGUploadType) {
+                    formData.append('files', file.file)
+                }
+                formData.append('chatId', chatId)
+
+                await vectorstoreApi.upsertVectorStoreWithFormData(chatflowid, formData)
+
+                // delay for vector store to be updated
+                const delay = (delayInms) => {
+                    return new Promise((resolve) => setTimeout(resolve, delayInms))
+                }
+                await delay(2500) //TODO: check if embeddings can be retrieved using file name as metadata filter
+
+                uploads = uploads.map((upload) => {
+                    return {
+                        ...upload,
+                        type: 'file:rag'
+                    }
+                })
+            }
+        }
+        return uploads
+    }
+
     // Handle form submission
-    const handleSubmit = async (e, promptStarterInput) => {
+    const handleSubmit = async (e, selectedInput, action, humanInput) => {
         if (e) e.preventDefault()
 
-        if (!promptStarterInput && userInput.trim() === '') {
-            const containsAudio = previews.filter((item) => item.type === 'audio').length > 0
-            if (!(previews.length >= 1 && containsAudio)) {
+        if (!selectedInput && userInput.trim() === '') {
+            const containsFile = previews.filter((item) => !item.mime.startsWith('image') && item.type !== 'audio').length > 0
+            if (!previews.length || (previews.length && containsFile)) {
                 return
             }
         }
 
         let input = userInput
 
-        if (promptStarterInput !== undefined && promptStarterInput.trim() !== '') input = promptStarterInput
+        if (typeof selectedInput === 'string') {
+            if (selectedInput !== undefined && selectedInput.trim() !== '') input = selectedInput
+
+            if (input.trim()) {
+                inputHistory.addToHistory(input)
+            }
+        } else if (typeof selectedInput === 'object') {
+            input = Object.entries(selectedInput)
+                .map(([key, value]) => `${key}: ${value}`)
+                .join('\n')
+        }
 
         setLoading(true)
-        const urls = previews.map((item) => {
+        clearAgentflowNodeStatus()
+
+        let uploads = previews.map((item) => {
             return {
                 data: item.data,
                 type: item.type,
@@ -512,8 +886,16 @@ export const ChatMessage = ({ open, chatflowid, isAgentCanvas, isDialog, preview
                 mime: item.mime
             }
         })
+
+        try {
+            uploads = await handleFileUploads(uploads)
+        } catch (error) {
+            handleError('Unable to upload documents')
+            return
+        }
+
         clearPreviews()
-        setMessages((prevMessages) => [...prevMessages, { message: input, type: 'userMessage', fileUploads: urls }])
+        setMessages((prevMessages) => [...prevMessages, { message: input, type: 'userMessage', fileUploads: uploads }])
 
         // Send user question to Prediction Internal API
         try {
@@ -521,37 +903,24 @@ export const ChatMessage = ({ open, chatflowid, isAgentCanvas, isDialog, preview
                 question: input,
                 chatId
             }
-            if (urls && urls.length > 0) params.uploads = urls
+            if (typeof selectedInput === 'object') {
+                params.form = selectedInput
+                delete params.question
+            }
+            if (uploads && uploads.length > 0) params.uploads = uploads
             if (leadEmail) params.leadEmail = leadEmail
-            if (isChatFlowAvailableToStream) params.socketIOClientId = socketIOClientId
+            if (action) params.action = action
+            if (humanInput) params.humanInput = humanInput
 
-            const response = await predictionApi.sendMessageAndGetPrediction(chatflowid, params)
+            if (isChatFlowAvailableToStream) {
+                fetchResponseFromEventStream(chatflowid, params)
+            } else {
+                const response = await predictionApi.sendMessageAndGetPrediction(chatflowid, params)
+                if (response.data) {
+                    const data = response.data
 
-            if (response.data) {
-                const data = response.data
+                    updateMetadata(data, input)
 
-                setMessages((prevMessages) => {
-                    let allMessages = [...cloneDeep(prevMessages)]
-                    if (allMessages[allMessages.length - 1].type === 'apiMessage') {
-                        allMessages[allMessages.length - 1].id = data?.chatMessageId
-                    }
-                    return allMessages
-                })
-
-                setChatId(data.chatId)
-
-                if (input === '' && data.question) {
-                    // the response contains the question even if it was in an audio format
-                    // so if input is empty but the response contains the question, update the user message to show the question
-                    setMessages((prevMessages) => {
-                        let allMessages = [...cloneDeep(prevMessages)]
-                        if (allMessages[allMessages.length - 2].type === 'apiMessage') return allMessages
-                        allMessages[allMessages.length - 2].message = data.question
-                        return allMessages
-                    })
-                }
-
-                if (!isChatFlowAvailableToStream) {
                     let text = ''
                     if (data.text) text = data.text
                     else if (data.json) text = '```json\n' + JSON.stringify(data.json, null, 2)
@@ -564,20 +933,26 @@ export const ChatMessage = ({ open, chatflowid, isAgentCanvas, isDialog, preview
                             id: data?.chatMessageId,
                             sourceDocuments: data?.sourceDocuments,
                             usedTools: data?.usedTools,
+                            calledTools: data?.calledTools,
                             fileAnnotations: data?.fileAnnotations,
                             agentReasoning: data?.agentReasoning,
+                            agentFlowExecutedData: data?.agentFlowExecutedData,
+                            action: data?.action,
+                            artifacts: data?.artifacts,
                             type: 'apiMessage',
                             feedback: null
                         }
                     ])
+
+                    setLocalStorageChatflow(chatflowid, data.chatId)
+                    setLoading(false)
+                    setUserInput('')
+                    setUploadedFiles([])
+                    setTimeout(() => {
+                        inputRef.current?.focus()
+                        scrollToBottom()
+                    }, 100)
                 }
-                setLocalStorageChatflow(chatflowid, data.chatId)
-                setLoading(false)
-                setUserInput('')
-                setTimeout(() => {
-                    inputRef.current?.focus()
-                    scrollToBottom()
-                }, 100)
             }
         } catch (error) {
             handleError(error.response.data.message)
@@ -585,17 +960,147 @@ export const ChatMessage = ({ open, chatflowid, isAgentCanvas, isDialog, preview
         }
     }
 
+    const fetchResponseFromEventStream = async (chatflowid, params) => {
+        const chatId = params.chatId
+        const input = params.question
+        const username = localStorage.getItem('username')
+        const password = localStorage.getItem('password')
+        params.streaming = true
+        await fetchEventSource(`${baseURL}/api/v1/internal-prediction/${chatflowid}`, {
+            openWhenHidden: true,
+            method: 'POST',
+            body: JSON.stringify(params),
+            headers: {
+                'Content-Type': 'application/json',
+                Authorization: username && password ? `Basic ${btoa(`${username}:${password}`)}` : undefined,
+                'x-request-from': 'internal'
+            },
+            async onopen(response) {
+                if (response.ok && response.headers.get('content-type') === EventStreamContentType) {
+                    //console.log('EventSource Open')
+                }
+            },
+            async onmessage(ev) {
+                const payload = JSON.parse(ev.data)
+                switch (payload.event) {
+                    case 'start':
+                        setMessages((prevMessages) => [...prevMessages, { message: '', type: 'apiMessage' }])
+                        break
+                    case 'token':
+                        updateLastMessage(payload.data)
+                        break
+                    case 'sourceDocuments':
+                        updateLastMessageSourceDocuments(payload.data)
+                        break
+                    case 'usedTools':
+                        updateLastMessageUsedTools(payload.data)
+                        break
+                    case 'fileAnnotations':
+                        updateLastMessageFileAnnotations(payload.data)
+                        break
+                    case 'agentReasoning':
+                        updateLastMessageAgentReasoning(payload.data)
+                        break
+                    case 'agentFlowEvent':
+                        updateAgentFlowEvent(payload.data)
+                        break
+                    case 'agentFlowExecutedData':
+                        updateAgentFlowExecutedData(payload.data)
+                        break
+                    case 'artifacts':
+                        updateLastMessageArtifacts(payload.data)
+                        break
+                    case 'action':
+                        updateLastMessageAction(payload.data)
+                        break
+                    case 'nextAgent':
+                        updateLastMessageNextAgent(payload.data)
+                        break
+                    case 'nextAgentFlow':
+                        updateLastMessageNextAgentFlow(payload.data)
+                        break
+                    case 'metadata':
+                        updateMetadata(payload.data, input)
+                        break
+                    case 'error':
+                        updateErrorMessage(payload.data)
+                        break
+                    case 'abort':
+                        abortMessage(payload.data)
+                        closeResponse()
+                        break
+                    case 'end':
+                        setLocalStorageChatflow(chatflowid, chatId)
+                        closeResponse()
+                        break
+                }
+            },
+            async onclose() {
+                closeResponse()
+            },
+            async onerror(err) {
+                console.error('EventSource Error: ', err)
+                closeResponse()
+                throw err
+            }
+        })
+    }
+
+    const closeResponse = () => {
+        setLoading(false)
+        setUserInput('')
+        setUploadedFiles([])
+        setTimeout(() => {
+            inputRef.current?.focus()
+            scrollToBottom()
+        }, 100)
+    }
     // Prevent blank submissions and allow for multiline input
     const handleEnter = (e) => {
         // Check if IME composition is in progress
         const isIMEComposition = e.isComposing || e.keyCode === 229
-        if (e.key === 'Enter' && userInput && !isIMEComposition) {
+        if (e.key === 'ArrowUp' && !isIMEComposition) {
+            e.preventDefault()
+            const previousInput = inputHistory.getPreviousInput(userInput)
+            setUserInput(previousInput)
+        } else if (e.key === 'ArrowDown' && !isIMEComposition) {
+            e.preventDefault()
+            const nextInput = inputHistory.getNextInput()
+            setUserInput(nextInput)
+        } else if (e.key === 'Enter' && userInput && !isIMEComposition) {
             if (!e.shiftKey && userInput) {
                 handleSubmit(e)
             }
         } else if (e.key === 'Enter') {
             e.preventDefault()
         }
+    }
+
+    const getLabel = (URL, source) => {
+        if (URL && typeof URL === 'object') {
+            if (URL.pathname && typeof URL.pathname === 'string') {
+                if (URL.pathname.substring(0, 15) === '/') {
+                    return URL.host || ''
+                } else {
+                    return `${URL.pathname.substring(0, 15)}...`
+                }
+            } else if (URL.host) {
+                return URL.host
+            }
+        }
+
+        if (source && source.pageContent && typeof source.pageContent === 'string') {
+            return `${source.pageContent.substring(0, 15)}...`
+        }
+
+        return ''
+    }
+
+    const getFileUploadAllowedTypes = () => {
+        if (fullFileUpload) {
+            return fullFileUploadAllowedTypes === '' ? '*' : fullFileUploadAllowedTypes
+        }
+        return fileUploadAllowedTypes.includes('*') ? '*' : fileUploadAllowedTypes || '*'
     }
 
     const downloadFile = async (fileAnnotation) => {
@@ -614,7 +1119,17 @@ export const ChatMessage = ({ open, chatflowid, isAgentCanvas, isDialog, preview
             link.click()
             link.remove()
         } catch (error) {
-            console.error('Загрузка не удалась:', error)
+            console.error('Download failed:', error)
+        }
+    }
+
+    const getAgentIcon = (nodeName, instructions) => {
+        if (nodeName) {
+            return `${baseURL}/api/v1/node-icon/${nodeName}`
+        } else if (instructions) {
+            return multiagent_supervisorPNG
+        } else {
+            return multiagent_workerPNG
         }
     }
 
@@ -630,18 +1145,33 @@ export const ChatMessage = ({ open, chatflowid, isAgentCanvas, isDialog, preview
                     feedback: message.feedback,
                     type: message.role
                 }
-                if (message.sourceDocuments) obj.sourceDocuments = JSON.parse(message.sourceDocuments)
-                if (message.usedTools) obj.usedTools = JSON.parse(message.usedTools)
-                if (message.fileAnnotations) obj.fileAnnotations = JSON.parse(message.fileAnnotations)
-                if (message.agentReasoning) obj.agentReasoning = JSON.parse(message.agentReasoning)
+                if (message.sourceDocuments) obj.sourceDocuments = message.sourceDocuments
+                if (message.usedTools) obj.usedTools = message.usedTools
+                if (message.fileAnnotations) obj.fileAnnotations = message.fileAnnotations
+                if (message.agentReasoning) obj.agentReasoning = message.agentReasoning
+                if (message.action) obj.action = message.action
+                if (message.artifacts) {
+                    obj.artifacts = message.artifacts
+                    obj.artifacts.forEach((artifact) => {
+                        if (artifact.type === 'png' || artifact.type === 'jpeg') {
+                            artifact.data = `${baseURL}/api/v1/get-upload-file?chatflowId=${chatflowid}&chatId=${chatId}&fileName=${artifact.data.replace(
+                                'FILE-STORAGE::',
+                                ''
+                            )}`
+                        }
+                    })
+                }
                 if (message.fileUploads) {
-                    obj.fileUploads = JSON.parse(message.fileUploads)
+                    obj.fileUploads = message.fileUploads
                     obj.fileUploads.forEach((file) => {
                         if (file.type === 'stored-file') {
                             file.data = `${baseURL}/api/v1/get-upload-file?chatflowId=${chatflowid}&chatId=${chatId}&fileName=${file.name}`
                         }
                     })
                 }
+                if (message.followUpPrompts) obj.followUpPrompts = JSON.parse(message.followUpPrompts)
+                if (message.role === 'apiMessage' && message.execution && message.execution.executionData)
+                    obj.agentFlowExecutedData = JSON.parse(message.execution.executionData)
                 return obj
             })
             setMessages((prevMessages) => [...prevMessages, ...loadedMessages])
@@ -650,6 +1180,25 @@ export const ChatMessage = ({ open, chatflowid, isAgentCanvas, isDialog, preview
 
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [getChatmessageApi.data])
+
+    useEffect(() => {
+        if (getAllExecutionsApi.data?.length) {
+            const chatId = getAllExecutionsApi.data[0]?.sessionId
+            setChatId(chatId)
+            const loadedMessages = getAllExecutionsApi.data.map((execution) => {
+                const executionData =
+                    typeof execution.executionData === 'string' ? JSON.parse(execution.executionData) : execution.executionData
+                const obj = {
+                    id: execution.id,
+                    agentFlow: executionData
+                }
+                return obj
+            })
+            setMessages((prevMessages) => [...prevMessages, ...loadedMessages])
+            setLocalStorageChatflow(chatflowid, chatId)
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [getAllExecutionsApi.data])
 
     // Get chatflow streaming capability
     useEffect(() => {
@@ -662,14 +1211,49 @@ export const ChatMessage = ({ open, chatflowid, isAgentCanvas, isDialog, preview
     // Get chatflow uploads capability
     useEffect(() => {
         if (getAllowChatFlowUploads.data) {
-            setIsChatFlowAvailableForUploads(getAllowChatFlowUploads.data?.isImageUploadAllowed ?? false)
+            setIsChatFlowAvailableForImageUploads(getAllowChatFlowUploads.data?.isImageUploadAllowed ?? false)
+            setIsChatFlowAvailableForRAGFileUploads(getAllowChatFlowUploads.data?.isRAGFileUploadAllowed ?? false)
             setIsChatFlowAvailableForSpeech(getAllowChatFlowUploads.data?.isSpeechToTextEnabled ?? false)
+            setImageUploadAllowedTypes(getAllowChatFlowUploads.data?.imgUploadSizeAndTypes.map((allowed) => allowed.fileTypes).join(','))
+            setFileUploadAllowedTypes(getAllowChatFlowUploads.data?.fileUploadSizeAndTypes.map((allowed) => allowed.fileTypes).join(','))
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [getAllowChatFlowUploads.data])
 
     useEffect(() => {
         if (getChatflowConfig.data) {
+            setIsConfigLoading(false)
+            if (getChatflowConfig.data?.flowData) {
+                let nodes = JSON.parse(getChatflowConfig.data?.flowData).nodes ?? []
+                const startNode = nodes.find((node) => node.data.name === 'startAgentflow')
+                if (startNode) {
+                    const startInputType = startNode.data.inputs?.startInputType
+                    setStartInputType(startInputType)
+
+                    const formInputTypes = startNode.data.inputs?.formInputTypes
+                    if (startInputType === 'formInput' && formInputTypes && formInputTypes.length > 0) {
+                        for (const formInputType of formInputTypes) {
+                            if (formInputType.type === 'options') {
+                                formInputType.options = formInputType.addOptions.map((option) => ({
+                                    label: option.option,
+                                    name: option.option
+                                }))
+                            }
+                        }
+                        setFormInputParams(formInputTypes)
+                        setFormInputsData({
+                            id: 'formInput',
+                            inputs: {},
+                            inputParams: formInputTypes
+                        })
+                        setFormTitle(startNode.data.inputs?.formTitle)
+                        setFormDescription(startNode.data.inputs?.formDescription)
+                    }
+
+                    getAllExecutionsApi.request({ agentflowId: chatflowid })
+                }
+            }
+
             if (getChatflowConfig.data?.chatbotConfig && JSON.parse(getChatflowConfig.data?.chatbotConfig)) {
                 let config = JSON.parse(getChatflowConfig.data?.chatbotConfig)
                 if (config.starterPrompts) {
@@ -698,10 +1282,38 @@ export const ChatMessage = ({ open, chatflowid, isAgentCanvas, isDialog, preview
                         })
                     }
                 }
+
+                if (config.followUpPrompts) {
+                    setFollowUpPromptsStatus(config.followUpPrompts.status)
+                }
+
+                if (config.fullFileUpload) {
+                    setFullFileUpload(config.fullFileUpload.status)
+                    if (config.fullFileUpload?.allowedUploadFileTypes) {
+                        setFullFileUploadAllowedTypes(config.fullFileUpload?.allowedUploadFileTypes)
+                    }
+                }
             }
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [getChatflowConfig.data])
+
+    useEffect(() => {
+        if (getChatflowConfig.error) {
+            setIsConfigLoading(false)
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [getChatflowConfig.error])
+
+    useEffect(() => {
+        if (fullFileUpload) {
+            setIsChatFlowAvailableForFileUploads(true)
+        } else if (isChatFlowAvailableForRAGFileUploads) {
+            setIsChatFlowAvailableForFileUploads(true)
+        } else {
+            setIsChatFlowAvailableForFileUploads(false)
+        }
+    }, [isChatFlowAvailableForRAGFileUploads, fullFileUpload])
 
     // Auto scroll chat to bottom
     useEffect(() => {
@@ -717,7 +1329,6 @@ export const ChatMessage = ({ open, chatflowid, isAgentCanvas, isDialog, preview
     }, [isDialog, inputRef])
 
     useEffect(() => {
-        let socket
         if (open && chatflowid) {
             // API request
             getChatmessageApi.request(chatflowid)
@@ -725,10 +1336,13 @@ export const ChatMessage = ({ open, chatflowid, isAgentCanvas, isDialog, preview
             getAllowChatFlowUploads.request(chatflowid)
             getChatflowConfig.request(chatflowid)
 
-            // Scroll to bottom
-            scrollToBottom()
+            // Add a small delay to ensure content is rendered before scrolling
+            setTimeout(() => {
+                scrollToBottom()
+            }, 100)
 
             setIsRecording(false)
+            setIsConfigLoading(true)
 
             // leads
             const savedLead = getLocalStorageChatflow(chatflowid)?.lead
@@ -736,46 +1350,18 @@ export const ChatMessage = ({ open, chatflowid, isAgentCanvas, isDialog, preview
                 setIsLeadSaved(!!savedLead)
                 setLeadEmail(savedLead.email)
             }
-
-            // SocketIO
-            socket = socketIOClient(baseURL)
-
-            socket.on('connect', () => {
-                setSocketIOClientId(socket.id)
-            })
-
-            socket.on('start', () => {
-                setMessages((prevMessages) => [...prevMessages, { message: '', type: 'apiMessage' }])
-            })
-
-            socket.on('sourceDocuments', updateLastMessageSourceDocuments)
-
-            socket.on('usedTools', updateLastMessageUsedTools)
-
-            socket.on('fileAnnotations', updateLastMessageFileAnnotations)
-
-            socket.on('token', updateLastMessage)
-
-            socket.on('agentReasoning', updateLastMessageAgentReasoning)
-
-            socket.on('nextAgent', updateLastMessageNextAgent)
-
-            socket.on('abort', abortMessage)
         }
 
         return () => {
             setUserInput('')
+            setUploadedFiles([])
             setLoading(false)
             setMessages([
                 {
-                    message: 'Всем привет! Чем могу помочь?',
+                    message: 'Hi there! How can I help?',
                     type: 'apiMessage'
                 }
             ])
-            if (socket) {
-                socket.disconnect()
-                setSocketIOClientId('')
-            }
         }
 
         // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -792,11 +1378,28 @@ export const ChatMessage = ({ open, chatflowid, isAgentCanvas, isDialog, preview
         // eslint-disable-next-line
     }, [previews])
 
+    useEffect(() => {
+        if (followUpPromptsStatus && messages.length > 0) {
+            const lastMessage = messages[messages.length - 1]
+            if (lastMessage.type === 'apiMessage' && lastMessage.followUpPrompts) {
+                if (Array.isArray(lastMessage.followUpPrompts)) {
+                    setFollowUpPrompts(lastMessage.followUpPrompts)
+                }
+                if (typeof lastMessage.followUpPrompts === 'string') {
+                    const followUpPrompts = JSON.parse(lastMessage.followUpPrompts)
+                    setFollowUpPrompts(followUpPrompts)
+                }
+            } else if (lastMessage.type === 'userMessage') {
+                setFollowUpPrompts([])
+            }
+        }
+    }, [followUpPromptsStatus, messages])
+
     const copyMessageToClipboard = async (text) => {
         try {
             await navigator.clipboard.writeText(text || '')
         } catch (error) {
-            console.error('Ошибка копирования в буфер обмена:', error)
+            console.error('Error copying to clipboard:', error)
         }
     }
 
@@ -899,6 +1502,289 @@ export const ChatMessage = ({ open, chatflowid, isAgentCanvas, isDialog, preview
         setIsLeadSaving(false)
     }
 
+    const getInputDisabled = () => {
+        return (
+            loading ||
+            !chatflowid ||
+            (leadsConfig?.status && !isLeadSaved) ||
+            (messages[messages.length - 1].action && Object.keys(messages[messages.length - 1].action).length > 0)
+        )
+    }
+
+    const previewDisplay = (item) => {
+        if (item.mime.startsWith('image/')) {
+            return (
+                <ImageButton
+                    focusRipple
+                    style={{
+                        width: '48px',
+                        height: '48px',
+                        marginRight: '10px',
+                        flex: '0 0 auto'
+                    }}
+                    disabled={getInputDisabled()}
+                    onClick={() => handleDeletePreview(item)}
+                >
+                    <ImageSrc style={{ backgroundImage: `url(${item.data})` }} />
+                    <ImageBackdrop className='MuiImageBackdrop-root' />
+                    <ImageMarked className='MuiImageMarked-root'>
+                        <IconTrash size={20} color='white' />
+                    </ImageMarked>
+                </ImageButton>
+            )
+        } else if (item.mime.startsWith('audio/')) {
+            return (
+                <Card
+                    sx={{
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        height: '48px',
+                        width: isDialog ? ps?.current?.offsetWidth / 4 : ps?.current?.offsetWidth / 2,
+                        p: 0.5,
+                        mr: 1,
+                        backgroundColor: theme.palette.grey[500],
+                        flex: '0 0 auto'
+                    }}
+                    variant='outlined'
+                >
+                    <CardMedia component='audio' sx={{ color: 'transparent' }} controls src={item.data} />
+                    <IconButton disabled={getInputDisabled()} onClick={() => handleDeletePreview(item)} size='small'>
+                        <IconTrash size={20} color='white' />
+                    </IconButton>
+                </Card>
+            )
+        } else {
+            return (
+                <CardWithDeleteOverlay
+                    disabled={getInputDisabled()}
+                    item={item}
+                    customization={customization}
+                    onDelete={() => handleDeletePreview(item)}
+                />
+            )
+        }
+    }
+
+    const renderFileUploads = (item, index) => {
+        if (item?.mime?.startsWith('image/')) {
+            return (
+                <Card
+                    key={index}
+                    sx={{
+                        p: 0,
+                        m: 0,
+                        maxWidth: 128,
+                        marginRight: '10px',
+                        flex: '0 0 auto'
+                    }}
+                >
+                    <CardMedia component='img' image={item.data} sx={{ height: 64 }} alt={'preview'} style={messageImageStyle} />
+                </Card>
+            )
+        } else if (item?.mime?.startsWith('audio/')) {
+            return (
+                /* eslint-disable jsx-a11y/media-has-caption */
+                <audio controls='controls'>
+                    Your browser does not support the &lt;audio&gt; tag.
+                    <source src={item.data} type={item.mime} />
+                </audio>
+            )
+        } else {
+            return (
+                <Card
+                    sx={{
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        height: '48px',
+                        width: 'max-content',
+                        p: 2,
+                        mr: 1,
+                        flex: '0 0 auto',
+                        backgroundColor: customization.isDarkMode ? 'rgba(0, 0, 0, 0.3)' : 'transparent'
+                    }}
+                    variant='outlined'
+                >
+                    <IconPaperclip size={20} />
+                    <span
+                        style={{
+                            marginLeft: '5px',
+                            color: customization.isDarkMode ? 'white' : 'inherit'
+                        }}
+                    >
+                        {item.name}
+                    </span>
+                </Card>
+            )
+        }
+    }
+
+    const agentReasoningArtifacts = (artifacts) => {
+        const newArtifacts = cloneDeep(artifacts)
+        for (let i = 0; i < newArtifacts.length; i++) {
+            const artifact = newArtifacts[i]
+            if (artifact && (artifact.type === 'png' || artifact.type === 'jpeg')) {
+                const data = artifact.data
+                newArtifacts[i].data = `${baseURL}/api/v1/get-upload-file?chatflowId=${chatflowid}&chatId=${chatId}&fileName=${data.replace(
+                    'FILE-STORAGE::',
+                    ''
+                )}`
+            }
+        }
+        return newArtifacts
+    }
+
+    const renderArtifacts = (item, index, isAgentReasoning) => {
+        if (item.type === 'png' || item.type === 'jpeg') {
+            return (
+                <Card
+                    key={index}
+                    sx={{
+                        p: 0,
+                        m: 0,
+                        mt: 2,
+                        mb: 2,
+                        flex: '0 0 auto'
+                    }}
+                >
+                    <CardMedia
+                        component='img'
+                        image={item.data}
+                        sx={{ height: 'auto' }}
+                        alt={'artifact'}
+                        style={{
+                            width: isAgentReasoning ? '200px' : '100%',
+                            height: isAgentReasoning ? '200px' : 'auto',
+                            objectFit: 'cover'
+                        }}
+                    />
+                </Card>
+            )
+        } else if (item.type === 'html') {
+            return (
+                <div style={{ marginTop: '20px' }}>
+                    <div dangerouslySetInnerHTML={{ __html: item.data }}></div>
+                </div>
+            )
+        } else {
+            return (
+                <MemoizedReactMarkdown chatflowid={chatflowid} isFullWidth={isDialog}>
+                    {item.data}
+                </MemoizedReactMarkdown>
+            )
+        }
+    }
+
+    if (isConfigLoading) {
+        return (
+            <Box
+                sx={{
+                    width: '100%',
+                    height: '100%',
+                    position: 'relative',
+                    backgroundColor: theme.palette.background.paper
+                }}
+            >
+                <Box
+                    sx={{
+                        position: 'absolute',
+                        top: '50%',
+                        left: '50%',
+                        transform: 'translate(-50%, -50%)'
+                    }}
+                >
+                    <CircularProgress />
+                </Box>
+            </Box>
+        )
+    }
+
+    if (startInputType === 'formInput' && messages.length === 1) {
+        return (
+            <Box
+                sx={{
+                    width: '100%',
+                    height: '100%',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    p: 2,
+                    backgroundColor: theme.palette.background.paper
+                }}
+            >
+                <Box
+                    sx={{
+                        width: '100%',
+                        height: '100%',
+                        position: 'relative'
+                    }}
+                >
+                    <Box
+                        sx={{
+                            position: 'absolute',
+                            top: '50%',
+                            left: '50%',
+                            transform: 'translate(-50%, -50%)',
+                            width: '100%',
+                            maxWidth: '600px',
+                            maxHeight: '90%', // Limit height to 90% of parent
+                            p: 3,
+                            backgroundColor: customization.isDarkMode
+                                ? darken(theme.palette.background.paper, 0.2)
+                                : theme.palette.background.paper,
+                            boxShadow: customization.isDarkMode ? '0px 0px 15px 0px rgba(255, 255, 255, 0.1)' : theme.shadows[3],
+                            borderRadius: 2,
+                            overflowY: 'auto' // Enable vertical scrolling if content overflows
+                        }}
+                    >
+                        <Typography variant='h4' sx={{ mb: 1, textAlign: 'center' }}>
+                            {formTitle || 'Please Fill Out The Form'}
+                        </Typography>
+                        <Typography variant='body1' sx={{ mb: 3, textAlign: 'center', color: theme.palette.text.secondary }}>
+                            {formDescription || 'Complete all fields below to continue'}
+                        </Typography>
+
+                        {/* Form inputs */}
+                        <Box sx={{ mb: 3 }}>
+                            {formInputParams &&
+                                formInputParams.map((inputParam, index) => (
+                                    <Box key={index} sx={{ mb: 2 }}>
+                                        <NodeInputHandler
+                                            inputParam={inputParam}
+                                            data={formInputsData}
+                                            isAdditionalParams={true}
+                                            onCustomDataChange={({ inputParam, newValue }) => {
+                                                setFormInputsData((prev) => ({
+                                                    ...prev,
+                                                    inputs: {
+                                                        ...prev.inputs,
+                                                        [inputParam.name]: newValue
+                                                    }
+                                                }))
+                                            }}
+                                        />
+                                    </Box>
+                                ))}
+                        </Box>
+
+                        <Button
+                            variant='contained'
+                            fullWidth
+                            disabled={loading}
+                            onClick={() => handleSubmit(null, formInputsData.inputs)}
+                            sx={{
+                                mb: 2,
+                                borderRadius: 20,
+                                background: 'linear-gradient(45deg, #673ab7 30%, #1e88e5 90%)'
+                            }}
+                        >
+                            {loading ? 'Submitting...' : 'Submit'}
+                        </Button>
+                    </Box>
+                </Box>
+            </Box>
+        )
+    }
+
     return (
         <div onDragEnter={handleDrag}>
             {isDragActive && (
@@ -910,19 +1796,25 @@ export const ChatMessage = ({ open, chatflowid, isAgentCanvas, isDialog, preview
                     onDrop={handleDrop}
                 />
             )}
-            {isDragActive && getAllowChatFlowUploads.data?.isImageUploadAllowed && (
-                <Box className='drop-overlay'>
-                    <Typography variant='h2'>Перетащите сюда, чтобы загрузить</Typography>
-                    {getAllowChatFlowUploads.data.imgUploadSizeAndTypes.map((allowed) => {
-                        return (
-                            <>
-                                <Typography variant='subtitle1'>{allowed.fileTypes?.join(', ')}</Typography>
-                                <Typography variant='subtitle1'>Максимально допустимый размер: {allowed.maxUploadSize} MB</Typography>
-                            </>
-                        )
-                    })}
-                </Box>
-            )}
+            {isDragActive &&
+                (getAllowChatFlowUploads.data?.isImageUploadAllowed || getAllowChatFlowUploads.data?.isRAGFileUploadAllowed) && (
+                    <Box className='drop-overlay'>
+                        <Typography variant='h2'>Drop here to upload</Typography>
+                        {[
+                            ...getAllowChatFlowUploads.data.imgUploadSizeAndTypes,
+                            ...getAllowChatFlowUploads.data.fileUploadSizeAndTypes
+                        ].map((allowed) => {
+                            return (
+                                <>
+                                    <Typography variant='subtitle1'>{allowed.fileTypes?.join(', ')}</Typography>
+                                    {allowed.maxUploadSize && (
+                                        <Typography variant='subtitle1'>Max Allowed Size: {allowed.maxUploadSize} MB</Typography>
+                                    )}
+                                </>
+                            )
+                        })}
+                    </Box>
+                )}
             <div ref={ps} className={`${isDialog ? 'cloud-dialog' : 'cloud'}`}>
                 <div id='messagelist' className={'messagelist'}>
                     {messages &&
@@ -961,6 +1853,52 @@ export const ChatMessage = ({ open, chatflowid, isAgentCanvas, isDialog, preview
                                             width: '100%'
                                         }}
                                     >
+                                        {message.fileUploads && message.fileUploads.length > 0 && (
+                                            <div
+                                                style={{
+                                                    display: 'flex',
+                                                    flexWrap: 'wrap',
+                                                    flexDirection: 'column',
+                                                    width: '100%',
+                                                    gap: '8px'
+                                                }}
+                                            >
+                                                {message.fileUploads.map((item, index) => {
+                                                    return <>{renderFileUploads(item, index)}</>
+                                                })}
+                                            </div>
+                                        )}
+                                        {message.agentReasoning && message.agentReasoning.length > 0 && (
+                                            <div style={{ display: 'block', flexDirection: 'row', width: '100%' }}>
+                                                {message.agentReasoning.map((agent, index) => (
+                                                    <AgentReasoningCard
+                                                        key={index}
+                                                        agent={agent}
+                                                        index={index}
+                                                        customization={customization}
+                                                        chatflowid={chatflowid}
+                                                        isDialog={isDialog}
+                                                        onSourceDialogClick={onSourceDialogClick}
+                                                        renderArtifacts={renderArtifacts}
+                                                        agentReasoningArtifacts={agentReasoningArtifacts}
+                                                        getAgentIcon={getAgentIcon}
+                                                        removeDuplicateURL={removeDuplicateURL}
+                                                        isValidURL={isValidURL}
+                                                        onURLClick={onURLClick}
+                                                    />
+                                                ))}
+                                            </div>
+                                        )}
+                                        {message.agentFlowExecutedData &&
+                                            Array.isArray(message.agentFlowExecutedData) &&
+                                            message.agentFlowExecutedData.length > 0 && (
+                                                <AgentExecutedDataCard
+                                                    status={message.agentFlowEventStatus}
+                                                    execution={message.agentFlowExecutedData}
+                                                    agentflowId={chatflowid}
+                                                    sessionId={chatId}
+                                                />
+                                            )}
                                         {message.usedTools && (
                                             <div
                                                 style={{
@@ -976,234 +1914,37 @@ export const ChatMessage = ({ open, chatflowid, isAgentCanvas, isDialog, preview
                                                             key={index}
                                                             label={tool.tool}
                                                             component='a'
-                                                            sx={{ mr: 1, mt: 1 }}
+                                                            sx={{
+                                                                mr: 1,
+                                                                mt: 1,
+                                                                borderColor: tool.error ? 'error.main' : undefined,
+                                                                color: tool.error ? 'error.main' : undefined
+                                                            }}
                                                             variant='outlined'
                                                             clickable
-                                                            icon={<IconTool size={15} />}
+                                                            icon={
+                                                                <IconTool
+                                                                    size={15}
+                                                                    color={tool.error ? theme.palette.error.main : undefined}
+                                                                />
+                                                            }
                                                             onClick={() => onSourceDialogClick(tool, 'Used Tools')}
                                                         />
                                                     ) : null
                                                 })}
                                             </div>
                                         )}
-                                        {message.fileUploads && message.fileUploads.length > 0 && (
+                                        {message.artifacts && (
                                             <div
                                                 style={{
                                                     display: 'flex',
                                                     flexWrap: 'wrap',
                                                     flexDirection: 'column',
-                                                    width: '100%',
-                                                    gap: '8px'
+                                                    width: '100%'
                                                 }}
                                             >
-                                                {message.fileUploads.map((item, index) => {
-                                                    return (
-                                                        <>
-                                                            {item?.mime?.startsWith('image/') ? (
-                                                                <Card
-                                                                    key={index}
-                                                                    sx={{
-                                                                        p: 0,
-                                                                        m: 0,
-                                                                        maxWidth: 128,
-                                                                        marginRight: '10px',
-                                                                        flex: '0 0 auto'
-                                                                    }}
-                                                                >
-                                                                    <CardMedia
-                                                                        component='img'
-                                                                        image={item.data}
-                                                                        sx={{ height: 64 }}
-                                                                        alt={'preview'}
-                                                                        style={messageImageStyle}
-                                                                    />
-                                                                </Card>
-                                                            ) : (
-                                                                // eslint-disable-next-line jsx-a11y/media-has-caption
-                                                                <audio controls='controls'>
-                                                                    Ваш браузер не поддерживает формат &lt;audio&gt; ярлык.
-                                                                    <source src={item.data} type={item.mime} />
-                                                                </audio>
-                                                            )}
-                                                        </>
-                                                    )
-                                                })}
-                                            </div>
-                                        )}
-                                        {message.agentReasoning && (
-                                            <div style={{ display: 'block', flexDirection: 'row', width: '100%' }}>
-                                                {message.agentReasoning.map((agent, index) => {
-                                                    return agent.nextAgent ? (
-                                                        <Card
-                                                            key={index}
-                                                            sx={{
-                                                                border: customization.isDarkMode ? 'none' : '1px solid #e0e0e0',
-                                                                borderRadius: `${customization.borderRadius}px`,
-                                                                background: customization.isDarkMode
-                                                                    ? `linear-gradient(to top, #303030, #212121)`
-                                                                    : `linear-gradient(to top, #f6f3fb, #f2f8fc)`,
-                                                                mb: 1
-                                                            }}
-                                                        >
-                                                            <CardContent>
-                                                                <Stack
-                                                                    sx={{
-                                                                        alignItems: 'center',
-                                                                        justifyContent: 'flex-start',
-                                                                        width: '100%'
-                                                                    }}
-                                                                    flexDirection='row'
-                                                                >
-                                                                    <Box sx={{ height: 'auto', pr: 1 }}>
-                                                                        <img
-                                                                            style={{
-                                                                                objectFit: 'cover',
-                                                                                height: '35px',
-                                                                                width: 'auto'
-                                                                            }}
-                                                                            src={nextAgentGIF}
-                                                                            alt='agentPNG'
-                                                                        />
-                                                                    </Box>
-                                                                    <div>{agent.nextAgent}</div>
-                                                                </Stack>
-                                                            </CardContent>
-                                                        </Card>
-                                                    ) : (
-                                                        <Card
-                                                            key={index}
-                                                            sx={{
-                                                                border: customization.isDarkMode ? 'none' : '1px solid #e0e0e0',
-                                                                borderRadius: `${customization.borderRadius}px`,
-                                                                background: customization.isDarkMode
-                                                                    ? `linear-gradient(to top, #303030, #212121)`
-                                                                    : `linear-gradient(to top, #f6f3fb, #f2f8fc)`,
-                                                                mb: 1
-                                                            }}
-                                                        >
-                                                            <CardContent>
-                                                                <Stack
-                                                                    sx={{
-                                                                        alignItems: 'center',
-                                                                        justifyContent: 'flex-start',
-                                                                        width: '100%'
-                                                                    }}
-                                                                    flexDirection='row'
-                                                                >
-                                                                    <Box sx={{ height: 'auto', pr: 1 }}>
-                                                                        <img
-                                                                            style={{
-                                                                                objectFit: 'cover',
-                                                                                height: '25px',
-                                                                                width: 'auto'
-                                                                            }}
-                                                                            src={
-                                                                                agent.instructions
-                                                                                    ? multiagent_supervisorPNG
-                                                                                    : multiagent_workerPNG
-                                                                            }
-                                                                            alt='agentPNG'
-                                                                        />
-                                                                    </Box>
-                                                                    <div>{agent.agentName}</div>
-                                                                </Stack>
-                                                                {agent.usedTools && agent.usedTools.length > 0 && (
-                                                                    <div
-                                                                        style={{
-                                                                            display: 'block',
-                                                                            flexDirection: 'row',
-                                                                            width: '100%'
-                                                                        }}
-                                                                    >
-                                                                        {agent.usedTools.map((tool, index) => {
-                                                                            return tool !== null ? (
-                                                                                <Chip
-                                                                                    size='small'
-                                                                                    key={index}
-                                                                                    label={tool.tool}
-                                                                                    component='a'
-                                                                                    sx={{ mr: 1, mt: 1 }}
-                                                                                    variant='outlined'
-                                                                                    clickable
-                                                                                    icon={<IconTool size={15} />}
-                                                                                    onClick={() => onSourceDialogClick(tool, 'Used Tools')}
-                                                                                />
-                                                                            ) : null
-                                                                        })}
-                                                                    </div>
-                                                                )}
-                                                                {agent.messages.length > 0 && (
-                                                                    <MemoizedReactMarkdown
-                                                                        remarkPlugins={[remarkGfm, remarkMath]}
-                                                                        rehypePlugins={[rehypeMathjax, rehypeRaw]}
-                                                                        components={{
-                                                                            code({ inline, className, children, ...props }) {
-                                                                                const match = /language-(\w+)/.exec(className || '')
-                                                                                return !inline ? (
-                                                                                    <CodeBlock
-                                                                                        key={Math.random()}
-                                                                                        chatflowid={chatflowid}
-                                                                                        isDialog={isDialog}
-                                                                                        language={(match && match[1]) || ''}
-                                                                                        value={String(children).replace(/\n$/, '')}
-                                                                                        {...props}
-                                                                                    />
-                                                                                ) : (
-                                                                                    <code className={className} {...props}>
-                                                                                        {children}
-                                                                                    </code>
-                                                                                )
-                                                                            }
-                                                                        }}
-                                                                    >
-                                                                        {agent.messages.length > 1
-                                                                            ? agent.messages.join('\\n')
-                                                                            : agent.messages[0]}
-                                                                    </MemoizedReactMarkdown>
-                                                                )}
-                                                                {agent.instructions && <p>{agent.instructions}</p>}
-                                                                {agent.messages.length === 0 && !agent.instructions && <p>Finished</p>}
-                                                                {agent.sourceDocuments && agent.sourceDocuments.length > 0 && (
-                                                                    <div
-                                                                        style={{
-                                                                            display: 'block',
-                                                                            flexDirection: 'row',
-                                                                            width: '100%'
-                                                                        }}
-                                                                    >
-                                                                        {removeDuplicateURL(agent).map((source, index) => {
-                                                                            const URL =
-                                                                                source && source.metadata && source.metadata.source
-                                                                                    ? isValidURL(source.metadata.source)
-                                                                                    : undefined
-                                                                            return (
-                                                                                <Chip
-                                                                                    size='small'
-                                                                                    key={index}
-                                                                                    label={
-                                                                                        URL
-                                                                                            ? URL.pathname.substring(0, 15) === '/'
-                                                                                                ? URL.host
-                                                                                                : `${URL.pathname.substring(0, 15)}...`
-                                                                                            : `${source.pageContent.substring(0, 15)}...`
-                                                                                    }
-                                                                                    component='a'
-                                                                                    sx={{ mr: 1, mb: 1 }}
-                                                                                    variant='outlined'
-                                                                                    clickable
-                                                                                    onClick={() =>
-                                                                                        URL
-                                                                                            ? onURLClick(source.metadata.source)
-                                                                                            : onSourceDialogClick(source)
-                                                                                    }
-                                                                                />
-                                                                            )
-                                                                        })}
-                                                                    </div>
-                                                                )}
-                                                            </CardContent>
-                                                        </Card>
-                                                    )
+                                                {message.artifacts.map((item, index) => {
+                                                    return item !== null ? <>{renderArtifacts(item, index)}</> : null
                                                 })}
                                             </div>
                                         )}
@@ -1285,35 +2026,132 @@ export const ChatMessage = ({ open, chatflowid, isAgentCanvas, isDialog, preview
                                                 </Box>
                                             ) : (
                                                 <>
-                                                    {/* Messages are being rendered in Markdown format */}
-                                                    <MemoizedReactMarkdown
-                                                        remarkPlugins={[remarkGfm, remarkMath]}
-                                                        rehypePlugins={[rehypeMathjax, rehypeRaw]}
-                                                        components={{
-                                                            code({ inline, className, children, ...props }) {
-                                                                const match = /language-(\w+)/.exec(className || '')
-                                                                return !inline ? (
-                                                                    <CodeBlock
-                                                                        key={Math.random()}
-                                                                        chatflowid={chatflowid}
-                                                                        isDialog={isDialog}
-                                                                        language={(match && match[1]) || ''}
-                                                                        value={String(children).replace(/\n$/, '')}
-                                                                        {...props}
-                                                                    />
-                                                                ) : (
-                                                                    <code className={className} {...props}>
-                                                                        {children}
-                                                                    </code>
-                                                                )
-                                                            }
-                                                        }}
-                                                    >
+                                                    <MemoizedReactMarkdown chatflowid={chatflowid} isFullWidth={isDialog}>
                                                         {message.message}
                                                     </MemoizedReactMarkdown>
                                                 </>
                                             )}
                                         </div>
+                                        {message.fileAnnotations && (
+                                            <div
+                                                style={{
+                                                    display: 'block',
+                                                    flexDirection: 'row',
+                                                    width: '100%',
+                                                    marginBottom: '8px'
+                                                }}
+                                            >
+                                                {message.fileAnnotations.map((fileAnnotation, index) => {
+                                                    return (
+                                                        <Button
+                                                            sx={{
+                                                                fontSize: '0.85rem',
+                                                                textTransform: 'none',
+                                                                mb: 1
+                                                            }}
+                                                            key={index}
+                                                            variant='outlined'
+                                                            onClick={() => downloadFile(fileAnnotation)}
+                                                            endIcon={<IconDownload color={theme.palette.primary.main} />}
+                                                        >
+                                                            {fileAnnotation.fileName}
+                                                        </Button>
+                                                    )
+                                                })}
+                                            </div>
+                                        )}
+                                        {message.sourceDocuments && (
+                                            <div
+                                                style={{
+                                                    display: 'block',
+                                                    flexDirection: 'row',
+                                                    width: '100%',
+                                                    marginBottom: '8px'
+                                                }}
+                                            >
+                                                {removeDuplicateURL(message).map((source, index) => {
+                                                    const URL =
+                                                        source.metadata && source.metadata.source
+                                                            ? isValidURL(source.metadata.source)
+                                                            : undefined
+                                                    return (
+                                                        <Chip
+                                                            size='small'
+                                                            key={index}
+                                                            label={getLabel(URL, source) || ''}
+                                                            component='a'
+                                                            sx={{ mr: 1, mb: 1 }}
+                                                            variant='outlined'
+                                                            clickable
+                                                            onClick={() =>
+                                                                URL ? onURLClick(source.metadata.source) : onSourceDialogClick(source)
+                                                            }
+                                                        />
+                                                    )
+                                                })}
+                                            </div>
+                                        )}
+                                        {message.action && (
+                                            <div
+                                                style={{
+                                                    display: 'flex',
+                                                    flexWrap: 'wrap',
+                                                    flexDirection: 'row',
+                                                    width: '100%',
+                                                    gap: '8px',
+                                                    marginBottom: '8px'
+                                                }}
+                                            >
+                                                {(message.action.elements || []).map((elem, index) => {
+                                                    return (
+                                                        <>
+                                                            {(elem.type === 'approve-button' && elem.label === 'Yes') ||
+                                                            elem.type === 'agentflowv2-approve-button' ? (
+                                                                <Button
+                                                                    sx={{
+                                                                        width: 'max-content',
+                                                                        borderRadius: '20px',
+                                                                        background: customization.isDarkMode ? 'transparent' : 'white'
+                                                                    }}
+                                                                    variant='outlined'
+                                                                    color='success'
+                                                                    key={index}
+                                                                    startIcon={<IconCheck />}
+                                                                    onClick={() => handleActionClick(elem, message.action)}
+                                                                >
+                                                                    {elem.label}
+                                                                </Button>
+                                                            ) : (elem.type === 'reject-button' && elem.label === 'No') ||
+                                                              elem.type === 'agentflowv2-reject-button' ? (
+                                                                <Button
+                                                                    sx={{
+                                                                        width: 'max-content',
+                                                                        borderRadius: '20px',
+                                                                        background: customization.isDarkMode ? 'transparent' : 'white'
+                                                                    }}
+                                                                    variant='outlined'
+                                                                    color='error'
+                                                                    key={index}
+                                                                    startIcon={<IconX />}
+                                                                    onClick={() => handleActionClick(elem, message.action)}
+                                                                >
+                                                                    {elem.label}
+                                                                </Button>
+                                                            ) : (
+                                                                <Button
+                                                                    sx={{ width: 'max-content', borderRadius: '20px', background: 'white' }}
+                                                                    variant='outlined'
+                                                                    key={index}
+                                                                    onClick={() => handleActionClick(elem, message.action)}
+                                                                >
+                                                                    {elem.label}
+                                                                </Button>
+                                                            )}
+                                                        </>
+                                                    )
+                                                })}
+                                            </div>
+                                        )}
                                         {message.type === 'apiMessage' && message.id && chatFeedbackStatus ? (
                                             <>
                                                 <Box
@@ -1346,69 +2184,6 @@ export const ChatMessage = ({ open, chatflowid, isAgentCanvas, isDialog, preview
                                                 </Box>
                                             </>
                                         ) : null}
-                                        {message.fileAnnotations && (
-                                            <div
-                                                style={{
-                                                    display: 'block',
-                                                    flexDirection: 'row',
-                                                    width: '100%'
-                                                }}
-                                            >
-                                                {message.fileAnnotations.map((fileAnnotation, index) => {
-                                                    return (
-                                                        <Button
-                                                            sx={{
-                                                                fontSize: '0.85rem',
-                                                                textTransform: 'none',
-                                                                mb: 1
-                                                            }}
-                                                            key={index}
-                                                            variant='outlined'
-                                                            onClick={() => downloadFile(fileAnnotation)}
-                                                            endIcon={<IconDownload color={theme.palette.primary.main} />}
-                                                        >
-                                                            {fileAnnotation.fileName}
-                                                        </Button>
-                                                    )
-                                                })}
-                                            </div>
-                                        )}
-                                        {message.sourceDocuments && (
-                                            <div
-                                                style={{
-                                                    display: 'block',
-                                                    flexDirection: 'row',
-                                                    width: '100%'
-                                                }}
-                                            >
-                                                {removeDuplicateURL(message).map((source, index) => {
-                                                    const URL =
-                                                        source.metadata && source.metadata.source
-                                                            ? isValidURL(source.metadata.source)
-                                                            : undefined
-                                                    return (
-                                                        <Chip
-                                                            size='small'
-                                                            key={index}
-                                                            label={
-                                                                URL
-                                                                    ? URL.pathname.substring(0, 15) === '/'
-                                                                        ? URL.host
-                                                                        : `${URL.pathname.substring(0, 15)}...`
-                                                                    : `${source.pageContent.substring(0, 15)}...`
-                                                            }
-                                                            component='a'
-                                                            sx={{ mr: 1, mb: 1 }}
-                                                            variant='outlined'
-                                                            clickable
-                                                            onClick={() =>
-                                                                URL ? onURLClick(source.metadata.source) : onSourceDialogClick(source)
-                                                            }
-                                                        />
-                                                    )
-                                                })}
-                                            </div>
-                                        )}
                                     </div>
                                 </Box>
                             )
@@ -1427,51 +2202,33 @@ export const ChatMessage = ({ open, chatflowid, isAgentCanvas, isDialog, preview
                 </div>
             )}
 
+            {messages && messages.length > 2 && followUpPromptsStatus && followUpPrompts.length > 0 && (
+                <>
+                    <Divider sx={{ width: '100%' }} />
+                    <Box sx={{ display: 'flex', flexDirection: 'column', position: 'relative', pt: 1.5 }}>
+                        <Stack sx={{ flexDirection: 'row', alignItems: 'center', px: 1.5, gap: 0.5 }}>
+                            <IconSparkles size={12} />
+                            <Typography sx={{ fontSize: '0.75rem' }} variant='body2'>
+                                Try these prompts
+                            </Typography>
+                        </Stack>
+                        <FollowUpPromptsCard
+                            sx={{ bottom: previews && previews.length > 0 ? 70 : 0 }}
+                            followUpPrompts={followUpPrompts || []}
+                            onPromptClick={handleFollowUpPromptClick}
+                            isGrid={isDialog}
+                        />
+                    </Box>
+                </>
+            )}
+
             <Divider sx={{ width: '100%' }} />
 
             <div className='center'>
                 {previews && previews.length > 0 && (
                     <Box sx={{ width: '100%', mb: 1.5, display: 'flex', alignItems: 'center' }}>
                         {previews.map((item, index) => (
-                            <Fragment key={index}>
-                                {item.mime.startsWith('image/') ? (
-                                    <ImageButton
-                                        focusRipple
-                                        style={{
-                                            width: '48px',
-                                            height: '48px',
-                                            marginRight: '10px',
-                                            flex: '0 0 auto'
-                                        }}
-                                        onClick={() => handleDeletePreview(item)}
-                                    >
-                                        <ImageSrc style={{ backgroundImage: `url(${item.data})` }} />
-                                        <ImageBackdrop className='MuiImageBackdrop-root' />
-                                        <ImageMarked className='MuiImageMarked-root'>
-                                            <IconTrash size={20} color='white' />
-                                        </ImageMarked>
-                                    </ImageButton>
-                                ) : (
-                                    <Card
-                                        sx={{
-                                            display: 'inline-flex',
-                                            alignItems: 'center',
-                                            height: '48px',
-                                            width: isDialog ? ps?.current?.offsetWidth / 4 : ps?.current?.offsetWidth / 2,
-                                            p: 0.5,
-                                            mr: 1,
-                                            backgroundColor: theme.palette.grey[500],
-                                            flex: '0 0 auto'
-                                        }}
-                                        variant='outlined'
-                                    >
-                                        <CardMedia component='audio' sx={{ color: 'transparent' }} controls src={item.data} />
-                                        <IconButton onClick={() => handleDeletePreview(item)} size='small'>
-                                            <IconTrash size={20} color='white' />
-                                        </IconButton>
-                                    </Card>
-                                )}
-                            </Fragment>
+                            <Fragment key={index}>{previewDisplay(item)}</Fragment>
                         ))}
                     </Box>
                 )}
@@ -1481,8 +2238,7 @@ export const ChatMessage = ({ open, chatflowid, isAgentCanvas, isDialog, preview
                             <div className='overlay'>
                                 <div className='browser-not-supporting-audio-recording-box'>
                                     <Typography variant='body1'>
-                                        Для записи звука используйте современные браузеры, такие как Chrome или Firefox, которые
-                                        поддерживают запись звука.
+                                        To record audio, use modern browsers like Chrome or Firefox that support audio recording.
                                     </Typography>
                                     <Button
                                         variant='contained'
@@ -1491,7 +2247,7 @@ export const ChatMessage = ({ open, chatflowid, isAgentCanvas, isDialog, preview
                                         type='button'
                                         onClick={() => onRecordingCancelled()}
                                     >
-                                        Хорошо
+                                        Okay
                                     </Button>
                                 </div>
                             </div>
@@ -1539,7 +2295,7 @@ export const ChatMessage = ({ open, chatflowid, isAgentCanvas, isDialog, preview
                             // eslint-disable-next-line
                             autoFocus
                             sx={{ width: '100%' }}
-                            disabled={loading || !chatflowid || (leadsConfig?.status && !isLeadSaved)}
+                            disabled={getInputDisabled()}
                             onKeyDown={handleEnter}
                             id='userInput'
                             name='userInput'
@@ -1549,26 +2305,62 @@ export const ChatMessage = ({ open, chatflowid, isAgentCanvas, isDialog, preview
                             multiline={true}
                             maxRows={isDialog ? 7 : 2}
                             startAdornment={
-                                isChatFlowAvailableForUploads && (
-                                    <InputAdornment position='start' sx={{ pl: 2 }}>
-                                        <IconButton
-                                            onClick={handleUploadClick}
-                                            type='button'
-                                            disabled={loading || !chatflowid || (leadsConfig?.status && !isLeadSaved)}
-                                            edge='start'
-                                        >
-                                            <IconPhotoPlus
-                                                color={
-                                                    loading || !chatflowid || (leadsConfig?.status && !isLeadSaved)
-                                                        ? '#9e9e9e'
-                                                        : customization.isDarkMode
-                                                        ? 'white'
-                                                        : '#1e88e5'
-                                                }
-                                            />
-                                        </IconButton>
-                                    </InputAdornment>
-                                )
+                                <>
+                                    {isChatFlowAvailableForImageUploads && !isChatFlowAvailableForFileUploads && (
+                                        <InputAdornment position='start' sx={{ ml: 2 }}>
+                                            <IconButton
+                                                onClick={handleImageUploadClick}
+                                                type='button'
+                                                disabled={getInputDisabled()}
+                                                edge='start'
+                                            >
+                                                <IconPhotoPlus
+                                                    color={getInputDisabled() ? '#9e9e9e' : customization.isDarkMode ? 'white' : '#1e88e5'}
+                                                />
+                                            </IconButton>
+                                        </InputAdornment>
+                                    )}
+                                    {!isChatFlowAvailableForImageUploads && isChatFlowAvailableForFileUploads && (
+                                        <InputAdornment position='start' sx={{ ml: 2 }}>
+                                            <IconButton
+                                                onClick={handleFileUploadClick}
+                                                type='button'
+                                                disabled={getInputDisabled()}
+                                                edge='start'
+                                            >
+                                                <IconPaperclip
+                                                    color={getInputDisabled() ? '#9e9e9e' : customization.isDarkMode ? 'white' : '#1e88e5'}
+                                                />
+                                            </IconButton>
+                                        </InputAdornment>
+                                    )}
+                                    {isChatFlowAvailableForImageUploads && isChatFlowAvailableForFileUploads && (
+                                        <InputAdornment position='start' sx={{ ml: 2 }}>
+                                            <IconButton
+                                                onClick={handleImageUploadClick}
+                                                type='button'
+                                                disabled={getInputDisabled()}
+                                                edge='start'
+                                            >
+                                                <IconPhotoPlus
+                                                    color={getInputDisabled() ? '#9e9e9e' : customization.isDarkMode ? 'white' : '#1e88e5'}
+                                                />
+                                            </IconButton>
+                                            <IconButton
+                                                sx={{ ml: 0 }}
+                                                onClick={handleFileUploadClick}
+                                                type='button'
+                                                disabled={getInputDisabled()}
+                                                edge='start'
+                                            >
+                                                <IconPaperclip
+                                                    color={getInputDisabled() ? '#9e9e9e' : customization.isDarkMode ? 'white' : '#1e88e5'}
+                                                />
+                                            </IconButton>
+                                        </InputAdornment>
+                                    )}
+                                    {!isChatFlowAvailableForImageUploads && !isChatFlowAvailableForFileUploads && <Box sx={{ pl: 1 }} />}
+                                </>
                             }
                             endAdornment={
                                 <>
@@ -1577,29 +2369,19 @@ export const ChatMessage = ({ open, chatflowid, isAgentCanvas, isDialog, preview
                                             <IconButton
                                                 onClick={() => onMicrophonePressed()}
                                                 type='button'
-                                                disabled={loading || !chatflowid || (leadsConfig?.status && !isLeadSaved)}
+                                                disabled={getInputDisabled()}
                                                 edge='end'
                                             >
                                                 <IconMicrophone
                                                     className={'start-recording-button'}
-                                                    color={
-                                                        loading || !chatflowid || (leadsConfig?.status && !isLeadSaved)
-                                                            ? '#9e9e9e'
-                                                            : customization.isDarkMode
-                                                            ? 'white'
-                                                            : '#1e88e5'
-                                                    }
+                                                    color={getInputDisabled() ? '#9e9e9e' : customization.isDarkMode ? 'white' : '#1e88e5'}
                                                 />
                                             </IconButton>
                                         </InputAdornment>
                                     )}
                                     {!isAgentCanvas && (
-                                        <InputAdornment position='end' sx={{ padding: '15px' }}>
-                                            <IconButton
-                                                type='submit'
-                                                disabled={loading || !chatflowid || (leadsConfig?.status && !isLeadSaved)}
-                                                edge='end'
-                                            >
+                                        <InputAdornment position='end' sx={{ paddingRight: '15px' }}>
+                                            <IconButton type='submit' disabled={getInputDisabled()} edge='end'>
                                                 {loading ? (
                                                     <div>
                                                         <CircularProgress color='inherit' size={20} />
@@ -1608,11 +2390,7 @@ export const ChatMessage = ({ open, chatflowid, isAgentCanvas, isDialog, preview
                                                     // Send icon SVG in input field
                                                     <IconSend
                                                         color={
-                                                            loading || !chatflowid || (leadsConfig?.status && !isLeadSaved)
-                                                                ? '#9e9e9e'
-                                                                : customization.isDarkMode
-                                                                ? 'white'
-                                                                : '#1e88e5'
+                                                            getInputDisabled() ? '#9e9e9e' : customization.isDarkMode ? 'white' : '#1e88e5'
                                                         }
                                                     />
                                                 )}
@@ -1622,15 +2400,11 @@ export const ChatMessage = ({ open, chatflowid, isAgentCanvas, isDialog, preview
                                     {isAgentCanvas && (
                                         <>
                                             {!loading && (
-                                                <InputAdornment position='end' sx={{ padding: '15px' }}>
-                                                    <IconButton
-                                                        type='submit'
-                                                        disabled={loading || !chatflowid || (leadsConfig?.status && !isLeadSaved)}
-                                                        edge='end'
-                                                    >
+                                                <InputAdornment position='end' sx={{ paddingRight: '15px' }}>
+                                                    <IconButton type='submit' disabled={getInputDisabled()} edge='end'>
                                                         <IconSend
                                                             color={
-                                                                loading || !chatflowid || (leadsConfig?.status && !isLeadSaved)
+                                                                getInputDisabled()
                                                                     ? '#9e9e9e'
                                                                     : customization.isDarkMode
                                                                     ? 'white'
@@ -1664,8 +2438,25 @@ export const ChatMessage = ({ open, chatflowid, isAgentCanvas, isDialog, preview
                                 </>
                             }
                         />
-                        {isChatFlowAvailableForUploads && (
-                            <input style={{ display: 'none' }} multiple ref={fileUploadRef} type='file' onChange={handleFileChange} />
+                        {isChatFlowAvailableForImageUploads && (
+                            <input
+                                style={{ display: 'none' }}
+                                multiple
+                                ref={imgUploadRef}
+                                type='file'
+                                onChange={handleFileChange}
+                                accept={imageUploadAllowedTypes || '*'}
+                            />
+                        )}
+                        {isChatFlowAvailableForFileUploads && (
+                            <input
+                                style={{ display: 'none' }}
+                                multiple
+                                ref={fileUploadRef}
+                                type='file'
+                                onChange={handleFileChange}
+                                accept={getFileUploadAllowedTypes()}
+                            />
                         )}
                     </form>
                 )}
@@ -1676,6 +2467,37 @@ export const ChatMessage = ({ open, chatflowid, isAgentCanvas, isDialog, preview
                 onCancel={() => setShowFeedbackContentDialog(false)}
                 onConfirm={submitFeedbackContent}
             />
+            <Dialog
+                maxWidth='md'
+                fullWidth
+                open={openFeedbackDialog}
+                onClose={() => {
+                    setOpenFeedbackDialog(false)
+                    setPendingActionData(null)
+                    setFeedback('')
+                }}
+            >
+                <DialogTitle variant='h5'>Provide Feedback</DialogTitle>
+                <DialogContent>
+                    <TextField
+                        // eslint-disable-next-line
+                        autoFocus
+                        margin='dense'
+                        label='Feedback'
+                        fullWidth
+                        multiline
+                        rows={4}
+                        value={feedback}
+                        onChange={(e) => setFeedback(e.target.value)}
+                    />
+                </DialogContent>
+                <DialogActions>
+                    <Button onClick={handleSubmitFeedback}>Cancel</Button>
+                    <Button onClick={handleSubmitFeedback} variant='contained'>
+                        Submit
+                    </Button>
+                </DialogActions>
+            </Dialog>
         </div>
     )
 }
@@ -1688,3 +2510,5 @@ ChatMessage.propTypes = {
     previews: PropTypes.array,
     setPreviews: PropTypes.func
 }
+
+export default memo(ChatMessage)

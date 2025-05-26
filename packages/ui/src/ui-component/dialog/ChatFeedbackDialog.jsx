@@ -35,7 +35,7 @@ const ChatFeedbackDialog = ({ show, dialogProps, onCancel }) => {
             aria-describedby='alert-dialog-description'
         >
             <DialogTitle sx={{ fontSize: '1rem' }} id='alert-dialog-title'>
-                {dialogProps.title || 'Allowed Domains'}
+                {dialogProps.title || 'Обратная связь в чате'}
             </DialogTitle>
             <DialogContent>
                 <ChatFeedback dialogProps={dialogProps} />

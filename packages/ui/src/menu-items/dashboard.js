@@ -1,3 +1,4 @@
+// assets
 import {
     IconUsersGroup,
     IconHierarchy,
@@ -8,13 +9,13 @@ import {
     IconRobot,
     IconVariable,
     IconFiles,
-    IconTable
+    IconListCheck
 } from '@tabler/icons-react'
 
 // constant
 const icons = {
+    IconListCheck,
     IconUsersGroup,
-    IconTable,
     IconHierarchy,
     IconBuildingStore,
     IconKey,
@@ -34,7 +35,7 @@ const dashboard = {
     children: [
         {
             id: 'chatflows',
-            title: 'Проекты',
+            title: 'Чат-потоки',
             type: 'item',
             url: '/chatflows',
             icon: icons.IconHierarchy,
@@ -42,19 +43,34 @@ const dashboard = {
         },
         {
             id: 'agentflows',
-            title: 'Агенты',
+            title: 'Потоки агентов',
             type: 'item',
             url: '/agentflows',
             icon: icons.IconUsersGroup,
-            breadcrumbs: true,
-            isBeta: true
+            breadcrumbs: true
+        },
+        {
+            id: 'executions',
+            title: 'Выполнения',
+            type: 'item',
+            url: '/executions',
+            icon: icons.IconListCheck,
+            breadcrumbs: true
+        },
+        {
+            id: 'assistants',
+            title: 'Ассистенты',
+            type: 'item',
+            url: '/assistants',
+            icon: icons.IconRobot,
+            breadcrumbs: true
         },
         {
             id: 'marketplaces',
-            title: 'Marketplace',
+            title: 'Маркетплейсы',
             type: 'item',
             url: '/marketplaces',
-            icon: icons.IconTable,
+            icon: icons.IconBuildingStore,
             breadcrumbs: true
         },
         {
@@ -66,19 +82,11 @@ const dashboard = {
             breadcrumbs: true
         },
         {
-            id: 'assistants',
-            title: 'Ассистенты',
-            type: 'item',
-            url: '/assistants',
-            icon: icons.IconHierarchy,
-            breadcrumbs: true
-        },
-        {
             id: 'credentials',
             title: 'Учетные данные',
             type: 'item',
             url: '/credentials',
-            icon: icons.IconHierarchy,
+            icon: icons.IconLock,
             breadcrumbs: true
         },
         {
@@ -94,7 +102,7 @@ const dashboard = {
             title: 'API-ключи',
             type: 'item',
             url: '/apikey',
-            icon: icons.IconHierarchy,
+            icon: icons.IconKey,
             breadcrumbs: true
         },
         {

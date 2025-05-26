@@ -7,7 +7,8 @@ import {
     IconMessage,
     IconDatabaseExport,
     IconAdjustmentsHorizontal,
-    IconUsers
+    IconUsers,
+    IconTemplate
 } from '@tabler/icons-react'
 
 // constant
@@ -19,10 +20,12 @@ const icons = {
     IconMessage,
     IconDatabaseExport,
     IconAdjustmentsHorizontal,
-    IconUsers
+    IconUsers,
+    IconTemplate
 }
 
 // ==============================|| SETTINGS MENU ITEMS ||============================== //
+
 const settings = {
     id: 'settings',
     title: '',
@@ -30,56 +33,63 @@ const settings = {
     children: [
         {
             id: 'viewMessages',
-            title: 'Просмотр сообщений',
+            title: 'View Messages',
             type: 'item',
             url: '',
             icon: icons.IconMessage
         },
         {
             id: 'viewLeads',
-            title: 'Посмотреть лидов',
+            title: 'View Leads',
             type: 'item',
             url: '',
             icon: icons.IconUsers
         },
         {
             id: 'viewUpsertHistory',
-            title: 'Вложенная история',
+            title: 'Upsert History',
             type: 'item',
             url: '',
             icon: icons.IconDatabaseExport
         },
         {
             id: 'chatflowConfiguration',
-            title: 'Конфигурация',
+            title: 'Configuration',
             type: 'item',
             url: '',
             icon: icons.IconAdjustmentsHorizontal
         },
         {
+            id: 'saveAsTemplate',
+            title: 'Save As Template',
+            type: 'item',
+            url: '',
+            icon: icons.IconTemplate
+        },
+        {
             id: 'duplicateChatflow',
-            title: 'Дублировать Проект',
+            title: 'Duplicate Chatflow',
             type: 'item',
             url: '',
             icon: icons.IconCopy
         },
         {
             id: 'loadChatflow',
-            title: 'Загрузить Проект',
+            title: 'Load Chatflow',
             type: 'item',
             url: '',
             icon: icons.IconFileUpload
         },
         {
             id: 'exportChatflow',
-            title: 'Скачать Проект',
+            title: 'Export Chatflow',
             type: 'item',
             url: '',
             icon: icons.IconFileExport
         },
         {
             id: 'deleteChatflow',
-            title: 'Удалить Проект',
+            title: 'Delete Chatflow',
             type: 'item',
             url: '',
             icon: icons.IconTrash

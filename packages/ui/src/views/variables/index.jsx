@@ -27,6 +27,11 @@ import {
 import MainCard from '@/ui-component/cards/MainCard'
 import { StyledButton } from '@/ui-component/button/StyledButton'
 import ConfirmDialog from '@/ui-component/dialog/ConfirmDialog'
+import { refreshVariablesCache } from '@/ui-component/input/suggestionOption'
+import AddEditVariableDialog from './AddEditVariableDialog'
+import HowToUseVariablesDialog from './HowToUseVariablesDialog'
+import ViewHeader from '@/layout/MainLayout/ViewHeader'
+import ErrorBoundary from '@/ErrorBoundary'
 
 // API
 import variablesApi from '@/api/variables'
@@ -41,12 +46,6 @@ import useNotifier from '@/utils/useNotifier'
 // Icons
 import { IconTrash, IconEdit, IconX, IconPlus, IconVariable } from '@tabler/icons-react'
 import VariablesEmptySVG from '@/assets/images/variables_empty.svg'
-
-// const
-import AddEditVariableDialog from './AddEditVariableDialog'
-import HowToUseVariablesDialog from './HowToUseVariablesDialog'
-import ViewHeader from '@/layout/MainLayout/ViewHeader'
-import ErrorBoundary from '@/ErrorBoundary'
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
     borderColor: theme.palette.grey[900] + 25,
@@ -67,7 +66,7 @@ const StyledTableRow = styled(TableRow)(() => ({
     }
 }))
 
-// ==============================|| Credentials ||============================== //
+// ==============================|| Переменные ||============================== //
 
 const Variables = () => {
     const theme = useTheme()
@@ -111,7 +110,7 @@ const Variables = () => {
 
     const edit = (variable) => {
         const dialogProp = {
-            type: 'Редактировать',
+            type: 'EDIT',
             cancelButtonName: 'Отмена',
             confirmButtonName: 'Сохранить',
             data: variable
@@ -122,7 +121,7 @@ const Variables = () => {
 
     const deleteVariable = async (variable) => {
         const confirmPayload = {
-            title: `Удалить`,
+            title: `Удаление`,
             description: `Удалить переменную ${variable.name}?`,
             confirmButtonName: 'Удалить',
             cancelButtonName: 'Отмена'
@@ -149,7 +148,7 @@ const Variables = () => {
                 }
             } catch (error) {
                 enqueueSnackbar({
-                    message: `Ошибка удаления переменной: ${
+                    message: `Не удалось удалить переменную: ${
                         typeof error.response.data === 'object' ? error.response.data.message : error.response.data
                     }`,
                     options: {
@@ -170,6 +169,7 @@ const Variables = () => {
     const onConfirm = () => {
         setShowVariableDialog(false)
         getAllVariables.request()
+        refreshVariablesCache()
     }
 
     useEffect(() => {
@@ -200,9 +200,15 @@ const Variables = () => {
                     <ErrorBoundary error={error} />
                 ) : (
                     <Stack flexDirection='column' sx={{ gap: 3 }}>
-                        <ViewHeader onSearchChange={onSearchChange} search={true} searchPlaceholder='Найти переменные' title='Переменные'>
+                        <ViewHeader
+                            onSearchChange={onSearchChange}
+                            search={true}
+                            searchPlaceholder='Поиск переменных'
+                            title='Переменные'
+                            description='Создание и управление глобальными переменными'
+                        >
                             <Button variant='outlined' sx={{ borderRadius: 2, height: '100%' }} onClick={() => setShowHowToDialog(true)}>
-                              Как использовать
+                                Как использовать
                             </Button>
                             <StyledButton
                                 variant='contained'
@@ -223,7 +229,7 @@ const Variables = () => {
                                         alt='VariablesEmptySVG'
                                     />
                                 </Box>
-                                <div>Переменных еще нет</div>
+                                <div>Пока нет переменных</div>
                             </Stack>
                         ) : (
                             <TableContainer
@@ -240,7 +246,7 @@ const Variables = () => {
                                         }}
                                     >
                                         <TableRow>
-                                            <StyledTableCell>Имя</StyledTableCell>
+                                            <StyledTableCell>Название</StyledTableCell>
                                             <StyledTableCell>Значение</StyledTableCell>
                                             <StyledTableCell>Тип</StyledTableCell>
                                             <StyledTableCell>Последнее обновление</StyledTableCell>
@@ -336,17 +342,21 @@ const Variables = () => {
                                                             <Chip
                                                                 color={variable.type === 'static' ? 'info' : 'secondary'}
                                                                 size='small'
-                                                                label={variable.type}
+                                                                label={variable.type === 'static' ? 'Статическая' : 'Динамическая'}
                                                             />
                                                         </StyledTableCell>
                                                         <StyledTableCell>
-                                                            {moment(variable.updatedDate).format('DD.MM.YYYY')}
+                                                            {moment(variable.updatedDate).format('MMMM Do, YYYY HH:mm:ss')}
                                                         </StyledTableCell>
                                                         <StyledTableCell>
-                                                            {moment(variable.createdDate).format('DD.MM.YYYY')}
+                                                            {moment(variable.createdDate).format('MMMM Do, YYYY HH:mm:ss')}
                                                         </StyledTableCell>
                                                         <StyledTableCell>
-                                                            <IconButton title='Редактировать' color='primary' onClick={() => edit(variable)}>
+                                                            <IconButton
+                                                                title='Редактировать'
+                                                                color='primary'
+                                                                onClick={() => edit(variable)}
+                                                            >
                                                                 <IconEdit />
                                                             </IconButton>
                                                         </StyledTableCell>

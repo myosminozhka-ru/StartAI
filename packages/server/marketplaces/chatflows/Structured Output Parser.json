@@ -1,9 +1,7 @@
 {
-    "description": "Возвращает ответ в виде определенной структуры JSON вместо текста/строки",
-    "title": "Структурированный парсер вывода",
-    "categories": "Structured Output Parser,ChatOpenAI,LLM Chain,Langchain",
-    "framework": "Langchain",
-    "badge": "NEW",
+    "description": "Return response as a specified JSON structure instead of a string/text",
+    "framework": ["Langchain"],
+    "usecases": ["Extraction"],
     "nodes": [
         {
             "width": 300,

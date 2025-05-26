@@ -27,6 +27,10 @@ import { StyledButton } from '@/ui-component/button/StyledButton'
 import langsmithPNG from '@/assets/images/langchain.png'
 import langfuseSVG from '@/assets/images/langfuse.svg'
 import lunarySVG from '@/assets/images/lunary.svg'
+import langwatchSVG from '@/assets/images/langwatch.svg'
+import arizePNG from '@/assets/images/arize.png'
+import phoenixPNG from '@/assets/images/phoenix.png'
+import opikPNG from '@/assets/images/opik.png'
 
 // store
 import useNotifier from '@/utils/useNotifier'
@@ -42,21 +46,21 @@ const analyticProviders = [
         url: 'https://smith.langchain.com',
         inputs: [
             {
-                label: 'Подключить учетные данные',
+                label: 'Connect Credential',
                 name: 'credential',
                 type: 'credential',
                 credentialNames: ['langsmithApi']
             },
             {
-                label: 'Название проекта',
+                label: 'Project Name',
                 name: 'projectName',
                 type: 'string',
                 optional: true,
-                description: 'Если не указано, будет использоваться значение по умолчанию.',
+                description: 'If not provided, default will be used',
                 placeholder: 'default'
             },
             {
-                label: 'Вкл/выкл',
+                label: 'On/Off',
                 name: 'status',
                 type: 'boolean',
                 optional: true
@@ -70,20 +74,20 @@ const analyticProviders = [
         url: 'https://langfuse.com',
         inputs: [
             {
-                label: 'Подключить учетные данные',
+                label: 'Connect Credential',
                 name: 'credential',
                 type: 'credential',
                 credentialNames: ['langfuseApi']
             },
             {
-                label: 'Версия',
+                label: 'Release',
                 name: 'release',
                 type: 'string',
                 optional: true,
-                description: 'Номер выпуска/хэш приложения для предоставления аналитики, сгруппированной по выпускам.'
+                description: 'The release number/hash of the application to provide analytics grouped by release'
             },
             {
-                label: 'Вкл/выкл',
+                label: 'On/Off',
                 name: 'status',
                 type: 'boolean',
                 optional: true
@@ -97,13 +101,116 @@ const analyticProviders = [
         url: 'https://lunary.ai',
         inputs: [
             {
-                label: 'Подключить учетные данные',
+                label: 'Connect Credential',
                 name: 'credential',
                 type: 'credential',
                 credentialNames: ['lunaryApi']
             },
             {
-                label: 'Вкл/выкл',
+                label: 'On/Off',
+                name: 'status',
+                type: 'boolean',
+                optional: true
+            }
+        ]
+    },
+    {
+        label: 'LangWatch',
+        name: 'langWatch',
+        icon: langwatchSVG,
+        url: 'https://langwatch.ai',
+        inputs: [
+            {
+                label: 'Connect Credential',
+                name: 'credential',
+                type: 'credential',
+                credentialNames: ['langwatchApi']
+            },
+            {
+                label: 'On/Off',
+                name: 'status',
+                type: 'boolean',
+                optional: true
+            }
+        ]
+    },
+    {
+        label: 'Arize',
+        name: 'arize',
+        icon: arizePNG,
+        url: 'https://arize.com',
+        inputs: [
+            {
+                label: 'Connect Credential',
+                name: 'credential',
+                type: 'credential',
+                credentialNames: ['arizeApi']
+            },
+            {
+                label: 'Project Name',
+                name: 'projectName',
+                type: 'string',
+                optional: true,
+                description: 'If not provided, default will be used.',
+                placeholder: 'default'
+            },
+            {
+                label: 'On/Off',
+                name: 'status',
+                type: 'boolean',
+                optional: true
+            }
+        ]
+    },
+    {
+        label: 'Phoenix',
+        name: 'phoenix',
+        icon: phoenixPNG,
+        url: 'https://phoenix.arize.com',
+        inputs: [
+            {
+                label: 'Connect Credential',
+                name: 'credential',
+                type: 'credential',
+                credentialNames: ['phoenixApi']
+            },
+            {
+                label: 'Project Name',
+                name: 'projectName',
+                type: 'string',
+                optional: true,
+                description: 'If not provided, default will be used.',
+                placeholder: 'default'
+            },
+            {
+                label: 'On/Off',
+                name: 'status',
+                type: 'boolean',
+                optional: true
+            }
+        ]
+    },
+    {
+        label: 'Opik',
+        name: 'opik',
+        icon: opikPNG,
+        url: 'https://www.comet.com/opik',
+        inputs: [
+            {
+                label: 'Connect Credential',
+                name: 'credential',
+                type: 'credential',
+                credentialNames: ['opikApi']
+            },
+            {
+                label: 'Project Name',
+                name: 'opikProjectName',
+                type: 'string',
+                description: 'Name of your Opik project',
+                placeholder: 'default'
+            },
+            {
+                label: 'On/Off',
                 name: 'status',
                 type: 'boolean',
                 optional: true
@@ -130,7 +237,7 @@ const AnalyseFlow = ({ dialogProps }) => {
             })
             if (saveResp.data) {
                 enqueueSnackbar({
-                    message: 'Аналитическая конфигурация сохранена.',
+                    message: 'Analytic Configuration Saved',
                     options: {
                         key: new Date().getTime() + Math.random(),
                         variant: 'success',
@@ -145,7 +252,7 @@ const AnalyseFlow = ({ dialogProps }) => {
             }
         } catch (error) {
             enqueueSnackbar({
-                message: `Не удалось сохранить аналитическую конфигурацию: ${
+                message: `Failed to save Analytic Configuration: ${
                     typeof error.response.data === 'object' ? error.response.data.message : error.response.data
                 }`,
                 options: {
@@ -310,7 +417,7 @@ const AnalyseFlow = ({ dialogProps }) => {
                 </Accordion>
             ))}
             <StyledButton style={{ marginBottom: 10, marginTop: 10 }} variant='contained' onClick={onSave}>
-                Сохранить
+                Save
             </StyledButton>
         </>
     )

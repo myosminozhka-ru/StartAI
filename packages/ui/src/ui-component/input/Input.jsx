@@ -1,10 +1,12 @@
 import { useState, useEffect, useRef } from 'react'
 import PropTypes from 'prop-types'
 import { FormControl, OutlinedInput, InputBase, Popover } from '@mui/material'
+import { useTheme } from '@mui/material/styles'
 import SelectVariable from '@/ui-component/json/SelectVariable'
 import { getAvailableNodesForVariable } from '@/utils/genericHelper'
-import { translationObject } from '@/translate'
+
 export const Input = ({ inputParam, value, nodes, edges, nodeId, onChange, disabled = false }) => {
+    const theme = useTheme()
     const [myValue, setMyValue] = useState(value ?? '')
     const [anchorEl, setAnchorEl] = useState(null)
     const [availableNodesForVariable, setAvailableNodesForVariable] = useState([])
@@ -57,7 +59,7 @@ export const Input = ({ inputParam, value, nodes, edges, nodeId, onChange, disab
                         size='small'
                         disabled={disabled}
                         type={getInputType(inputParam.type)}
-                        placeholder={translationObject[inputParam.placeholder] || inputParam.placeholder}
+                        placeholder={inputParam.placeholder}
                         multiline={!!inputParam.rows}
                         minRows={inputParam.rows ?? 1}
                         value={myValue}
@@ -71,7 +73,7 @@ export const Input = ({ inputParam, value, nodes, edges, nodeId, onChange, disab
                             style: {
                                 border: 'none',
                                 background: 'none',
-                                color: '#212121'
+                                color: 'inherit'
                             }
                         }}
                         sx={{
@@ -93,7 +95,7 @@ export const Input = ({ inputParam, value, nodes, edges, nodeId, onChange, disab
                         size='small'
                         disabled={disabled}
                         type={getInputType(inputParam.type)}
-                        placeholder={translationObject[inputParam.placeholder] || inputParam.placeholder}
+                        placeholder={inputParam.placeholder}
                         multiline={!!inputParam.rows}
                         rows={inputParam.rows ?? 1}
                         value={myValue}
@@ -106,6 +108,11 @@ export const Input = ({ inputParam, value, nodes, edges, nodeId, onChange, disab
                             step: inputParam.step ?? 1,
                             style: {
                                 height: inputParam.rows ? '90px' : 'inherit'
+                            }
+                        }}
+                        sx={{
+                            '& .MuiOutlinedInput-notchedOutline': {
+                                borderColor: theme.palette.grey[900] + 25
                             }
                         }}
                     />

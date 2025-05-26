@@ -11,7 +11,8 @@ class LangfuseApi implements INodeCredential {
         this.label = 'Langfuse API'
         this.name = 'langfuseApi'
         this.version = 1.0
-        this.description = ''
+        this.description =
+            'Refer to <a target="_blank" href="https://langfuse.com/docs/flowise">integration guide</a> on how to get API keys on Langfuse'
         this.inputs = [
             {
                 label: 'Secret Key',

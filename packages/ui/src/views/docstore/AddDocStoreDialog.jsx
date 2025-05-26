@@ -74,7 +74,7 @@ const AddDocStoreDialog = ({ show, dialogProps, onCancel, onConfirm }) => {
             const createResp = await documentStoreApi.createDocumentStore(obj)
             if (createResp.data) {
                 enqueueSnackbar({
-                    message: 'New Document Store created.',
+                    message: 'Новый документный магазин создан.',
                     options: {
                         key: new Date().getTime() + Math.random(),
                         variant: 'success',
@@ -90,7 +90,7 @@ const AddDocStoreDialog = ({ show, dialogProps, onCancel, onConfirm }) => {
         } catch (err) {
             const errorData = typeof err === 'string' ? err : err.response?.data || `${err.response.data.message}`
             enqueueSnackbar({
-                message: `Failed to add new Document Store: ${errorData}`,
+                message: `Не удалось добавить новый документный магазин: ${errorData}`,
                 options: {
                     key: new Date().getTime() + Math.random(),
                     variant: 'error',
@@ -116,7 +116,7 @@ const AddDocStoreDialog = ({ show, dialogProps, onCancel, onConfirm }) => {
             const saveResp = await documentStoreApi.updateDocumentStore(docStoreId, saveObj)
             if (saveResp.data) {
                 enqueueSnackbar({
-                    message: 'Document Store Updated!',
+                    message: 'Документный магазин обновлен!',
                     options: {
                         key: new Date().getTime() + Math.random(),
                         variant: 'success',
@@ -132,7 +132,7 @@ const AddDocStoreDialog = ({ show, dialogProps, onCancel, onConfirm }) => {
         } catch (error) {
             const errorData = error.response?.data || `${error.response?.status}: ${error.response?.statusText}`
             enqueueSnackbar({
-                message: `Failed to update Document Store: ${errorData}`,
+                message: `Не удалось обновить документный магазин: ${errorData}`,
                 options: {
                     key: new Date().getTime() + Math.random(),
                     variant: 'error',
@@ -167,7 +167,7 @@ const AddDocStoreDialog = ({ show, dialogProps, onCancel, onConfirm }) => {
                 <Box sx={{ p: 2 }}>
                     <div style={{ display: 'flex', flexDirection: 'row' }}>
                         <Typography>
-                            Name<span style={{ color: 'red' }}>&nbsp;*</span>
+                            Название<span style={{ color: 'red' }}>&nbsp;*</span>
                         </Typography>
 
                         <div style={{ flexGrow: 1 }}></div>
@@ -184,7 +184,7 @@ const AddDocStoreDialog = ({ show, dialogProps, onCancel, onConfirm }) => {
                 </Box>
                 <Box sx={{ p: 2 }}>
                     <div style={{ display: 'flex', flexDirection: 'row' }}>
-                        <Typography>Description</Typography>
+                        <Typography>Описание</Typography>
 
                         <div style={{ flexGrow: 1 }}></div>
                     </div>
@@ -202,7 +202,7 @@ const AddDocStoreDialog = ({ show, dialogProps, onCancel, onConfirm }) => {
                 </Box>
             </DialogContent>
             <DialogActions>
-                <Button onClick={() => onCancel()}>Cancel</Button>
+                <Button onClick={() => onCancel()}>Отмена</Button>
                 <StyledButton
                     disabled={!documentStoreName}
                     variant='contained'

@@ -63,7 +63,7 @@ const APIKeyDialog = ({ show, dialogProps, onCancel, onConfirm, setError }) => {
             const createResp = await apikeyApi.createNewAPI({ keyName })
             if (createResp.data) {
                 enqueueSnackbar({
-                    message: 'Новый ключ API добавлен',
+                    message: 'New API key added',
                     options: {
                         key: new Date().getTime() + Math.random(),
                         variant: 'success',
@@ -77,9 +77,9 @@ const APIKeyDialog = ({ show, dialogProps, onCancel, onConfirm, setError }) => {
                 onConfirm()
             }
         } catch (error) {
-            setError(error)
+            if (setError) setError(error)
             enqueueSnackbar({
-                message: `Ошибка удаления API ключа: ${
+                message: `Failed to add new API key: ${
                     typeof error.response.data === 'object' ? error.response.data.message : error.response.data
                 }`,
                 options: {
@@ -102,7 +102,7 @@ const APIKeyDialog = ({ show, dialogProps, onCancel, onConfirm, setError }) => {
             const saveResp = await apikeyApi.updateAPI(dialogProps.key.id, { keyName })
             if (saveResp.data) {
                 enqueueSnackbar({
-                    message: 'API ключ сохранен',
+                    message: 'API Key saved',
                     options: {
                         key: new Date().getTime() + Math.random(),
                         variant: 'success',
@@ -116,9 +116,9 @@ const APIKeyDialog = ({ show, dialogProps, onCancel, onConfirm, setError }) => {
                 onConfirm()
             }
         } catch (error) {
-            setError(error)
+            if (setError) setError(error)
             enqueueSnackbar({
-                message: `Ошибка сохранения API ключа: ${
+                message: `Failed to save API key: ${
                     typeof error.response.data === 'object' ? error.response.data.message : error.response.data
                 }`,
                 options: {
@@ -151,7 +151,7 @@ const APIKeyDialog = ({ show, dialogProps, onCancel, onConfirm, setError }) => {
             <DialogContent>
                 {dialogProps.type === 'EDIT' && (
                     <Box sx={{ p: 2 }}>
-                        <Typography variant='overline'>API ключ</Typography>
+                        <Typography variant='overline'>API Key</Typography>
                         <Stack direction='row' sx={{ mb: 1 }}>
                             <Typography
                                 sx={{
@@ -166,7 +166,7 @@ const APIKeyDialog = ({ show, dialogProps, onCancel, onConfirm, setError }) => {
                                 {dialogProps.key.apiKey}
                             </Typography>
                             <IconButton
-                                title='Скопировать API ключ'
+                                title='Copy API Key'
                                 color='success'
                                 onClick={(event) => {
                                     navigator.clipboard.writeText(dialogProps.key.apiKey)
@@ -192,7 +192,7 @@ const APIKeyDialog = ({ show, dialogProps, onCancel, onConfirm, setError }) => {
                                 }}
                             >
                                 <Typography variant='h6' sx={{ pl: 1, pr: 1, color: 'white', background: theme.palette.success.dark }}>
-                                    Скопировано!
+                                    Copied!
                                 </Typography>
                             </Popover>
                         </Stack>
@@ -201,13 +201,13 @@ const APIKeyDialog = ({ show, dialogProps, onCancel, onConfirm, setError }) => {
 
                 <Box sx={{ p: 2 }}>
                     <Stack sx={{ position: 'relative' }} direction='row'>
-                        <Typography variant='overline'>Название ключа</Typography>
+                        <Typography variant='overline'>Key Name</Typography>
                     </Stack>
                     <OutlinedInput
                         id='keyName'
                         type='string'
                         fullWidth
-                        placeholder='Мой новый ключ'
+                        placeholder='My New Key'
                         value={keyName}
                         name='keyName'
                         onChange={(e) => setKeyName(e.target.value)}

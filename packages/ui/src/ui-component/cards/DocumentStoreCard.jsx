@@ -60,7 +60,8 @@ const DocumentStoreCard = ({ data, images, onClick }) => {
                                     WebkitBoxOrient: 'vertical',
                                     textOverflow: 'ellipsis',
                                     overflow: 'hidden',
-                                    flex: 1
+                                    flex: 1,
+                                    mr: 1
                                 }}
                             >
                                 {data.name}
@@ -122,7 +123,7 @@ const DocumentStoreCard = ({ data, images, onClick }) => {
                             }}
                         >
                             <IconLanguage style={{ marginRight: 5 }} size={15} />
-                            {kFormatter(data.totalChars ?? 0)} chars
+                            {kFormatter(data.totalChars ?? 0)} символов
                         </div>
                         <div
                             style={{
@@ -142,7 +143,7 @@ const DocumentStoreCard = ({ data, images, onClick }) => {
                             }}
                         >
                             <IconScissors style={{ marginRight: 5 }} size={15} />
-                            {kFormatter(data.totalChunks ?? 0)} chunks
+                            {kFormatter(data.totalChunks ?? 0)} фрагментов
                         </div>
                     </Grid>
                     {images && images.length > 0 && (
@@ -171,7 +172,7 @@ const DocumentStoreCard = ({ data, images, onClick }) => {
                             ))}
                             {images.length > 3 && (
                                 <Typography sx={{ alignItems: 'center', display: 'flex', fontSize: '.9rem', fontWeight: 200 }}>
-                                    + {images.length - 3} More
+                                    + {images.length - 3} Еще
                                 </Typography>
                             )}
                         </Box>

@@ -44,10 +44,22 @@ import useConfirm from '@/hooks/useConfirm'
 import useNotifier from '@/utils/useNotifier'
 
 // Icons
-import { IconTrash, IconEdit, IconCopy, IconChevronsUp, IconChevronsDown, IconX, IconPlus, IconEye, IconEyeOff } from '@tabler/icons-react'
+import {
+    IconTrash,
+    IconEdit,
+    IconCopy,
+    IconChevronsUp,
+    IconChevronsDown,
+    IconX,
+    IconPlus,
+    IconEye,
+    IconEyeOff,
+    IconFileUpload
+} from '@tabler/icons-react'
 import APIEmptySVG from '@/assets/images/api_empty.svg'
+import UploadJSONFileDialog from '@/views/apikey/UploadJSONFileDialog'
 
-// ==============================|| APIKey ||============================== //
+// ==============================|| API Ключи ||============================== //
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
     borderColor: theme.palette.grey[900] + 25,
@@ -112,14 +124,14 @@ function APIKeyRow(props) {
                 <StyledTableCell>
                     {props.apiKey.chatFlows.length}{' '}
                     {props.apiKey.chatFlows.length > 0 && (
-                        <IconButton aria-label='expand row' size='small' color='inherit' onClick={() => setOpen(!open)}>
+                        <IconButton aria-label='развернуть строку' size='small' color='inherit' onClick={() => setOpen(!open)}>
                             {props.apiKey.chatFlows.length > 0 && open ? <IconChevronsUp /> : <IconChevronsDown />}
                         </IconButton>
                     )}
                 </StyledTableCell>
-                <StyledTableCell>{moment(props.apiKey.createdAt).format('DD.MM.YYYY')}</StyledTableCell>
+                <StyledTableCell>{moment(props.apiKey.createdAt).format('DD-MM-YYYY')}</StyledTableCell>
                 <StyledTableCell>
-                    <IconButton title='Изменить' color='primary' onClick={props.onEditClick}>
+                    <IconButton title='Редактировать' color='primary' onClick={props.onEditClick}>
                         <IconEdit />
                     </IconButton>
                 </StyledTableCell>
@@ -134,19 +146,19 @@ function APIKeyRow(props) {
                     <StyledTableCell sx={{ p: 2 }} colSpan={6}>
                         <Collapse in={open} timeout='auto' unmountOnExit>
                             <Box sx={{ borderRadius: 2, border: 1, borderColor: theme.palette.grey[900] + 25, overflow: 'hidden' }}>
-                                <Table aria-label='chatflow table'>
+                                <Table aria-label='таблица чатфлоу'>
                                     <TableHead sx={{ height: 48 }}>
                                         <TableRow>
-                                            <StyledTableCell sx={{ width: '30%' }}>Chatflow Name</StyledTableCell>
-                                            <StyledTableCell sx={{ width: '20%' }}>Modified On</StyledTableCell>
-                                            <StyledTableCell sx={{ width: '50%' }}>Category</StyledTableCell>
+                                            <StyledTableCell sx={{ width: '30%' }}>Название чатфлоу</StyledTableCell>
+                                            <StyledTableCell sx={{ width: '20%' }}>Изменено</StyledTableCell>
+                                            <StyledTableCell sx={{ width: '50%' }}>Категория</StyledTableCell>
                                         </TableRow>
                                     </TableHead>
                                     <TableBody>
                                         {props.apiKey.chatFlows.map((flow, index) => (
                                             <TableRow key={index}>
                                                 <StyledTableCell>{flow.flowName}</StyledTableCell>
-                                                <StyledTableCell>{moment(flow.updatedDate).format('DD.MM.YYYY')}</StyledTableCell>
+                                                <StyledTableCell>{moment(flow.updatedDate).format('DD-MM-YYYY')}</StyledTableCell>
                                                 <StyledTableCell>
                                                     &nbsp;
                                                     {flow.category &&
@@ -200,6 +212,9 @@ const APIKey = () => {
     const [showApiKeys, setShowApiKeys] = useState([])
     const openPopOver = Boolean(anchorEl)
 
+    const [showUploadDialog, setShowUploadDialog] = useState(false)
+    const [uploadDialogProps, setUploadDialogProps] = useState({})
+
     const [search, setSearch] = useState('')
     const onSearchChange = (event) => {
         setSearch(event.target.value)
@@ -231,9 +246,9 @@ const APIKey = () => {
 
     const addNew = () => {
         const dialogProp = {
-            title: 'Добавить новый ключ API',
+            title: 'Добавить новый API ключ',
             type: 'ADD',
-            cancelButtonName: 'Cancel',
+            cancelButtonName: 'Отмена',
             confirmButtonName: 'Добавить',
             customBtnId: 'btn_confirmAddingApiKey'
         }
@@ -243,9 +258,9 @@ const APIKey = () => {
 
     const edit = (key) => {
         const dialogProp = {
-            title: 'Изменить API ключ',
+            title: 'Редактировать API ключ',
             type: 'EDIT',
-            cancelButtonName: 'Cancel',
+            cancelButtonName: 'Отмена',
             confirmButtonName: 'Сохранить',
             customBtnId: 'btn_confirmEditingApiKey',
             key
@@ -254,15 +269,26 @@ const APIKey = () => {
         setShowDialog(true)
     }
 
+    const uploadDialog = () => {
+        const dialogProp = {
+            type: 'ADD',
+            cancelButtonName: 'Отмена',
+            confirmButtonName: 'Загрузить',
+            data: {}
+        }
+        setUploadDialogProps(dialogProp)
+        setShowUploadDialog(true)
+    }
+
     const deleteKey = async (key) => {
         const confirmPayload = {
-            title: `Удалить`,
+            title: `Удаление`,
             description:
                 key.chatFlows.length === 0
-                    ? `Удалить ключ [${key.keyName}] ? `
-                    : `Удалить ключ [${key.keyName}] ?\n There are ${key.chatFlows.length} chatflows using this key.`,
+                    ? `Удалить ключ [${key.keyName}]?`
+                    : `Удалить ключ [${key.keyName}]?\n Есть ${key.chatFlows.length} чатфлоу, использующих этот ключ.`,
             confirmButtonName: 'Удалить',
-            cancelButtonName: 'Отменить',
+            cancelButtonName: 'Отмена',
             customBtnId: 'btn_initiateDeleteApiKey'
         }
         const isConfirmed = await confirm(confirmPayload)
@@ -287,7 +313,7 @@ const APIKey = () => {
                 }
             } catch (error) {
                 enqueueSnackbar({
-                    message: `Ошибка удаления API ключа: ${
+                    message: `Не удалось удалить API ключ: ${
                         typeof error.response.data === 'object' ? error.response.data.message : error.response.data
                     }`,
                     options: {
@@ -308,6 +334,7 @@ const APIKey = () => {
 
     const onConfirm = () => {
         setShowDialog(false)
+        setShowUploadDialog(false)
         getAllAPIKeysApi.request()
     }
 
@@ -340,15 +367,30 @@ const APIKey = () => {
                     <ErrorBoundary error={error} />
                 ) : (
                     <Stack flexDirection='column' sx={{ gap: 3 }}>
-                        <ViewHeader onSearchChange={onSearchChange} search={true} searchPlaceholder='Поиск по имени ключа' title='API-ключи'>
+                        <ViewHeader
+                            onSearchChange={onSearchChange}
+                            search={true}
+                            searchPlaceholder='Поиск API ключей'
+                            title='API Ключи'
+                            description='Ключи аутентификации Flowise API & SDK'
+                        >
+                            <Button
+                                variant='outlined'
+                                sx={{ borderRadius: 2, height: '100%' }}
+                                onClick={uploadDialog}
+                                startIcon={<IconFileUpload />}
+                                id='btn_importApiKeys'
+                            >
+                                Импорт
+                            </Button>
                             <StyledButton
                                 variant='contained'
-                                sx={{ borderRadius: 2, height: '100%', textTransform: 'unset' }}
+                                sx={{ borderRadius: 2, height: '100%' }}
                                 onClick={addNew}
                                 startIcon={<IconPlus />}
                                 id='btn_createApiKey'
                             >
-                                Добавить новый ключ
+                                Создать ключ
                             </StyledButton>
                         </ViewHeader>
                         {!isLoading && apiKeys.length <= 0 ? (
@@ -357,17 +399,17 @@ const APIKey = () => {
                                     <img
                                         style={{ objectFit: 'cover', height: '20vh', width: 'auto' }}
                                         src={APIEmptySVG}
-                                        alt='APIEmptySVG'
+                                        alt='Нет API ключей'
                                     />
                                 </Box>
-                                <div>No API Keys Yet</div>
+                                <div>Нет API ключей</div>
                             </Stack>
                         ) : (
                             <TableContainer
                                 sx={{ border: 1, borderColor: theme.palette.grey[900] + 25, borderRadius: 2 }}
                                 component={Paper}
                             >
-                                <Table sx={{ minWidth: 650 }} aria-label='simple table'>
+                                <Table sx={{ minWidth: 650 }} aria-label='таблица ключей'>
                                     <TableHead
                                         sx={{
                                             backgroundColor: customization.isDarkMode
@@ -378,9 +420,9 @@ const APIKey = () => {
                                     >
                                         <TableRow>
                                             <StyledTableCell>Название ключа</StyledTableCell>
-                                            <StyledTableCell>API-ключ</StyledTableCell>
-                                            <StyledTableCell>Использовано</StyledTableCell>
-                                            <StyledTableCell>Дата создания</StyledTableCell>
+                                            <StyledTableCell>API Ключ</StyledTableCell>
+                                            <StyledTableCell>Использование</StyledTableCell>
+                                            <StyledTableCell>Создан</StyledTableCell>
                                             <StyledTableCell> </StyledTableCell>
                                             <StyledTableCell> </StyledTableCell>
                                         </TableRow>
@@ -468,6 +510,14 @@ const APIKey = () => {
                 onConfirm={onConfirm}
                 setError={setError}
             ></APIKeyDialog>
+            {showUploadDialog && (
+                <UploadJSONFileDialog
+                    show={showUploadDialog}
+                    dialogProps={uploadDialogProps}
+                    onCancel={() => setShowUploadDialog(false)}
+                    onConfirm={onConfirm}
+                ></UploadJSONFileDialog>
+            )}
             <ConfirmDialog />
         </>
     )

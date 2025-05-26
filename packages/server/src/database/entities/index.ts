@@ -9,6 +9,9 @@ import { DocumentStore } from './DocumentStore'
 import { DocumentStoreFileChunk } from './DocumentStoreFileChunk'
 import { Lead } from './Lead'
 import { UpsertHistory } from './UpsertHistory'
+import { ApiKey } from './ApiKey'
+import { CustomTemplate } from './CustomTemplate'
+import { Execution } from './Execution'
 
 export const entities = {
     ChatFlow,
@@ -21,5 +24,8 @@ export const entities = {
     DocumentStore,
     DocumentStoreFileChunk,
     Lead,
-    UpsertHistory
+    UpsertHistory,
+    ApiKey,
+    CustomTemplate,
+    Execution
 }

@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import PropTypes from 'prop-types'
 import { useSelector } from 'react-redux'
 import moment from 'moment'
@@ -14,6 +15,7 @@ import {
     TableContainer,
     TableHead,
     TableRow,
+    TableSortLabel,
     Tooltip,
     Typography,
     useTheme
@@ -41,9 +43,49 @@ const StyledTableRow = styled(TableRow)(() => ({
     }
 }))
 
-export const FlowListTable = ({ data, images, isLoading, filterFunction, updateFlowsApi, setError, isAgentCanvas }) => {
+const getLocalStorageKeyName = (name, isAgentCanvas) => {
+    return (isAgentCanvas ? 'agentcanvas' : 'chatflowcanvas') + '_' + name
+}
+
+export const FlowListTable = ({ data, images = {}, icons = {}, isLoading, filterFunction, updateFlowsApi, setError, isAgentCanvas }) => {
     const theme = useTheme()
     const customization = useSelector((state) => state.customization)
+
+    const localStorageKeyOrder = getLocalStorageKeyName('order', isAgentCanvas)
+    const localStorageKeyOrderBy = getLocalStorageKeyName('orderBy', isAgentCanvas)
+
+    const [order, setOrder] = useState(localStorage.getItem(localStorageKeyOrder) || 'desc')
+    const [orderBy, setOrderBy] = useState(localStorage.getItem(localStorageKeyOrderBy) || 'updatedDate')
+
+    const handleRequestSort = (property) => {
+        const isAsc = orderBy === property && order === 'asc'
+        const newOrder = isAsc ? 'desc' : 'asc'
+        setOrder(newOrder)
+        setOrderBy(property)
+        localStorage.setItem(localStorageKeyOrder, newOrder)
+        localStorage.setItem(localStorageKeyOrderBy, property)
+    }
+
+    const onFlowClick = (row) => {
+        if (!isAgentCanvas) {
+            return `/canvas/${row.id}`
+        } else {
+            return localStorage.getItem('agentFlowVersion') === 'v2' ? `/v2/agentcanvas/${row.id}` : `/agentcanvas/${row.id}`
+        }
+    }
+
+    const sortedData = data
+        ? [...data].sort((a, b) => {
+              if (orderBy === 'name') {
+                  return order === 'asc' ? (a.name || '').localeCompare(b.name || '') : (b.name || '').localeCompare(a.name || '')
+              } else if (orderBy === 'updatedDate') {
+                  return order === 'asc'
+                      ? new Date(a.updatedDate) - new Date(b.updatedDate)
+                      : new Date(b.updatedDate) - new Date(a.updatedDate)
+              }
+              return 0
+          })
+        : []
 
     return (
         <>
@@ -57,19 +99,27 @@ export const FlowListTable = ({ data, images, isLoading, filterFunction, updateF
                     >
                         <TableRow>
                             <StyledTableCell component='th' scope='row' style={{ width: '20%' }} key='0'>
-                                Название
+                                <TableSortLabel active={orderBy === 'name'} direction={order} onClick={() => handleRequestSort('name')}>
+                                    Название
+                                </TableSortLabel>
                             </StyledTableCell>
                             <StyledTableCell style={{ width: '25%' }} key='1'>
-                                Категории
+                                Категория
                             </StyledTableCell>
                             <StyledTableCell style={{ width: '30%' }} key='2'>
                                 Узлы
                             </StyledTableCell>
                             <StyledTableCell style={{ width: '15%' }} key='3'>
-                                Дата обновления
+                                <TableSortLabel
+                                    active={orderBy === 'updatedDate'}
+                                    direction={order}
+                                    onClick={() => handleRequestSort('updatedDate')}
+                                >
+                                    Дата изменения
+                                </TableSortLabel>
                             </StyledTableCell>
                             <StyledTableCell style={{ width: '10%' }} key='4'>
-                                Параметры
+                                Действия
                             </StyledTableCell>
                         </TableRow>
                     </TableHead>
@@ -113,7 +163,7 @@ export const FlowListTable = ({ data, images, isLoading, filterFunction, updateF
                             </>
                         ) : (
                             <>
-                                {data?.filter(filterFunction).map((row, index) => (
+                                {sortedData.filter(filterFunction).map((row, index) => (
                                     <StyledTableRow key={index}>
                                         <StyledTableCell key='0'>
                                             <Tooltip title={row.templateName || row.name}>
@@ -128,10 +178,7 @@ export const FlowListTable = ({ data, images, isLoading, filterFunction, updateF
                                                         overflow: 'hidden'
                                                     }}
                                                 >
-                                                    <Link
-                                                        to={`/${isAgentCanvas ? 'agentcanvas' : 'canvas'}/${row.id}`}
-                                                        style={{ color: '#2196f3', textDecoration: 'none' }}
-                                                    >
+                                                    <Link to={onFlowClick(row)} style={{ color: '#2196f3', textDecoration: 'none' }}>
                                                         {row.templateName || row.name}
                                                     </Link>
                                                 </Typography>
@@ -156,7 +203,7 @@ export const FlowListTable = ({ data, images, isLoading, filterFunction, updateF
                                             </div>
                                         </StyledTableCell>
                                         <StyledTableCell key='2'>
-                                            {images[row.id] && (
+                                            {(images[row.id] || icons[row.id]) && (
                                                 <Box
                                                     sx={{
                                                         display: 'flex',
@@ -165,33 +212,55 @@ export const FlowListTable = ({ data, images, isLoading, filterFunction, updateF
                                                         gap: 1
                                                     }}
                                                 >
-                                                    {images[row.id]
-                                                        .slice(0, images[row.id].length > 5 ? 5 : images[row.id].length)
-                                                        .map((img) => (
-                                                            <Box
-                                                                key={img}
-                                                                sx={{
-                                                                    width: 30,
-                                                                    height: 30,
-                                                                    borderRadius: '50%',
-                                                                    backgroundColor: customization.isDarkMode
-                                                                        ? theme.palette.common.white
-                                                                        : theme.palette.grey[300] + 75
-                                                                }}
-                                                            >
-                                                                <img
-                                                                    style={{
-                                                                        width: '100%',
-                                                                        height: '100%',
-                                                                        padding: 5,
-                                                                        objectFit: 'contain'
+                                                    {[
+                                                        ...(images[row.id] || []).map((img) => ({ type: 'image', src: img })),
+                                                        ...(icons[row.id] || []).map((ic) => ({
+                                                            type: 'icon',
+                                                            icon: ic.icon,
+                                                            color: ic.color
+                                                        }))
+                                                    ]
+                                                        .slice(0, 5)
+                                                        .map((item, index) =>
+                                                            item.type === 'image' ? (
+                                                                <Box
+                                                                    key={item.src}
+                                                                    sx={{
+                                                                        width: 30,
+                                                                        height: 30,
+                                                                        borderRadius: '50%',
+                                                                        backgroundColor: customization.isDarkMode
+                                                                            ? theme.palette.common.white
+                                                                            : theme.palette.grey[300] + 75
                                                                     }}
-                                                                    alt=''
-                                                                    src={img}
-                                                                />
-                                                            </Box>
-                                                        ))}
-                                                    {images[row.id].length > 5 && (
+                                                                >
+                                                                    <img
+                                                                        style={{
+                                                                            width: '100%',
+                                                                            height: '100%',
+                                                                            padding: 5,
+                                                                            objectFit: 'contain'
+                                                                        }}
+                                                                        alt=''
+                                                                        src={item.src}
+                                                                    />
+                                                                </Box>
+                                                            ) : (
+                                                                <div
+                                                                    key={index}
+                                                                    style={{
+                                                                        width: 30,
+                                                                        height: 30,
+                                                                        display: 'flex',
+                                                                        alignItems: 'center',
+                                                                        justifyContent: 'center'
+                                                                    }}
+                                                                >
+                                                                    <item.icon size={25} color={item.color} />
+                                                                </div>
+                                                            )
+                                                        )}
+                                                    {(images[row.id]?.length || 0) + (icons[row.id]?.length || 0) > 5 && (
                                                         <Typography
                                                             sx={{
                                                                 alignItems: 'center',
@@ -200,13 +269,13 @@ export const FlowListTable = ({ data, images, isLoading, filterFunction, updateF
                                                                 fontWeight: 200
                                                             }}
                                                         >
-                                                            + {images[row.id].length - 5} Больше
+                                                            + {(images[row.id]?.length || 0) + (icons[row.id]?.length || 0) - 5} Ещё
                                                         </Typography>
                                                     )}
                                                 </Box>
                                             )}
                                         </StyledTableCell>
-                                        <StyledTableCell key='3'>{moment(row.updatedDate).format('DD.MM.YYYY')}</StyledTableCell>
+                                        <StyledTableCell key='3'>{moment(row.updatedDate).format('DD.MM.YYYY HH:mm')}</StyledTableCell>
                                         <StyledTableCell key='4'>
                                             <Stack
                                                 direction={{ xs: 'column', sm: 'row' }}
@@ -236,6 +305,7 @@ export const FlowListTable = ({ data, images, isLoading, filterFunction, updateF
 FlowListTable.propTypes = {
     data: PropTypes.array,
     images: PropTypes.object,
+    icons: PropTypes.object,
     isLoading: PropTypes.bool,
     filterFunction: PropTypes.func,
     updateFlowsApi: PropTypes.object,

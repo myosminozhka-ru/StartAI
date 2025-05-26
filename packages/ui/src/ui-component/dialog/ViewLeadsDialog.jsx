@@ -75,7 +75,9 @@ const ViewLeadsDialog = ({ show, dialogProps, onCancel }) => {
             leads
         }
         const dataStr = JSON.stringify(exportData, null, 2)
-        const dataUri = 'data:application/json;charset=utf-8,' + encodeURIComponent(dataStr)
+        //const dataUri = 'data:application/json;charset=utf-8,' + encodeURIComponent(dataStr)
+        const blob = new Blob([dataStr], { type: 'application/json' })
+        const dataUri = URL.createObjectURL(blob)
 
         const exportFileDefaultName = `${dialogProps.chatflow.id}-leads.json`
 
@@ -134,7 +136,7 @@ const ViewLeadsDialog = ({ show, dialogProps, onCancel }) => {
                             }
                         }}
                         variant='outlined'
-                        placeholder='Search Name or Email or Phone'
+                        placeholder='Поиск по имени, email или телефону'
                         onChange={onSearchChange}
                         startAdornment={
                             <Box
@@ -154,7 +156,7 @@ const ViewLeadsDialog = ({ show, dialogProps, onCancel }) => {
                     <div style={{ flex: 1 }} />
                     {leads && leads.length > 0 && (
                         <Button variant='outlined' onClick={() => exportMessages()} startIcon={<IconFileExport />}>
-                            Export
+                            Экспорт
                         </Button>
                     )}
                 </div>
@@ -163,20 +165,20 @@ const ViewLeadsDialog = ({ show, dialogProps, onCancel }) => {
                 {leads && leads.length == 0 && (
                     <Stack sx={{ alignItems: 'center', justifyContent: 'center', width: '100%' }} flexDirection='column'>
                         <Box sx={{ p: 5, height: 'auto' }}>
-                            <img style={{ objectFit: 'cover', height: '20vh', width: 'auto' }} src={leadsEmptySVG} alt='msgEmptySVG' />
+                            <img style={{ objectFit: 'cover', height: '20vh', width: 'auto' }} src={leadsEmptySVG} alt='Нет лидов' />
                         </Box>
-                        <div>No Leads</div>
+                        <div>Нет лидов</div>
                     </Stack>
                 )}
                 {leads && leads.length > 0 && (
                     <TableContainer component={Paper}>
-                        <Table sx={{ minWidth: 650 }} aria-label='simple table'>
+                        <Table sx={{ minWidth: 650 }} aria-label='таблица лидов'>
                             <TableHead>
                                 <TableRow>
-                                    <TableCell>Name</TableCell>
-                                    <TableCell>Email Address</TableCell>
-                                    <TableCell>Phone</TableCell>
-                                    <TableCell>Created Date</TableCell>
+                                    <TableCell>Имя</TableCell>
+                                    <TableCell>Email адрес</TableCell>
+                                    <TableCell>Телефон</TableCell>
+                                    <TableCell>Дата создания</TableCell>
                                 </TableRow>
                             </TableHead>
                             <TableBody>
@@ -185,7 +187,7 @@ const ViewLeadsDialog = ({ show, dialogProps, onCancel }) => {
                                         <TableCell>{lead.name}</TableCell>
                                         <TableCell>{lead.email}</TableCell>
                                         <TableCell>{lead.phone}</TableCell>
-                                        <TableCell>{moment(lead.createdDate).format('MMMM Do, YYYY')}</TableCell>
+                                        <TableCell>{moment(lead.createdDate).format('DD-MM-YYYY')}</TableCell>
                                     </TableRow>
                                 ))}
                             </TableBody>

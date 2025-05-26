@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react'
 import { useDispatch } from 'react-redux'
 import { enqueueSnackbar as enqueueSnackbarAction, closeSnackbar as closeSnackbarAction } from '@/store/actions'
 import parser from 'html-react-parser'
-import { translationObject } from '@/translate'
+
 // Material
 import { Button, Dialog, DialogActions, DialogContent, DialogTitle, Box, Stack, OutlinedInput, Typography } from '@mui/material'
 
@@ -24,10 +24,12 @@ import useApi from '@/hooks/useApi'
 
 // utils
 import useNotifier from '@/utils/useNotifier'
+import { initializeDefaultNodeData } from '@/utils/genericHelper'
 
 // const
 import { baseURL, REDACTED_CREDENTIAL_VALUE } from '@/store/constant'
 import { HIDE_CANVAS_DIALOG, SHOW_CANVAS_DIALOG } from '@/store/actions'
+import keySVG from '@/assets/images/key.svg'
 
 const AddEditCredentialDialog = ({ show, dialogProps, onCancel, onConfirm, setError }) => {
     const portalElement = document.getElementById('portal')
@@ -71,14 +73,14 @@ const AddEditCredentialDialog = ({ show, dialogProps, onCancel, onConfirm, setEr
     }, [getSpecificComponentCredentialApi.data])
 
     useEffect(() => {
-        if (getSpecificCredentialApi.error) {
+        if (getSpecificCredentialApi.error && setError) {
             setError(getSpecificCredentialApi.error)
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [getSpecificCredentialApi.error])
 
     useEffect(() => {
-        if (getSpecificComponentCredentialApi.error) {
+        if (getSpecificComponentCredentialApi.error && setError) {
             setError(getSpecificComponentCredentialApi.error)
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -95,7 +97,8 @@ const AddEditCredentialDialog = ({ show, dialogProps, onCancel, onConfirm, setEr
             // When credential dialog is to add a new credential
             setName('')
             setCredential({})
-            setCredentialData({})
+            const defaultCredentialData = initializeDefaultNodeData(dialogProps.credentialComponent.inputs)
+            setCredentialData(defaultCredentialData)
             setComponentCredential(dialogProps.credentialComponent)
         }
 
@@ -132,9 +135,9 @@ const AddEditCredentialDialog = ({ show, dialogProps, onCancel, onConfirm, setEr
                 onConfirm(createResp.data.id)
             }
         } catch (error) {
-            setError(error)
+            if (setError) setError(error)
             enqueueSnackbar({
-                message: `Ошибка добавления учетных данных: ${
+                message: `Не удалось добавить учетные данные: ${
                     typeof error.response.data === 'object' ? error.response.data.message : error.response.data
                 }`,
                 options: {
@@ -151,6 +154,7 @@ const AddEditCredentialDialog = ({ show, dialogProps, onCancel, onConfirm, setEr
             onCancel()
         }
     }
+
     const saveCredential = async () => {
         try {
             const saveObj = {
@@ -183,9 +187,9 @@ const AddEditCredentialDialog = ({ show, dialogProps, onCancel, onConfirm, setEr
                 onConfirm(saveResp.data.id)
             }
         } catch (error) {
-            setError(error)
+            if (setError) setError(error)
             enqueueSnackbar({
-                message: `Ошибка сохранения учетных данных: ${
+                message: `Не удалось сохранить учетные данные: ${
                     typeof error.response.data === 'object' ? error.response.data.message : error.response.data
                 }`,
                 options: {
@@ -234,9 +238,14 @@ const AddEditCredentialDialog = ({ show, dialogProps, onCancel, onConfirm, setEr
                                 }}
                                 alt={componentCredential.name}
                                 src={`${baseURL}/api/v1/components-credentials-icon/${componentCredential.name}`}
+                                onError={(e) => {
+                                    e.target.onerror = null
+                                    e.target.style.padding = '5px'
+                                    e.target.src = keySVG
+                                }}
                             />
                         </div>
-                        {translationObject[componentCredential.label] || componentCredential.label}
+                        {componentCredential.label}
                     </div>
                 )}
             </DialogTitle>
@@ -254,9 +263,7 @@ const AddEditCredentialDialog = ({ show, dialogProps, onCancel, onConfirm, setEr
                                 marginBottom: 10
                             }}
                         >
-                            <span style={{ color: 'rgb(116,66,16)' }}>
-                                {parser(translationObject[componentCredential.description] || componentCredential.description)}
-                            </span>
+                            <span style={{ color: 'rgb(116,66,16)' }}>{parser(componentCredential.description)}</span>
                         </div>
                     </Box>
                 )}
@@ -272,7 +279,7 @@ const AddEditCredentialDialog = ({ show, dialogProps, onCancel, onConfirm, setEr
                             id='credName'
                             type='string'
                             fullWidth
-                            placeholder={translationObject[componentCredential.label] || componentCredential.label}
+                            placeholder={componentCredential.label}
                             value={name}
                             name='name'
                             onChange={(e) => setName(e.target.value)}
@@ -282,11 +289,7 @@ const AddEditCredentialDialog = ({ show, dialogProps, onCancel, onConfirm, setEr
                 {componentCredential &&
                     componentCredential.inputs &&
                     componentCredential.inputs.map((inputParam, index) => (
-                        <CredentialInputHandler
-                            key={index}
-                            inputParam={translationObject[inputParam] || inputParam}
-                            data={credentialData}
-                        />
+                        <CredentialInputHandler key={index} inputParam={inputParam} data={credentialData} />
                     ))}
             </DialogContent>
             <DialogActions>
@@ -295,7 +298,7 @@ const AddEditCredentialDialog = ({ show, dialogProps, onCancel, onConfirm, setEr
                     variant='contained'
                     onClick={() => (dialogProps.type === 'ADD' ? addNewCredential() : saveCredential())}
                 >
-                    Добавить
+                    {dialogProps.confirmButtonName}
                 </StyledButton>
             </DialogActions>
             <ConfirmDialog />

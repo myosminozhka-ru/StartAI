@@ -19,11 +19,11 @@ class Groq_ChatModels implements INode {
     constructor() {
         this.label = 'GroqChat'
         this.name = 'groqChat'
-        this.version = 3.0
+        this.version = 4.0
         this.type = 'GroqChat'
         this.icon = 'groq.png'
         this.category = 'Chat Models'
-        this.description = 'Обертка вокруг Groq API с LPU Inference Engine'
+        this.description = 'Wrapper around Groq API with LPU Inference Engine'
         this.baseClasses = [this.type, ...getBaseClasses(ChatGroq)]
         this.credential = {
             label: 'Connect Credential',
@@ -53,6 +53,21 @@ class Groq_ChatModels implements INode {
                 step: 0.1,
                 default: 0.9,
                 optional: true
+            },
+            {
+                label: 'Max Tokens',
+                name: 'maxTokens',
+                type: 'number',
+                step: 1,
+                optional: true,
+                additionalParams: true
+            },
+            {
+                label: 'Streaming',
+                name: 'streaming',
+                type: 'boolean',
+                default: true,
+                optional: true
             }
         ]
     }
@@ -66,6 +81,7 @@ class Groq_ChatModels implements INode {
 
     async init(nodeData: INodeData, _: string, options: ICommonObject): Promise<any> {
         const modelName = nodeData.inputs?.modelName as string
+        const maxTokens = nodeData.inputs?.maxTokens as string
         const cache = nodeData.inputs?.cache as BaseCache
         const temperature = nodeData.inputs?.temperature as string
         const streaming = nodeData.inputs?.streaming as boolean
@@ -79,6 +95,7 @@ class Groq_ChatModels implements INode {
             apiKey: groqApiKey,
             streaming: streaming ?? true
         }
+        if (maxTokens) obj.maxTokens = parseInt(maxTokens, 10)
         if (cache) obj.cache = cache
 
         const model = new ChatGroq(obj)

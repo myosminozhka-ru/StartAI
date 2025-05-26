@@ -9,7 +9,7 @@ import { useTheme } from '@mui/material/styles'
 import MainCard from '@/ui-component/cards/MainCard'
 import ItemCard from '@/ui-component/cards/ItemCard'
 import { gridSpacing } from '@/store/constant'
-import WorkflowEmptySVG from '@/assets/images/workflow_empty_startai.svg'
+import WorkflowEmptySVG from '@/assets/images/workflow_empty.svg'
 import LoginDialog from '@/ui-component/dialog/LoginDialog'
 import ConfirmDialog from '@/ui-component/dialog/ConfirmDialog'
 import { FlowListTable } from '@/ui-component/table/FlowListTable'
@@ -51,7 +51,6 @@ const Chatflows = () => {
         setView(nextView)
     }
 
-    // eslint-disable-next-line unused-imports/no-unused-vars
     const onSearchChange = (event) => {
         setSearch(event.target.value)
     }
@@ -59,7 +58,8 @@ const Chatflows = () => {
     function filterFlows(data) {
         return (
             data.name.toLowerCase().indexOf(search.toLowerCase()) > -1 ||
-            (data.category && data.category.toLowerCase().indexOf(search.toLowerCase()) > -1)
+            (data.category && data.category.toLowerCase().indexOf(search.toLowerCase()) > -1) ||
+            data.id.toLowerCase().indexOf(search.toLowerCase()) > -1
         )
     }
 
@@ -87,8 +87,8 @@ const Chatflows = () => {
         if (getAllChatflowsApi.error) {
             if (getAllChatflowsApi.error?.response?.status === 401) {
                 setLoginDialogProps({
-                    title: 'Войти',
-                    confirmButtonName: 'Войти'
+                    title: 'Login',
+                    confirmButtonName: 'Login'
                 })
                 setLoginDialogOpen(true)
             } else {
@@ -134,8 +134,9 @@ const Chatflows = () => {
                     <ViewHeader
                         onSearchChange={onSearchChange}
                         search={true}
-                        searchPlaceholder='Найти по имени или категории'
-                        title='Проекты'
+                        searchPlaceholder='Поиск по названию или категории'
+                        title='Чат-потоки'
+                        description='Создавайте однокомпонентные системы, чат-боты и простые потоки языковых моделей'
                     >
                         <ToggleButtonGroup
                             sx={{ borderRadius: 2, maxHeight: 40 }}
@@ -152,7 +153,7 @@ const Chatflows = () => {
                                 }}
                                 variant='contained'
                                 value='card'
-                                title='Просмотр картыw'
+                                title='Вид карточек'
                             >
                                 <IconLayoutGrid />
                             </ToggleButton>
@@ -164,13 +165,13 @@ const Chatflows = () => {
                                 }}
                                 variant='contained'
                                 value='list'
-                                title='Посмотреть список'
+                                title='Вид списка'
                             >
                                 <IconList />
                             </ToggleButton>
                         </ToggleButtonGroup>
                         <StyledButton variant='contained' onClick={addNew} startIcon={<IconPlus />} sx={{ borderRadius: 2, height: 40 }}>
-                            Создать
+                            Добавить
                         </StyledButton>
                     </ViewHeader>
                     {!view || view === 'card' ? (
@@ -208,7 +209,7 @@ const Chatflows = () => {
                                     alt='WorkflowEmptySVG'
                                 />
                             </Box>
-                            <div>Пока нет чатов</div>
+                            <div>Пока нет чат-потоков</div>
                         </Stack>
                     )}
                 </Stack>

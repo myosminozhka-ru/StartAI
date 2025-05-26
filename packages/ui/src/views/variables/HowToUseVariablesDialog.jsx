@@ -28,7 +28,7 @@ const HowToUseVariablesDialog = ({ show, onCancel }) => {
             </DialogTitle>
             <DialogContent>
                 <p style={{ marginBottom: '10px' }}>
-                    Переменные можно использовать в функциях пользовательских инструментов с префиксом $.
+                    Переменные можно использовать в Custom Tool, Custom Function, Custom Loader, If Else Function с префиксом $.
                 </p>
                 <CodeEditor
                     disabled={true}
@@ -39,11 +39,22 @@ const HowToUseVariablesDialog = ({ show, onCancel }) => {
                     basicSetup={{ highlightActiveLine: false, highlightActiveLineGutter: false }}
                 />
                 <p style={{ marginBottom: '10px' }}>
-                    Если тип переменной — Статический, значение будет получено как есть. Если тип переменной — Runtime, значение будет
+                    Переменные также можно использовать в параметре Text Field любого узла. Например, в System Message агента:
+                </p>
+                <CodeEditor
+                    disabled={true}
+                    value={`You are a {{$vars.personality}} AI assistant`}
+                    height={'50px'}
+                    theme={'dark'}
+                    lang={'js'}
+                    basicSetup={{ highlightActiveLine: false, highlightActiveLineGutter: false }}
+                />
+                <p style={{ marginBottom: '10px' }}>
+                    Если тип переменной Статический, значение будет получено как есть. Если тип переменной Динамический, значение будет
                     получено из файла .env.
                 </p>
                 <p style={{ marginBottom: '10px' }}>
-                    Вы также можете переопределить значения переменных в API overrideConfig, используя <b>vars</b>.:
+                    Вы также можете переопределить значения переменных в API overrideConfig используя <b>vars</b>:
                 </p>
                 <CodeEditor
                     disabled={true}
@@ -53,6 +64,12 @@ const HowToUseVariablesDialog = ({ show, onCancel }) => {
                     lang={'js'}
                     basicSetup={{ highlightActiveLine: false, highlightActiveLineGutter: false }}
                 />
+                <p>
+                    Подробнее в{' '}
+                    <a target='_blank' rel='noreferrer' href='https://docs.flowiseai.com/using-flowise/variables'>
+                        документации
+                    </a>
+                </p>
             </DialogContent>
         </Dialog>
     ) : null

@@ -1,13 +1,11 @@
 {
-    "description": "Создание изображения с использованием генеративной AI-модели Replicate Stability для текста в изображение",
-    "title": "Генерация изображений",
-    "badge": "NEW",
-    "categories": "Replicate,ChatOpenAI,LLM Chain,Langchain",
-    "framework": "Langchain",
+    "description": "Генерация изображений с использованием модели Replicate Stability для преобразования текста в изображение",
+    "framework": ["Langchain"],
+    "usecases": ["Image Generation"],
     "nodes": [
         {
             "width": 300,
-            "height": 475,
+            "height": 513,
             "id": "promptTemplate_0",
             "position": {
                 "x": 366.28009688480114,
@@ -16,24 +14,24 @@
             "type": "customNode",
             "data": {
                 "id": "promptTemplate_0",
-                "label": "Prompt Template",
+                "label": "Шаблон запроса",
                 "version": 1,
                 "name": "promptTemplate",
                 "type": "PromptTemplate",
                 "baseClasses": ["PromptTemplate", "BaseStringPromptTemplate", "BasePromptTemplate"],
-                "category": "Prompts",
-                "description": "Schema to represent a basic prompt for an LLM",
+                "category": "Запросы",
+                "description": "Схема для представления базового запроса к языковой модели",
                 "inputParams": [
                     {
-                        "label": "Template",
+                        "label": "Шаблон",
                         "name": "template",
                         "type": "string",
                         "rows": 4,
-                        "placeholder": "What is a good name for a company that makes {product}?",
+                        "placeholder": "Какое хорошее название для компании, которая производит {product}?",
                         "id": "promptTemplate_0-input-template-string"
                     },
                     {
-                        "label": "Format Prompt Values",
+                        "label": "Форматировать значения запроса",
                         "name": "promptValues",
                         "type": "json",
                         "optional": true,
@@ -67,7 +65,7 @@
         },
         {
             "width": 300,
-            "height": 475,
+            "height": 513,
             "id": "promptTemplate_1",
             "position": {
                 "x": 1391.1872909364881,
@@ -76,24 +74,24 @@
             "type": "customNode",
             "data": {
                 "id": "promptTemplate_1",
-                "label": "Prompt Template",
+                "label": "Шаблон запроса",
                 "version": 1,
                 "name": "promptTemplate",
                 "type": "PromptTemplate",
                 "baseClasses": ["PromptTemplate", "BaseStringPromptTemplate", "BasePromptTemplate", "Runnable"],
-                "category": "Prompts",
-                "description": "Schema to represent a basic prompt for an LLM",
+                "category": "Запросы",
+                "description": "Схема для представления базового запроса к языковой модели",
                 "inputParams": [
                     {
-                        "label": "Template",
+                        "label": "Шаблон",
                         "name": "template",
                         "type": "string",
                         "rows": 4,
-                        "placeholder": "What is a good name for a company that makes {product}?",
+                        "placeholder": "Какое хорошее название для компании, которая производит {product}?",
                         "id": "promptTemplate_1-input-template-string"
                     },
                     {
-                        "label": "Format Prompt Values",
+                        "label": "Форматировать значения запроса",
                         "name": "promptValues",
                         "type": "json",
                         "optional": true,
@@ -141,18 +139,18 @@
                 "name": "replicate",
                 "type": "Replicate",
                 "baseClasses": ["Replicate", "BaseChatModel", "LLM", "BaseLLM", "BaseLanguageModel", "Runnable"],
-                "category": "LLMs",
-                "description": "Use Replicate to run open source models on cloud",
+                "category": "Языковые модели",
+                "description": "Использование Replicate для запуска моделей с открытым исходным кодом в облаке",
                 "inputParams": [
                     {
-                        "label": "Connect Credential",
+                        "label": "Подключить учетные данные",
                         "name": "credential",
                         "type": "credential",
                         "credentialNames": ["replicateApi"],
                         "id": "replicate_0-input-credential-credential"
                     },
                     {
-                        "label": "Model",
+                        "label": "Модель",
                         "name": "model",
                         "type": "string",
                         "placeholder": "a16z-infra/llama13b-v2-chat:df7690f1994d94e96ad9d568eac121aecf50684a0b0963b25a41cc40061269e5",
@@ -160,50 +158,50 @@
                         "id": "replicate_0-input-model-string"
                     },
                     {
-                        "label": "Temperature",
+                        "label": "Температура",
                         "name": "temperature",
                         "type": "number",
                         "step": 0.1,
-                        "description": "Adjusts randomness of outputs, greater than 1 is random and 0 is deterministic, 0.75 is a good starting value.",
+                        "description": "Регулирует случайность выходных данных, больше 1 - случайно, 0 - детерминированно, 0.75 - хорошее начальное значение.",
                         "default": 0.7,
                         "optional": true,
                         "id": "replicate_0-input-temperature-number"
                     },
                     {
-                        "label": "Max Tokens",
+                        "label": "Максимум токенов",
                         "name": "maxTokens",
                         "type": "number",
                         "step": 1,
-                        "description": "Maximum number of tokens to generate. A word is generally 2-3 tokens",
+                        "description": "Максимальное количество токенов для генерации. Слово обычно состоит из 2-3 токенов",
                         "optional": true,
                         "additionalParams": true,
                         "id": "replicate_0-input-maxTokens-number"
                     },
                     {
-                        "label": "Top Probability",
+                        "label": "Вероятность верхнего уровня",
                         "name": "topP",
                         "type": "number",
                         "step": 0.1,
-                        "description": "When decoding text, samples from the top p percentage of most likely tokens; lower to ignore less likely tokens",
+                        "description": "При декодировании текста выбирает из верхних p процентов наиболее вероятных токенов; уменьшите значение, чтобы игнорировать менее вероятные токены",
                         "optional": true,
                         "additionalParams": true,
                         "id": "replicate_0-input-topP-number"
                     },
                     {
-                        "label": "Repetition Penalty",
+                        "label": "Штраф за повторение",
                         "name": "repetitionPenalty",
                         "type": "number",
                         "step": 0.1,
-                        "description": "Penalty for repeated words in generated text; 1 is no penalty, values greater than 1 discourage repetition, less than 1 encourage it. (minimum: 0.01; maximum: 5)",
+                        "description": "Штраф за повторяющиеся слова в сгенерированном тексте; 1 - без штрафа, значения больше 1 уменьшают повторения, меньше 1 - увеличивают (минимум: 0.01; максимум: 5)",
                         "optional": true,
                         "additionalParams": true,
                         "id": "replicate_0-input-repetitionPenalty-number"
                     },
                     {
-                        "label": "Additional Inputs",
+                        "label": "Дополнительные входные данные",
                         "name": "additionalInputs",
                         "type": "json",
-                        "description": "Each model has different parameters, refer to the specific model accepted inputs. For example: <a target=\"_blank\" href=\"https://replicate.com/a16z-infra/llama13b-v2-chat/api#inputs\">llama13b-v2</a>",
+                        "description": "Каждая модель имеет разные параметры, обратитесь к конкретным входным данным модели. Например: <a target=\"_blank\" href=\"https://replicate.com/a16z-infra/llama13b-v2-chat/api#inputs\">llama13b-v2</a>",
                         "additionalParams": true,
                         "optional": true,
                         "id": "replicate_0-input-additionalInputs-json"
@@ -247,55 +245,55 @@
         },
         {
             "width": 300,
-            "height": 456,
+            "height": 508,
             "id": "llmChain_0",
             "position": {
-                "x": 1045.7783277092838,
-                "y": 242.08205161173464
+                "x": 1036.2168666805817,
+                "y": 252.83869526902453
             },
             "type": "customNode",
             "data": {
                 "id": "llmChain_0",
-                "label": "LLM Chain",
+                "label": "Цепочка LLM",
                 "version": 3,
                 "name": "llmChain",
                 "type": "LLMChain",
                 "baseClasses": ["LLMChain", "BaseChain", "Runnable"],
-                "category": "Chains",
-                "description": "Chain to run queries against LLMs",
+                "category": "Цепочки",
+                "description": "Цепочка для выполнения запросов к языковым моделям",
                 "inputParams": [
                     {
-                        "label": "Chain Name",
+                        "label": "Название цепочки",
                         "name": "chainName",
                         "type": "string",
-                        "placeholder": "Name Your Chain",
+                        "placeholder": "Назовите вашу цепочку",
                         "optional": true,
                         "id": "llmChain_0-input-chainName-string"
                     }
                 ],
                 "inputAnchors": [
                     {
-                        "label": "Language Model",
+                        "label": "Языковая модель",
                         "name": "model",
                         "type": "BaseLanguageModel",
                         "id": "llmChain_0-input-model-BaseLanguageModel"
                     },
                     {
-                        "label": "Prompt",
+                        "label": "Запрос",
                         "name": "prompt",
                         "type": "BasePromptTemplate",
                         "id": "llmChain_0-input-prompt-BasePromptTemplate"
                     },
                     {
-                        "label": "Output Parser",
+                        "label": "Парсер вывода",
                         "name": "outputParser",
                         "type": "BaseLLMOutputParser",
                         "optional": true,
                         "id": "llmChain_0-input-outputParser-BaseLLMOutputParser"
                     },
                     {
-                        "label": "Input Moderation",
-                        "description": "Detect text that could generate harmful output and prevent it from being sent to the language model",
+                        "label": "Модерация ввода",
+                        "description": "Обнаружение текста, который может генерировать вредоносный вывод, и предотвращение его отправки в языковую модель",
                         "name": "inputModeration",
                         "type": "Moderation",
                         "optional": true,
@@ -339,14 +337,14 @@
             },
             "selected": false,
             "positionAbsolute": {
-                "x": 1045.7783277092838,
-                "y": 242.08205161173464
+                "x": 1036.2168666805817,
+                "y": 252.83869526902453
             },
             "dragging": false
         },
         {
             "width": 300,
-            "height": 456,
+            "height": 508,
             "id": "llmChain_1",
             "position": {
                 "x": 1769.7463380379868,
@@ -355,46 +353,46 @@
             "type": "customNode",
             "data": {
                 "id": "llmChain_1",
-                "label": "LLM Chain",
+                "label": "Цепочка LLM",
                 "version": 3,
                 "name": "llmChain",
                 "type": "LLMChain",
                 "baseClasses": ["LLMChain", "BaseChain", "Runnable"],
-                "category": "Chains",
-                "description": "Chain to run queries against LLMs",
+                "category": "Цепочки",
+                "description": "Цепочка для выполнения запросов к языковым моделям",
                 "inputParams": [
                     {
-                        "label": "Chain Name",
+                        "label": "Название цепочки",
                         "name": "chainName",
                         "type": "string",
-                        "placeholder": "Name Your Chain",
+                        "placeholder": "Назовите вашу цепочку",
                         "optional": true,
                         "id": "llmChain_1-input-chainName-string"
                     }
                 ],
                 "inputAnchors": [
                     {
-                        "label": "Language Model",
+                        "label": "Языковая модель",
                         "name": "model",
                         "type": "BaseLanguageModel",
                         "id": "llmChain_1-input-model-BaseLanguageModel"
                     },
                     {
-                        "label": "Prompt",
+                        "label": "Запрос",
                         "name": "prompt",
                         "type": "BasePromptTemplate",
                         "id": "llmChain_1-input-prompt-BasePromptTemplate"
                     },
                     {
-                        "label": "Output Parser",
+                        "label": "Парсер вывода",
                         "name": "outputParser",
                         "type": "BaseLLMOutputParser",
                         "optional": true,
                         "id": "llmChain_1-input-outputParser-BaseLLMOutputParser"
                     },
                     {
-                        "label": "Input Moderation",
-                        "description": "Detect text that could generate harmful output and prevent it from being sent to the language model",
+                        "label": "Модерация ввода",
+                        "description": "Обнаружение текста, который может генерировать вредоносный вывод, и предотвращение его отправки в языковую модель",
                         "name": "inputModeration",
                         "type": "Moderation",
                         "optional": true,
@@ -412,19 +410,19 @@
                 "outputAnchors": [
                     {
                         "name": "output",
-                        "label": "Output",
+                        "label": "Вывод",
                         "type": "options",
                         "options": [
                             {
                                 "id": "llmChain_1-output-llmChain-LLMChain|BaseChain|Runnable",
                                 "name": "llmChain",
-                                "label": "LLM Chain",
+                                "label": "Цепочка LLM",
                                 "type": "LLMChain | BaseChain | Runnable"
                             },
                             {
                                 "id": "llmChain_1-output-outputPrediction-string|json",
                                 "name": "outputPrediction",
-                                "label": "Output Prediction",
+                                "label": "Предсказание вывода",
                                 "type": "string | json"
                             }
                         ],
@@ -445,32 +443,32 @@
         },
         {
             "width": 300,
-            "height": 574,
+            "height": 670,
             "id": "chatOpenAI_0",
             "position": {
-                "x": 1390.9908731749008,
-                "y": -332.0609187416074
+                "x": 1395.7716036892518,
+                "y": -415.72370274275096
             },
             "type": "customNode",
             "data": {
                 "id": "chatOpenAI_0",
                 "label": "ChatOpenAI",
-                "version": 6.0,
+                "version": 6,
                 "name": "chatOpenAI",
                 "type": "ChatOpenAI",
                 "baseClasses": ["ChatOpenAI", "BaseChatModel", "BaseLanguageModel", "Runnable"],
-                "category": "Chat Models",
-                "description": "Wrapper around OpenAI large language models that use the Chat endpoint",
+                "category": "Модели чата",
+                "description": "Обертка для больших языковых моделей OpenAI, использующих конечную точку Chat",
                 "inputParams": [
                     {
-                        "label": "Connect Credential",
+                        "label": "Подключить учетные данные",
                         "name": "credential",
                         "type": "credential",
                         "credentialNames": ["openAIApi"],
                         "id": "chatOpenAI_0-input-credential-credential"
                     },
                     {
-                        "label": "Model Name",
+                        "label": "Название модели",
                         "name": "modelName",
                         "type": "asyncOptions",
                         "loadMethod": "listModels",
@@ -478,7 +476,7 @@
                         "id": "chatOpenAI_0-input-modelName-options"
                     },
                     {
-                        "label": "Temperature",
+                        "label": "Температура",
                         "name": "temperature",
                         "type": "number",
                         "step": 0.1,
@@ -487,7 +485,7 @@
                         "id": "chatOpenAI_0-input-temperature-number"
                     },
                     {
-                        "label": "Max Tokens",
+                        "label": "Максимум токенов",
                         "name": "maxTokens",
                         "type": "number",
                         "step": 1,
@@ -496,7 +494,7 @@
                         "id": "chatOpenAI_0-input-maxTokens-number"
                     },
                     {
-                        "label": "Top Probability",
+                        "label": "Вероятность верхнего уровня",
                         "name": "topP",
                         "type": "number",
                         "step": 0.1,
@@ -505,7 +503,7 @@
                         "id": "chatOpenAI_0-input-topP-number"
                     },
                     {
-                        "label": "Frequency Penalty",
+                        "label": "Штраф за частоту",
                         "name": "frequencyPenalty",
                         "type": "number",
                         "step": 0.1,
@@ -514,7 +512,7 @@
                         "id": "chatOpenAI_0-input-frequencyPenalty-number"
                     },
                     {
-                        "label": "Presence Penalty",
+                        "label": "Штраф за присутствие",
                         "name": "presencePenalty",
                         "type": "number",
                         "step": 0.1,
@@ -523,7 +521,7 @@
                         "id": "chatOpenAI_0-input-presencePenalty-number"
                     },
                     {
-                        "label": "Timeout",
+                        "label": "Таймаут",
                         "name": "timeout",
                         "type": "number",
                         "step": 1,
@@ -532,7 +530,7 @@
                         "id": "chatOpenAI_0-input-timeout-number"
                     },
                     {
-                        "label": "BasePath",
+                        "label": "Базовый путь",
                         "name": "basepath",
                         "type": "string",
                         "optional": true,
@@ -540,7 +538,7 @@
                         "id": "chatOpenAI_0-input-basepath-string"
                     },
                     {
-                        "label": "BaseOptions",
+                        "label": "Базовые опции",
                         "name": "baseOptions",
                         "type": "json",
                         "optional": true,
@@ -548,30 +546,30 @@
                         "id": "chatOpenAI_0-input-baseOptions-json"
                     },
                     {
-                        "label": "Allow Image Uploads",
+                        "label": "Разрешить загрузку изображений",
                         "name": "allowImageUploads",
                         "type": "boolean",
-                        "description": "Automatically uses gpt-4-vision-preview when image is being uploaded from chat. Only works with LLMChain, Conversation Chain, ReAct Agent, and Conversational Agent",
+                        "description": "Автоматически использует gpt-4-vision-preview при загрузке изображения из чата. Работает только с LLMChain, Conversation Chain, ReAct Agent и Conversational Agent",
                         "default": false,
                         "optional": true,
                         "id": "chatOpenAI_0-input-allowImageUploads-boolean"
                     },
                     {
-                        "label": "Image Resolution",
-                        "description": "This parameter controls the resolution in which the model views the image.",
+                        "label": "Разрешение изображения",
+                        "description": "Этот параметр контролирует разрешение, в котором модель просматривает изображение.",
                         "name": "imageResolution",
                         "type": "options",
                         "options": [
                             {
-                                "label": "Low",
+                                "label": "Низкое",
                                 "name": "low"
                             },
                             {
-                                "label": "High",
+                                "label": "Высокое",
                                 "name": "high"
                             },
                             {
-                                "label": "Auto",
+                                "label": "Авто",
                                 "name": "auto"
                             }
                         ],
@@ -601,7 +599,7 @@
                     "timeout": "",
                     "basepath": "",
                     "baseOptions": "",
-                    "allowImageUploads": true,
+                    "allowImageUploads": false,
                     "imageResolution": "low"
                 },
                 "outputAnchors": [
@@ -617,8 +615,61 @@
             },
             "selected": false,
             "positionAbsolute": {
-                "x": 1390.9908731749008,
-                "y": -332.0609187416074
+                "x": 1395.7716036892518,
+                "y": -415.72370274275096
+            },
+            "dragging": false
+        },
+        {
+            "id": "stickyNote_0",
+            "position": {
+                "x": 1766.9902171902506,
+                "y": 22.813703651766104
+            },
+            "type": "stickyNote",
+            "data": {
+                "id": "stickyNote_0",
+                "label": "Стикер",
+                "version": 2,
+                "name": "stickyNote",
+                "type": "StickyNote",
+                "baseClasses": ["StickyNote"],
+                "tags": ["Utilities"],
+                "category": "Utilities",
+                "description": "Добавить стикер",
+                "inputParams": [
+                    {
+                        "label": "",
+                        "name": "note",
+                        "type": "string",
+                        "rows": 1,
+                        "placeholder": "Введите что-нибудь здесь",
+                        "optional": true,
+                        "id": "stickyNote_0-input-note-string"
+                    }
+                ],
+                "inputAnchors": [],
+                "inputs": {
+                    "note": "Инструкция для LLM отвечать в формате markdown для отображения изображения в окне чата\n\nПример вопроса:\nкартина с кошкой"
+                },
+                "outputAnchors": [
+                    {
+                        "id": "stickyNote_0-output-stickyNote-StickyNote",
+                        "name": "stickyNote",
+                        "label": "Стикер",
+                        "description": "Добавить стикер",
+                        "type": "StickyNote"
+                    }
+                ],
+                "outputs": {},
+                "selected": false
+            },
+            "width": 300,
+            "height": 143,
+            "selected": false,
+            "positionAbsolute": {
+                "x": 1766.9902171902506,
+                "y": 22.813703651766104
             },
             "dragging": false
         }

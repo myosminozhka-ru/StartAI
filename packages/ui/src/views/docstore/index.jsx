@@ -78,10 +78,10 @@ const Documents = () => {
 
     const addNew = () => {
         const dialogProp = {
-            title: 'Создать новое хранилище документов',
+            title: 'Добавить новое хранилище документов',
             type: 'ADD',
-            cancelButtonName: 'Отменить',
-            confirmButtonName: 'Создать'
+            cancelButtonName: 'Отмена',
+            confirmButtonName: 'Добавить'
         }
         setDialogProps(dialogProp)
         setShowDialog(true)
@@ -148,8 +148,9 @@ const Documents = () => {
                     <ViewHeader
                         onSearchChange={onSearchChange}
                         search={true}
-                        searchPlaceholder='Поиск по имени'
-                        title='Хранилища документов'
+                        searchPlaceholder='Поиск по названию'
+                        title='Хранилище документов'
+                        description='Храните и обновляйте документы для извлечения информации языковыми моделями (RAG)'
                     >
                         <ToggleButtonGroup
                             sx={{ borderRadius: 2, maxHeight: 40 }}
@@ -166,7 +167,7 @@ const Documents = () => {
                                 }}
                                 variant='contained'
                                 value='card'
-                                title='Card View'
+                                title='Вид карточек'
                             >
                                 <IconLayoutGrid />
                             </ToggleButton>
@@ -178,7 +179,7 @@ const Documents = () => {
                                 }}
                                 variant='contained'
                                 value='list'
-                                title='List View'
+                                title='Вид списка'
                             >
                                 <IconList />
                             </ToggleButton>
@@ -190,7 +191,7 @@ const Documents = () => {
                             startIcon={<IconPlus />}
                             id='btn_createVariable'
                         >
-                            Создать
+                            Добавить
                         </StyledButton>
                     </ViewHeader>
                     {!view || view === 'card' ? (
@@ -227,10 +228,10 @@ const Documents = () => {
                                         <TableCell>&nbsp;</TableCell>
                                         <TableCell>Название</TableCell>
                                         <TableCell>Описание</TableCell>
-                                        <TableCell>Подключенные чаты</TableCell>
+                                        <TableCell>Подключенные потоки</TableCell>
                                         <TableCell>Всего символов</TableCell>
-                                        <TableCell>Всего чанков</TableCell>
-                                        <TableCell>Тип загрузчика</TableCell>
+                                        <TableCell>Всего фрагментов</TableCell>
+                                        <TableCell>Типы загрузчиков</TableCell>
                                     </TableRow>
                                 </TableHead>
                                 <TableBody>
@@ -316,7 +317,7 @@ const Documents = () => {
                                                                     fontWeight: 200
                                                                 }}
                                                             >
-                                                                + {images.length - 3} More
+                                                                + {images.length - 3} Еще
                                                             </Typography>
                                                         )}
                                                     </Box>
@@ -337,7 +338,7 @@ const Documents = () => {
                                     alt='doc_store_empty'
                                 />
                             </Box>
-                            <div>Пока нет хранилищ документов</div>
+                            <div>Хранилища документов еще не созданы</div>
                         </Stack>
                     )}
                 </Stack>

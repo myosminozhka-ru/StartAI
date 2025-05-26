@@ -28,14 +28,14 @@ import { Dropdown } from '@/ui-component/dropdown/Dropdown'
 
 const variableTypes = [
     {
-        label: 'Статические',
+        label: 'Статическая',
         name: 'static',
-        description: 'Значение переменной будет считано из значения, введенного ниже.'
+        description: 'Значение переменной будет прочитано из введенного ниже значения'
     },
     {
-        label: 'Время выполнения',
+        label: 'Динамическая',
         name: 'runtime',
-        description: 'Значение переменной будет прочитано из файла .env.'
+        description: 'Значение переменной будет прочитано из файла .env'
     }
 ]
 
@@ -97,7 +97,7 @@ const AddEditVariableDialog = ({ show, dialogProps, onCancel, onConfirm, setErro
             const createResp = await variablesApi.createVariable(obj)
             if (createResp.data) {
                 enqueueSnackbar({
-                    message: 'Добавлена ​​новая переменная',
+                    message: 'Новая переменная добавлена',
                     options: {
                         key: new Date().getTime() + Math.random(),
                         variant: 'success',
@@ -111,7 +111,7 @@ const AddEditVariableDialog = ({ show, dialogProps, onCancel, onConfirm, setErro
                 onConfirm(createResp.data.id)
             }
         } catch (err) {
-            setError(err)
+            if (setError) setError(err)
             enqueueSnackbar({
                 message: `Не удалось добавить новую переменную: ${
                     typeof error.response.data === 'object' ? error.response.data.message : error.response.data
@@ -156,7 +156,7 @@ const AddEditVariableDialog = ({ show, dialogProps, onCancel, onConfirm, setErro
                 onConfirm(saveResp.data.id)
             }
         } catch (error) {
-            setError(err)
+            if (setError) setError(err)
             enqueueSnackbar({
                 message: `Не удалось сохранить переменную: ${
                     typeof error.response.data === 'object' ? error.response.data.message : error.response.data
@@ -195,7 +195,7 @@ const AddEditVariableDialog = ({ show, dialogProps, onCancel, onConfirm, setErro
                 <Box sx={{ p: 2 }}>
                     <div style={{ display: 'flex', flexDirection: 'row' }}>
                         <Typography>
-                            Имя переменной<span style={{ color: 'red' }}>&nbsp;*</span>
+                            Название переменной<span style={{ color: 'red' }}>&nbsp;*</span>
                         </Typography>
 
                         <div style={{ flexGrow: 1 }}></div>
@@ -223,7 +223,7 @@ const AddEditVariableDialog = ({ show, dialogProps, onCancel, onConfirm, setErro
                         name='variableType'
                         options={variableTypes}
                         onSelect={(newValue) => setVariableType(newValue)}
-                        value={variableType ?? 'choose an option'}
+                        value={variableType ?? 'выберите опцию'}
                         id='dropdown_variableType'
                     />
                 </Box>
@@ -255,7 +255,7 @@ const AddEditVariableDialog = ({ show, dialogProps, onCancel, onConfirm, setErro
                     onClick={() => (dialogType === 'ADD' ? addNewVariable() : saveVariable())}
                     id='btn_confirmAddingNewVariable'
                 >
-                    Добавить
+                    {dialogProps.confirmButtonName}
                 </StyledButton>
             </DialogActions>
             <ConfirmDialog />

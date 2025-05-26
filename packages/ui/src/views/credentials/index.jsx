@@ -42,6 +42,7 @@ import useNotifier from '@/utils/useNotifier'
 // Icons
 import { IconTrash, IconEdit, IconX, IconPlus } from '@tabler/icons-react'
 import CredentialEmptySVG from '@/assets/images/credential_empty.svg'
+import keySVG from '@/assets/images/key.svg'
 
 // const
 import { baseURL } from '@/store/constant'
@@ -104,7 +105,7 @@ const Credentials = () => {
 
     const listCredential = () => {
         const dialogProp = {
-            title: 'Добавить новые учетные данные',
+            title: 'Добавить новую учетную запись',
             componentsCredentials
         }
         setCredentialListDialogProps(dialogProp)
@@ -135,8 +136,8 @@ const Credentials = () => {
 
     const deleteCredential = async (credential) => {
         const confirmPayload = {
-            title: `Удалить`,
-            description: `Удалить ассистента ${credential.name}?`,
+            title: `Удаление`,
+            description: `Удалить учетную запись ${credential.name}?`,
             confirmButtonName: 'Удалить',
             cancelButtonName: 'Отмена'
         }
@@ -147,7 +148,7 @@ const Credentials = () => {
                 const deleteResp = await credentialsApi.deleteCredential(credential.id)
                 if (deleteResp.data) {
                     enqueueSnackbar({
-                        message: 'Учетные данные удалены',
+                        message: 'Учетная запись удалена',
                         options: {
                             key: new Date().getTime() + Math.random(),
                             variant: 'success',
@@ -162,7 +163,7 @@ const Credentials = () => {
                 }
             } catch (error) {
                 enqueueSnackbar({
-                    message: `Ошибка удаления учетных данных: ${
+                    message: `Не удалось удалить учетную запись: ${
                         typeof error.response.data === 'object' ? error.response.data.message : error.response.data
                     }`,
                     options: {
@@ -231,8 +232,9 @@ const Credentials = () => {
                         <ViewHeader
                             onSearchChange={onSearchChange}
                             search={true}
-                            searchPlaceholder='Найти учетные данные'
-                            title='Учетные данные'
+                            searchPlaceholder='Поиск учетных записей'
+                            title='Учетные записи'
+                            description='API ключи, токены и секреты для интеграций с сторонними сервисами'
                         >
                             <StyledButton
                                 variant='contained'
@@ -240,7 +242,7 @@ const Credentials = () => {
                                 onClick={listCredential}
                                 startIcon={<IconPlus />}
                             >
-                                Добавить Данные
+                                Добавить учетную запись
                             </StyledButton>
                         </ViewHeader>
                         {!isLoading && credentials.length <= 0 ? (
@@ -252,7 +254,7 @@ const Credentials = () => {
                                         alt='CredentialEmptySVG'
                                     />
                                 </Box>
-                                <div>No Credentials Yet</div>
+                                <div>Нет учетных записей</div>
                             </Stack>
                         ) : (
                             <TableContainer
@@ -269,7 +271,7 @@ const Credentials = () => {
                                         }}
                                     >
                                         <TableRow>
-                                            <StyledTableCell>Наименование</StyledTableCell>
+                                            <StyledTableCell>Имя</StyledTableCell>
                                             <StyledTableCell>Последнее обновление</StyledTableCell>
                                             <StyledTableCell>Создано</StyledTableCell>
                                             <StyledTableCell> </StyledTableCell>
@@ -346,25 +348,34 @@ const Credentials = () => {
                                                                         }}
                                                                         alt={credential.credentialName}
                                                                         src={`${baseURL}/api/v1/components-credentials-icon/${credential.credentialName}`}
+                                                                        onError={(e) => {
+                                                                            e.target.onerror = null
+                                                                            e.target.style.padding = '5px'
+                                                                            e.target.src = keySVG
+                                                                        }}
                                                                     />
                                                                 </Box>
                                                                 {credential.name}
                                                             </Box>
                                                         </StyledTableCell>
                                                         <StyledTableCell>
-                                                            {moment(credential.updatedDate).format('DD.MM.YYYY')}
+                                                            {moment(credential.updatedDate).format('MMMM Do, YYYY HH:mm:ss')}
                                                         </StyledTableCell>
                                                         <StyledTableCell>
-                                                            {moment(credential.createdDate).format('DD.MM.YYYY')}
+                                                            {moment(credential.createdDate).format('MMMM Do, YYYY HH:mm:ss')}
                                                         </StyledTableCell>
                                                         <StyledTableCell>
-                                                            <IconButton title='Edit' color='primary' onClick={() => edit(credential)}>
+                                                            <IconButton
+                                                                title='Редактировать'
+                                                                color='primary'
+                                                                onClick={() => edit(credential)}
+                                                            >
                                                                 <IconEdit />
                                                             </IconButton>
                                                         </StyledTableCell>
                                                         <StyledTableCell>
                                                             <IconButton
-                                                                title='Delete'
+                                                                title='Удалить'
                                                                 color='error'
                                                                 onClick={() => deleteCredential(credential)}
                                                             >

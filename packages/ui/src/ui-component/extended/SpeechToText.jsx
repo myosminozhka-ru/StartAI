@@ -6,6 +6,7 @@ import { enqueueSnackbar as enqueueSnackbarAction, closeSnackbar as closeSnackba
 // material-ui
 import { Typography, Box, Button, FormControl, ListItem, ListItemAvatar, ListItemText, MenuItem, Select } from '@mui/material'
 import { IconX } from '@tabler/icons-react'
+import { useTheme } from '@mui/material/styles'
 
 // Project import
 import CredentialInputHandler from '@/views/canvas/CredentialInputHandler'
@@ -17,6 +18,8 @@ import { Dropdown } from '@/ui-component/dropdown/Dropdown'
 import openAISVG from '@/assets/images/openai.svg'
 import assemblyAIPng from '@/assets/images/assemblyai.png'
 import localAiPng from '@/assets/images/localai.png'
+import azureSvg from '@/assets/images/azure_openai.svg'
+import groqPng from '@/assets/images/groq.png'
 
 // store
 import useNotifier from '@/utils/useNotifier'
@@ -29,13 +32,15 @@ import chatflowsApi from '@/api/chatflows'
 const SpeechToTextType = {
     OPENAI_WHISPER: 'openAIWhisper',
     ASSEMBLYAI_TRANSCRIBE: 'assemblyAiTranscribe',
-    LOCALAI_STT: 'localAISTT'
+    LOCALAI_STT: 'localAISTT',
+    AZURE_COGNITIVE: 'azureCognitive',
+    GROQ_WHISPER: 'groqWhisper'
 }
 
 // Weird quirk - the key must match the name property value.
 const speechToTextProviders = {
     [SpeechToTextType.OPENAI_WHISPER]: {
-        label: 'StartAI Whisper',
+        label: 'OpenAI Whisper',
         name: SpeechToTextType.OPENAI_WHISPER,
         icon: openAISVG,
         url: 'https://platform.openai.com/docs/guides/speech-to-text',
@@ -50,8 +55,8 @@ const speechToTextProviders = {
                 label: 'Язык',
                 name: 'language',
                 type: 'string',
-                description: 'Язык входного аудио. Предоставление языка ввода в формате ISO-639-1 улучшит точность и задержку.',
-                placeholder: 'en',
+                description: 'Язык входного аудио. Указание языка в формате ISO-639-1 улучшит точность и скорость обработки.',
+                placeholder: 'ru',
                 optional: true
             },
             {
@@ -59,7 +64,7 @@ const speechToTextProviders = {
                 name: 'prompt',
                 type: 'string',
                 rows: 4,
-                description: `Дополнительный текст, определяющий стиль модели или продолжающий предыдущий аудиосегмент. Подсказка должна соответствовать языку аудио.`,
+                description: `Необязательный текст для управления стилем модели или продолжения предыдущего аудиосегмента. Подсказка должна соответствовать языку аудио.`,
                 optional: true
             },
             {
@@ -67,7 +72,7 @@ const speechToTextProviders = {
                 name: 'temperature',
                 type: 'number',
                 step: 0.1,
-                description: `Температура выборки от 0 до 1. Более высокие значения, например 0,8, сделают выходные данные более случайными, а более низкие значения, например 0,2, сделают их более целенаправленными и детерминированными.`,
+                description: `Температура выборки от 0 до 1. Более высокие значения, такие как 0.8, сделают вывод более случайным, а более низкие значения, такие как 0.2, сделают его более сфокусированным и детерминированным.`,
                 optional: true
             }
         ]
@@ -93,48 +98,138 @@ const speechToTextProviders = {
         url: 'https://localai.io/features/audio-to-text/',
         inputs: [
             {
-                label: 'Connect Credential',
+                label: 'Подключить учетные данные',
                 name: 'credential',
                 type: 'credential',
                 credentialNames: ['localAIApi']
             },
             {
-                label: 'Base URL',
+                label: 'Базовый URL',
                 name: 'baseUrl',
                 type: 'string',
-                description: 'The base URL of the local AI server'
+                description: 'Базовый URL локального AI сервера'
             },
             {
-                label: 'Language',
+                label: 'Язык',
                 name: 'language',
                 type: 'string',
-                description:
-                    'The language of the input audio. Supplying the input language in ISO-639-1 format will improve accuracy and latency.',
-                placeholder: 'en',
+                description: 'Язык входного аудио. Указание языка в формате ISO-639-1 улучшит точность и скорость обработки.',
+                placeholder: 'ru',
                 optional: true
             },
             {
-                label: 'Model',
+                label: 'Модель',
                 name: 'model',
                 type: 'string',
-                description: `The STT model to load. Defaults to whisper-1 if left blank.`,
+                description: `Модель STT для загрузки. По умолчанию whisper-1, если не указано.`,
                 placeholder: 'whisper-1',
                 optional: true
             },
             {
-                label: 'Prompt',
+                label: 'Подсказка',
                 name: 'prompt',
                 type: 'string',
                 rows: 4,
-                description: `An optional text to guide the model's style or continue a previous audio segment. The prompt should match the audio language.`,
+                description: `Необязательный текст для управления стилем модели или продолжения предыдущего аудиосегмента. Подсказка должна соответствовать языку аудио.`,
                 optional: true
             },
             {
-                label: 'Temperature',
+                label: 'Температура',
                 name: 'temperature',
                 type: 'number',
                 step: 0.1,
-                description: `The sampling temperature, between 0 and 1. Higher values like 0.8 will make the output more random, while lower values like 0.2 will make it more focused and deterministic.`,
+                description: `Температура выборки от 0 до 1. Более высокие значения, такие как 0.8, сделают вывод более случайным, а более низкие значения, такие как 0.2, сделают его более сфокусированным и детерминированным.`,
+                optional: true
+            }
+        ]
+    },
+    [SpeechToTextType.AZURE_COGNITIVE]: {
+        label: 'Azure Cognitive Services',
+        name: SpeechToTextType.AZURE_COGNITIVE,
+        icon: azureSvg,
+        url: 'https://azure.microsoft.com/en-us/products/cognitive-services/speech-services',
+        inputs: [
+            {
+                label: 'Подключить учетные данные',
+                name: 'credential',
+                type: 'credential',
+                credentialNames: ['azureCognitiveServices']
+            },
+            {
+                label: 'Язык',
+                name: 'language',
+                type: 'string',
+                description: 'Язык распознавания (например, "ru-RU", "en-US")',
+                placeholder: 'ru-RU',
+                optional: true
+            },
+            {
+                label: 'Режим фильтрации ненормативной лексики',
+                name: 'profanityFilterMode',
+                type: 'options',
+                description: 'Как обрабатывать ненормативную лексику в транскрипции',
+                options: [
+                    {
+                        label: 'Нет',
+                        name: 'None'
+                    },
+                    {
+                        label: 'Маскировать',
+                        name: 'Masked'
+                    },
+                    {
+                        label: 'Удалить',
+                        name: 'Removed'
+                    }
+                ],
+                default: 'Masked',
+                optional: true
+            },
+            {
+                label: 'Аудио каналы',
+                name: 'channels',
+                type: 'string',
+                description: 'Список аудиоканалов для обработки через запятую (например, "0,1")',
+                placeholder: '0,1',
+                default: '0,1'
+            }
+        ]
+    },
+    [SpeechToTextType.GROQ_WHISPER]: {
+        label: 'Groq Whisper',
+        name: SpeechToTextType.GROQ_WHISPER,
+        icon: groqPng,
+        url: 'https://console.groq.com/',
+        inputs: [
+            {
+                label: 'Модель',
+                name: 'model',
+                type: 'string',
+                description: `Модель STT для загрузки. По умолчанию whisper-large-v3, если не указано.`,
+                placeholder: 'whisper-large-v3',
+                optional: true
+            },
+            {
+                label: 'Подключить учетные данные',
+                name: 'credential',
+                type: 'credential',
+                credentialNames: ['groqApi']
+            },
+            {
+                label: 'Язык',
+                name: 'language',
+                type: 'string',
+                description: 'Язык входного аудио. Указание языка в формате ISO-639-1 улучшит точность и скорость обработки.',
+                placeholder: 'ru',
+                optional: true
+            },
+            {
+                label: 'Температура',
+                name: 'temperature',
+                type: 'number',
+                step: 0.1,
+                description:
+                    'Температура выборки от 0 до 1. Более высокие значения, такие как 0.8, сделают вывод более случайным, а более низкие значения, такие как 0.2, сделают его более сфокусированным и детерминированным.',
                 optional: true
             }
         ]
@@ -145,6 +240,7 @@ const SpeechToText = ({ dialogProps }) => {
     const dispatch = useDispatch()
 
     useNotifier()
+    const theme = useTheme()
 
     const enqueueSnackbar = (...args) => dispatch(enqueueSnackbarAction(...args))
     const closeSnackbar = (...args) => dispatch(closeSnackbarAction(...args))
@@ -209,6 +305,9 @@ const SpeechToText = ({ dialogProps }) => {
                     newVal[provider.name] = { ...speechToText[provider.name], status: false }
                 }
             })
+            if (providerName !== 'none' && newVal['none']) {
+                newVal['none'].status = false
+            }
         }
         setSpeechToText(newVal)
         return newVal
@@ -247,12 +346,19 @@ const SpeechToText = ({ dialogProps }) => {
     return (
         <>
             <Box fullWidth sx={{ mb: 1, display: 'flex', flexDirection: 'column', gap: 1 }}>
-                <Typography variant='h4' sx={{ mb: 1 }}>
-                    Выберите сервис для распознования речи
-                </Typography>
+                <Typography>Поставщики услуг</Typography>
                 <FormControl fullWidth>
-                    <Select size='small' value={selectedProvider} onChange={handleProviderChange}>
-                        <MenuItem value='none'>Отсутствует</MenuItem>
+                    <Select
+                        size='small'
+                        value={selectedProvider}
+                        onChange={handleProviderChange}
+                        sx={{
+                            '& .MuiSvgIcon-root': {
+                                color: theme?.customization?.isDarkMode ? '#fff' : 'inherit'
+                            }
+                        }}
+                    >
+                        <MenuItem value='none'>Не выбран</MenuItem>
                         {Object.values(speechToTextProviders).map((provider) => (
                             <MenuItem key={provider.name} value={provider.name}>
                                 {provider.label}

@@ -4,7 +4,7 @@ import PropTypes from 'prop-types'
 import { enqueueSnackbar as enqueueSnackbarAction, closeSnackbar as closeSnackbarAction, SET_CHATFLOW } from '@/store/actions'
 
 // material-ui
-import { Button, IconButton, OutlinedInput, Box, List, InputAdornment, Typography } from '@mui/material'
+import { Button, IconButton, OutlinedInput, Box, InputAdornment, Stack, Typography } from '@mui/material'
 import { IconX, IconTrash, IconPlus } from '@tabler/icons-react'
 
 // Project import
@@ -60,7 +60,7 @@ const AllowedDomains = ({ dialogProps }) => {
             })
             if (saveResp.data) {
                 enqueueSnackbar({
-                    message: 'Разрешенные источники сохранены',
+                    message: 'Allowed Origins Saved',
                     options: {
                         key: new Date().getTime() + Math.random(),
                         variant: 'success',
@@ -75,7 +75,7 @@ const AllowedDomains = ({ dialogProps }) => {
             }
         } catch (error) {
             enqueueSnackbar({
-                message: `Не удалось сохранить разрешенные источники: ${
+                message: `Failed to save Allowed Origins: ${
                     typeof error.response.data === 'object' ? error.response.data.message : error.response.data
                 }`,
                 options: {
@@ -118,23 +118,17 @@ const AllowedDomains = ({ dialogProps }) => {
     }, [dialogProps])
 
     return (
-        <>
-            <Box>
-                <Box
-                    sx={{
-                        display: 'flex',
-                        flexDirection: 'column'
-                    }}
-                >
-                    <Typography sx={{ mb: 1 }}>
-                        Адреса сайта
-                        <TooltipWithParser
-                            style={{ mb: 1, mt: 2, marginLeft: 10 }}
-                            title={'Ваш чат-бот будет работать только при использовании из следующих доменов.'}
-                        />
-                    </Typography>
-                </Box>
-                <List>
+        <Stack direction='column' spacing={2} sx={{ alignItems: 'start' }}>
+            <Typography variant='h3'>
+                Разрешенные домены
+                <TooltipWithParser
+                    style={{ mb: 1, mt: 2, marginLeft: 10 }}
+                    title={'Ваш чатбот будет работать только на следующих доменах.'}
+                />
+            </Typography>
+            <Stack direction='column' spacing={2} sx={{ width: '100%' }}>
+                <Stack direction='column' spacing={2}>
+                    <Typography>Домены</Typography>
                     {inputFields.map((origin, index) => {
                         return (
                             <div key={index} style={{ display: 'flex', width: '100%' }}>
@@ -176,15 +170,13 @@ const AllowedDomains = ({ dialogProps }) => {
                             </div>
                         )
                     })}
-                </List>
-            </Box>
-            <Box sx={{ pt: 2, pb: 2 }}>
-                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
-                    <Typography sx={{ mb: 1 }}>
-                        Название ошибки
+                </Stack>
+                <Stack direction='column' spacing={1}>
+                    <Typography>
+                        Сообщение об ошибке
                         <TooltipWithParser
                             style={{ mb: 1, mt: 2, marginLeft: 10 }}
-                            title={'Ваше сообщение об ошибке которое будет показано при использовании чат бота на стороннем домене'}
+                            title={'Сообщение об ошибке, которое будет показано при попытке использовать чатбот на недопустимом домене'}
                         />
                     </Typography>
                     <OutlinedInput
@@ -192,18 +184,18 @@ const AllowedDomains = ({ dialogProps }) => {
                         type='text'
                         size='small'
                         fullWidth
-                        placeholder='Неавторизированный домен!'
+                        placeholder='Unauthorized domain!'
                         value={errorMessage}
                         onChange={(e) => {
                             setErrorMessage(e.target.value)
                         }}
                     />
-                </div>
-            </Box>
+                </Stack>
+            </Stack>
             <StyledButton variant='contained' onClick={onSave}>
                 Сохранить
             </StyledButton>
-        </>
+        </Stack>
     )
 }
 

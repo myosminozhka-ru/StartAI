@@ -9,13 +9,13 @@ import { Input } from '@/ui-component/input/Input'
 const LoginDialog = ({ show, dialogProps, onConfirm }) => {
     const portalElement = document.getElementById('portal')
     const usernameInput = {
-        label: 'Имя пользователя',
+        label: 'Username',
         name: 'username',
         type: 'string',
-        placeholder: 'Иван иванов'
+        placeholder: 'john doe'
     }
     const passwordInput = {
-        label: 'Пароль',
+        label: 'Password',
         name: 'password',
         type: 'password'
     }
@@ -39,7 +39,7 @@ const LoginDialog = ({ show, dialogProps, onConfirm }) => {
                 {dialogProps.title}
             </DialogTitle>
             <DialogContent>
-                <Typography>Имя пользователя</Typography>
+                <Typography>Username</Typography>
                 <Input
                     inputParam={usernameInput}
                     onChange={(newValue) => setUsernameVal(newValue)}
@@ -47,12 +47,12 @@ const LoginDialog = ({ show, dialogProps, onConfirm }) => {
                     showDialog={false}
                 />
                 <div style={{ marginTop: 20 }}></div>
-                <Typography>Пороль</Typography>
+                <Typography>Password</Typography>
                 <Input inputParam={passwordInput} onChange={(newValue) => setPasswordVal(newValue)} value={passwordVal} />
             </DialogContent>
             <DialogActions>
                 <StyledButton variant='contained' onClick={() => onConfirm(usernameVal, passwordVal)}>
-                    Войти
+                    {dialogProps.confirmButtonName}
                 </StyledButton>
             </DialogActions>
         </Dialog>

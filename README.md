@@ -1,92 +1,217 @@
-# STARTAI
+<!-- markdownlint-disable MD030 -->
 
-## запуск проекта
+<p align="center">
+<img src="https://github.com/FlowiseAI/Flowise/blob/main/images/flowise_white.svg#gh-light-mode-only">
+<img src="https://github.com/FlowiseAI/Flowise/blob/main/images/flowise_dark.svg#gh-dark-mode-only">
+</p>
 
-### - pnpm install
+[![Release Notes](https://img.shields.io/github/release/FlowiseAI/Flowise)](https://github.com/FlowiseAI/Flowise/releases)
+[![Discord](https://img.shields.io/discord/1087698854775881778?label=Discord&logo=discord)](https://discord.gg/jbaHfsRVBW)
+[![Twitter Follow](https://img.shields.io/twitter/follow/FlowiseAI?style=social)](https://twitter.com/FlowiseAI)
+[![GitHub star chart](https://img.shields.io/github/stars/FlowiseAI/Flowise?style=social)](https://star-history.com/#FlowiseAI/Flowise)
+[![GitHub fork](https://img.shields.io/github/forks/FlowiseAI/Flowise?style=social)](https://github.com/FlowiseAI/Flowise/fork)
 
-### - pnpm build
+English | [繁體中文](./i18n/README-TW.md) | [简体中文](./i18n/README-ZH.md) | [日本語](./i18n/README-JA.md) | [한국어](./i18n/README-KR.md)
 
-### - pnpm start
+<h3>Build AI Agents, Visually</h3>
+<a href="https://github.com/FlowiseAI/Flowise">
+<img width="100%" src="https://github.com/FlowiseAI/Flowise/blob/main/images/flowise_agentflow.gif?raw=true"></a>
 
-English | [中文](./README-ZH.md) | [日本語](./README-JA.md) | [한국어](./README-KR.md)
+## ⚡Quick Start
 
-## PM2
+Download and Install [NodeJS](https://nodejs.org/en/download) >= 18.15.0
 
-## Имена и порты
+1. Install Flowise
+    ```bash
+    npm install -g flowise
+    ```
+2. Start Flowise
 
-### имена редактируются в файлах STARTAI\_'ONE-FIVE'\_ecosystem.config.js
+    ```bash
+    npx flowise start
+    ```
 
-### порты PORT=3000 PORT_ONE=3021 PORT_TWO=3022 PORT_THREE=3023 PORT_FOUR=3024 PORT_FIVE=3025 редактировать порты в packages\server\.env
+    With username & password
 
-### Порт выбирается в зависимости от NODE_ENV название которого ровно имени STARTAI\_'ONE-FIVE'\_, для добавления нового или изенения порта нужно отредактировать файл packages\server\src\index.ts в котором используется функция запуска приложения на нужном порте
+    ```bash
+    npx flowise start --FLOWISE_USERNAME=user --FLOWISE_PASSWORD=1234
+    ```
 
-```
-switch (process.env.NODE_ENV) {
-        case 'STARTAI_DEFAULT':
-            port = parseInt(process.env.PORT || '', 10) || 3000
-            break
-        case 'STARTAI_ONE':
-            port = parseInt(process.env.PORT_ONE || '', 10) || 3021
-            break
-        case 'STARTAI_TWO':
-            port = parseInt(process.env.PORT_TWO || '', 10) || 3022
-            break
-        case 'STARTAI_THREE':
-            port = parseInt(process.env.PORT_THREE || '', 10) || 3023
-            break
-        case 'STARTAI_FOUR':
-            port = parseInt(process.env.PORT_FOUR || '', 10) || 3024
-            break
-        case 'STARTAI_FIVE':
-            port = parseInt(process.env.PORT_FIVE || '', 10) || 3025
-            break
-        case 'STARTAI_TEST':
-            port = parseInt(process.env.PORT_TEST || '', 10) || 3026
-            break
-        default:
-}
-```
+3. Open [http://localhost:3000](http://localhost:3000)
 
-### - pnpm install
+## 🐳 Docker
 
-### - pnpm build
+### Docker Compose
 
-Start the app:
+1. Clone the Flowise project
+2. Go to `docker` folder at the root of the project
+3. Copy `.env.example` file, paste it into the same location, and rename to `.env` file
+4. `docker compose up -d`
+5. Open [http://localhost:3000](http://localhost:3000)
+6. You can bring the containers down by `docker compose stop`
+
+### Docker Image
+
+1. Build the image locally:
+    ```bash
+    docker build --no-cache -t flowise .
+    ```
+2. Run image:
+
+    ```bash
+    docker run -d --name flowise -p 3000:3000 flowise
+    ```
+
+3. Stop image:
+    ```bash
+    docker stop flowise
+    ```
+
+## 👨‍💻 Developers
+
+Flowise has 3 different modules in a single mono repository.
+
+-   `server`: Node backend to serve API logics
+-   `ui`: React frontend
+-   `components`: Third-party nodes integrations
+-   `api-documentation`: Auto-generated swagger-ui API docs from express
+
+### Prerequisite
+
+-   Install [PNPM](https://pnpm.io/installation)
+    ```bash
+    npm i -g pnpm
+    ```
+
+### Setup
+
+1.  Clone the repository
+
+    ```bash
+    git clone https://github.com/FlowiseAI/Flowise.git
+    ```
+
+2.  Go into repository folder
+
+    ```bash
+    cd Flowise
+    ```
+
+3.  Install all dependencies of all modules:
+
+    ```bash
+    pnpm install
+    ```
+
+4.  Build all the code:
+
+    ```bash
+    pnpm build
+    ```
+
+    <details>
+    <summary>Exit code 134 (JavaScript heap out of memory)</summary>  
+      If you get this error when running the above `build` script, try increasing the Node.js heap size and run the script again:
+
+        export NODE_OPTIONS="--max-old-space-size=4096"
+        pnpm build
+
+    </details>
+
+5.  Start the app:
+
     ```bash
     pnpm start
+    ```
 
-## Первый вариант запуска
+    You can now access the app on [http://localhost:3000](http://localhost:3000)
 
-### - переименовать ecosystem.config.js.example -> ecosystem.config.js
+6.  For development build:
 
-### - pm2 start + Редактируем файл для изменения порта и имени приложения ecosystem.config.js
+    -   Create `.env` file and specify the `VITE_PORT` (refer to `.env.example`) in `packages/ui`
+    -   Create `.env` file and specify the `PORT` (refer to `.env.example`) in `packages/server`
+    -   Run
 
-## Второй вариант запуска
+        ```bash
+        pnpm dev
+        ```
 
-### - `pm2 start` запуск приложения - port 3000 имя STARTAI_DEFAULT
+    Any code changes will reload the app automatically on [http://localhost:8080](http://localhost:8080)
 
-### - `pm2 start STARTAI_ONE_ecosystem.config.js` - запуск приложения - port - 3021 имя STARTAI_ONE
+## 🔒 Authentication
 
-### -` pm2 start STARTAI_TWO_ecosystem.config.js` - запуск приложения - port - 3022 имя STARTAI_TWO
+To enable app level authentication, add `FLOWISE_USERNAME` and `FLOWISE_PASSWORD` to the `.env` file in `packages/server`:
 
-### - `pm2 start STARTAI_THREE_ecosystem.config.js` - запуск приложения - port - 3023 имя STARTAI_THREE
+```
+FLOWISE_USERNAME=user
+FLOWISE_PASSWORD=1234
+```
 
-### - `pm2 start STARTAI_FOUR_ecosystem.config.js` - запуск приложения - port - 3024 имя STARTAI_FOUR
+## 🌱 Env Variables
 
-### - `pm2 start STARTAI_FIVE_ecosystem.config.js` - запуск приложения - port - 3025 имя STARTAI_FIVE
+Flowise support different environment variables to configure your instance. You can specify the following variables in the `.env` file inside `packages/server` folder. Read [more](https://github.com/FlowiseAI/Flowise/blob/main/CONTRIBUTING.md#-env-variables)
 
-### - `pm2 start STARTAI_TEST_ecosystem.config.js` - запуск приложения - port - 3026 имя STARTAI_TEST
+## 📖 Documentation
 
-## Фикс если возникают ошибки с типами в TS или в @oclif/core
+[Flowise Docs](https://docs.flowiseai.com/)
 
-### - удалить node_modules в корне, в packages\server, packages\ui, packages\components
+## 🌐 Self Host
 
-### - удалить файлы yarn.lock, package.lock
+Deploy Flowise self-hosted in your existing infrastructure, we support various [deployments](https://docs.flowiseai.com/configuration/deployment)
 
-### - сделать yarn clear cache
+-   [AWS](https://docs.flowiseai.com/configuration/deployment/aws)
+-   [Azure](https://docs.flowiseai.com/configuration/deployment/azure)
+-   [Digital Ocean](https://docs.flowiseai.com/configuration/deployment/digital-ocean)
+-   [GCP](https://docs.flowiseai.com/configuration/deployment/gcp)
+-   [Alibaba Cloud](https://computenest.console.aliyun.com/service/instance/create/default?type=user&ServiceName=Flowise社区版)
+-   <details>
+      <summary>Others</summary>
 
-### - при ошибки в @oclif/core сделать yarn add @oclif/core@1.26.2
+    -   [Railway](https://docs.flowiseai.com/configuration/deployment/railway)
 
-### - yarn install
+        [![Deploy on Railway](https://railway.app/button.svg)](https://railway.app/template/pn4G8S?referralCode=WVNPD9)
 
-### - yarn build
+    -   [Render](https://docs.flowiseai.com/configuration/deployment/render)
+
+        [![Deploy to Render](https://render.com/images/deploy-to-render-button.svg)](https://docs.flowiseai.com/configuration/deployment/render)
+
+    -   [HuggingFace Spaces](https://docs.flowiseai.com/deployment/hugging-face)
+
+        <a href="https://huggingface.co/spaces/FlowiseAI/Flowise"><img src="https://huggingface.co/datasets/huggingface/badges/raw/main/open-in-hf-spaces-sm.svg" alt="HuggingFace Spaces"></a>
+
+    -   [Elestio](https://elest.io/open-source/flowiseai)
+
+        [![Deploy on Elestio](https://elest.io/images/logos/deploy-to-elestio-btn.png)](https://elest.io/open-source/flowiseai)
+
+    -   [Sealos](https://template.sealos.io/deploy?templateName=flowise)
+
+        [![Deploy on Sealos](https://sealos.io/Deploy-on-Sealos.svg)](https://template.sealos.io/deploy?templateName=flowise)
+
+    -   [RepoCloud](https://repocloud.io/details/?app_id=29)
+
+        [![Deploy on RepoCloud](https://d16t0pc4846x52.cloudfront.net/deploy.png)](https://repocloud.io/details/?app_id=29)
+
+      </details>
+
+## ☁️ Flowise Cloud
+
+[Get Started with Flowise Cloud](https://flowiseai.com/)
+
+## 🙋 Support
+
+Feel free to ask any questions, raise problems, and request new features in [discussion](https://github.com/FlowiseAI/Flowise/discussions)
+
+## 🙌 Contributing
+
+Thanks go to these awesome contributors
+
+<a href="https://github.com/FlowiseAI/Flowise/graphs/contributors">
+<img src="https://contrib.rocks/image?repo=FlowiseAI/Flowise" />
+</a>
+
+See [contributing guide](CONTRIBUTING.md). Reach out to us at [Discord](https://discord.gg/jbaHfsRVBW) if you have any questions or issues.
+[![Star History Chart](https://api.star-history.com/svg?repos=FlowiseAI/Flowise&type=Timeline)](https://star-history.com/#FlowiseAI/Flowise&Date)
+
+## 📄 License
+
+Source code in this repository is made available under the [Apache License Version 2.0](LICENSE.md).
