@@ -47,7 +47,7 @@ import utilNodesPNG from '@/assets/images/utilNodes.png'
 import { baseURL, AGENTFLOW_ICONS } from '@/store/constant'
 import { SET_COMPONENT_NODES } from '@/store/actions'
 
-// ==============================|| ADD NODES||============================== //
+// ==============================|| ДОБАВЛЕНИЕ УЗЛОВ ||============================== //
 function a11yProps(index) {
     return {
         id: `attachment-tab-${index}`,
@@ -55,17 +55,18 @@ function a11yProps(index) {
     }
 }
 
+// Категории, которые не отображаются в агент-канвасе
 const blacklistCategoriesForAgentCanvas = ['Agents', 'Memory', 'Record Manager', 'Utilities']
 
 const agentMemoryNodes = ['agentMemory', 'sqliteAgentMemory', 'postgresAgentMemory', 'mySQLAgentMemory']
 
-// Show blacklisted nodes (exceptions) for agent canvas
+// Показать исключения для черного списка в агент-канвасе
 const exceptionsForAgentCanvas = {
     Memory: agentMemoryNodes,
     Utilities: ['getVariable', 'setVariable', 'stickyNote']
 }
 
-// Hide some nodes from the chatflow canvas
+// Скрыть некоторые узлы из чат-канваса
 const blacklistForChatflowCanvas = {
     Memory: agentMemoryNodes
 }
@@ -303,9 +304,9 @@ const AddNodes = ({ nodesData, node, isAgentCanvas, isAgentflowv2, onFlowGenerat
     const handleOpenDialog = () => {
         setOpenDialog(true)
         setDialogProps({
-            title: 'What would you like to build?',
+            title: 'Что бы вы хотели создать?',
             description:
-                'Enter your prompt to generate an agentflow. Performance may vary with different models. Only nodes and edges are generated, you will need to fill in the input fields for each node.'
+                'Введите ваш запрос для генерации агент-потока. Производительность может варьироваться в зависимости от используемых моделей. Генерируются только узлы и связи, вам нужно будет заполнить входные поля для каждого узла.'
         })
     }
 
@@ -325,8 +326,8 @@ const AddNodes = ({ nodesData, node, isAgentCanvas, isAgentflowv2, onFlowGenerat
                 ref={anchorRef}
                 size='small'
                 color='primary'
-                aria-label='add'
-                title='Add Node'
+                aria-label='добавить'
+                title='Добавить узел'
                 onClick={handleToggle}
             >
                 {open ? <IconMinus /> : <IconPlus />}
@@ -344,8 +345,8 @@ const AddNodes = ({ nodesData, node, isAgentCanvas, isAgentflowv2, onFlowGenerat
                     onClick={handleOpenDialog}
                     size='small'
                     color='primary'
-                    aria-label='generate'
-                    title='Generate Agentflow'
+                    aria-label='сгенерировать'
+                    title='Сгенерировать агент-поток'
                 >
                     <IconSparkles />
                 </StyledFab>
@@ -384,7 +385,7 @@ const AddNodes = ({ nodesData, node, isAgentCanvas, isAgentflowv2, onFlowGenerat
                                 <MainCard border={false} elevation={16} content={false} boxShadow shadow={theme.shadows[16]}>
                                     <Box sx={{ p: 2 }}>
                                         <Stack>
-                                            <Typography variant='h4'>Add Nodes</Typography>
+                                            <Typography variant='h4'>Добавить узлы</Typography>
                                         </Stack>
                                         <OutlinedInput
                                             // eslint-disable-next-line
@@ -393,7 +394,7 @@ const AddNodes = ({ nodesData, node, isAgentCanvas, isAgentflowv2, onFlowGenerat
                                             id='input-search-node'
                                             value={searchValue}
                                             onChange={(e) => filterSearch(e.target.value)}
-                                            placeholder='Search nodes'
+                                            placeholder='Поиск узлов'
                                             startAdornment={
                                                 <InputAdornment position='start'>
                                                     <IconSearch stroke={1.5} size='1rem' color={theme.palette.grey[500]} />
@@ -409,7 +410,7 @@ const AddNodes = ({ nodesData, node, isAgentCanvas, isAgentflowv2, onFlowGenerat
                                                             color: theme.palette.grey[900]
                                                         }
                                                     }}
-                                                    title='Clear Search'
+                                                    title='Очистить поиск'
                                                 >
                                                     <IconX
                                                         stroke={1.5}
@@ -432,7 +433,7 @@ const AddNodes = ({ nodesData, node, isAgentCanvas, isAgentflowv2, onFlowGenerat
                                                 variant='fullWidth'
                                                 value={tabValue}
                                                 onChange={handleTabChange}
-                                                aria-label='tabs'
+                                                aria-label='вкладки'
                                             >
                                                 {['LangChain', 'LlamaIndex', 'Utilities'].map((item, index) => (
                                                     <Tab
@@ -457,7 +458,7 @@ const AddNodes = ({ nodesData, node, isAgentCanvas, isAgentflowv2, onFlowGenerat
                                                         iconPosition='start'
                                                         sx={{ minHeight: '50px', height: '50px' }}
                                                         key={index}
-                                                        label={item}
+                                                        label={item === 'Utilities' ? 'Утилиты' : item}
                                                         {...a11yProps(index)}
                                                     ></Tab>
                                                 ))}
@@ -536,11 +537,25 @@ const AddNodes = ({ nodesData, node, isAgentCanvas, isAgentflowv2, onFlowGenerat
                                                                                         : 'inherit'
                                                                             }}
                                                                             size='small'
-                                                                            label={category.split(';')[1]}
+                                                                            label={
+                                                                                category.split(';')[1] === 'DEPRECATING'
+                                                                                    ? 'УСТАРЕВАЕТ'
+                                                                                    : category.split(';')[1]
+                                                                            }
                                                                         />
                                                                     </div>
                                                                 ) : (
-                                                                    <Typography variant='h5'>{category}</Typography>
+                                                                    <Typography variant='h5'>
+                                                                        {category === 'Memory'
+                                                                            ? 'Память'
+                                                                            : category === 'Agents'
+                                                                            ? 'Агенты'
+                                                                            : category === 'Record Manager'
+                                                                            ? 'Менеджер записей'
+                                                                            : category === 'Utilities'
+                                                                            ? 'Утилиты'
+                                                                            : category}
+                                                                    </Typography>
                                                                 )}
                                                             </AccordionSummary>
                                                             <AccordionDetails>
@@ -626,7 +641,11 @@ const AddNodes = ({ nodesData, node, isAgentCanvas, isAgentflowv2, onFlowGenerat
                                                                                                                     : 'inherit'
                                                                                                         }}
                                                                                                         size='small'
-                                                                                                        label={node.badge}
+                                                                                                        label={
+                                                                                                            node.badge === 'DEPRECATING'
+                                                                                                                ? 'УСТАРЕВАЕТ'
+                                                                                                                : node.badge
+                                                                                                        }
                                                                                                     />
                                                                                                 )}
                                                                                             </div>
@@ -637,7 +656,7 @@ const AddNodes = ({ nodesData, node, isAgentCanvas, isAgentflowv2, onFlowGenerat
                                                                                                         fontWeight: 700
                                                                                                     }}
                                                                                                 >
-                                                                                                    By {node.author}
+                                                                                                    Автор: {node.author}
                                                                                                 </span>
                                                                                             )}
                                                                                         </>

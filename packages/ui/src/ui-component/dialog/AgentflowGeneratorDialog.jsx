@@ -21,16 +21,16 @@ import useApi from '@/hooks/useApi'
 
 const defaultInstructions = [
     {
-        text: 'An agent that can autonomously search the web and generate report'
+        text: 'Агент, который может автономно искать в интернете и генерировать отчеты'
     },
     {
-        text: 'Summarize a document'
+        text: 'Суммаризировать документ'
     },
     {
-        text: 'Generate response to user queries and send it to Slack'
+        text: 'Генерировать ответы на запросы пользователей и отправлять их в Slack'
     },
     {
-        text: 'A team of agents that can handle all customer queries'
+        text: 'Команда агентов для обработки всех запросов клиентов'
     }
 ]
 
@@ -118,7 +118,7 @@ const AgentflowGeneratorDialog = ({ show, dialogProps, onCancel, onConfirm }) =>
                 onConfirm()
             } else {
                 enqueueSnackbar({
-                    message: response.error || 'Failed to generate agentflow',
+                    message: response.error || 'Не удалось сгенерировать агент-поток',
                     options: {
                         key: new Date().getTime() + Math.random(),
                         variant: 'error',
@@ -133,7 +133,7 @@ const AgentflowGeneratorDialog = ({ show, dialogProps, onCancel, onConfirm }) =>
             }
         } catch (error) {
             enqueueSnackbar({
-                message: error.response?.data?.message || 'Failed to generate agentflow',
+                message: error.response?.data?.message || 'Не удалось сгенерировать агент-поток',
                 options: {
                     key: new Date().getTime() + Math.random(),
                     variant: 'error',
@@ -179,9 +179,9 @@ const AgentflowGeneratorDialog = ({ show, dialogProps, onCancel, onConfirm }) =>
                 <DialogContent>
                     {loading ? (
                         <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', flexDirection: 'column' }}>
-                            <img src={generatorGIF} alt='Generating Agentflow' style={{ maxWidth: '100%', height: 'auto' }} />
+                            <img src={generatorGIF} alt='Генерация агент-потока' style={{ maxWidth: '100%', height: 'auto' }} />
                             <Typography variant='h5' sx={{ mt: 2 }}>
-                                Generating your Agentflow...
+                                Генерация вашего агент-потока...
                             </Typography>
                             <Box sx={{ width: '100%', mt: 2 }}>
                                 <LinearProgress
@@ -252,7 +252,7 @@ const AgentflowGeneratorDialog = ({ show, dialogProps, onCancel, onConfirm }) =>
                                     rows={12}
                                     disabled={loading}
                                     value={customAssistantInstruction}
-                                    placeholder={'Describe your agent here'}
+                                    placeholder={'Опишите вашего агента здесь'}
                                     onChange={(event) => setCustomAssistantInstruction(event.target.value)}
                                 />
                             )}
@@ -269,7 +269,7 @@ const AgentflowGeneratorDialog = ({ show, dialogProps, onCancel, onConfirm }) =>
                             <Box sx={{ mt: 2 }}>
                                 <div style={{ display: 'flex', flexDirection: 'row' }}>
                                     <Typography>
-                                        Select model to generate agentflow<span style={{ color: 'red' }}>&nbsp;*</span>
+                                        Выберите модель для генерации агент-потока<span style={{ color: 'red' }}>&nbsp;*</span>
                                     </Typography>
                                 </div>
                                 <Dropdown
@@ -289,7 +289,7 @@ const AgentflowGeneratorDialog = ({ show, dialogProps, onCancel, onConfirm }) =>
                                             }
                                         }
                                     }}
-                                    value={selectedChatModel ? selectedChatModel?.name : 'choose an option'}
+                                    value={selectedChatModel ? selectedChatModel?.name : 'выберите опцию'}
                                 />
                             </Box>
                             {selectedChatModel && Object.keys(selectedChatModel).length > 0 && (
@@ -335,7 +335,7 @@ const AgentflowGeneratorDialog = ({ show, dialogProps, onCancel, onConfirm }) =>
                                         !Object.keys(selectedChatModel).length
                                     }
                                 >
-                                    Generate
+                                    Сгенерировать
                                 </LoadingButton>
                             )}
                             {generatedInstruction && (
@@ -346,7 +346,7 @@ const AgentflowGeneratorDialog = ({ show, dialogProps, onCancel, onConfirm }) =>
                                         setGeneratedInstruction('')
                                     }}
                                 >
-                                    Back
+                                    Назад
                                 </Button>
                             )}
                         </>

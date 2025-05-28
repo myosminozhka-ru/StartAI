@@ -1,5 +1,5 @@
 {
-    "description": "Use chat history to rephrase user question, then answer the rephrased question using retrieved docs from vector store",
+    "description": "Используйте историю чата, чтобы перефразировать вопрос пользователя, а затем ответьте на перефразированный вопрос, используя извлеченные документы из vector store",
     "usecases": ["Documents QnA"],
     "framework": ["Langchain"],
     "nodes": [
@@ -436,7 +436,7 @@
                 "description": "Wrapper around OpenAI large language models that use the Chat endpoint",
                 "inputParams": [
                     {
-                        "label": "Connect Credential",
+                        "label": "Подключите учетные данные",
                         "name": "credential",
                         "type": "credential",
                         "credentialNames": ["openAIApi"],
@@ -615,7 +615,7 @@
                 "description": "Wrapper around OpenAI large language models that use the Chat endpoint",
                 "inputParams": [
                     {
-                        "label": "Connect Credential",
+                        "label": "Подключите учетные данные",
                         "name": "credential",
                         "type": "credential",
                         "credentialNames": ["openAIApi"],
@@ -794,7 +794,7 @@
                 "description": "Upsert embedded data and perform similarity search upon query using SingleStore, a fast and distributed cloud relational database",
                 "inputParams": [
                     {
-                        "label": "Connect Credential",
+                        "label": "Подключите учетные данные",
                         "name": "credential",
                         "type": "credential",
                         "description": "Needed when using SingleStore cloud hosted",
@@ -941,7 +941,7 @@
                 "description": "OpenAI API to generate embeddings for a given text",
                 "inputParams": [
                     {
-                        "label": "Connect Credential",
+                        "label": "Подключите учетные данные",
                         "name": "credential",
                         "type": "credential",
                         "credentialNames": ["openAIApi"],

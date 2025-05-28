@@ -31,7 +31,7 @@ class Chroma_VectorStores implements INode {
         this.description = 'Upsert embedded data and perform similarity search upon query using Chroma, an open-source embedding database'
         this.baseClasses = [this.type, 'VectorStoreRetriever', 'BaseRetriever']
         this.credential = {
-            label: 'Connect Credential',
+            label: 'Подключите учетные данные',
             name: 'credential',
             type: 'credential',
             description: 'Only needed if you have chroma on cloud services with X-Api-key',

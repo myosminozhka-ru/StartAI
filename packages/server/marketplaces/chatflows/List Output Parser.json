@@ -1,5 +1,5 @@
 {
-    "description": "Return response as a list (array) instead of a string/text",
+    "description": "Возвращает ответ в виде списка (массива) вместо строки/текста",
     "usecases": ["Extraction"],
     "framework": ["Langchain"],
     "nodes": [
@@ -232,7 +232,7 @@
                 "description": "Wrapper around OpenAI large language models that use the Chat endpoint",
                 "inputParams": [
                     {
-                        "label": "Connect Credential",
+                        "label": "Подключите учетные данные",
                         "name": "credential",
                         "type": "credential",
                         "credentialNames": ["openAIApi"],

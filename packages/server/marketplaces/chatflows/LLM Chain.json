@@ -1,5 +1,5 @@
 {
-    "description": "Basic example of stateless (no memory) LLM Chain with a Prompt Template and LLM Model",
+    "description": "Базовый пример цепочки LLM без сохранения состояния (без памяти) с шаблоном запроса и моделью LLM",
     "usecases": ["Basic"],
     "framework": ["Langchain"],
     "nodes": [
@@ -180,7 +180,7 @@
                 "description": "Wrapper around Azure OpenAI large language models that use the Chat endpoint",
                 "inputParams": [
                     {
-                        "label": "Connect Credential",
+                        "label": "Подключите учетные данные",
                         "name": "credential",
                         "type": "credential",
                         "credentialNames": ["azureOpenAIApi"],

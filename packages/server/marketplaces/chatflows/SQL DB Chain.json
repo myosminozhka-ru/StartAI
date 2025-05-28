@@ -1,5 +1,5 @@
 {
-    "description": "Answer questions over a SQL database",
+    "description": "Отвечайте на вопросы с помощью базы данных SQL",
     "usecases": ["SQL"],
     "framework": ["Langchain"],
     "nodes": [
@@ -23,7 +23,7 @@
                 "description": "Wrapper around OpenAI large language models that use the Chat endpoint",
                 "inputParams": [
                     {
-                        "label": "Connect Credential",
+                        "label": "Подключите учетные данные",
                         "name": "credential",
                         "type": "credential",
                         "credentialNames": ["openAIApi"],
@@ -192,7 +192,7 @@
                 "type": "SqlDatabaseChain",
                 "baseClasses": ["SqlDatabaseChain", "BaseChain", "Runnable"],
                 "category": "Chains",
-                "description": "Answer questions over a SQL database",
+                "description": "Отвечайте на вопросы с помощью базы данных SQL",
                 "inputParams": [
                     {
                         "label": "Database",

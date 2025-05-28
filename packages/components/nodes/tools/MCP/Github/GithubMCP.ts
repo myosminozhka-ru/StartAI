@@ -26,7 +26,7 @@ class Github_MCP implements INode {
         this.description = 'MCP Server for the GitHub API'
         this.documentation = 'https://github.com/modelcontextprotocol/servers/tree/main/src/github'
         this.credential = {
-            label: 'Connect Credential',
+            label: 'Подключите учетные данные',
             name: 'credential',
             type: 'credential',
             credentialNames: ['githubApi']

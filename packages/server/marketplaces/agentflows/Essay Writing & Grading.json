@@ -1,5 +1,5 @@
 {
-    "description": "One agent that writes essay, and another agent that grades the essay. Then loop back to first agent until the condition is met",
+    "description": "Один агент, который пишет эссе, и другой агент, который оценивает эссе. Затем вернитесь к первому агенту, пока не будет выполнено условие",
     "framework": ["Langchain"],
     "usecases": ["Reflective Agent"],
     "nodes": [
@@ -886,7 +886,7 @@
                 "description": "Wrapper around OpenAI large language models that use the Chat endpoint",
                 "inputParams": [
                     {
-                        "label": "Connect Credential",
+                        "label": "Подключите учетные данные",
                         "name": "credential",
                         "type": "credential",
                         "credentialNames": ["openAIApi"],

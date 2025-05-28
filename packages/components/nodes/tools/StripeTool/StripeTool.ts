@@ -174,7 +174,7 @@ class StripeTool_Tools implements INode {
             }
         ]
         this.credential = {
-            label: 'Connect Credential',
+            label: 'Подключите учетные данные',
             name: 'credential',
             type: 'credential',
             credentialNames: ['stripeApi']

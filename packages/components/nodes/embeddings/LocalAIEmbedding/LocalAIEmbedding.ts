@@ -24,7 +24,7 @@ class LocalAIEmbedding_Embeddings implements INode {
         this.description = 'Use local embeddings models like llama.cpp'
         this.baseClasses = [this.type, 'Embeddings']
         this.credential = {
-            label: 'Connect Credential',
+            label: 'Подключите учетные данные',
             name: 'credential',
             type: 'credential',
             credentialNames: ['localAIApi'],

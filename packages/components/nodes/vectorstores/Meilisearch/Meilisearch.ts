@@ -31,7 +31,7 @@ class MeilisearchRetriever_node implements INode {
         this.description = `Upsert embedded data and perform similarity search upon query using Meilisearch hybrid search functionality`
         this.baseClasses = ['BaseRetriever']
         this.credential = {
-            label: 'Connect Credential',
+            label: 'Подключите учетные данные',
             name: 'credential',
             type: 'credential',
             credentialNames: ['meilisearchApi']

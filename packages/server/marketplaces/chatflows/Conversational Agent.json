@@ -1,5 +1,5 @@
 {
-    "description": "A conversational agent designed to use tools and chat model to provide responses",
+    "description": "Диалоговый агент, предназначенный для использования инструментов и модели чата для предоставления ответов",
     "usecases": ["Agent"],
     "framework": ["Langchain"],
     "nodes": [
@@ -123,7 +123,7 @@
                 "description": "Wrapper around SerpAPI - a real-time API to access Google search results",
                 "inputParams": [
                     {
-                        "label": "Connect Credential",
+                        "label": "Подключите учетные данные",
                         "name": "credential",
                         "type": "credential",
                         "credentialNames": ["serpApi"],
@@ -170,7 +170,7 @@
                 "description": "Wrapper around OpenAI large language models that use the Chat endpoint",
                 "inputParams": [
                     {
-                        "label": "Connect Credential",
+                        "label": "Подключите учетные данные",
                         "name": "credential",
                         "type": "credential",
                         "credentialNames": ["openAIApi"],

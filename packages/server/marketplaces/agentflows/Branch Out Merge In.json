@@ -1,5 +1,5 @@
 {
-    "description": "Example of branching out into different agents, and merge the final responses back into one",
+    "description": "Пример разветвления на разные агенты и объединения окончательных ответов обратно в один",
     "framework": ["Langchain"],
     "usecases": ["Basic"],
     "nodes": [
@@ -1120,7 +1120,7 @@
                 "description": "Wrapper around ChatAnthropic large language models that use the Chat endpoint",
                 "inputParams": [
                     {
-                        "label": "Connect Credential",
+                        "label": "Подключите учетные данные",
                         "name": "credential",
                         "type": "credential",
                         "credentialNames": ["anthropicApi"],

@@ -27,7 +27,7 @@ class RedisCache implements INode {
         this.category = 'Cache'
         this.baseClasses = [this.type, ...getBaseClasses(LangchainRedisCache)]
         this.credential = {
-            label: 'Connect Credential',
+            label: 'Подключите учетные данные',
             name: 'credential',
             type: 'credential',
             optional: true,

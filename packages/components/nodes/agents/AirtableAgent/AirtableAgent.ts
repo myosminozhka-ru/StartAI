@@ -22,61 +22,62 @@ class Airtable_Agents implements INode {
     inputs: INodeParams[]
 
     constructor() {
-        this.label = 'Airtable Agent'
+        this.label = 'Airtable Агент'
         this.name = 'airtableAgent'
         this.version = 2.0
         this.type = 'AgentExecutor'
         this.category = 'Agents'
         this.icon = 'airtable.svg'
-        this.description = 'Agent used to answer queries on Airtable table'
+        this.description = 'Агент для ответов на запросы по таблице Airtable'
         this.baseClasses = [this.type, ...getBaseClasses(AgentExecutor)]
         this.credential = {
-            label: 'Connect Credential',
+            label: 'Подключите учетные данные',
             name: 'credential',
             type: 'credential',
             credentialNames: ['airtableApi']
         }
         this.inputs = [
             {
-                label: 'Language Model',
+                label: 'Языковая модель',
                 name: 'model',
                 type: 'BaseLanguageModel'
             },
             {
-                label: 'Base Id',
+                label: 'ID базы',
                 name: 'baseId',
                 type: 'string',
                 placeholder: 'app11RobdGoX0YNsC',
                 description:
-                    'If your table URL looks like: https://airtable.com/app11RobdGoX0YNsC/tblJdmvbrgizbYICO/viw9UrP77Id0CE4ee, app11RovdGoX0YNsC is the base id'
+                    'Если URL вашей таблицы выглядит так: https://airtable.com/app11RobdGoX0YNsC/tblJdmvbrgizbYICO/viw9UrP77Id0CE4ee, то app11RovdGoX0YNsC - это ID базы'
             },
             {
-                label: 'Table Id',
+                label: 'ID таблицы',
                 name: 'tableId',
                 type: 'string',
                 placeholder: 'tblJdmvbrgizbYICO',
                 description:
-                    'If your table URL looks like: https://airtable.com/app11RobdGoX0YNsC/tblJdmvbrgizbYICO/viw9UrP77Id0CE4ee, tblJdmvbrgizbYICO is the table id'
+                    'Если URL вашей таблицы выглядит так: https://airtable.com/app11RobdGoX0YNsC/tblJdmvbrgizbYICO/viw9UrP77Id0CE4ee, то tblJdmvbrgizbYICO - это ID таблицы'
             },
             {
-                label: 'Return All',
+                label: 'Вернуть все',
                 name: 'returnAll',
                 type: 'boolean',
                 default: true,
                 additionalParams: true,
-                description: 'If all results should be returned or only up to a given limit'
+                description: 'Возвращать все результаты или только до указанного лимита'
             },
             {
-                label: 'Limit',
+                label: 'Лимит',
                 name: 'limit',
                 type: 'number',
                 default: 100,
                 additionalParams: true,
-                description: 'Number of results to return'
+                description: 'Количество возвращаемых результатов'
             },
             {
-                label: 'Input Moderation',
-                description: 'Detect text that could generate harmful output and prevent it from being sent to the language model',
+                label: 'Модерация ввода',
+                description:
+                    'Обнаружение текста, который может генерировать вредоносный вывод, и предотвращение его отправки в языковую модель',
                 name: 'inputModeration',
                 type: 'Moderation',
                 optional: true,
@@ -180,10 +181,9 @@ json.dumps(my_dict)`
         if (pythonCode) {
             try {
                 const code = `import pandas as pd\n${pythonCode}`
-                // TODO: get print console output
                 finalResult = await pyodide.runPythonAsync(code)
             } catch (error) {
-                throw new Error(`Sorry, I'm unable to find answer for question: "${input}" using follwoing code: "${pythonCode}"`)
+                throw new Error(`Извините, я не могу найти ответ на вопрос: "${input}" используя следующий код: "${pythonCode}"`)
             }
         }
 
@@ -234,7 +234,7 @@ const fetchAirtableData = async (url: string, params: ICommonObject, accessToken
         const response = await axios.get(url, { params, headers })
         return response.data
     } catch (error) {
-        throw new Error(`Failed to fetch ${url} from Airtable: ${error}`)
+        throw new Error(`Не удалось получить данные из Airtable по адресу ${url}: ${error}`)
     }
 }
 

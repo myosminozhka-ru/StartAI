@@ -1,5 +1,5 @@
 {
-    "description": "Conversational agent to choose between multiple Chain Tools, each connected to different vector databases",
+    "description": "Диалоговый агент для выбора между несколькими цепными инструментами, каждый из которых подключен к различным векторным базам данных",
     "usecases": ["Documents QnA"],
     "framework": ["Langchain"],
     "nodes": [
@@ -301,7 +301,7 @@
                 "description": "OpenAI API to generate embeddings for a given text",
                 "inputParams": [
                     {
-                        "label": "Connect Credential",
+                        "label": "Подключите учетные данные",
                         "name": "credential",
                         "type": "credential",
                         "credentialNames": ["openAIApi"],
@@ -404,7 +404,7 @@
                 "description": "OpenAI API to generate embeddings for a given text",
                 "inputParams": [
                     {
-                        "label": "Connect Credential",
+                        "label": "Подключите учетные данные",
                         "name": "credential",
                         "type": "credential",
                         "credentialNames": ["openAIApi"],
@@ -507,7 +507,7 @@
                 "description": "Wrapper around OpenAI large language models that use the Chat endpoint",
                 "inputParams": [
                     {
-                        "label": "Connect Credential",
+                        "label": "Подключите учетные данные",
                         "name": "credential",
                         "type": "credential",
                         "credentialNames": ["openAIApi"],
@@ -686,7 +686,7 @@
                 "description": "Upsert embedded data and perform similarity search upon query using Redis, an open source, in-memory data structure store",
                 "inputParams": [
                     {
-                        "label": "Connect Credential",
+                        "label": "Подключите учетные данные",
                         "name": "credential",
                         "type": "credential",
                         "credentialNames": ["redisCacheUrlApi", "redisCacheApi"],
@@ -1006,7 +1006,7 @@
                 "description": "Wrapper around OpenAI large language models that use the Chat endpoint",
                 "inputParams": [
                     {
-                        "label": "Connect Credential",
+                        "label": "Подключите учетные данные",
                         "name": "credential",
                         "type": "credential",
                         "credentialNames": ["openAIApi"],

@@ -25,7 +25,7 @@ class ChatXAI_ChatModels implements INode {
         this.description = 'Wrapper around Grok from XAI'
         this.baseClasses = [this.type, ...getBaseClasses(ChatXAI)]
         this.credential = {
-            label: 'Connect Credential',
+            label: 'Подключите учетные данные',
             name: 'credential',
             type: 'credential',
             credentialNames: ['xaiApi']

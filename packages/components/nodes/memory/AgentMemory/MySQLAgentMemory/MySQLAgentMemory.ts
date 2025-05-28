@@ -27,7 +27,7 @@ class MySQLAgentMemory_Memory implements INode {
         this.description = 'Memory for agentflow to remember the state of the conversation using MySQL database'
         this.baseClasses = [this.type, ...getBaseClasses(MySQLSaver)]
         this.credential = {
-            label: 'Connect Credential',
+            label: 'Подключите учетные данные',
             name: 'credential',
             type: 'credential',
             credentialNames: ['MySQLApi'],

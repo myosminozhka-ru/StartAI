@@ -1,5 +1,5 @@
 {
-    "description": "A team of portfolio manager, financial analyst, and risk manager working together to optimize an investment portfolio.",
+    "description": "Команда портфельных менеджеров, финансовых аналитиков и риск-менеджеров, работающих вместе над оптимизацией инвестиционного портфеля.",
     "framework": ["Langchain"],
     "usecases": ["Finance & Accounting", "Hierarchical Agent Teams"],
     "nodes": [
@@ -417,7 +417,7 @@
                 "description": "Wrapper around OpenAI large language models that use the Chat endpoint",
                 "inputParams": [
                     {
-                        "label": "Connect Credential",
+                        "label": "Подключите учетные данные",
                         "name": "credential",
                         "type": "credential",
                         "credentialNames": ["openAIApi"],
@@ -597,7 +597,7 @@
                 "description": "Wrapper around Google Custom Search API - a real-time API to access Google search results",
                 "inputParams": [
                     {
-                        "label": "Connect Credential",
+                        "label": "Подключите учетные данные",
                         "name": "credential",
                         "type": "credential",
                         "credentialNames": ["googleCustomSearchApi"],
@@ -645,7 +645,7 @@
                 "description": "Wrapper around Google Custom Search API - a real-time API to access Google search results",
                 "inputParams": [
                     {
-                        "label": "Connect Credential",
+                        "label": "Подключите учетные данные",
                         "name": "credential",
                         "type": "credential",
                         "credentialNames": ["googleCustomSearchApi"],
@@ -693,7 +693,7 @@
                 "description": "Wrapper around Google Custom Search API - a real-time API to access Google search results",
                 "inputParams": [
                     {
-                        "label": "Connect Credential",
+                        "label": "Подключите учетные данные",
                         "name": "credential",
                         "type": "credential",
                         "credentialNames": ["googleCustomSearchApi"],

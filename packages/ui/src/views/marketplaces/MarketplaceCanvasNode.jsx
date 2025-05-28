@@ -154,7 +154,7 @@ const MarketplaceCanvasNode = ({ data }) => {
                                 textAlign: 'center'
                             }}
                         >
-                            Выход
+                            Выходные данные
                         </Typography>
                     </Box>
                     <Divider />

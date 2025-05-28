@@ -31,7 +31,7 @@ class Couchbase_VectorStores implements INode {
         this.description = `Upsert embedded data and load existing index using Couchbase, a award-winning distributed NoSQL database`
         this.baseClasses = [this.type, 'VectorStoreRetriever', 'BaseRetriever']
         this.credential = {
-            label: 'Connect Credential',
+            label: 'Подключите учетные данные',
             name: 'credential',
             type: 'credential',
             credentialNames: ['couchbaseApi']

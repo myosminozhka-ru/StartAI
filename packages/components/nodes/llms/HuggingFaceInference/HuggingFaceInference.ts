@@ -25,7 +25,7 @@ class HuggingFaceInference_LLMs implements INode {
         this.description = 'Wrapper around HuggingFace large language models'
         this.baseClasses = [this.type, ...getBaseClasses(HuggingFaceInference)]
         this.credential = {
-            label: 'Connect Credential',
+            label: 'Подключите учетные данные',
             name: 'credential',
             type: 'credential',
             credentialNames: ['huggingFaceApi']

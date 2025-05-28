@@ -1,5 +1,5 @@
 {
-    "description": "An agent that can iterate over a list of items and perform actions on each item",
+    "description": "Агент, который может перебирать список элементов и выполнять действия с каждым элементом",
     "usecases": ["Agent"],
     "nodes": [
         {

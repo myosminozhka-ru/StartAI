@@ -1,5 +1,5 @@
 {
-    "description": "Multi agents with supervisor and agents, constructed using Sequential Agents nodes",
+    "description": "Мультиагенты с супервизором и агентами, построенные с использованием последовательных узлов агентов",
     "framework": ["Langchain"],
     "usecases": ["Reflective Agent"],
     "nodes": [
@@ -1089,7 +1089,7 @@
                 "description": "Wrapper around OpenAI large language models that use the Chat endpoint",
                 "inputParams": [
                     {
-                        "label": "Connect Credential",
+                        "label": "Подключите учетные данные",
                         "name": "credential",
                         "type": "credential",
                         "credentialNames": ["openAIApi"],

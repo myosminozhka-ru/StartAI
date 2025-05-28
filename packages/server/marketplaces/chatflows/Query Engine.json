@@ -1,5 +1,5 @@
 {
-    "description": "Stateless query engine designed to answer question over your data using LlamaIndex",
+    "description": "Механизм запросов без учета состояния, предназначенный для ответа на вопрос о ваших данных с помощью LlamaIndex",
     "usecases": ["Documents QnA"],
     "framework": ["LlamaIndex"],
     "nodes": [
@@ -91,7 +91,7 @@
                 "description": "Upsert embedded data and perform similarity search upon query using Pinecone, a leading fully managed hosted vector database",
                 "inputParams": [
                     {
-                        "label": "Connect Credential",
+                        "label": "Подключите учетные данные",
                         "name": "credential",
                         "type": "credential",
                         "credentialNames": ["pineconeApi"],
@@ -217,7 +217,7 @@
                 "description": "OpenAI Embedding specific for LlamaIndex",
                 "inputParams": [
                     {
-                        "label": "Connect Credential",
+                        "label": "Подключите учетные данные",
                         "name": "credential",
                         "type": "credential",
                         "credentialNames": ["openAIApi"],
@@ -357,7 +357,7 @@
                 "description": "Wrapper around ChatAnthropic LLM specific for LlamaIndex",
                 "inputParams": [
                     {
-                        "label": "Connect Credential",
+                        "label": "Подключите учетные данные",
                         "name": "credential",
                         "type": "credential",
                         "credentialNames": ["anthropicApi"],

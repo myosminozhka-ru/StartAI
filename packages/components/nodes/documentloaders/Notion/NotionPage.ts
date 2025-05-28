@@ -27,7 +27,7 @@ class NotionPage_DocumentLoaders implements INode {
         this.description = 'Load data from Notion Page (including child pages all as separate documents)'
         this.baseClasses = [this.type]
         this.credential = {
-            label: 'Connect Credential',
+            label: 'Подключите учетные данные',
             name: 'credential',
             type: 'credential',
             credentialNames: ['notionApi']

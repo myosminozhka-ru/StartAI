@@ -27,7 +27,7 @@ class Deepseek_ChatModels implements INode {
         this.description = 'Wrapper around Deepseek large language models that use the Chat endpoint'
         this.baseClasses = [this.type, ...getBaseClasses(ChatOpenAI)]
         this.credential = {
-            label: 'Connect Credential',
+            label: 'Подключите учетные данные',
             name: 'credential',
             type: 'credential',
             credentialNames: ['deepseekApi']

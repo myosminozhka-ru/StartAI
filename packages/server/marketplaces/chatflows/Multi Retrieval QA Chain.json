@@ -1,5 +1,5 @@
 {
-    "description": "A chain that automatically picks an appropriate vector store retriever from multiple different vector databases",
+    "description": "Цепочка, которая автоматически выбирает подходящий поисковик хранилища векторов из нескольких различных баз данных векторов",
     "usecases": ["Documents QnA"],
     "framework": ["Langchain"],
     "nodes": [
@@ -301,7 +301,7 @@
                 "description": "OpenAI API to generate embeddings for a given text",
                 "inputParams": [
                     {
-                        "label": "Connect Credential",
+                        "label": "Подключите учетные данные",
                         "name": "credential",
                         "type": "credential",
                         "credentialNames": ["openAIApi"],
@@ -404,7 +404,7 @@
                 "description": "Wrapper around OpenAI large language models that use the Chat endpoint",
                 "inputParams": [
                     {
-                        "label": "Connect Credential",
+                        "label": "Подключите учетные данные",
                         "name": "credential",
                         "type": "credential",
                         "credentialNames": ["openAIApi"],
@@ -583,7 +583,7 @@
                 "description": "Upsert embedded data and perform similarity or mmr search using Pinecone, a leading fully managed hosted vector database",
                 "inputParams": [
                     {
-                        "label": "Connect Credential",
+                        "label": "Подключите учетные данные",
                         "name": "credential",
                         "type": "credential",
                         "credentialNames": ["pineconeApi"],
@@ -755,7 +755,7 @@
                 "description": "Upsert embedded data and perform similarity search upon query using Chroma, an open-source embedding database",
                 "inputParams": [
                     {
-                        "label": "Connect Credential",
+                        "label": "Подключите учетные данные",
                         "name": "credential",
                         "type": "credential",
                         "description": "Only needed if you have chroma on cloud services with X-Api-key",
@@ -885,7 +885,7 @@
                 "description": "Upsert embedded data and perform similarity or mmr search upon query using Supabase via pgvector extension",
                 "inputParams": [
                     {
-                        "label": "Connect Credential",
+                        "label": "Подключите учетные данные",
                         "name": "credential",
                         "type": "credential",
                         "credentialNames": ["supabaseApi"],

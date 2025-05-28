@@ -22,7 +22,7 @@ class Opik_Analytic implements INode {
         this.baseClasses = [this.type]
         this.inputs = []
         this.credential = {
-            label: 'Connect Credential',
+            label: 'Подключите учетные данные',
             name: 'credential',
             type: 'credential',
             credentialNames: ['opikApi']

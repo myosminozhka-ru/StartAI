@@ -1,5 +1,5 @@
 {
-    "description": "Use output from a chain as prompt for another chain, similar to chain of thought",
+    "description": "Используйте выходные данные из цепочки в качестве подсказки для другой цепочки, аналогичной цепочке размышлений",
     "usecases": ["Basic"],
     "framework": ["Langchain"],
     "nodes": [
@@ -339,7 +339,7 @@
                 "description": "Wrapper around OpenAI large language models that use the Chat endpoint",
                 "inputParams": [
                     {
-                        "label": "Connect Credential",
+                        "label": "Подключите учетные данные",
                         "name": "credential",
                         "type": "credential",
                         "credentialNames": ["openAIApi"],
@@ -519,7 +519,7 @@
                 "description": "Wrapper around OpenAI large language models that use the Chat endpoint",
                 "inputParams": [
                     {
-                        "label": "Connect Credential",
+                        "label": "Подключите учетные данные",
                         "name": "credential",
                         "type": "credential",
                         "credentialNames": ["openAIApi"],

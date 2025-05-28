@@ -33,63 +33,63 @@ const settings = {
     children: [
         {
             id: 'viewMessages',
-            title: 'View Messages',
+            title: 'Просмотр сообщений',
             type: 'item',
             url: '',
             icon: icons.IconMessage
         },
         {
             id: 'viewLeads',
-            title: 'View Leads',
+            title: 'Просмотр лидов',
             type: 'item',
             url: '',
             icon: icons.IconUsers
         },
         {
             id: 'viewUpsertHistory',
-            title: 'Upsert History',
+            title: 'История обновлений',
             type: 'item',
             url: '',
             icon: icons.IconDatabaseExport
         },
         {
             id: 'chatflowConfiguration',
-            title: 'Configuration',
+            title: 'Конфигурация',
             type: 'item',
             url: '',
             icon: icons.IconAdjustmentsHorizontal
         },
         {
             id: 'saveAsTemplate',
-            title: 'Save As Template',
+            title: 'Сохранить как шаблон',
             type: 'item',
             url: '',
             icon: icons.IconTemplate
         },
         {
             id: 'duplicateChatflow',
-            title: 'Duplicate Chatflow',
+            title: 'Дублировать чат-поток',
             type: 'item',
             url: '',
             icon: icons.IconCopy
         },
         {
             id: 'loadChatflow',
-            title: 'Load Chatflow',
+            title: 'Загрузить чат-поток',
             type: 'item',
             url: '',
             icon: icons.IconFileUpload
         },
         {
             id: 'exportChatflow',
-            title: 'Export Chatflow',
+            title: 'Экспорт чат-потока',
             type: 'item',
             url: '',
             icon: icons.IconFileExport
         },
         {
             id: 'deleteChatflow',
-            title: 'Delete Chatflow',
+            title: 'Удалить чат-поток',
             type: 'item',
             url: '',
             icon: icons.IconTrash

@@ -24,7 +24,7 @@ class SearchAPI_Tools implements INode {
         this.description = 'Real-time API for accessing Google Search data'
         this.inputs = []
         this.credential = {
-            label: 'Connect Credential',
+            label: 'Подключите учетные данные',
             name: 'credential',
             type: 'credential',
             credentialNames: ['searchApi']

@@ -43,7 +43,7 @@ class DynamoDb_Memory implements INode {
         this.description = 'Stores the conversation in dynamo db table'
         this.baseClasses = [this.type, ...getBaseClasses(BufferMemory)]
         this.credential = {
-            label: 'Connect Credential',
+            label: 'Подключите учетные данные',
             name: 'credential',
             type: 'credential',
             credentialNames: ['dynamodbMemoryApi'],

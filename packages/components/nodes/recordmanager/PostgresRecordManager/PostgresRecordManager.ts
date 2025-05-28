@@ -123,7 +123,7 @@ class PostgresRecordManager_RecordManager implements INode {
             }
         ]
         this.credential = {
-            label: 'Connect Credential',
+            label: 'Подключите учетные данные',
             name: 'credential',
             type: 'credential',
             credentialNames: ['PostgresApi'],

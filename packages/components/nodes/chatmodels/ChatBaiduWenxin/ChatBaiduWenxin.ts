@@ -25,7 +25,7 @@ class ChatBaiduWenxin_ChatModels implements INode {
         this.description = 'Wrapper around BaiduWenxin Chat Endpoints'
         this.baseClasses = [this.type, ...getBaseClasses(ChatBaiduQianfan)]
         this.credential = {
-            label: 'Connect Credential',
+            label: 'Подключите учетные данные',
             name: 'credential',
             type: 'credential',
             credentialNames: ['baiduQianfanApi']

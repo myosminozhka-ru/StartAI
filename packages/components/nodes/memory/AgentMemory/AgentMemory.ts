@@ -31,7 +31,7 @@ class AgentMemory_Memory implements INode {
         this.baseClasses = [this.type, ...getBaseClasses(SqliteSaver)]
         this.badge = 'DEPRECATING'
         this.credential = {
-            label: 'Connect Credential',
+            label: 'Подключите учетные данные',
             name: 'credential',
             type: 'credential',
             credentialNames: ['PostgresApi', 'MySQLApi'],

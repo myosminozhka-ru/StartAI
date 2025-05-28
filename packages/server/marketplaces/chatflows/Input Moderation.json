@@ -1,5 +1,5 @@
 {
-    "description": "Detect text that could generate harmful output and prevent it from being sent to the language model",
+    "description": "Обнаруживайте текст, который может привести к вредоносным выводам, и предотвращайте его отправку в языковую модель",
     "framework": ["Langchain"],
     "usecases": ["Basic"],
     "nodes": [
@@ -122,7 +122,7 @@
                 "description": "Wrapper around OpenAI large language models that use the Chat endpoint",
                 "inputParams": [
                     {
-                        "label": "Connect Credential",
+                        "label": "Подключите учетные данные",
                         "name": "credential",
                         "type": "credential",
                         "credentialNames": ["openAIApi"],
@@ -433,7 +433,7 @@
                 "description": "Wrapper around OpenAI large language models that use the Chat endpoint",
                 "inputParams": [
                     {
-                        "label": "Connect Credential",
+                        "label": "Подключите учетные данные",
                         "name": "credential",
                         "type": "credential",
                         "credentialNames": ["openAIApi"],

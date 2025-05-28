@@ -25,7 +25,7 @@ class ChatLocalAI_ChatModels implements INode {
         this.description = 'Use local LLMs like llama.cpp, gpt4all using LocalAI'
         this.baseClasses = [this.type, 'BaseChatModel', ...getBaseClasses(ChatOpenAI)]
         this.credential = {
-            label: 'Connect Credential',
+            label: 'Подключите учетные данные',
             name: 'credential',
             type: 'credential',
             credentialNames: ['localAIApi'],

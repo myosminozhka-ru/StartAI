@@ -26,7 +26,7 @@ class ChatAlibabaTongyi_ChatModels implements INode {
         this.description = 'Wrapper around Alibaba Tongyi Chat Endpoints'
         this.baseClasses = [this.type, ...getBaseClasses(ChatAlibabaTongyi)]
         this.credential = {
-            label: 'Connect Credential',
+            label: 'Подключите учетные данные',
             name: 'credential',
             type: 'credential',
             credentialNames: ['AlibabaApi']

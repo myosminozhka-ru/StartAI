@@ -26,7 +26,7 @@ class GoogleGenerativeAIEmbedding_Embeddings implements INode {
         this.description = 'Google Generative API to generate embeddings for a given text'
         this.baseClasses = [this.type, ...getBaseClasses(GoogleGenerativeAIEmbeddings)]
         this.credential = {
-            label: 'Connect Credential',
+            label: 'Подключите учетные данные',
             name: 'credential',
             type: 'credential',
             credentialNames: ['googleGenerativeAI'],

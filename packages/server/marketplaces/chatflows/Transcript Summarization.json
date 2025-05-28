@@ -1,5 +1,5 @@
 {
-    "description": "Use Anthropic Claude with 200k context window to ingest whole document for summarization",
+    "description": "Используйте Anthropic Claude с контекстным окном 200k, чтобы просмотреть весь документ для обобщения",
     "framework": ["Langchain"],
     "usecases": ["Summarization"],
     "nodes": [
@@ -172,7 +172,7 @@
                 "description": "Wrapper around ChatAnthropic large language models that use the Chat endpoint",
                 "inputParams": [
                     {
-                        "label": "Connect Credential",
+                        "label": "Подключите учетные данные",
                         "name": "credential",
                         "type": "credential",
                         "credentialNames": ["anthropicApi"],

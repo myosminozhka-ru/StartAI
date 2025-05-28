@@ -28,7 +28,7 @@ class JinaRerankRetriever_Retrievers implements INode {
         this.description = 'Jina AI Rerank indexes the documents from most to least semantically relevant to the query.'
         this.baseClasses = [this.type, 'BaseRetriever']
         this.credential = {
-            label: 'Connect Credential',
+            label: 'Подключите учетные данные',
             name: 'credential',
             type: 'credential',
             credentialNames: ['jinaAIApi']

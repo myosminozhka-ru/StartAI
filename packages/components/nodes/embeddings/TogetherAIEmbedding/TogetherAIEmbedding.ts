@@ -24,7 +24,7 @@ class TogetherAIEmbedding_Embeddings implements INode {
         this.description = 'TogetherAI Embedding models to generate embeddings for a given text'
         this.baseClasses = [this.type, ...getBaseClasses(TogetherAIEmbeddings)]
         this.credential = {
-            label: 'Connect Credential',
+            label: 'Подключите учетные данные',
             name: 'credential',
             type: 'credential',
             credentialNames: ['togetherAIApi']

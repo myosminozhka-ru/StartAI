@@ -24,7 +24,7 @@ class SerpAPI_Tools implements INode {
         this.description = 'Wrapper around SerpAPI - a real-time API to access Google search results'
         this.inputs = []
         this.credential = {
-            label: 'Connect Credential',
+            label: 'Подключите учетные данные',
             name: 'credential',
             type: 'credential',
             credentialNames: ['serpApi']

@@ -25,7 +25,7 @@ class OpenAIModeration implements INode {
         this.description = 'Check whether content complies with OpenAI usage policies.'
         this.baseClasses = [this.type, ...getBaseClasses(Moderation)]
         this.credential = {
-            label: 'Connect Credential',
+            label: 'Подключите учетные данные',
             name: 'credential',
             type: 'credential',
             credentialNames: ['openAIApi']

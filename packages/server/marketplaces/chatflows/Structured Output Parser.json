@@ -1,5 +1,5 @@
 {
-    "description": "Return response as a specified JSON structure instead of a string/text",
+    "description": "Возвращает ответ в виде указанной структуры JSON вместо строки/текста",
     "framework": ["Langchain"],
     "usecases": ["Extraction"],
     "nodes": [
@@ -23,7 +23,7 @@
                 "description": "Wrapper around OpenAI large language models that use the Chat endpoint",
                 "inputParams": [
                     {
-                        "label": "Connect Credential",
+                        "label": "Подключите учетные данные",
                         "name": "credential",
                         "type": "credential",
                         "credentialNames": ["openAIApi"],

@@ -1,5 +1,5 @@
 {
-    "description": "Split flows based on if else condition",
+    "description": "Разделение потоков на основе условия if else",
     "framework": ["Langchain"],
     "usecases": ["Basic"],
     "nodes": [
@@ -601,7 +601,7 @@
                 "description": "Wrapper around OpenAI large language models that use the Chat endpoint",
                 "inputParams": [
                     {
-                        "label": "Connect Credential",
+                        "label": "Подключите учетные данные",
                         "name": "credential",
                         "type": "credential",
                         "credentialNames": ["openAIApi"],
@@ -780,7 +780,7 @@
                 "description": "Wrapper around OpenAI large language models that use the Chat endpoint",
                 "inputParams": [
                     {
-                        "label": "Connect Credential",
+                        "label": "Подключите учетные данные",
                         "name": "credential",
                         "type": "credential",
                         "credentialNames": ["openAIApi"],
@@ -957,7 +957,7 @@
                 "description": "Wrapper around ChatAnthropic large language models that use the Chat endpoint",
                 "inputParams": [
                     {
-                        "label": "Connect Credential",
+                        "label": "Подключите учетные данные",
                         "name": "credential",
                         "type": "credential",
                         "credentialNames": ["anthropicApi"],

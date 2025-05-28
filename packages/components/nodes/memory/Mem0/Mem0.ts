@@ -37,7 +37,7 @@ class Mem0_Memory implements INode {
         this.description = 'Stores and manages chat memory using Mem0 service'
         this.baseClasses = [this.type, ...getBaseClasses(BaseMem0Memory)]
         this.credential = {
-            label: 'Connect Credential',
+            label: 'Подключите учетные данные',
             name: 'credential',
             type: 'credential',
             optional: false,

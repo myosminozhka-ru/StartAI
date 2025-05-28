@@ -145,7 +145,7 @@ class TavilyAPI_Tools implements INode {
             }
         ]
         this.credential = {
-            label: 'Connect Credential',
+            label: 'Подключите учетные данные',
             name: 'credential',
             type: 'credential',
             credentialNames: ['tavilyApi']

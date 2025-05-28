@@ -1,5 +1,5 @@
 {
-    "description": "An email reply HITL (human in the loop) agent that can proceed or refine the email with user input",
+    "description": "Агент HITL (human in the loop), отвечающий на запросы электронной почты, который может продолжить или уточнить электронное письмо с помощью пользовательского ввода",
     "usecases": ["Human In Loop"],
     "nodes": [
         {

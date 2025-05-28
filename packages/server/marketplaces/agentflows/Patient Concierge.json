@@ -1,5 +1,5 @@
 {
-    "description": "Patient concierge system that always verify the user's identity first before proceeding to answer user questions",
+    "description": "Система консьержа для пациентов, которая всегда сначала проверяет личность пользователя, прежде чем приступить к ответу на вопросы пользователя",
     "framework": ["Langchain"],
     "usecases": ["Chatbot"],
     "nodes": [
@@ -669,7 +669,7 @@
                 "description": "Wrapper around OpenAI large language models that use the Chat endpoint",
                 "inputParams": [
                     {
-                        "label": "Connect Credential",
+                        "label": "Подключите учетные данные",
                         "name": "credential",
                         "type": "credential",
                         "credentialNames": ["openAIApi"],

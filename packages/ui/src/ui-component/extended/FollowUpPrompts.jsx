@@ -48,7 +48,7 @@ const followUpPromptsOptions = {
         icon: anthropicIcon,
         inputs: [
             {
-                label: 'Connect Credential',
+                label: 'Подключите учетные данные',
                 name: 'credential',
                 type: 'credential',
                 credentialNames: ['anthropicApi']
@@ -84,7 +84,7 @@ const followUpPromptsOptions = {
         icon: azureOpenAiIcon,
         inputs: [
             {
-                label: 'Connect Credential',
+                label: 'Подключите учетные данные',
                 name: 'credential',
                 type: 'credential',
                 credentialNames: ['azureOpenAIApi']
@@ -120,7 +120,7 @@ const followUpPromptsOptions = {
         icon: azureOpenAiIcon,
         inputs: [
             {
-                label: 'Connect Credential',
+                label: 'Подключите учетные данные',
                 name: 'credential',
                 type: 'credential',
                 credentialNames: ['googleGenerativeAI']
@@ -160,7 +160,7 @@ const followUpPromptsOptions = {
         icon: groqIcon,
         inputs: [
             {
-                label: 'Connect Credential',
+                label: 'Подключите учетные данные',
                 name: 'credential',
                 type: 'credential',
                 credentialNames: ['groqApi']
@@ -196,7 +196,7 @@ const followUpPromptsOptions = {
         icon: mistralAiIcon,
         inputs: [
             {
-                label: 'Connect Credential',
+                label: 'Подключите учетные данные',
                 name: 'credential',
                 type: 'credential',
                 credentialNames: ['mistralAIApi']
@@ -235,7 +235,7 @@ const followUpPromptsOptions = {
         icon: openAiIcon,
         inputs: [
             {
-                label: 'Connect Credential',
+                label: 'Подключите учетные данные',
                 name: 'credential',
                 type: 'credential',
                 credentialNames: ['openAIApi']

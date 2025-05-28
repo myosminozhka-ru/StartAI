@@ -29,7 +29,7 @@ class SearchAPI_DocumentLoaders implements INode {
         this.description = 'Load data from real-time search results'
         this.baseClasses = [this.type]
         this.credential = {
-            label: 'Connect Credential',
+            label: 'Подключите учетные данные',
             name: 'credential',
             type: 'credential',
             optional: false,

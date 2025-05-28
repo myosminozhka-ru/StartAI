@@ -25,7 +25,7 @@ class ChatTogetherAI_ChatModels implements INode {
         this.description = 'Wrapper around TogetherAI large language models'
         this.baseClasses = [this.type, ...getBaseClasses(ChatTogetherAI)]
         this.credential = {
-            label: 'Connect Credential',
+            label: 'Подключите учетные данные',
             name: 'credential',
             type: 'credential',
             credentialNames: ['togetherAIApi']

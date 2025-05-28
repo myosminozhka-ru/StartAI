@@ -25,7 +25,7 @@ class ChatFireworks_ChatModels implements INode {
         this.description = 'Wrapper around Fireworks Chat Endpoints'
         this.baseClasses = [this.type, ...getBaseClasses(ChatFireworks)]
         this.credential = {
-            label: 'Connect Credential',
+            label: 'Подключите учетные данные',
             name: 'credential',
             type: 'credential',
             credentialNames: ['fireworksApi']

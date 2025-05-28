@@ -1,6 +1,6 @@
 {
     "description": "Вопросно-ответная система для документации Flowise с использованием Retrieval Augmented Generation (RAG)",
-    "badge": "ПОПУЛЯРНЫЙ",
+    "badge": "NEW",
     "usecases": ["Вопросно-ответная система для документов"],
     "framework": ["Langchain"],
     "nodes": [

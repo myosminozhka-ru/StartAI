@@ -34,7 +34,7 @@ class Weaviate_VectorStores implements INode {
             'Upsert embedded data and perform similarity or mmr search using Weaviate, a scalable open-source vector database'
         this.baseClasses = [this.type, 'VectorStoreRetriever', 'BaseRetriever']
         this.credential = {
-            label: 'Connect Credential',
+            label: 'Подключите учетные данные',
             name: 'credential',
             type: 'credential',
             description: 'Only needed when using Weaviate cloud hosted',

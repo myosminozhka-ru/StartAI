@@ -1,5 +1,5 @@
 {
-    "description": "An agent that can post message to Slack channel",
+    "description": "Агент, который может отправлять сообщения в Slack channel",
     "usecases": ["Agent"],
     "nodes": [
         {

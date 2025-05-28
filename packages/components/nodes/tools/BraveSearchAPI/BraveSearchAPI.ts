@@ -24,7 +24,7 @@ class BraveSearchAPI_Tools implements INode {
         this.description = 'Wrapper around BraveSearch API - a real-time API to access Brave search results'
         this.inputs = []
         this.credential = {
-            label: 'Connect Credential',
+            label: 'Подключите учетные данные',
             name: 'credential',
             type: 'credential',
             credentialNames: ['braveSearchApi']

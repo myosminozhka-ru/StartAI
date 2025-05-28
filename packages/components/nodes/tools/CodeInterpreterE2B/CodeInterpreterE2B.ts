@@ -41,7 +41,7 @@ class Code_Interpreter_Tools implements INode {
         this.description = 'Execute code in a sandbox environment'
         this.baseClasses = [this.type, 'Tool', ...getBaseClasses(E2BTool)]
         this.credential = {
-            label: 'Connect Credential',
+            label: 'Подключите учетные данные',
             name: 'credential',
             type: 'credential',
             credentialNames: ['E2BApi'],

@@ -27,7 +27,7 @@ class Figma_DocumentLoaders implements INode {
         this.description = 'Load data from a Figma file'
         this.baseClasses = [this.type]
         this.credential = {
-            label: 'Connect Credential',
+            label: 'Подключите учетные данные',
             name: 'credential',
             type: 'credential',
             credentialNames: ['figmaApi']

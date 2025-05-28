@@ -1,5 +1,5 @@
 {
-    "description": "Research leads and create personalized email drafts for sales team",
+    "description": "Исследуйте потенциальных клиентов и создавайте персонализированные проекты электронных писем для отдела продаж",
     "framework": ["Langchain"],
     "usecases": ["Leads", "Hierarchical Agent Teams"],
     "nodes": [
@@ -110,7 +110,7 @@
                 "description": "Wrapper around OpenAI large language models that use the Chat endpoint",
                 "inputParams": [
                     {
-                        "label": "Connect Credential",
+                        "label": "Подключите учетные данные",
                         "name": "credential",
                         "type": "credential",
                         "credentialNames": ["openAIApi"],
@@ -494,7 +494,7 @@
                 "description": "Wrapper around Google Custom Search API - a real-time API to access Google search results",
                 "inputParams": [
                     {
-                        "label": "Connect Credential",
+                        "label": "Подключите учетные данные",
                         "name": "credential",
                         "type": "credential",
                         "credentialNames": ["googleCustomSearchApi"],

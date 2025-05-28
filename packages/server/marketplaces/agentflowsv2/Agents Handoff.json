@@ -1,5 +1,5 @@
 {
-    "description": "A customer support agent that can handoff tasks to different agents based on scenarios",
+    "description": "Агент службы поддержки клиентов, который может передавать задачи различным агентам в зависимости от сценариев",
     "usecases": ["Customer Support"],
     "nodes": [
         {

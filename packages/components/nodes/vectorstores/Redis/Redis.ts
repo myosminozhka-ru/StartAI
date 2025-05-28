@@ -32,7 +32,7 @@ class Redis_VectorStores implements INode {
         this.category = 'Vector Stores'
         this.baseClasses = [this.type, 'VectorStoreRetriever', 'BaseRetriever']
         this.credential = {
-            label: 'Connect Credential',
+            label: 'Подключите учетные данные',
             name: 'credential',
             type: 'credential',
             credentialNames: ['redisCacheUrlApi', 'redisCacheApi']

@@ -56,7 +56,7 @@ class Postgres_VectorStores implements INode {
         this.description = 'Upsert embedded data and perform similarity search upon query using pgvector on Postgres'
         this.baseClasses = [this.type, 'VectorStoreRetriever', 'BaseRetriever']
         this.credential = {
-            label: 'Connect Credential',
+            label: 'Подключите учетные данные',
             name: 'credential',
             type: 'credential',
             credentialNames: ['PostgresApi'],

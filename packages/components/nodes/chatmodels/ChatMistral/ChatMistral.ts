@@ -26,7 +26,7 @@ class ChatMistral_ChatModels implements INode {
         this.description = 'Wrapper around Mistral large language models that use the Chat endpoint'
         this.baseClasses = [this.type, ...getBaseClasses(ChatMistralAI)]
         this.credential = {
-            label: 'Connect Credential',
+            label: 'Подключите учетные данные',
             name: 'credential',
             type: 'credential',
             credentialNames: ['mistralAIApi']

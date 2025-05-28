@@ -62,7 +62,7 @@ export const toolAgentFlow = {
                 description: 'Wrapper around OpenAI large language models that use the Chat endpoint',
                 inputParams: [
                     {
-                        label: 'Connect Credential',
+                        label: 'Подключите учетные данные',
                         name: 'credential',
                         type: 'credential',
                         credentialNames: ['openAIApi'],

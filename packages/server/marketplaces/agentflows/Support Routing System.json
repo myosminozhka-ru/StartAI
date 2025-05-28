@@ -1,5 +1,5 @@
 {
-    "description": "An agent that can route a user to the billing or technical support team, or respond conversationally",
+    "description": "Агент, который может направить пользователя в службу выставления счетов или технической поддержки или ответить в разговорной форме",
     "framework": ["Langchain"],
     "usecases": ["Chatbot"],
     "nodes": [
@@ -1256,7 +1256,7 @@
                 "description": "Wrapper around OpenAI large language models that use the Chat endpoint",
                 "inputParams": [
                     {
-                        "label": "Connect Credential",
+                        "label": "Подключите учетные данные",
                         "name": "credential",
                         "type": "credential",
                         "credentialNames": ["openAIApi"],
@@ -1668,7 +1668,7 @@
                 "description": "OpenAI API to generate embeddings for a given text",
                 "inputParams": [
                     {
-                        "label": "Connect Credential",
+                        "label": "Подключите учетные данные",
                         "name": "credential",
                         "type": "credential",
                         "credentialNames": ["openAIApi"],

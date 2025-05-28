@@ -43,7 +43,7 @@ class ExecuteFlow_SeqAgents implements INode {
         this.description = `Execute chatflow/agentflow and return final response`
         this.baseClasses = [this.type]
         this.credential = {
-            label: 'Connect Credential',
+            label: 'Подключите учетные данные',
             name: 'credential',
             type: 'credential',
             credentialNames: ['chatflowApi'],

@@ -26,7 +26,7 @@ class ChatLitellm_ChatModels implements INode {
         this.description = 'Connect to a Litellm server using OpenAI-compatible API'
         this.baseClasses = [this.type, 'BaseChatModel', ...getBaseClasses(ChatOpenAI)]
         this.credential = {
-            label: 'Connect Credential',
+            label: 'Подключите учетные данные',
             name: 'credential',
             type: 'credential',
             credentialNames: ['litellmApi'],

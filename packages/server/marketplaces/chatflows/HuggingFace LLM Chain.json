@@ -1,5 +1,5 @@
 {
-    "description": "Simple LLM Chain using HuggingFace Inference API on falcon-7b-instruct model",
+    "description": "Простая цепочка LLM с использованием API вывода 'Hugging Face' на модели falcon-7b-instruct",
     "framework": ["Langchain"],
     "usecases": ["Basic"],
     "nodes": [
@@ -83,7 +83,7 @@
                 "description": "Wrapper around HuggingFace large language models",
                 "inputParams": [
                     {
-                        "label": "Connect Credential",
+                        "label": "Подключите учетные данные",
                         "name": "credential",
                         "type": "credential",
                         "credentialNames": ["huggingFaceApi"],

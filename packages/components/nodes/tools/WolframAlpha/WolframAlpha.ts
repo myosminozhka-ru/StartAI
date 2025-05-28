@@ -24,7 +24,7 @@ class WolframAlpha_Tools implements INode {
         this.description = 'Wrapper around WolframAlpha - a powerful computational knowledge engine'
         this.inputs = []
         this.credential = {
-            label: 'Connect Credential',
+            label: 'Подключите учетные данные',
             name: 'credential',
             type: 'credential',
             credentialNames: ['wolframAlphaAppId']

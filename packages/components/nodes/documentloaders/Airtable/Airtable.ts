@@ -26,116 +26,116 @@ class Airtable_DocumentLoaders implements INode {
         this.version = 3.02
         this.type = 'Document'
         this.icon = 'airtable.svg'
-        this.category = 'Document Loaders'
-        this.description = `Load data from Airtable table`
+        this.category = 'Загрузчики документов'
+        this.description = `Загрузка данных из таблицы Airtable`
         this.baseClasses = [this.type]
         this.credential = {
-            label: 'Connect Credential',
+            label: 'Подключите учетные данные',
             name: 'credential',
             type: 'credential',
             credentialNames: ['airtableApi']
         }
         this.inputs = [
             {
-                label: 'Text Splitter',
+                label: 'Разделитель текста',
                 name: 'textSplitter',
                 type: 'TextSplitter',
                 optional: true
             },
             {
-                label: 'Base Id',
+                label: 'ID базы',
                 name: 'baseId',
                 type: 'string',
                 placeholder: 'app11RobdGoX0YNsC',
                 description:
-                    'If your table URL looks like: https://airtable.com/app11RobdGoX0YNsC/tblJdmvbrgizbYICO/viw9UrP77Id0CE4ee, app11RovdGoX0YNsC is the base id'
+                    'Если URL вашей таблицы выглядит так: https://airtable.com/app11RobdGoX0YNsC/tblJdmvbrgizbYICO/viw9UrP77Id0CE4ee, то app11RovdGoX0YNsC - это ID базы'
             },
             {
-                label: 'Table Id',
+                label: 'ID таблицы',
                 name: 'tableId',
                 type: 'string',
                 placeholder: 'tblJdmvbrgizbYICO',
                 description:
-                    'If your table URL looks like: https://airtable.com/app11RobdGoX0YNsC/tblJdmvbrgizbYICO/viw9UrP77Id0CE4ee, tblJdmvbrgizbYICO is the table id'
+                    'Если URL вашей таблицы выглядит так: https://airtable.com/app11RobdGoX0YNsC/tblJdmvbrgizbYICO/viw9UrP77Id0CE4ee, то tblJdmvbrgizbYICO - это ID таблицы'
             },
             {
-                label: 'View Id',
+                label: 'ID представления',
                 name: 'viewId',
                 type: 'string',
                 placeholder: 'viw9UrP77Id0CE4ee',
                 description:
-                    'If your view URL looks like: https://airtable.com/app11RobdGoX0YNsC/tblJdmvbrgizbYICO/viw9UrP77Id0CE4ee, viw9UrP77Id0CE4ee is the view id',
+                    'Если URL вашего представления выглядит так: https://airtable.com/app11RobdGoX0YNsC/tblJdmvbrgizbYICO/viw9UrP77Id0CE4ee, то viw9UrP77Id0CE4ee - это ID представления',
                 optional: true
             },
             {
-                label: 'Include Only Fields',
+                label: 'Включить только поля',
                 name: 'fields',
                 type: 'string',
                 placeholder: 'Name, Assignee, fld1u0qUz0SoOQ9Gg, fldew39v6LBN5CjUl',
                 optional: true,
                 additionalParams: true,
                 description:
-                    'Comma-separated list of field names or IDs to include. If empty, then ALL fields are used. Use field IDs if field names contain commas.'
+                    'Список имен или ID полей через запятую для включения. Если пусто, используются ВСЕ поля. Используйте ID полей, если имена полей содержат запятые.'
             },
             {
-                label: 'Return All',
+                label: 'Вернуть все',
                 name: 'returnAll',
                 type: 'boolean',
                 optional: true,
                 default: true,
                 additionalParams: true,
-                description: 'If all results should be returned or only up to a given limit'
+                description: 'Если должны быть возвращены все результаты или только до указанного лимита'
             },
             {
-                label: 'Limit',
+                label: 'Лимит',
                 name: 'limit',
                 type: 'number',
                 optional: true,
                 default: 100,
                 additionalParams: true,
-                description: 'Number of results to return. Ignored when Return All is enabled.'
+                description: 'Количество результатов для возврата. Игнорируется, когда включен параметр "Вернуть все".'
             },
             {
-                label: 'Additional Metadata',
+                label: 'Дополнительные метаданные',
                 name: 'metadata',
                 type: 'json',
-                description: 'Additional metadata to be added to the extracted documents',
+                description: 'Дополнительные метаданные для добавления к извлеченным документам',
                 optional: true,
                 additionalParams: true
             },
             {
-                label: 'Omit Metadata Keys',
+                label: 'Исключить ключи метаданных',
                 name: 'omitMetadataKeys',
                 type: 'string',
                 rows: 4,
                 description:
-                    'Each document loader comes with a default set of metadata keys that are extracted from the document. You can use this field to omit some of the default metadata keys. The value should be a list of keys, seperated by comma. Use * to omit all metadata keys execept the ones you specify in the Additional Metadata field',
+                    'Каждый загрузчик документов поставляется с набором ключей метаданных по умолчанию, которые извлекаются из документа. Вы можете использовать это поле, чтобы исключить некоторые ключи метаданных по умолчанию. Значение должно быть списком ключей, разделенных запятыми. Используйте * для исключения всех ключей метаданных, кроме тех, которые вы указали в поле "Дополнительные метаданные"',
                 placeholder: 'key1, key2, key3.nestedKey1',
                 optional: true,
                 additionalParams: true
             },
             {
-                label: 'Filter By Formula',
+                label: 'Фильтр по формуле',
                 name: 'filterByFormula',
                 type: 'string',
                 placeholder: 'NOT({Id} = "")',
                 optional: true,
                 additionalParams: true,
                 description:
-                    'A formula used to filter records. The formula will be evaluated for each record, and if the result is not 0, false, "", NaN, [], or #Error! the record will be included in the response.'
+                    'Формула для фильтрации записей. Формула будет вычислена для каждой записи, и если результат не равен 0, false, "", NaN, [] или #Error!, запись будет включена в ответ.'
             }
         ]
         this.outputs = [
             {
-                label: 'Document',
+                label: 'Документ',
                 name: 'document',
-                description: 'Array of document objects containing metadata and pageContent',
+                description: 'Массив объектов документа, содержащих метаданные и содержимое страницы',
                 baseClasses: [...this.baseClasses, 'json']
             },
             {
-                label: 'Text',
+                label: 'Текст',
                 name: 'text',
-                description: 'Concatenated string from pageContent of documents',
+                description: 'Объединенная строка из содержимого страниц документов',
                 baseClasses: ['string', 'json']
             }
         ]
@@ -175,7 +175,7 @@ class Airtable_DocumentLoaders implements INode {
         const loader = new AirtableLoader(airtableOptions)
 
         if (!baseId || !tableId) {
-            throw new Error('Base ID and Table ID must be provided.')
+            throw new Error('Необходимо указать ID базы и ID таблицы.')
         }
 
         let docs: IDocument[] = []
@@ -319,9 +319,9 @@ class AirtableLoader extends BaseDocumentLoader {
             return response.data
         } catch (error) {
             if (axios.isAxiosError(error)) {
-                throw new Error(`Failed to fetch ${url} from Airtable: ${error.message}, status: ${error.response?.status}`)
+                throw new Error(`Не удалось получить данные из Airtable (${url}): ${error.message}, статус: ${error.response?.status}`)
             } else {
-                throw new Error(`Failed to fetch ${url} from Airtable: ${error}`)
+                throw new Error(`Не удалось получить данные из Airtable (${url}): ${error}`)
             }
         }
     }

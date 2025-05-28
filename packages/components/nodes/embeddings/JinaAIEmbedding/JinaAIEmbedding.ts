@@ -34,7 +34,7 @@ class JinaAIEmbedding_Embeddings implements INode {
         this.description = 'JinaAI API to generate embeddings for a given text'
         this.baseClasses = [this.type, ...getBaseClasses(JinaEmbeddings)]
         this.credential = {
-            label: 'Connect Credential',
+            label: 'Подключите учетные данные',
             name: 'credential',
             type: 'credential',
             credentialNames: ['jinaAIApi']

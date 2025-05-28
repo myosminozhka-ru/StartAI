@@ -1,5 +1,5 @@
 {
-    "description": "Software engineering team working together to build a feature, solve a problem, or complete a task.",
+    "description": "Команда разработчиков программного обеспечения работает вместе над созданием функции, решением проблемы или выполнением задачи.",
     "framework": ["Langchain"],
     "usecases": ["Engineering", "Hierarchical Agent Teams"],
     "nodes": [
@@ -314,7 +314,7 @@
                 "description": "Wrapper around OpenAI large language models that use the Chat endpoint",
                 "inputParams": [
                     {
-                        "label": "Connect Credential",
+                        "label": "Подключите учетные данные",
                         "name": "credential",
                         "type": "credential",
                         "credentialNames": ["openAIApi"],

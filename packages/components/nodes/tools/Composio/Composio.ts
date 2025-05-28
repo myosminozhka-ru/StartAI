@@ -48,7 +48,7 @@ class Composio_Tools implements INode {
         this.description = 'Toolset with over 250+ Apps for building AI-powered applications'
         this.baseClasses = [this.type, ...getBaseClasses(ComposioTool)]
         this.credential = {
-            label: 'Connect Credential',
+            label: 'Подключите учетные данные',
             name: 'credential',
             type: 'credential',
             credentialNames: ['composioApi']

@@ -1,5 +1,5 @@
 {
-    "description": "OpenAI Assistant that has instructions and can leverage models, tools, and knowledge to respond to user queries",
+    "description": "Откройте AI Assistant, который содержит инструкции и может использовать модели, инструменты и знания для ответа на запросы пользователей",
     "usecases": ["Agent"],
     "framework": ["Langchain"],
     "nodes": [
@@ -140,7 +140,7 @@
                 "description": "Wrapper around Serper.dev - Google Search API",
                 "inputParams": [
                     {
-                        "label": "Connect Credential",
+                        "label": "Подключите учетные данные",
                         "name": "credential",
                         "type": "credential",
                         "credentialNames": ["serperApi"],

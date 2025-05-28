@@ -25,7 +25,7 @@ class IBMWatsonx_Embeddings implements INode {
         this.description = 'Generate embeddings for a given text using open source model on IBM Watsonx'
         this.baseClasses = [this.type, ...getBaseClasses(WatsonxEmbeddings)]
         this.credential = {
-            label: 'Connect Credential',
+            label: 'Подключите учетные данные',
             name: 'credential',
             type: 'credential',
             credentialNames: ['ibmWatsonx']

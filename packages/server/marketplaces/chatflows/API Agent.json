@@ -1,5 +1,5 @@
 {
-    "description": "Given API docs, agent automatically decide which API to call, generating url and body request from conversation",
+    "description": "Учитывая APIdocs, агент автоматически решает, какой API вызывать, генерируя URL и основной запрос из диалога",
     "framework": ["Langchain"],
     "usecases": ["Interacting with API"],
     "nodes": [
@@ -189,7 +189,7 @@
                 "description": "Wrapper around ChatAnthropic large language models that use the Chat endpoint",
                 "inputParams": [
                     {
-                        "label": "Connect Credential",
+                        "label": "Подключите учетные данные",
                         "name": "credential",
                         "type": "credential",
                         "credentialNames": ["anthropicApi"],

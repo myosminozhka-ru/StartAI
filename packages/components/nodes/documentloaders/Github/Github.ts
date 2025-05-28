@@ -27,7 +27,7 @@ class Github_DocumentLoaders implements INode {
         this.description = `Load data from a GitHub repository`
         this.baseClasses = [this.type]
         this.credential = {
-            label: 'Connect Credential',
+            label: 'Подключите учетные данные',
             name: 'credential',
             type: 'credential',
             description: 'Only needed when accessing private repo',

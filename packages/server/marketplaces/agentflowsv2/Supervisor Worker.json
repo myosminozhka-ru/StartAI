@@ -1,5 +1,5 @@
 {
-    "description": "A hierarchical supervisor agent that plan the steps, and delegate tasks to worker agents based on user query",
+    "description": "Иерархический агент-супервайзер, который планирует этапы и делегирует задачи рабочим агентам на основе запроса пользователя",
     "usecases": ["Hierarchical Agent Teams"],
     "nodes": [
         {

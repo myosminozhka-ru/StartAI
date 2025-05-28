@@ -1,5 +1,5 @@
 {
-    "description": "Simple chat engine to handle back and forth conversations using LlamaIndex",
+    "description": "Простой чат-движок для обмена сообщениями с помощью LlamaIndex",
     "usecases": ["Chatbot"],
     "framework": ["LlamaIndex"],
     "nodes": [
@@ -152,7 +152,7 @@
                 "description": "Wrapper around Azure OpenAI Chat LLM specific for LlamaIndex",
                 "inputParams": [
                     {
-                        "label": "Connect Credential",
+                        "label": "Подключите учетные данные",
                         "name": "credential",
                         "type": "credential",
                         "credentialNames": ["azureOpenAIApi"],

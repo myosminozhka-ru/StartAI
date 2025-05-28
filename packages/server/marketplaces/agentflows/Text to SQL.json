@@ -1,5 +1,5 @@
 {
-    "description": "Text to SQL query process using team of 3 agents: SQL Expert, SQL Reviewer, and SQL Executor",
+    "description": "Обработка текстовых запросов SQL с использованием команды из 3 агентов: SQL Expert, SQL Reviewer и SQL Executor",
     "framework": ["Langchain"],
     "usecases": ["SQL", "Hierarchical Agent Teams"],
     "nodes": [
@@ -315,7 +315,7 @@
                 "description": "Wrapper around OpenAI large language models that use the Chat endpoint",
                 "inputParams": [
                     {
-                        "label": "Connect Credential",
+                        "label": "Подключите учетные данные",
                         "name": "credential",
                         "type": "credential",
                         "credentialNames": ["openAIApi"],

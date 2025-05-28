@@ -24,7 +24,7 @@ class Neo4j_Graphs implements INode {
         this.description = 'Connect with Neo4j graph database'
         this.baseClasses = [this.type, ...getBaseClasses(Neo4jGraph)]
         this.credential = {
-            label: 'Connect Credential',
+            label: 'Подключите учетные данные',
             name: 'credential',
             type: 'credential',
             credentialNames: ['neo4jApi']

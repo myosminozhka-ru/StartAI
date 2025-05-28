@@ -1,5 +1,5 @@
 {
-    "description": "Prompt engineering team working together to craft Worker Prompts for your AgentFlow.",
+    "description": "Оперативная команда инженеров работает сообща над созданием рабочих запросов для вашего потока агентов.",
     "framework": ["Langchain"],
     "usecases": ["Engineering", "Hierarchical Agent Teams"],
     "nodes": [
@@ -315,7 +315,7 @@
                 "description": "Wrapper around OpenAI large language models that use the Chat endpoint",
                 "inputParams": [
                     {
-                        "label": "Connect Credential",
+                        "label": "Подключите учетные данные",
                         "name": "credential",
                         "type": "credential",
                         "credentialNames": ["openAIApi"],

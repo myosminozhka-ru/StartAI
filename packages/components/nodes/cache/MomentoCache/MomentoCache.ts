@@ -24,7 +24,7 @@ class MomentoCache implements INode {
         this.category = 'Cache'
         this.baseClasses = [this.type, ...getBaseClasses(LangchainMomentoCache)]
         this.credential = {
-            label: 'Connect Credential',
+            label: 'Подключите учетные данные',
             name: 'credential',
             type: 'credential',
             optional: true,

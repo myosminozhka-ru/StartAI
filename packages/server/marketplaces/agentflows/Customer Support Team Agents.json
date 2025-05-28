@@ -1,5 +1,5 @@
 {
-    "description": "Customer support team consisting of Support Representative and Quality Assurance Specialist to handle support tickets",
+    "description": "Команда поддержки клиентов, состоящая из представителя службы поддержки и специалиста по обеспечению качества, занимается обращениями в службу поддержки",
     "framework": ["Langchain"],
     "usecases": ["Customer Support", "Hierarchical Agent Teams"],
     "nodes": [
@@ -391,7 +391,7 @@
                 "description": "Upsert embedded data and perform similarity or mmr search using Pinecone, a leading fully managed hosted vector database",
                 "inputParams": [
                     {
-                        "label": "Connect Credential",
+                        "label": "Подключите учетные данные",
                         "name": "credential",
                         "type": "credential",
                         "credentialNames": ["pineconeApi"],
@@ -563,7 +563,7 @@
                 "description": "OpenAI API to generate embeddings for a given text",
                 "inputParams": [
                     {
-                        "label": "Connect Credential",
+                        "label": "Подключите учетные данные",
                         "name": "credential",
                         "type": "credential",
                         "credentialNames": ["openAIApi"],
@@ -753,7 +753,7 @@
                 "description": "Wrapper around OpenAI large language models that use the Chat endpoint",
                 "inputParams": [
                     {
-                        "label": "Connect Credential",
+                        "label": "Подключите учетные данные",
                         "name": "credential",
                         "type": "credential",
                         "credentialNames": ["openAIApi"],

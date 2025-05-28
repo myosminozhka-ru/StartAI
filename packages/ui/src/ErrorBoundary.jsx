@@ -7,7 +7,7 @@ const ErrorBoundary = ({ error }) => {
     const theme = useTheme()
 
     const copyToClipboard = () => {
-        const errorMessage = `Status: ${error.response.status}\n${error.response.data.message}`
+        const errorMessage = `Статус: ${error.response.status}\n${error.response.data.message}`
         navigator.clipboard.writeText(errorMessage)
     }
 
@@ -15,8 +15,8 @@ const ErrorBoundary = ({ error }) => {
         <Box sx={{ border: 1, borderColor: theme.palette.grey[900] + 25, borderRadius: 2, padding: '20px', maxWidth: '1280px' }}>
             <Stack flexDirection='column' sx={{ alignItems: 'center', gap: 3 }}>
                 <Stack flexDirection='column' sx={{ alignItems: 'center', gap: 1 }}>
-                    <Typography variant='h2'>Oh snap!</Typography>
-                    <Typography variant='h3'>The following error occurred when loading this page.</Typography>
+                    <Typography variant='h2'>Ой!</Typography>
+                    <Typography variant='h3'>При загрузке страницы произошла следующая ошибка.</Typography>
                 </Stack>
                 <Card variant='outlined'>
                     <Box sx={{ position: 'relative', px: 2, py: 3 }}>
@@ -28,16 +28,17 @@ const ErrorBoundary = ({ error }) => {
                             <IconCopy />
                         </IconButton>
                         <pre style={{ margin: 0, overflowWrap: 'break-word', whiteSpace: 'pre-wrap', textAlign: 'center' }}>
-                            <code>{`Status: ${error.response.status}`}</code>
+                            <code>{`Статус: ${error.response.status}`}</code>
                             <br />
                             <code>{error.response.data.message}</code>
                         </pre>
                     </Box>
                 </Card>
                 <Typography variant='body1' sx={{ fontSize: '1.1rem', textAlign: 'center', lineHeight: '1.5' }}>
-                    Please retry after some time. If the issue persists, reach out to us on our Discord server.
+                    Пожалуйста, повторите попытку через некоторое время. Если проблема сохраняется, свяжитесь с нами на нашем Discord
+                    сервере.
                     <br />
-                    Alternatively, you can raise an issue on Github.
+                    Также вы можете создать issue на Github.
                 </Typography>
             </Stack>
         </Box>

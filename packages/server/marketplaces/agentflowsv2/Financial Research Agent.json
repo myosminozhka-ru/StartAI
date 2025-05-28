@@ -1,5 +1,5 @@
 {
-    "description": "A financial research agent that takes in a query, plan the steps, search the web, and return a detailed report",
+    "description": "Финансовый исследовательский агент, который принимает запрос, планирует шаги, ищет в интернете и возвращает детальный отчет",
     "usecases": ["Finance & Accounting"],
     "nodes": [
         {

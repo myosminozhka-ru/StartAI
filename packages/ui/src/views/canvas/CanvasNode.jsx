@@ -266,7 +266,7 @@ const CanvasNode = ({ data }) => {
                                         textAlign: 'center'
                                     }}
                                 >
-                                    Выход
+                                    Выходные данные
                                 </Typography>
                             </Box>
                         )}

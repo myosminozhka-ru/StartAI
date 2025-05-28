@@ -24,7 +24,7 @@ class Serper_Tools implements INode {
         this.description = 'Wrapper around Serper.dev - Google Search API'
         this.inputs = []
         this.credential = {
-            label: 'Connect Credential',
+            label: 'Подключите учетные данные',
             name: 'credential',
             type: 'credential',
             credentialNames: ['serperApi']

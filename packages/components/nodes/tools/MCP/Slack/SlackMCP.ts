@@ -26,7 +26,7 @@ class Slack_MCP implements INode {
         this.description = 'MCP Server for the Slack API'
         this.documentation = 'https://github.com/modelcontextprotocol/servers/tree/main/src/slack'
         this.credential = {
-            label: 'Connect Credential',
+            label: 'Подключите учетные данные',
             name: 'credential',
             type: 'credential',
             credentialNames: ['slackApi']

@@ -1,5 +1,5 @@
 {
-    "description": "Answer question based on retrieved documents (context) while remembering previous conversations",
+    "description": "Ответы на вопросы на основе полученных документов (контекста) с сохранением предыдущих разговоров",
     "framework": ["LlamaIndex"],
     "badge": "POPULAR",
     "usecases": ["Documents QnA"],
@@ -177,7 +177,7 @@
                 "description": "OpenAI Embedding specific for LlamaIndex",
                 "inputParams": [
                     {
-                        "label": "Connect Credential",
+                        "label": "Подключите учетные данные",
                         "name": "credential",
                         "type": "credential",
                         "credentialNames": ["openAIApi"],
@@ -253,7 +253,7 @@
                 "description": "Upsert embedded data and perform similarity search upon query using Pinecone, a leading fully managed hosted vector database",
                 "inputParams": [
                     {
-                        "label": "Connect Credential",
+                        "label": "Подключите учетные данные",
                         "name": "credential",
                         "type": "credential",
                         "credentialNames": ["pineconeApi"],
@@ -379,7 +379,7 @@
                 "description": "Wrapper around OpenAI Chat LLM specific for LlamaIndex",
                 "inputParams": [
                     {
-                        "label": "Connect Credential",
+                        "label": "Подключите учетные данные",
                         "name": "credential",
                         "type": "credential",
                         "credentialNames": ["openAIApi"],
@@ -558,7 +558,7 @@
                 "description": "Summarizes the conversation and stores the memory in Redis server",
                 "inputParams": [
                     {
-                        "label": "Connect Credential",
+                        "label": "Подключите учетные данные",
                         "name": "credential",
                         "type": "credential",
                         "optional": true,
@@ -638,7 +638,7 @@
                 "description": "Wrapper around OpenAI Chat LLM specific for LlamaIndex",
                 "inputParams": [
                     {
-                        "label": "Connect Credential",
+                        "label": "Подключите учетные данные",
                         "name": "credential",
                         "type": "credential",
                         "credentialNames": ["openAIApi"],

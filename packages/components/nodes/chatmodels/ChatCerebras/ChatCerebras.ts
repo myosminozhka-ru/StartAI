@@ -25,7 +25,7 @@ class ChatCerebras_ChatModels implements INode {
         this.description = 'Wrapper around Cerebras Inference API'
         this.baseClasses = [this.type, ...getBaseClasses(ChatOpenAI)]
         this.credential = {
-            label: 'Connect Credential',
+            label: 'Подключите учетные данные',
             name: 'credential',
             type: 'credential',
             credentialNames: ['cerebrasAIApi'],

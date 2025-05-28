@@ -1,6 +1,6 @@
 {
     "description": "Вопросно-ответная система для документов с использованием Retrieval Augmented Generation (RAG) с Mistral и FAISS для поиска по сходству",
-    "badge": "ПОПУЛЯРНЫЙ",
+    "badge": "NEW",
     "usecases": ["Вопросно-ответная система для документов"],
     "framework": ["Langchain"],
     "nodes": [

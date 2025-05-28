@@ -43,7 +43,7 @@ class PineconeLlamaIndex_VectorStores implements INode {
         this.baseClasses = [this.type, 'VectorIndexRetriever']
         this.tags = ['LlamaIndex']
         this.credential = {
-            label: 'Connect Credential',
+            label: 'Подключите учетные данные',
             name: 'credential',
             type: 'credential',
             credentialNames: ['pineconeApi']

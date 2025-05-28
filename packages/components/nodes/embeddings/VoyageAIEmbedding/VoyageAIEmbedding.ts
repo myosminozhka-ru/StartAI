@@ -25,7 +25,7 @@ class VoyageAIEmbedding_Embeddings implements INode {
         this.description = 'Voyage AI API to generate embeddings for a given text'
         this.baseClasses = [this.type, ...getBaseClasses(VoyageEmbeddings)]
         this.credential = {
-            label: 'Connect Credential',
+            label: 'Подключите учетные данные',
             name: 'credential',
             type: 'credential',
             credentialNames: ['voyageAIApi']

@@ -26,7 +26,7 @@ class PostgreSQL_MCP implements INode {
         this.description = 'MCP server that provides read-only access to PostgreSQL databases'
         this.documentation = 'https://github.com/modelcontextprotocol/servers/tree/main/src/postgres'
         this.credential = {
-            label: 'Connect Credential',
+            label: 'Подключите учетные данные',
             name: 'credential',
             type: 'credential',
             credentialNames: ['PostgresUrl']

@@ -1,5 +1,5 @@
 {
-    "description": "An agent that uses ReAct (Reason + Act) logic to decide what action to take",
+    "description": "Агент, который использует логику ReAct (Reason + Act) для принятия решения о том, какое действие предпринять",
     "usecases": ["Agent"],
     "framework": ["Langchain"],
     "nodes": [
@@ -60,7 +60,7 @@
                 "description": "Wrapper around OpenAI large language models that use the Chat endpoint",
                 "inputParams": [
                     {
-                        "label": "Connect Credential",
+                        "label": "Подключите учетные данные",
                         "name": "credential",
                         "type": "credential",
                         "credentialNames": ["openAIApi"],
@@ -302,7 +302,7 @@
                 "description": "Wrapper around Google Custom Search API - a real-time API to access Google search results",
                 "inputParams": [
                     {
-                        "label": "Connect Credential",
+                        "label": "Подключите учетные данные",
                         "name": "credential",
                         "type": "credential",
                         "credentialNames": ["googleCustomSearchApi"],

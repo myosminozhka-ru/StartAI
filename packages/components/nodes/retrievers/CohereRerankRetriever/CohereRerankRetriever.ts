@@ -29,7 +29,7 @@ class CohereRerankRetriever_Retrievers implements INode {
         this.description = 'Cohere Rerank indexes the documents from most to least semantically relevant to the query.'
         this.baseClasses = [this.type, 'BaseRetriever']
         this.credential = {
-            label: 'Connect Credential',
+            label: 'Подключите учетные данные',
             name: 'credential',
             type: 'credential',
             credentialNames: ['cohereApi']

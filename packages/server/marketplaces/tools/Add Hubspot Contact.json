@@ -1,6 +1,6 @@
 {
     "name": "add_contact_hubspot",
-    "description": "Add new contact to Hubspot",
+    "description": "Добавить новый контакт в Hubspot",
     "color": "linear-gradient(rgb(85,198,123), rgb(0,230,99))",
     "iconSrc": "https://cdn.worldvectorlogo.com/logos/hubspot-1.svg",
     "schema": "[{\"id\":1,\"property\":\"email\",\"description\":\"email address of contact\",\"type\":\"string\",\"required\":true},{\"id\":2,\"property\":\"firstname\",\"description\":\"first name of contact\",\"type\":\"string\",\"required\":false},{\"id\":3,\"property\":\"lastname\",\"description\":\"last name of contact\",\"type\":\"string\",\"required\":false}]",

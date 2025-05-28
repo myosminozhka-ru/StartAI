@@ -56,7 +56,7 @@ class AzureChatOpenAI_LlamaIndex_ChatModels implements INode {
         this.baseClasses = [this.type, 'BaseChatModel_LlamaIndex', ...getBaseClasses(OpenAI)]
         this.tags = ['LlamaIndex']
         this.credential = {
-            label: 'Connect Credential',
+            label: 'Подключите учетные данные',
             name: 'credential',
             type: 'credential',
             credentialNames: ['azureOpenAIApi']

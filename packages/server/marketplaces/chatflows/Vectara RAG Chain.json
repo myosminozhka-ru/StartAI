@@ -1,5 +1,5 @@
 {
-    "description": "Using Vectara for Retrieval Augmented Generation (RAG) to answer questions from documents",
+    "description": "Использование Vectra for Retrieval Augmented Generation (RAG) для ответов на вопросы из документов",
     "usecases": ["Documents QnA"],
     "framework": ["Langchain"],
     "nodes": [
@@ -245,7 +245,7 @@
                 "description": "Upsert embedded data and perform similarity search upon query using Vectara, a LLM-powered search-as-a-service",
                 "inputParams": [
                     {
-                        "label": "Connect Credential",
+                        "label": "Подключите учетные данные",
                         "name": "credential",
                         "type": "credential",
                         "credentialNames": ["vectaraApi"],

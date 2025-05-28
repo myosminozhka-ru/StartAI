@@ -25,7 +25,7 @@ class ChatOpenAICustom_ChatModels implements INode {
         this.description = 'Custom/FineTuned model using OpenAI Chat compatible API'
         this.baseClasses = [this.type, ...getBaseClasses(ChatOpenAI)]
         this.credential = {
-            label: 'Connect Credential',
+            label: 'Подключите учетные данные',
             name: 'credential',
             type: 'credential',
             credentialNames: ['openAIApi'],

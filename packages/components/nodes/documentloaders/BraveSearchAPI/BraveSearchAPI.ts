@@ -28,7 +28,7 @@ class BraveSearchAPI_DocumentLoaders implements INode {
         this.description = 'Load and process data from BraveSearch results'
         this.baseClasses = [this.type]
         this.credential = {
-            label: 'Connect Credential',
+            label: 'Подключите учетные данные',
             name: 'credential',
             type: 'credential',
             optional: false,

@@ -1,5 +1,5 @@
 {
-    "description": "Language translation using LLM Chain with a Chat Prompt Template and Chat Model",
+    "description": "Перевод языков с использованием цепочки LLM с шаблоном чат-промпта и чат-моделью",
     "usecases": ["Basic"],
     "framework": ["Langchain"],
     "nodes": [
@@ -92,7 +92,7 @@
                 "description": "Wrapper around OpenAI large language models that use the Chat endpoint",
                 "inputParams": [
                     {
-                        "label": "Connect Credential",
+                        "label": "Подключите учетные данные",
                         "name": "credential",
                         "type": "credential",
                         "credentialNames": ["openAIApi"],

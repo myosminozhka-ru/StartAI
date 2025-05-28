@@ -1,5 +1,5 @@
 {
-    "description": "Generate multi-step plans, go through each plan, finish the task, revisit the plan and update accordingly",
+    "description": "Создавайте многоэтапные планы, просматривайте каждый план, завершайте задачу, пересматривайте план и обновляйте его соответствующим образом",
     "framework": ["Langchain"],
     "usecases": ["Reflective Agent"],
     "nodes": [
@@ -140,7 +140,7 @@
                 "description": "Wrapper around OpenAI large language models that use the Chat endpoint",
                 "inputParams": [
                     {
-                        "label": "Connect Credential",
+                        "label": "Подключите учетные данные",
                         "name": "credential",
                         "type": "credential",
                         "credentialNames": ["openAIApi"],
@@ -1355,7 +1355,7 @@
                 "description": "Wrapper around Google Custom Search API - a real-time API to access Google search results",
                 "inputParams": [
                     {
-                        "label": "Connect Credential",
+                        "label": "Подключите учетные данные",
                         "name": "credential",
                         "type": "credential",
                         "credentialNames": ["googleCustomSearchApi"],

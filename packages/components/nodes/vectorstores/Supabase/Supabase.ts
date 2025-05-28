@@ -33,7 +33,7 @@ class Supabase_VectorStores implements INode {
         this.description = 'Upsert embedded data and perform similarity or mmr search upon query using Supabase via pgvector extension'
         this.baseClasses = [this.type, 'VectorStoreRetriever', 'BaseRetriever']
         this.credential = {
-            label: 'Connect Credential',
+            label: 'Подключите учетные данные',
             name: 'credential',
             type: 'credential',
             credentialNames: ['supabaseApi']

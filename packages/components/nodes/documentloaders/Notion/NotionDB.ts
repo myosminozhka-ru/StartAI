@@ -27,7 +27,7 @@ class NotionDB_DocumentLoaders implements INode {
         this.description = 'Load data from Notion Database (each row is a separate document with all properties as metadata)'
         this.baseClasses = [this.type]
         this.credential = {
-            label: 'Connect Credential',
+            label: 'Подключите учетные данные',
             name: 'credential',
             type: 'credential',
             credentialNames: ['notionApi']

@@ -27,7 +27,7 @@ class Confluence_DocumentLoaders implements INode {
         this.description = `Load data from a Confluence Document`
         this.baseClasses = [this.type]
         this.credential = {
-            label: 'Connect Credential',
+            label: 'Подключите учетные данные',
             name: 'credential',
             type: 'credential',
             credentialNames: ['confluenceCloudApi', 'confluenceServerDCApi']

@@ -37,7 +37,7 @@ class ExecuteFlow_Agentflow implements INode {
         this.baseClasses = [this.type]
         this.color = '#a3b18a'
         this.credential = {
-            label: 'Connect Credential',
+            label: 'Подключите учетные данные',
             name: 'credential',
             type: 'credential',
             credentialNames: ['chatflowApi'],

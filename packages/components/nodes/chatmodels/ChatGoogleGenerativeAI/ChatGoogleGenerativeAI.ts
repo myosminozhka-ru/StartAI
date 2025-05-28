@@ -29,7 +29,7 @@ class GoogleGenerativeAI_ChatModels implements INode {
         this.description = 'Wrapper around Google Gemini large language models that use the Chat endpoint'
         this.baseClasses = [this.type, ...getBaseClasses(ChatGoogleGenerativeAI)]
         this.credential = {
-            label: 'Connect Credential',
+            label: 'Подключите учетные данные',
             name: 'credential',
             type: 'credential',
             credentialNames: ['googleGenerativeAI'],

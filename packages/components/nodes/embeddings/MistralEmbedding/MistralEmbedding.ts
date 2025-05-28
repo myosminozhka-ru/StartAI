@@ -25,7 +25,7 @@ class MistralEmbedding_Embeddings implements INode {
         this.description = 'MistralAI API to generate embeddings for a given text'
         this.baseClasses = [this.type, ...getBaseClasses(MistralAIEmbeddings)]
         this.credential = {
-            label: 'Connect Credential',
+            label: 'Подключите учетные данные',
             name: 'credential',
             type: 'credential',
             credentialNames: ['mistralAIApi']

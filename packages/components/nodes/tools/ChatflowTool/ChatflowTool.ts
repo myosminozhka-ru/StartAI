@@ -30,7 +30,7 @@ class ChatflowTool_Tools implements INode {
         this.description = 'Use as a tool to execute another chatflow'
         this.baseClasses = [this.type, 'Tool']
         this.credential = {
-            label: 'Connect Credential',
+            label: 'Подключите учетные данные',
             name: 'credential',
             type: 'credential',
             credentialNames: ['chatflowApi'],

@@ -27,7 +27,7 @@ class Jira_DocumentLoaders implements INode {
         this.description = `Load issues from Jira`
         this.baseClasses = [this.type]
         this.credential = {
-            label: 'Connect Credential',
+            label: 'Подключите учетные данные',
             name: 'credential',
             type: 'credential',
             description: 'Jira API Credential',

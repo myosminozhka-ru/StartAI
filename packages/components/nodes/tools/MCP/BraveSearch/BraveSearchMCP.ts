@@ -26,7 +26,7 @@ class BraveSearch_MCP implements INode {
         this.description = 'MCP server that integrates the Brave Search API - a real-time API to access web search capabilities'
         this.documentation = 'https://github.com/modelcontextprotocol/servers/tree/main/src/brave-search'
         this.credential = {
-            label: 'Connect Credential',
+            label: 'Подключите учетные данные',
             name: 'credential',
             type: 'credential',
             credentialNames: ['braveSearchApi']

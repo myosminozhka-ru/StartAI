@@ -588,7 +588,7 @@ const AgentflowCanvas = () => {
             dispatch({
                 type: SET_CHATFLOW,
                 chatflow: {
-                    name: `Untitled ${canvasTitle}`
+                    name: `Без названия ${canvasTitle}`
                 }
             })
         }

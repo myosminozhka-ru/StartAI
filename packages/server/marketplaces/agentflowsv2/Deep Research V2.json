@@ -1,5 +1,5 @@
 {
-    "description": "An agent capable of performing research, synthesizing information, and generating in-depth, well-structured white papers on any given topic",
+    "description": "Агент, способный проводить исследования, синтезировать информацию и генерировать детальные, хорошо структурированные аналитические обзоры по любой заданной теме",
     "usecases": ["Agent"],
     "nodes": [
         {
