@@ -183,7 +183,7 @@ const ShareChatbot = ({ isSessionMemory, isAgentCanvas }) => {
             })
             if (saveResp.data) {
                 enqueueSnackbar({
-                    message: 'Chatbot Configuration Saved',
+                    message: 'Сохранена конфигурация чат-бота',
                     options: {
                         key: new Date().getTime() + Math.random(),
                         variant: 'success',
@@ -220,7 +220,7 @@ const ShareChatbot = ({ isSessionMemory, isAgentCanvas }) => {
             const saveResp = await chatflowsApi.updateChatflow(chatflowid, { isPublic: checked })
             if (saveResp.data) {
                 enqueueSnackbar({
-                    message: 'Chatbot Configuration Saved',
+                    message: 'Сохранена конфигурация чат-бота',
                     options: {
                         key: new Date().getTime() + Math.random(),
                         variant: 'success',
@@ -590,7 +590,7 @@ const ShareChatbot = ({ isSessionMemory, isAgentCanvas }) => {
                 }}
             >
                 <Typography variant='h6' sx={{ pl: 1, pr: 1, color: 'white', background: theme.palette.success.dark }}>
-                    Copied!
+                    Скопировано!
                 </Typography>
             </Popover>
         </>

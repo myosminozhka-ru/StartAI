@@ -24,7 +24,7 @@ const ShareExecutionDialog = ({ show, executionId, onClose, onUnshare }) => {
 
     const updateExecutionApi = useApi(executionsApi.updateExecution)
 
-    // Create shareable link
+    // Создание ссылки для общего доступа
     const origin = window.location.origin
     const shareableLink = `${origin}/execution/${executionId}`
 
@@ -32,10 +32,10 @@ const ShareExecutionDialog = ({ show, executionId, onClose, onUnshare }) => {
         navigator.clipboard.writeText(shareableLink)
         setCopied(true)
 
-        // Show success message
+        // Показать сообщение об успехе
         dispatch(
             enqueueSnackbarAction({
-                message: 'Link copied to clipboard',
+                message: 'Ссылка скопирована в буфер обмена',
                 options: {
                     key: new Date().getTime() + Math.random(),
                     variant: 'success',
@@ -48,7 +48,7 @@ const ShareExecutionDialog = ({ show, executionId, onClose, onUnshare }) => {
             })
         )
 
-        // Reset copied state after 2 seconds
+        // Сбросить состояние копирования через 2 секунды
         setTimeout(() => {
             setCopied(false)
         }, 2000)
@@ -63,14 +63,14 @@ const ShareExecutionDialog = ({ show, executionId, onClose, onUnshare }) => {
     const component = show ? (
         <Dialog open={show} onClose={onClose} maxWidth='sm' fullWidth aria-labelledby='share-dialog-title'>
             <DialogTitle id='share-dialog-title' sx={{ fontSize: '1.1rem', fontWeight: 600 }}>
-                Public Trace Link
+                Публичная ссылка на трассировку
             </DialogTitle>
             <DialogContent>
                 <Typography variant='body2' color='text.secondary' sx={{ mb: 2 }}>
-                    Anyone with the link below can view this execution trace.
+                    Любой, у кого есть эта ссылка, может просмотреть эту трассировку выполнения.
                 </Typography>
 
-                {/* Link Display Box */}
+                {/* Блок отображения ссылки */}
                 <Box
                     sx={{
                         display: 'flex',
@@ -95,19 +95,19 @@ const ShareExecutionDialog = ({ show, executionId, onClose, onUnshare }) => {
                     >
                         {shareableLink}
                     </Typography>
-                    <Tooltip title={copied ? 'Copied!' : 'Copy link'}>
+                    <Tooltip title={copied ? 'Скопировано!' : 'Копировать ссылку'}>
                         <Button variant='text' color='primary' onClick={copyToClipboard} startIcon={<IconCopy size={18} />}>
-                            Copy
+                            Копировать
                         </Button>
                     </Tooltip>
                 </Box>
 
-                {/* Actions */}
+                {/* Действия */}
                 <Box sx={{ display: 'flex', justifyContent: 'flex-end' }}>
                     <Button color='error' onClick={handleUnshare} sx={{ mr: 1 }}>
-                        Unshare
+                        Отменить доступ
                     </Button>
-                    <Button onClick={onClose}>Close</Button>
+                    <Button onClick={onClose}>Закрыть</Button>
                 </Box>
             </DialogContent>
         </Dialog>

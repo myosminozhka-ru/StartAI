@@ -197,23 +197,15 @@ const getIconFromStatus = (status, theme) => {
             return ErrorIcon
         case 'TERMINATED':
             // eslint-disable-next-line react/display-name
-            return (props) => {
-                const IconWrapper = (props) => <IconCircleXFilled {...props} color={theme.palette.error.main} />
-                IconWrapper.displayName = 'TerminatedIcon'
-                return <IconWrapper {...props} />
-            }
+            return (props) => <IconCircleXFilled {...props} color={theme.palette.error.main} />
         case 'STOPPED':
             return StopCircleIcon
         case 'INPROGRESS':
             // eslint-disable-next-line react/display-name
-            return (props) => {
-                const IconWrapper = (props) => (
-                    // eslint-disable-next-line
-                    <IconLoader {...props} color={theme.palette.warning.dark} className={`spin-animation ${props.className || ''}`} />
-                )
-                IconWrapper.displayName = 'InProgressIcon'
-                return <IconWrapper {...props} />
-            }
+            return (props) => (
+                // eslint-disable-next-line
+                <IconLoader {...props} color={theme.palette.warning.dark} className={`spin-animation ${props.className || ''}`} />
+            )
     }
 }
 
@@ -315,10 +307,10 @@ export const ExecutionDetails = ({ open, isPublic, execution, metadata, onClose,
         navigator.clipboard.writeText(localMetadata?.id)
         setCopied(true)
 
-        // Show success message
+        // Показать сообщение об успехе
         dispatch(
             enqueueSnackbarAction({
-                message: 'ID copied to clipboard',
+                message: 'ID скопирован в буфер обмена',
                 options: {
                     key: new Date().getTime() + Math.random(),
                     variant: 'success',
@@ -331,7 +323,7 @@ export const ExecutionDetails = ({ open, isPublic, execution, metadata, onClose,
             })
         )
 
-        // Reset copied state after 2 seconds
+        // Сбросить состояние копирования через 2 секунды
         setTimeout(() => {
             setCopied(false)
         }, 2000)
@@ -633,16 +625,16 @@ export const ExecutionDetails = ({ open, isPublic, execution, metadata, onClose,
     const onSharePublicly = () => {
         const newIsPublic = !localMetadata.isPublic
         updateExecutionApi.request(localMetadata.id, { isPublic: newIsPublic }).then(() => {
-            // Update local metadata to reflect the change
+            // Обновить локальные метаданные для отражения изменений
             setLocalMetadata((prev) => ({
                 ...prev,
                 isPublic: newIsPublic
             }))
 
-            // Show success message
+            // Показать сообщение об успехе
             dispatch(
                 enqueueSnackbarAction({
-                    message: newIsPublic ? 'Execution shared publicly' : 'Execution is no longer public',
+                    message: newIsPublic ? 'Выполнение опубликовано' : 'Выполнение больше не публичное',
                     options: {
                         key: new Date().getTime() + Math.random(),
                         variant: 'success',
@@ -655,7 +647,7 @@ export const ExecutionDetails = ({ open, isPublic, execution, metadata, onClose,
                 })
             )
 
-            // Notify parent component to refresh data
+            // Уведомить родительский компонент об обновлении данных
             if (onUpdateSharing) {
                 onUpdateSharing()
             }
@@ -743,7 +735,7 @@ export const ExecutionDetails = ({ open, isPublic, execution, metadata, onClose,
                                 sx={{ pl: 1 }}
                                 icon={<IconExternalLink size={15} />}
                                 variant='outlined'
-                                label={metadata?.agentflow?.name || metadata?.agentflow?.id || 'Go to AgentFlow'}
+                                label={metadata?.agentflow?.name || metadata?.agentflow?.id || 'Перейти к AgentFlow'}
                                 className={'button'}
                                 onClick={() => window.open(`/v2/agentcanvas/${metadata?.agentflow?.id}`, '_blank')}
                             />
@@ -751,7 +743,7 @@ export const ExecutionDetails = ({ open, isPublic, execution, metadata, onClose,
 
                         {!isPublic && (
                             <Tooltip
-                                title={`Execution ID: ${localMetadata?.id || ''}`}
+                                title={`ID выполнения: ${localMetadata?.id || ''}`}
                                 placement='top'
                                 disableHoverListener={!localMetadata?.id}
                             >
@@ -759,7 +751,7 @@ export const ExecutionDetails = ({ open, isPublic, execution, metadata, onClose,
                                     sx={{ ml: 1, pl: 1 }}
                                     icon={<IconCopy size={15} />}
                                     variant='outlined'
-                                    label={copied ? 'Copied!' : 'Copy ID'}
+                                    label={copied ? 'Скопировано!' : 'Копировать ID'}
                                     className={'button'}
                                     onClick={copyToClipboard}
                                 />
@@ -777,7 +769,7 @@ export const ExecutionDetails = ({ open, isPublic, execution, metadata, onClose,
                                     )
                                 }
                                 variant='outlined'
-                                label={updateExecutionApi.loading ? 'Updating...' : 'Share'}
+                                label={updateExecutionApi.loading ? 'Обновление...' : 'Поделиться'}
                                 className={'button'}
                                 onClick={() => onSharePublicly()}
                                 disabled={updateExecutionApi.loading}
@@ -795,7 +787,7 @@ export const ExecutionDetails = ({ open, isPublic, execution, metadata, onClose,
                                     )
                                 }
                                 variant='outlined'
-                                label={updateExecutionApi.loading ? 'Updating...' : 'Public'}
+                                label={updateExecutionApi.loading ? 'Обновление...' : 'Публичный'}
                                 className={'button'}
                                 onClick={() => setShowShareDialog(true)}
                                 disabled={updateExecutionApi.loading}
@@ -804,7 +796,7 @@ export const ExecutionDetails = ({ open, isPublic, execution, metadata, onClose,
 
                         <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', alignContent: 'center' }}>
                             <Typography sx={{ flex: 1, mt: 1 }} color='text.primary'>
-                                {metadata?.updatedDate ? moment(metadata.updatedDate).format('MMM D, YYYY h:mm A') : 'N/A'}
+                                {metadata?.updatedDate ? moment(metadata.updatedDate).format('MMM D, YYYY h:mm A') : 'Н/Д'}
                             </Typography>
                             <IconButton
                                 onClick={() => onRefresh(localMetadata?.id)}
@@ -815,7 +807,7 @@ export const ExecutionDetails = ({ open, isPublic, execution, metadata, onClose,
                                         backgroundColor: (theme) => theme.palette.primary.main + '20'
                                     }
                                 }}
-                                title='Refresh execution data'
+                                title='Обновить данные выполнения'
                             >
                                 <IconRefresh size={20} />
                             </IconButton>
@@ -850,7 +842,7 @@ export const ExecutionDetails = ({ open, isPublic, execution, metadata, onClose,
                         onProceedSuccess={onProceedSuccess}
                     />
                 ) : (
-                    <Typography color='text.secondary'>No data available for this item</Typography>
+                    <Typography color='text.secondary'>Нет данных для этого элемента</Typography>
                 )}
             </Box>
         </Box>
@@ -859,7 +851,7 @@ export const ExecutionDetails = ({ open, isPublic, execution, metadata, onClose,
     // Resize handle component (shared between modes)
     const resizeHandle = (
         <button
-            aria-label='Resize drawer'
+            aria-label='Изменить размер панели'
             style={{
                 position: 'absolute',
                 left: 0,
@@ -881,7 +873,7 @@ export const ExecutionDetails = ({ open, isPublic, execution, metadata, onClose,
             onKeyDown={(e) => {
                 if (e.key === 'Enter' || e.key === ' ') {
                     e.preventDefault()
-                    // Start resize mode
+                    // Начать режим изменения размера
                     handleMouseDown()
                 }
             }}
@@ -942,7 +934,42 @@ export const ExecutionDetails = ({ open, isPublic, execution, metadata, onClose,
                 open={open}
                 onClose={onClose}
             >
-                {resizeHandle}
+                <button
+                    aria-label='Изменить размер панели'
+                    style={{
+                        position: 'absolute',
+                        left: 0,
+                        top: 0,
+                        bottom: 0,
+                        width: '8px',
+                        cursor: 'ew-resize',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        padding: 0,
+                        border: 'none',
+                        background: 'transparent',
+                        '&:hover': {
+                            background: 'rgba(0, 0, 0, 0.1)'
+                        }
+                    }}
+                    onMouseDown={handleMouseDown}
+                    onKeyDown={(e) => {
+                        if (e.key === 'Enter' || e.key === ' ') {
+                            e.preventDefault()
+                            // Начать режим изменения размера
+                            handleMouseDown()
+                        }
+                    }}
+                >
+                    <DragHandleIcon
+                        sx={{
+                            transform: 'rotate(90deg)',
+                            fontSize: '20px',
+                            color: customization.isDarkMode ? 'white' : 'action.disabled'
+                        }}
+                    />
+                </button>
                 {contentComponent}
             </Drawer>
             <ShareExecutionDialog
@@ -951,14 +978,14 @@ export const ExecutionDetails = ({ open, isPublic, execution, metadata, onClose,
                 onClose={() => setShowShareDialog(false)}
                 onUnshare={() => {
                     updateExecutionApi.request(localMetadata.id, { isPublic: false }).then(() => {
-                        // Update local metadata to reflect the change
+                        // Обновить локальные метаданные для отражения изменений
                         setLocalMetadata((prev) => ({
                             ...prev,
                             isPublic: false
                         }))
                         setShowShareDialog(false)
 
-                        // Notify parent component to refresh data
+                        // Уведомить родительский компонент об обновлении данных
                         if (onUpdateSharing) {
                             onUpdateSharing()
                         }

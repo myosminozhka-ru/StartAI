@@ -91,7 +91,7 @@ const APICodeDialog = ({ show, dialogProps, onCancel }) => {
     const apiConfig = chatflow?.apiConfig ? JSON.parse(chatflow.apiConfig) : {}
     const overrideConfigStatus = apiConfig?.overrideConfig?.status !== undefined ? apiConfig.overrideConfig.status : false
 
-    const codes = ['Embed', 'Python', 'JavaScript', 'cURL', 'Share Chatbot']
+    const codes = ['Встраивание', 'Python', 'JavaScript', 'cURL', 'Поделиться чатботом']
     const [value, setValue] = useState(0)
     const [keyOptions, setKeyOptions] = useState([])
     const [apiKeys, setAPIKeys] = useState([])
@@ -630,7 +630,7 @@ formData.append("openAIApiKey[openAIEmbeddings_0]", "sk-my-openai-2nd-key")`
         if (getAllAPIKeysApi.data) {
             const options = [
                 {
-                    label: 'No Authorization',
+                    label: 'Без авторизации',
                     name: ''
                 }
             ]
@@ -641,7 +641,7 @@ formData.append("openAIApiKey[openAIEmbeddings_0]", "sk-my-openai-2nd-key")`
                 })
             }
             options.push({
-                label: '- Add New Key -',
+                label: '- Добавить новый ключ -',
                 name: 'addnewkey'
             })
             setKeyOptions(options)
@@ -678,11 +678,11 @@ formData.append("openAIApiKey[openAIEmbeddings_0]", "sk-my-openai-2nd-key")`
             <DialogContent>
                 <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
                     <div style={{ flex: 80 }}>
-                        <Tabs value={value} onChange={handleChange} aria-label='tabs'>
+                        <Tabs value={value} onChange={handleChange} aria-label='вкладки'>
                             {codes.map((codeLang, index) => (
                                 <Tab
                                     icon={
-                                        <img style={{ objectFit: 'cover', height: 15, width: 'auto' }} src={getSVG(codeLang)} alt='code' />
+                                        <img style={{ objectFit: 'cover', height: 15, width: 'auto' }} src={getSVG(codeLang)} alt='код' />
                                     }
                                     iconPosition='start'
                                     key={index}
@@ -698,23 +698,23 @@ formData.append("openAIApiKey[openAIEmbeddings_0]", "sk-my-openai-2nd-key")`
                             disableClearable={true}
                             options={keyOptions}
                             onSelect={(newValue) => onApiKeySelected(newValue)}
-                            value={dialogProps.chatflowApiKeyId ?? chatflowApiKeyId ?? 'Choose an API key'}
+                            value={dialogProps.chatflowApiKeyId ?? chatflowApiKeyId ?? 'Выберите API ключ'}
                         />
                     </div>
                 </div>
                 <div style={{ marginTop: 10 }}></div>
                 {codes.map((codeLang, index) => (
                     <TabPanel key={index} value={value} index={index}>
-                        {(codeLang === 'Embed' || codeLang === 'Share Chatbot') && chatflowApiKeyId && (
+                        {(codeLang === 'Встраивание' || codeLang === 'Поделиться чатботом') && chatflowApiKeyId && (
                             <>
-                                <p>You cannot use API key while embedding/sharing chatbot.</p>
+                                <p>Вы не можете использовать API ключ при встраивании/поделиться чатботом.</p>
                                 <p>
-                                    Please select <b>&quot;No Authorization&quot;</b> from the dropdown at the top right corner.
+                                    Пожалуйста, выберите <b>&quot;Без авторизации&quot;</b> из выпадающего списка в правом верхнем углу.
                                 </p>
                             </>
                         )}
-                        {codeLang === 'Embed' && !chatflowApiKeyId && <EmbedChat chatflowid={dialogProps.chatflowid} />}
-                        {codeLang !== 'Embed' && codeLang !== 'Share Chatbot' && codeLang !== 'Configuration' && (
+                        {codeLang === 'Встраивание' && !chatflowApiKeyId && <EmbedChat chatflowid={dialogProps.chatflowid} />}
+                        {codeLang !== 'Встраивание' && codeLang !== 'Поделиться чатботом' && codeLang !== 'Configuration' && (
                             <>
                                 <CopyBlock
                                     theme={atomOneDark}
@@ -723,11 +723,16 @@ formData.append("openAIApiKey[openAIEmbeddings_0]", "sk-my-openai-2nd-key")`
                                     showLineNumbers={false}
                                     wrapLines
                                 />
-                                <CheckboxInput label='Show Override Config' value={checkboxVal} onChange={onCheckBoxChanged} />
+                                <CheckboxInput
+                                    label='Показать конфигурацию переопределения'
+                                    value={checkboxVal}
+                                    onChange={onCheckBoxChanged}
+                                />
                                 {checkboxVal && getConfigApi.data && getConfigApi.data.length > 0 && (
                                     <>
                                         <Typography sx={{ mt: 2 }}>
-                                            You can override existing input configuration of the chatflow with overrideConfig property.
+                                            Вы можете переопределить существующую конфигурацию ввода чатфлоу с помощью свойства
+                                            overrideConfig.
                                         </Typography>
                                         <div
                                             style={{
@@ -750,17 +755,16 @@ formData.append("openAIApiKey[openAIEmbeddings_0]", "sk-my-openai-2nd-key")`
                                                 <IconExclamationCircle size={30} color='rgb(116,66,16)' />
                                                 <span style={{ color: 'rgb(116,66,16)', marginLeft: 10, fontWeight: 500 }}>
                                                     {
-                                                        'For security reason, override config is disabled by default. You can change this by going into Chatflow Configuration -> Security tab, and enable the property you want to override.'
+                                                        'По соображениям безопасности, переопределение конфигурации отключено по умолчанию. Вы можете изменить это, перейдя в Конфигурацию чатфлоу -> вкладка Безопасность, и включить свойство, которое хотите переопределить.'
                                                     }
-                                                    &nbsp;Refer{' '}
+                                                    &nbsp;Подробнее{' '}
                                                     <a
                                                         rel='noreferrer'
                                                         target='_blank'
                                                         href='https://docs.flowiseai.com/using-flowise/api#override-config'
                                                     >
-                                                        here
-                                                    </a>{' '}
-                                                    for more details
+                                                        здесь
+                                                    </a>
                                                 </span>
                                             </div>
                                         </div>
@@ -832,7 +836,7 @@ formData.append("openAIApiKey[openAIEmbeddings_0]", "sk-my-openai-2nd-key")`
                                             <Card sx={{ borderColor: theme.palette.primary[200] + 75, p: 2 }} variant='outlined'>
                                                 <Stack sx={{ mt: 1, mb: 2, ml: 1, alignItems: 'center' }} direction='row' spacing={2}>
                                                     <IconVariable />
-                                                    <Typography variant='h4'>Variables</Typography>
+                                                    <Typography variant='h4'>Переменные</Typography>
                                                 </Stack>
                                                 <TableViewOnly rows={variableOverrides} columns={['name', 'type', 'enabled']} />
                                             </Card>
@@ -872,7 +876,8 @@ formData.append("openAIApiKey[openAIEmbeddings_0]", "sk-my-openai-2nd-key")`
                                             >
                                                 <IconBulb size={30} color='#2d6a4f' />
                                                 <span style={{ color: '#2d6a4f', marginLeft: 10, fontWeight: 500 }}>
-                                                    You can also specify multiple values for a config parameter by specifying the node id
+                                                    Вы также можете указать несколько значений для параметра конфигурации, указав
+                                                    идентификатор узла
                                                 </span>
                                             </div>
                                             <div style={{ padding: 10 }}>
@@ -893,16 +898,16 @@ formData.append("openAIApiKey[openAIEmbeddings_0]", "sk-my-openai-2nd-key")`
                                 )}
                                 {getIsChatflowStreamingApi.data?.isStreaming && (
                                     <p>
-                                        Read&nbsp;
+                                        Читайте&nbsp;
                                         <a rel='noreferrer' target='_blank' href='https://docs.flowiseai.com/using-flowise/streaming'>
-                                            here
+                                            здесь
                                         </a>
-                                        &nbsp;on how to stream response back to application
+                                        &nbsp;о том, как передавать ответ обратно в приложение
                                     </p>
                                 )}
                             </>
                         )}
-                        {codeLang === 'Share Chatbot' && !chatflowApiKeyId && (
+                        {codeLang === 'Поделиться чатботом' && !chatflowApiKeyId && (
                             <ShareChatbot isSessionMemory={dialogProps.isSessionMemory} isAgentCanvas={dialogProps.isAgentCanvas} />
                         )}
                     </TabPanel>

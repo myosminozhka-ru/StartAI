@@ -3,14 +3,14 @@ import { TableContainer, Table, TableHead, TableCell, TableRow, TableBody, Paper
 import { TooltipWithParser } from '@/ui-component/tooltip/TooltipWithParser'
 
 export const TableViewOnly = ({ columns, rows, sx }) => {
-    // Helper function to safely render cell content
+    // Вспомогательная функция для безопасного отображения содержимого ячейки
     const renderCellContent = (key, row) => {
         if (row[key] === null || row[key] === undefined) {
             return ''
         } else if (key === 'enabled') {
-            return row[key] ? <Chip label='Enabled' color='primary' /> : <Chip label='Disabled' />
+            return row[key] ? <Chip label='Включено' color='primary' /> : <Chip label='Отключено' />
         } else if (key === 'type' && row.schema) {
-            // If there's schema information, add a tooltip
+            // Если есть информация о схеме, добавляем подсказку
             const schemaContent =
                 '[<br>' +
                 row.schema
@@ -30,11 +30,11 @@ export const TableViewOnly = ({ columns, rows, sx }) => {
             return (
                 <Stack direction='row' alignItems='center' spacing={1}>
                     <Typography>{row[key]}</Typography>
-                    <TooltipWithParser title={`<div>Schema:<br/>${schemaContent}</div>`} />
+                    <TooltipWithParser title={`<div>Схема:<br/>${schemaContent}</div>`} />
                 </Stack>
             )
         } else if (typeof row[key] === 'object') {
-            // For other objects (that are not handled by special cases above)
+            // Для других объектов (которые не обрабатываются специальными случаями выше)
             return JSON.stringify(row[key])
         } else {
             return row[key]
@@ -44,18 +44,18 @@ export const TableViewOnly = ({ columns, rows, sx }) => {
     return (
         <>
             <TableContainer component={Paper}>
-                <Table sx={{ minWidth: 650, ...sx }} aria-label='simple table'>
+                <Table sx={{ minWidth: 650, ...sx }} aria-label='простая таблица'>
                     <TableHead>
                         <TableRow>
                             {columns.map((col, index) => (
                                 <TableCell key={index}>
                                     {col === 'enabled' ? (
                                         <>
-                                            Override
+                                            Переопределение
                                             <TooltipWithParser
                                                 style={{ mb: 1, mt: 2, marginLeft: 10 }}
                                                 title={
-                                                    'If enabled, this variable can be overridden in API calls and embeds. If disabled, any overrides will be ignored. To change this, go to Security settings in Chatflow Configuration.'
+                                                    'Если включено, эта переменная может быть переопределена в API-вызовах и встраиваниях. Если отключено, любые переопределения будут проигнорированы. Чтобы изменить это, перейдите в настройки безопасности в Конфигурации чатфлоу.'
                                                 }
                                             />
                                         </>

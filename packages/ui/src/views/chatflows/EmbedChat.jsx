@@ -38,6 +38,8 @@ function a11yProps(index) {
     }
 }
 
+const codes = ['Всплывающий Html', 'Полноэкранный Html', 'Всплывающий React', 'Полноэкранный React']
+
 const embedPopupHtmlCode = (chatflowid) => {
     return `<script type="module">
     import Chatbot from "https://cdn.jsdelivr.net/npm/flowise-embed/dist/web.js"
@@ -170,7 +172,7 @@ export const defaultThemeConfig = {
         },
         footer: {
             textColor: '#303235',
-            text: 'Powered by',
+            text: 'Работает на',
             company: 'Flowise',
             companyLink: 'https://flowiseai.com'
         }
@@ -287,7 +289,6 @@ const App = () => {
 }
 
 const EmbedChat = ({ chatflowid }) => {
-    const codes = ['Popup Html', 'Fullpage Html', 'Popup React', 'Fullpage React']
     const [value, setValue] = useState(0)
     const [embedChatCheckboxVal, setEmbedChatCheckbox] = useState(false)
 
@@ -301,13 +302,13 @@ const EmbedChat = ({ chatflowid }) => {
 
     const getCode = (codeLang) => {
         switch (codeLang) {
-            case 'Popup Html':
+            case 'Всплывающий Html':
                 return embedPopupHtmlCode(chatflowid)
-            case 'Fullpage Html':
+            case 'Полноэкранный Html':
                 return embedFullpageHtmlCode(chatflowid)
-            case 'Popup React':
+            case 'Всплывающий React':
                 return embedPopupReactCode(chatflowid)
-            case 'Fullpage React':
+            case 'Полноэкранный React':
                 return embedFullpageReactCode(chatflowid)
             default:
                 return ''
@@ -316,13 +317,13 @@ const EmbedChat = ({ chatflowid }) => {
 
     const getCodeCustomization = (codeLang) => {
         switch (codeLang) {
-            case 'Popup Html':
+            case 'Всплывающий Html':
                 return embedPopupHtmlCodeCustomization(chatflowid)
-            case 'Fullpage Html':
+            case 'Полноэкранный Html':
                 return embedFullpageHtmlCodeCustomization(chatflowid)
-            case 'Popup React':
+            case 'Всплывающий React':
                 return embedPopupReactCodeCustomization(chatflowid)
-            case 'Fullpage React':
+            case 'Полноэкранный React':
                 return embedFullpageReactCodeCustomization(chatflowid)
             default:
                 return embedPopupHtmlCodeCustomization(chatflowid)
@@ -333,7 +334,7 @@ const EmbedChat = ({ chatflowid }) => {
         <>
             <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
                 <div style={{ flex: 80 }}>
-                    <Tabs value={value} onChange={handleChange} aria-label='tabs'>
+                    <Tabs value={value} onChange={handleChange} aria-label='вкладки'>
                         {codes.map((codeLang, index) => (
                             <Tab key={index} label={codeLang} {...a11yProps(index)}></Tab>
                         ))}
@@ -346,15 +347,15 @@ const EmbedChat = ({ chatflowid }) => {
                     {(value === 0 || value === 1) && (
                         <>
                             <span>
-                                Paste this anywhere in the <code>{`<body>`}</code> tag of your html file.
+                                Вставьте этот код в любое место внутри тега <code>{`<body>`}</code> вашего html файла.
                                 <p>
-                                    You can also specify a&nbsp;
+                                    Вы также можете указать&nbsp;
                                     <a
                                         rel='noreferrer'
                                         target='_blank'
                                         href='https://www.npmjs.com/package/flowise-embed?activeTab=versions'
                                     >
-                                        version
+                                        версию
                                     </a>
                                     :&nbsp;<code>{`https://cdn.jsdelivr.net/npm/flowise-embed@<version>/dist/web.js`}</code>
                                 </p>
@@ -364,7 +365,11 @@ const EmbedChat = ({ chatflowid }) => {
                     )}
                     <CopyBlock theme={atomOneDark} text={getCode(codeLang)} language='javascript' showLineNumbers={false} wrapLines />
 
-                    <CheckboxInput label='Show Embed Chat Config' value={embedChatCheckboxVal} onChange={onCheckBoxEmbedChatChanged} />
+                    <CheckboxInput
+                        label='Показать конфигурацию встраиваемого чата'
+                        value={embedChatCheckboxVal}
+                        onChange={onCheckBoxEmbedChatChanged}
+                    />
 
                     {embedChatCheckboxVal && (
                         <CopyBlock

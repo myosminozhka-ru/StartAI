@@ -192,7 +192,7 @@ const APIKeyDialog = ({ show, dialogProps, onCancel, onConfirm, setError }) => {
                                 }}
                             >
                                 <Typography variant='h6' sx={{ pl: 1, pr: 1, color: 'white', background: theme.palette.success.dark }}>
-                                    Copied!
+                                    Скопировано!
                                 </Typography>
                             </Popover>
                         </Stack>
