@@ -87,10 +87,11 @@ const AddDocStoreDialog = ({ show, dialogProps, onCancel, onConfirm }) => {
                 })
                 onConfirm(createResp.data.id)
             }
-        } catch (err) {
-            const errorData = typeof err === 'string' ? err : err.response?.data || `${err.response.data.message}`
+        } catch (error) {
             enqueueSnackbar({
-                message: `Не удалось добавить новый документный магазин: ${errorData}`,
+                message: `Не удалось добавить новый документный магазин:: ${
+                    typeof error.response.data === 'object' ? error.response.data.message : error.response.data
+                }`,
                 options: {
                     key: new Date().getTime() + Math.random(),
                     variant: 'error',
@@ -130,9 +131,10 @@ const AddDocStoreDialog = ({ show, dialogProps, onCancel, onConfirm }) => {
                 onConfirm(saveResp.data.id)
             }
         } catch (error) {
-            const errorData = error.response?.data || `${error.response?.status}: ${error.response?.statusText}`
             enqueueSnackbar({
-                message: `Не удалось обновить документный магазин: ${errorData}`,
+                message: `Не удалось обновить документный магазин: ${
+                    typeof error.response.data === 'object' ? error.response.data.message : error.response.data
+                }`,
                 options: {
                     key: new Date().getTime() + Math.random(),
                     variant: 'error',

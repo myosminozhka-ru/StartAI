@@ -101,7 +101,7 @@ class MultiRetrievalQAChain_Chains implements INode {
             }
         }
         const obj = { input }
-        const loggerHandler = new ConsoleCallbackHandler(options.logger)
+        const loggerHandler = new ConsoleCallbackHandler(options.logger, options?.orgId)
         const callbacks = await additionalCallbacks(nodeData, options)
 
         if (shouldStreamResponse) {

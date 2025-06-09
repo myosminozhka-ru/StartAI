@@ -32,7 +32,7 @@ const ShareExecutionDialog = ({ show, executionId, onClose, onUnshare }) => {
         navigator.clipboard.writeText(shareableLink)
         setCopied(true)
 
-        // Показать сообщение об успехе
+        // Show success message
         dispatch(
             enqueueSnackbarAction({
                 message: 'Ссылка скопирована в буфер обмена',

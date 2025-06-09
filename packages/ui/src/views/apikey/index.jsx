@@ -27,14 +27,16 @@ import { useTheme, styled } from '@mui/material/styles'
 
 // project imports
 import MainCard from '@/ui-component/cards/MainCard'
-import { StyledButton } from '@/ui-component/button/StyledButton'
 import APIKeyDialog from './APIKeyDialog'
 import ConfirmDialog from '@/ui-component/dialog/ConfirmDialog'
 import ViewHeader from '@/layout/MainLayout/ViewHeader'
 import ErrorBoundary from '@/ErrorBoundary'
+import { PermissionButton, StyledPermissionButton } from '@/ui-component/button/RBACButtons'
+import { Available } from '@/ui-component/rbac/available'
 
 // API
 import apiKeyApi from '@/api/apikey'
+import { useError } from '@/store/context/ErrorContext'
 
 // Hooks
 import useApi from '@/hooks/useApi'
@@ -59,7 +61,7 @@ import {
 import APIEmptySVG from '@/assets/images/api_empty.svg'
 import UploadJSONFileDialog from '@/views/apikey/UploadJSONFileDialog'
 
-// ==============================|| API Ключи ||============================== //
+// ==============================|| APIKey ||============================== //
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
     borderColor: theme.palette.grey[900] + 25,
@@ -124,32 +126,36 @@ function APIKeyRow(props) {
                 <StyledTableCell>
                     {props.apiKey.chatFlows.length}{' '}
                     {props.apiKey.chatFlows.length > 0 && (
-                        <IconButton aria-label='развернуть строку' size='small' color='inherit' onClick={() => setOpen(!open)}>
+                        <IconButton aria-label='развернуть' size='small' color='inherit' onClick={() => setOpen(!open)}>
                             {props.apiKey.chatFlows.length > 0 && open ? <IconChevronsUp /> : <IconChevronsDown />}
                         </IconButton>
                     )}
                 </StyledTableCell>
-                <StyledTableCell>{moment(props.apiKey.createdAt).format('DD-MM-YYYY')}</StyledTableCell>
-                <StyledTableCell>
-                    <IconButton title='Редактировать' color='primary' onClick={props.onEditClick}>
-                        <IconEdit />
-                    </IconButton>
-                </StyledTableCell>
-                <StyledTableCell>
-                    <IconButton title='Удалить' color='error' onClick={props.onDeleteClick}>
-                        <IconTrash />
-                    </IconButton>
-                </StyledTableCell>
+                <StyledTableCell>{moment(props.apiKey.createdAt).format('D MMMM YYYY г.')}</StyledTableCell>
+                <Available permission={'apikeys:update,apikeys:create'}>
+                    <StyledTableCell>
+                        <IconButton title='Редактировать' color='primary' onClick={props.onEditClick}>
+                            <IconEdit />
+                        </IconButton>
+                    </StyledTableCell>
+                </Available>
+                <Available permission={'apikeys:delete'}>
+                    <StyledTableCell>
+                        <IconButton title='Удалить' color='error' onClick={props.onDeleteClick}>
+                            <IconTrash />
+                        </IconButton>
+                    </StyledTableCell>
+                </Available>
             </TableRow>
             {open && (
                 <TableRow sx={{ '& td': { border: 0 } }}>
                     <StyledTableCell sx={{ p: 2 }} colSpan={6}>
                         <Collapse in={open} timeout='auto' unmountOnExit>
                             <Box sx={{ borderRadius: 2, border: 1, borderColor: theme.palette.grey[900] + 25, overflow: 'hidden' }}>
-                                <Table aria-label='таблица чатфлоу'>
+                                <Table aria-label='таблица чатов'>
                                     <TableHead sx={{ height: 48 }}>
                                         <TableRow>
-                                            <StyledTableCell sx={{ width: '30%' }}>Название чатфлоу</StyledTableCell>
+                                            <StyledTableCell sx={{ width: '30%' }}>Название чата</StyledTableCell>
                                             <StyledTableCell sx={{ width: '20%' }}>Изменено</StyledTableCell>
                                             <StyledTableCell sx={{ width: '50%' }}>Категория</StyledTableCell>
                                         </TableRow>
@@ -158,7 +164,7 @@ function APIKeyRow(props) {
                                         {props.apiKey.chatFlows.map((flow, index) => (
                                             <TableRow key={index}>
                                                 <StyledTableCell>{flow.flowName}</StyledTableCell>
-                                                <StyledTableCell>{moment(flow.updatedDate).format('DD-MM-YYYY')}</StyledTableCell>
+                                                <StyledTableCell>{moment(flow.updatedDate).format('D MMMM YYYY г.')}</StyledTableCell>
                                                 <StyledTableCell>
                                                     &nbsp;
                                                     {flow.category &&
@@ -199,12 +205,12 @@ const APIKey = () => {
 
     const dispatch = useDispatch()
     useNotifier()
+    const { error, setError } = useError()
 
     const enqueueSnackbar = (...args) => dispatch(enqueueSnackbarAction(...args))
     const closeSnackbar = (...args) => dispatch(closeSnackbarAction(...args))
 
     const [isLoading, setLoading] = useState(true)
-    const [error, setError] = useState(null)
     const [showDialog, setShowDialog] = useState(false)
     const [dialogProps, setDialogProps] = useState({})
     const [apiKeys, setAPIKeys] = useState([])
@@ -282,11 +288,11 @@ const APIKey = () => {
 
     const deleteKey = async (key) => {
         const confirmPayload = {
-            title: `Удаление`,
+            title: `Удалить`,
             description:
                 key.chatFlows.length === 0
-                    ? `Удалить ключ [${key.keyName}]?`
-                    : `Удалить ключ [${key.keyName}]?\n Есть ${key.chatFlows.length} чатфлоу, использующих этот ключ.`,
+                    ? `Удалить ключ [${key.keyName}] ? `
+                    : `Удалить ключ [${key.keyName}] ?\n Используется в ${key.chatFlows.length} чатах.`,
             confirmButtonName: 'Удалить',
             cancelButtonName: 'Отмена',
             customBtnId: 'btn_initiateDeleteApiKey'
@@ -298,7 +304,7 @@ const APIKey = () => {
                 const deleteResp = await apiKeyApi.deleteAPI(key.id)
                 if (deleteResp.data) {
                     enqueueSnackbar({
-                        message: 'API ключ удален',
+                        message: 'API ключ удалён',
                         options: {
                             key: new Date().getTime() + Math.random(),
                             variant: 'success',
@@ -354,12 +360,6 @@ const APIKey = () => {
         }
     }, [getAllAPIKeysApi.data])
 
-    useEffect(() => {
-        if (getAllAPIKeysApi.error) {
-            setError(getAllAPIKeysApi.error)
-        }
-    }, [getAllAPIKeysApi.error])
-
     return (
         <>
             <MainCard>
@@ -371,10 +371,11 @@ const APIKey = () => {
                             onSearchChange={onSearchChange}
                             search={true}
                             searchPlaceholder='Поиск API ключей'
-                            title='API Ключи'
-                            description='Ключи аутентификации Flowise API & SDK'
+                            title='API ключи'
+                            description='Ключи аутентификации Flowise API и SDK'
                         >
-                            <Button
+                            <PermissionButton
+                                permissionId={'apikeys:import'}
                                 variant='outlined'
                                 sx={{ borderRadius: 2, height: '100%' }}
                                 onClick={uploadDialog}
@@ -382,8 +383,9 @@ const APIKey = () => {
                                 id='btn_importApiKeys'
                             >
                                 Импорт
-                            </Button>
-                            <StyledButton
+                            </PermissionButton>
+                            <StyledPermissionButton
+                                permissionId={'apikeys:create'}
                                 variant='contained'
                                 sx={{ borderRadius: 2, height: '100%' }}
                                 onClick={addNew}
@@ -391,7 +393,7 @@ const APIKey = () => {
                                 id='btn_createApiKey'
                             >
                                 Создать ключ
-                            </StyledButton>
+                            </StyledPermissionButton>
                         </ViewHeader>
                         {!isLoading && apiKeys.length <= 0 ? (
                             <Stack sx={{ alignItems: 'center', justifyContent: 'center' }} flexDirection='column'>
@@ -399,17 +401,17 @@ const APIKey = () => {
                                     <img
                                         style={{ objectFit: 'cover', height: '20vh', width: 'auto' }}
                                         src={APIEmptySVG}
-                                        alt='Нет API ключей'
+                                        alt='APIEmptySVG'
                                     />
                                 </Box>
-                                <div>Нет API ключей</div>
+                                <div>Пока нет API ключей</div>
                             </Stack>
                         ) : (
                             <TableContainer
                                 sx={{ border: 1, borderColor: theme.palette.grey[900] + 25, borderRadius: 2 }}
                                 component={Paper}
                             >
-                                <Table sx={{ minWidth: 650 }} aria-label='таблица ключей'>
+                                <Table sx={{ minWidth: 650 }} aria-label='простая таблица'>
                                     <TableHead
                                         sx={{
                                             backgroundColor: customization.isDarkMode
@@ -420,11 +422,15 @@ const APIKey = () => {
                                     >
                                         <TableRow>
                                             <StyledTableCell>Название ключа</StyledTableCell>
-                                            <StyledTableCell>API Ключ</StyledTableCell>
+                                            <StyledTableCell>API ключ</StyledTableCell>
                                             <StyledTableCell>Использование</StyledTableCell>
-                                            <StyledTableCell>Создан</StyledTableCell>
-                                            <StyledTableCell> </StyledTableCell>
-                                            <StyledTableCell> </StyledTableCell>
+                                            <StyledTableCell>Обновлено</StyledTableCell>
+                                            <Available permission={'apikeys:update,apikeys:create'}>
+                                                <StyledTableCell> </StyledTableCell>
+                                            </Available>
+                                            <Available permission={'apikeys:delete'}>
+                                                <StyledTableCell> </StyledTableCell>
+                                            </Available>
                                         </TableRow>
                                     </TableHead>
                                     <TableBody>
@@ -443,12 +449,12 @@ const APIKey = () => {
                                                     <StyledTableCell>
                                                         <Skeleton variant='text' />
                                                     </StyledTableCell>
-                                                    <StyledTableCell>
-                                                        <Skeleton variant='text' />
-                                                    </StyledTableCell>
-                                                    <StyledTableCell>
-                                                        <Skeleton variant='text' />
-                                                    </StyledTableCell>
+                                                    <Available permission={'apikeys:update,apikeys:create'}>
+                                                        <StyledTableCell> </StyledTableCell>
+                                                    </Available>
+                                                    <Available permission={'apikeys:delete'}>
+                                                        <StyledTableCell> </StyledTableCell>
+                                                    </Available>
                                                 </StyledTableRow>
                                                 <StyledTableRow>
                                                     <StyledTableCell>
@@ -463,12 +469,12 @@ const APIKey = () => {
                                                     <StyledTableCell>
                                                         <Skeleton variant='text' />
                                                     </StyledTableCell>
-                                                    <StyledTableCell>
-                                                        <Skeleton variant='text' />
-                                                    </StyledTableCell>
-                                                    <StyledTableCell>
-                                                        <Skeleton variant='text' />
-                                                    </StyledTableCell>
+                                                    <Available permission={'apikeys:update,apikeys:create'}>
+                                                        <StyledTableCell> </StyledTableCell>
+                                                    </Available>
+                                                    <Available permission={'apikeys:delete'}>
+                                                        <StyledTableCell> </StyledTableCell>
+                                                    </Available>
                                                 </StyledTableRow>
                                             </>
                                         ) : (

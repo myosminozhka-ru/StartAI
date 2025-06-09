@@ -1,6 +1,7 @@
 import { flatten } from 'lodash'
 import { ChatMessage, OpenAI, OpenAIAgent } from 'llamaindex'
 import { getBaseClasses } from '../../../../src/utils'
+import { EvaluationRunTracerLlama } from '../../../../evaluation/EvaluationRunTracerLlama'
 import {
     FlowiseMemory,
     ICommonObject,
@@ -110,6 +111,9 @@ class OpenAIFunctionAgent_LlamaIndex_Agents implements INode {
             verbose: process.env.DEBUG === 'true'
         })
 
+        // these are needed for evaluation runs
+        await EvaluationRunTracerLlama.injectEvaluationMetadata(nodeData, options, agent)
+
         let text = ''
         let isStreamingStarted = false
         const usedTools: IUsedTool[] = []
@@ -122,7 +126,6 @@ class OpenAIFunctionAgent_LlamaIndex_Agents implements INode {
                 verbose: process.env.DEBUG === 'true'
             })
             for await (const chunk of stream) {
-                //console.log('chunk', chunk)
                 text += chunk.response.delta
                 if (!isStreamingStarted) {
                     isStreamingStarted = true

@@ -97,7 +97,7 @@ class CSV_Agents implements INode {
             }
         }
 
-        const loggerHandler = new ConsoleCallbackHandler(options.logger)
+        const loggerHandler = new ConsoleCallbackHandler(options.logger, options?.orgId)
         const shouldStreamResponse = options.shouldStreamResponse
         const sseStreamer: IServerSideEventStreamer = options.sseStreamer as IServerSideEventStreamer
         const chatId = options.chatId
@@ -114,11 +114,12 @@ class CSV_Agents implements INode {
             } else {
                 files = [fileName]
             }
+            const orgId = options.orgId
             const chatflowid = options.chatflowid
 
             for (const file of files) {
                 if (!file) continue
-                const fileData = await getFileFromStorage(file, chatflowid)
+                const fileData = await getFileFromStorage(file, orgId, chatflowid)
                 base64String += fileData.toString('base64')
             }
         } else {

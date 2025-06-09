@@ -194,7 +194,7 @@ class SqlDatabaseChain_Chains implements INode {
             topK,
             customPrompt
         )
-        const loggerHandler = new ConsoleCallbackHandler(options.logger)
+        const loggerHandler = new ConsoleCallbackHandler(options.logger, options?.orgId)
         const callbacks = await additionalCallbacks(nodeData, options)
 
         if (shouldStreamResponse) {

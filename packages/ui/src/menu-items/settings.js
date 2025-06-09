@@ -57,6 +57,7 @@ const settings = {
             title: 'Конфигурация',
             type: 'item',
             url: '',
+            permission: 'chatflows:config',
             icon: icons.IconAdjustmentsHorizontal
         },
         {
@@ -64,35 +65,40 @@ const settings = {
             title: 'Сохранить как шаблон',
             type: 'item',
             url: '',
-            icon: icons.IconTemplate
+            icon: icons.IconTemplate,
+            permission: 'templates:flowexport'
         },
         {
             id: 'duplicateChatflow',
             title: 'Дублировать чат-поток',
             type: 'item',
             url: '',
-            icon: icons.IconCopy
+            icon: icons.IconCopy,
+            permission: 'chatflows:duplicate'
         },
         {
             id: 'loadChatflow',
             title: 'Загрузить чат-поток',
             type: 'item',
             url: '',
-            icon: icons.IconFileUpload
+            icon: icons.IconFileUpload,
+            permission: 'chatflows:import'
         },
         {
             id: 'exportChatflow',
             title: 'Экспорт чат-потока',
             type: 'item',
             url: '',
-            icon: icons.IconFileExport
+            icon: icons.IconFileExport,
+            permission: 'chatflows:export'
         },
         {
             id: 'deleteChatflow',
             title: 'Удалить чат-поток',
             type: 'item',
             url: '',
-            icon: icons.IconTrash
+            icon: icons.IconTrash,
+            permission: 'chatflows:delete'
         }
     ]
 }

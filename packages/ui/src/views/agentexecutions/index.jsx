@@ -29,6 +29,7 @@ import {
 import MainCard from '@/ui-component/cards/MainCard'
 import ErrorBoundary from '@/ErrorBoundary'
 import ViewHeader from '@/layout/MainLayout/ViewHeader'
+import { Available } from '@/ui-component/rbac/available'
 
 // API
 import useApi from '@/hooks/useApi'
@@ -224,8 +225,16 @@ const AgentExecutions = () => {
             const executionDetails =
                 typeof execution.executionData === 'string' ? JSON.parse(execution.executionData) : execution.executionData
             setSelectedExecutionData(executionDetails)
-            setSelectedMetadata(omit(execution, ['executionData']))
+            const newMetadata = {
+                ...omit(execution, ['executionData']),
+                agentflow: {
+                    ...selectedMetadata.agentflow
+                }
+            }
+            setSelectedMetadata(newMetadata)
         }
+
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [getExecutionByIdApi.data])
 
     return (
@@ -334,22 +343,24 @@ const AgentExecutions = () => {
                                         Применить
                                     </Button>
                                     <Button variant='outlined' onClick={resetFilters} size='small'>
-                                        Сбросить
+                                        Сброс
                                     </Button>
-                                    <Tooltip title='Удалить выбранные выполнения'>
-                                        <span>
-                                            <IconButton
-                                                sx={{ height: 30, width: 30 }}
-                                                size='small'
-                                                color='error'
-                                                onClick={handleDeleteDialogOpen}
-                                                edge='end'
-                                                disabled={selectedExecutionIds.length === 0}
-                                            >
-                                                <IconTrash />
-                                            </IconButton>
-                                        </span>
-                                    </Tooltip>
+                                    <Available permissions={['executions:delete']}>
+                                        <Tooltip title='Удалить выбранные выполнения'>
+                                            <span>
+                                                <IconButton
+                                                    sx={{ height: 30, width: 30 }}
+                                                    size='small'
+                                                    color='error'
+                                                    onClick={handleDeleteDialogOpen}
+                                                    edge='end'
+                                                    disabled={selectedExecutionIds.length === 0}
+                                                >
+                                                    <IconTrash />
+                                                </IconButton>
+                                            </span>
+                                        </Tooltip>
+                                    </Available>
                                 </Stack>
                             </Grid>
                         </Grid>

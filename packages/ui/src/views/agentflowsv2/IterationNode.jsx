@@ -198,7 +198,7 @@ const IterationNode = ({ data }) => {
                             <img
                                 style={{ width: '100%', height: '100%', padding: 5, objectFit: 'contain' }}
                                 src={`${baseURL}/api/v1/node-icon/${data.name}`}
-                                alt='Иконка узла'
+                                alt={data.name}
                             />
                         </div>
                     )}

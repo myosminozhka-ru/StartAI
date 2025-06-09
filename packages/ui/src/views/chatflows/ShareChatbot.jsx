@@ -8,8 +8,9 @@ import { Card, Box, Typography, Button, Switch, OutlinedInput, Popover, Stack, I
 import { useTheme } from '@mui/material/styles'
 
 // Project import
-import { StyledButton } from '@/ui-component/button/StyledButton'
 import { TooltipWithParser } from '@/ui-component/tooltip/TooltipWithParser'
+import { Available } from '@/ui-component/rbac/available'
+import { StyledPermissionButton } from '@/ui-component/button/RBACButtons'
 
 // Icons
 import { IconX, IconCopy, IconArrowUpRightCircle } from '@tabler/icons-react'
@@ -183,7 +184,7 @@ const ShareChatbot = ({ isSessionMemory, isAgentCanvas }) => {
             })
             if (saveResp.data) {
                 enqueueSnackbar({
-                    message: 'Сохранена конфигурация чат-бота',
+                    message: 'Конфигурация чат-бота сохранена',
                     options: {
                         key: new Date().getTime() + Math.random(),
                         variant: 'success',
@@ -198,7 +199,7 @@ const ShareChatbot = ({ isSessionMemory, isAgentCanvas }) => {
             }
         } catch (error) {
             enqueueSnackbar({
-                message: `Failed to save Chatbot Configuration: ${
+                message: `Не удалось сохранить конфигурацию чат-бота: ${
                     typeof error.response.data === 'object' ? error.response.data.message : error.response.data
                 }`,
                 options: {
@@ -220,7 +221,7 @@ const ShareChatbot = ({ isSessionMemory, isAgentCanvas }) => {
             const saveResp = await chatflowsApi.updateChatflow(chatflowid, { isPublic: checked })
             if (saveResp.data) {
                 enqueueSnackbar({
-                    message: 'Сохранена конфигурация чат-бота',
+                    message: 'Конфигурация чат-бота сохранена',
                     options: {
                         key: new Date().getTime() + Math.random(),
                         variant: 'success',
@@ -235,7 +236,7 @@ const ShareChatbot = ({ isSessionMemory, isAgentCanvas }) => {
             }
         } catch (error) {
             enqueueSnackbar({
-                message: `Failed to save Chatbot Configuration: ${
+                message: `Не удалось сохранить конфигурацию чат-бота: ${
                     typeof error.response.data === 'object' ? error.response.data.message : error.response.data
                 }`,
                 options: {
@@ -428,7 +429,7 @@ const ShareChatbot = ({ isSessionMemory, isAgentCanvas }) => {
                     {`${baseURL}/chatbot/${chatflowid}`}
                 </Typography>
                 <IconButton
-                    title='Копировать ссылку'
+                    title='Скопировать ссылку'
                     color='success'
                     onClick={(event) => {
                         navigator.clipboard.writeText(`${baseURL}/chatbot/${chatflowid}`)
@@ -448,20 +449,22 @@ const ShareChatbot = ({ isSessionMemory, isAgentCanvas }) => {
                     <IconArrowUpRightCircle />
                 </IconButton>
                 <div style={{ flex: 1 }} />
-                <div style={{ display: 'flex', alignItems: 'center' }}>
-                    <Switch
-                        checked={isPublicChatflow}
-                        onChange={(event) => {
-                            setChatflowIsPublic(event.target.checked)
-                            onSwitchChange(event.target.checked)
-                        }}
-                    />
-                    <Typography>Сделать публичным</Typography>
-                    <TooltipWithParser
-                        style={{ marginLeft: 10 }}
-                        title={'При публичном доступе любой сможет использовать чат-бота без имени пользователя и пароля'}
-                    />
-                </div>
+                <Available permission={'chatflows:update,agentflows:update'}>
+                    <div style={{ display: 'flex', alignItems: 'center' }}>
+                        <Switch
+                            checked={isPublicChatflow}
+                            onChange={(event) => {
+                                setChatflowIsPublic(event.target.checked)
+                                onSwitchChange(event.target.checked)
+                            }}
+                        />
+                        <Typography>Сделать публичным</Typography>
+                        <TooltipWithParser
+                            style={{ marginLeft: 10 }}
+                            title={'Если сделать публичным, любой сможет получить доступ к чат-боту без авторизации'}
+                        />
+                    </div>
+                </Available>
             </Stack>
 
             <Card sx={{ borderColor: theme.palette.primary[200] + 75, p: 3, mt: 2 }} variant='outlined'>
@@ -489,12 +492,12 @@ const ShareChatbot = ({ isSessionMemory, isAgentCanvas }) => {
                     'welcomeMessage',
                     'Приветственное сообщение',
                     'string',
-                    'Привет! Это пользовательское приветственное сообщение'
+                    'Здравствуйте! Это приветственное сообщение'
                 )}
-                {textField(errorMessage, 'errorMessage', 'Сообщение об ошибке', 'string', 'Это пользовательское сообщение об ошибке')}
+                {textField(errorMessage, 'errorMessage', 'Сообщение об ошибке', 'string', 'Это сообщение об ошибке')}
                 {colorField(backgroundColor, 'backgroundColor', 'Цвет фона')}
                 {textField(fontSize, 'fontSize', 'Размер шрифта', 'number')}
-                {colorField(poweredByTextColor, 'poweredByTextColor', 'Цвет текста "Powered by"')}
+                {colorField(poweredByTextColor, 'poweredByTextColor', 'Цвет текста PoweredBy')}
                 {isAgentCanvas &&
                     booleanField(showAgentMessages, 'showAgentMessages', 'Показывать рассуждения агента при использовании Agentflow')}
                 {booleanField(renderHTML, 'renderHTML', 'Отображать HTML в чате')}
@@ -508,7 +511,7 @@ const ShareChatbot = ({ isSessionMemory, isAgentCanvas }) => {
 
             <Card sx={{ borderColor: theme.palette.primary[200] + 75, p: 3, mt: 2 }} variant='outlined'>
                 <Stack sx={{ mt: 1, mb: 2, alignItems: 'center' }} direction='row' spacing={2}>
-                    <Typography variant='h4'>Сообщения бота</Typography>
+                    <Typography variant='h4'>Сообщение бота</Typography>
                 </Stack>
                 {colorField(botMessageBackgroundColor, 'botMessageBackgroundColor', 'Цвет фона')}
                 {colorField(botMessageTextColor, 'botMessageTextColor', 'Цвет текста')}
@@ -524,7 +527,7 @@ const ShareChatbot = ({ isSessionMemory, isAgentCanvas }) => {
 
             <Card sx={{ borderColor: theme.palette.primary[200] + 75, p: 3, mt: 2 }} variant='outlined'>
                 <Stack sx={{ mt: 1, mb: 2, alignItems: 'center' }} direction='row' spacing={2}>
-                    <Typography variant='h4'>Сообщения пользователя</Typography>
+                    <Typography variant='h4'>Сообщение пользователя</Typography>
                 </Stack>
                 {colorField(userMessageBackgroundColor, 'userMessageBackgroundColor', 'Цвет фона')}
                 {colorField(userMessageTextColor, 'userMessageTextColor', 'Цвет текста')}
@@ -540,15 +543,16 @@ const ShareChatbot = ({ isSessionMemory, isAgentCanvas }) => {
 
             <Card sx={{ borderColor: theme.palette.primary[200] + 75, p: 3, mt: 2 }} variant='outlined'>
                 <Stack sx={{ mt: 1, mb: 2, alignItems: 'center' }} direction='row' spacing={2}>
-                    <Typography variant='h4'>Текстовый ввод</Typography>
+                    <Typography variant='h4'>Текстовое поле ввода</Typography>
                 </Stack>
                 {colorField(textInputBackgroundColor, 'textInputBackgroundColor', 'Цвет фона')}
                 {colorField(textInputTextColor, 'textInputTextColor', 'Цвет текста')}
-                {textField(textInputPlaceholder, 'textInputPlaceholder', 'Подсказка в поле ввода', 'string', `Введите вопрос..`)}
+                {textField(textInputPlaceholder, 'textInputPlaceholder', 'Плейсхолдер поля ввода', 'string', `Введите вопрос..`)}
                 {colorField(textInputSendButtonColor, 'textInputSendButtonColor', 'Цвет кнопки отправки')}
             </Card>
 
-            <StyledButton
+            <StyledPermissionButton
+                permissionId={'chatflows:update,agentflows:update'}
                 fullWidth
                 style={{
                     borderRadius: 20,
@@ -560,7 +564,7 @@ const ShareChatbot = ({ isSessionMemory, isAgentCanvas }) => {
                 onClick={() => onSave()}
             >
                 Сохранить изменения
-            </StyledButton>
+            </StyledPermissionButton>
             <Popover
                 open={openColorPopOver}
                 anchorEl={colorAnchorEl}

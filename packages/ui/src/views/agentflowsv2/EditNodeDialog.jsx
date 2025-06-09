@@ -151,6 +151,7 @@ const EditNodeDialog = ({ show, dialogProps, onCancel }) => {
                         ) : (
                             <Stack flexDirection='row' sx={{ width: '100%' }}>
                                 <TextField
+                                    //eslint-disable-next-line jsx-a11y/no-autofocus
                                     autoFocus
                                     size='small'
                                     sx={{

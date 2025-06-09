@@ -197,15 +197,23 @@ const getIconFromStatus = (status, theme) => {
             return ErrorIcon
         case 'TERMINATED':
             // eslint-disable-next-line react/display-name
-            return (props) => <IconCircleXFilled {...props} color={theme.palette.error.main} />
+            return (props) => {
+                const IconWrapper = (props) => <IconCircleXFilled {...props} color={theme.palette.error.main} />
+                IconWrapper.displayName = 'TerminatedIcon'
+                return <IconWrapper {...props} />
+            }
         case 'STOPPED':
             return StopCircleIcon
         case 'INPROGRESS':
             // eslint-disable-next-line react/display-name
-            return (props) => (
-                // eslint-disable-next-line
-                <IconLoader {...props} color={theme.palette.warning.dark} className={`spin-animation ${props.className || ''}`} />
-            )
+            return (props) => {
+                const IconWrapper = (props) => (
+                    // eslint-disable-next-line
+                    <IconLoader {...props} color={theme.palette.warning.dark} className={`spin-animation ${props.className || ''}`} />
+                )
+                IconWrapper.displayName = 'InProgressIcon'
+                return <IconWrapper {...props} />
+            }
     }
 }
 
@@ -307,7 +315,7 @@ export const ExecutionDetails = ({ open, isPublic, execution, metadata, onClose,
         navigator.clipboard.writeText(localMetadata?.id)
         setCopied(true)
 
-        // Показать сообщение об успехе
+        // Show success message
         dispatch(
             enqueueSnackbarAction({
                 message: 'ID скопирован в буфер обмена',
@@ -796,7 +804,7 @@ export const ExecutionDetails = ({ open, isPublic, execution, metadata, onClose,
 
                         <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', alignContent: 'center' }}>
                             <Typography sx={{ flex: 1, mt: 1 }} color='text.primary'>
-                                {metadata?.updatedDate ? moment(metadata.updatedDate).format('MMM D, YYYY h:mm A') : 'Н/Д'}
+                                {metadata?.updatedDate ? moment(metadata.updatedDate).format('DD.MM.YYYY HH:mm') : 'Н/Д'}
                             </Typography>
                             <IconButton
                                 onClick={() => onRefresh(localMetadata?.id)}
@@ -934,42 +942,7 @@ export const ExecutionDetails = ({ open, isPublic, execution, metadata, onClose,
                 open={open}
                 onClose={onClose}
             >
-                <button
-                    aria-label='Изменить размер панели'
-                    style={{
-                        position: 'absolute',
-                        left: 0,
-                        top: 0,
-                        bottom: 0,
-                        width: '8px',
-                        cursor: 'ew-resize',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        padding: 0,
-                        border: 'none',
-                        background: 'transparent',
-                        '&:hover': {
-                            background: 'rgba(0, 0, 0, 0.1)'
-                        }
-                    }}
-                    onMouseDown={handleMouseDown}
-                    onKeyDown={(e) => {
-                        if (e.key === 'Enter' || e.key === ' ') {
-                            e.preventDefault()
-                            // Начать режим изменения размера
-                            handleMouseDown()
-                        }
-                    }}
-                >
-                    <DragHandleIcon
-                        sx={{
-                            transform: 'rotate(90deg)',
-                            fontSize: '20px',
-                            color: customization.isDarkMode ? 'white' : 'action.disabled'
-                        }}
-                    />
-                </button>
+                {resizeHandle}
                 {contentComponent}
             </Drawer>
             <ShareExecutionDialog
