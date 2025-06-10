@@ -4,7 +4,7 @@ import PropTypes from 'prop-types'
 
 import { styled, alpha } from '@mui/material/styles'
 import Menu from '@mui/material/Menu'
-import MenuItem from '@mui/material/MenuItem'
+import { PermissionMenuItem } from '@/ui-component/button/RBACButtons'
 import EditIcon from '@mui/icons-material/Edit'
 import Divider from '@mui/material/Divider'
 import FileCopyIcon from '@mui/icons-material/FileCopy'
@@ -74,7 +74,7 @@ const StyledMenu = styled((props) => (
     }
 }))
 
-export default function FlowListMenu({ chatflow, isAgentCanvas, setError, updateFlowsApi }) {
+export default function FlowListMenu({ chatflow, isAgentCanvas, isAgentflowV2, setError, updateFlowsApi }) {
     const { confirm } = useConfirm()
     const dispatch = useDispatch()
     const updateChatflowApi = useApi(chatflowsApi.updateChatflow)
@@ -100,7 +100,8 @@ export default function FlowListMenu({ chatflow, isAgentCanvas, setError, update
     const [exportTemplateDialogOpen, setExportTemplateDialogOpen] = useState(false)
     const [exportTemplateDialogProps, setExportTemplateDialogProps] = useState({})
 
-    const title = isAgentCanvas ? 'Агенты' : 'Чат-поток'
+    // Переводим только текстовые строки для пользователя
+    const title = isAgentCanvas ? 'Агенты' : 'Чатфлоу'
 
     const handleClick = (event) => {
         setAnchorEl(event.currentTarget)
@@ -135,7 +136,7 @@ export default function FlowListMenu({ chatflow, isAgentCanvas, setError, update
     const handleFlowChatFeedback = () => {
         setAnchorEl(null)
         setChatFeedbackDialogProps({
-            title: 'Обратная связь чата - ' + chatflow.name,
+            title: 'Обратная связь по чату - ' + chatflow.name,
             chatflow: chatflow
         })
         setChatFeedbackDialogOpen(true)
@@ -144,7 +145,7 @@ export default function FlowListMenu({ chatflow, isAgentCanvas, setError, update
     const handleAllowedDomains = () => {
         setAnchorEl(null)
         setAllowedDomainsDialogProps({
-            title: 'Разрешенные домены - ' + chatflow.name,
+            title: 'Разрешённые домены - ' + chatflow.name,
             chatflow: chatflow
         })
         setAllowedDomainsDialogOpen(true)
@@ -231,7 +232,7 @@ export default function FlowListMenu({ chatflow, isAgentCanvas, setError, update
     const handleDelete = async () => {
         setAnchorEl(null)
         const confirmPayload = {
-            title: `Удаление`,
+            title: `Удалить`,
             description: `Удалить ${title} ${chatflow.name}?`,
             confirmButtonName: 'Удалить',
             cancelButtonName: 'Отмена'
@@ -269,7 +270,13 @@ export default function FlowListMenu({ chatflow, isAgentCanvas, setError, update
         setAnchorEl(null)
         try {
             localStorage.setItem('duplicatedFlowData', chatflow.flowData)
-            window.open(`${uiBaseURL}/${isAgentCanvas ? 'agentcanvas' : 'canvas'}`, '_blank')
+            if (isAgentflowV2) {
+                window.open(`${uiBaseURL}/v2/agentcanvas`, '_blank')
+            } else if (isAgentCanvas) {
+                window.open(`${uiBaseURL}/agentcanvas`, '_blank')
+            } else {
+                window.open(`${uiBaseURL}/canvas`, '_blank')
+            }
         } catch (e) {
             console.error(e)
         }
@@ -317,48 +324,84 @@ export default function FlowListMenu({ chatflow, isAgentCanvas, setError, update
                 open={open}
                 onClose={handleClose}
             >
-                <MenuItem onClick={handleFlowRename} disableRipple>
+                <PermissionMenuItem
+                    permissionId={isAgentCanvas ? 'agentflows:update' : 'chatflows:update'}
+                    onClick={handleFlowRename}
+                    disableRipple
+                >
                     <EditIcon />
                     Переименовать
-                </MenuItem>
-                <MenuItem onClick={handleDuplicate} disableRipple>
+                </PermissionMenuItem>
+                <PermissionMenuItem
+                    permissionId={isAgentCanvas ? 'agentflows:duplicate' : 'chatflows:duplicate'}
+                    onClick={handleDuplicate}
+                    disableRipple
+                >
                     <FileCopyIcon />
                     Дублировать
-                </MenuItem>
-                <MenuItem onClick={handleExport} disableRipple>
+                </PermissionMenuItem>
+                <PermissionMenuItem
+                    permissionId={isAgentCanvas ? 'agentflows:export' : 'chatflows:export'}
+                    onClick={handleExport}
+                    disableRipple
+                >
                     <FileDownloadIcon />
-                    Экспорт
-                </MenuItem>
-                <MenuItem onClick={handleExportTemplate} disableRipple>
+                    Экспортировать
+                </PermissionMenuItem>
+                <PermissionMenuItem permissionId={'templates:flowexport'} onClick={handleExportTemplate} disableRipple>
                     <ExportTemplateOutlinedIcon />
                     Сохранить как шаблон
-                </MenuItem>
+                </PermissionMenuItem>
                 <Divider sx={{ my: 0.5 }} />
-                <MenuItem onClick={handleFlowStarterPrompts} disableRipple>
+                <PermissionMenuItem
+                    permissionId={isAgentCanvas ? 'agentflows:config' : 'chatflows:config'}
+                    onClick={handleFlowStarterPrompts}
+                    disableRipple
+                >
                     <PictureInPictureAltIcon />
                     Стартовые подсказки
-                </MenuItem>
-                <MenuItem onClick={handleFlowChatFeedback} disableRipple>
+                </PermissionMenuItem>
+                <PermissionMenuItem
+                    permissionId={isAgentCanvas ? 'agentflows:config' : 'chatflows:config'}
+                    onClick={handleFlowChatFeedback}
+                    disableRipple
+                >
                     <ThumbsUpDownOutlinedIcon />
-                    Обратная связь чата
-                </MenuItem>
-                <MenuItem onClick={handleAllowedDomains} disableRipple>
+                    Обратная связь по чату
+                </PermissionMenuItem>
+                <PermissionMenuItem
+                    permissionId={isAgentCanvas ? 'agentflows:domains' : 'chatflows:domains'}
+                    onClick={handleAllowedDomains}
+                    disableRipple
+                >
                     <VpnLockOutlinedIcon />
-                    Разрешенные домены
-                </MenuItem>
-                <MenuItem onClick={handleSpeechToText} disableRipple>
+                    Разрешённые домены
+                </PermissionMenuItem>
+                <PermissionMenuItem
+                    permissionId={isAgentCanvas ? 'agentflows:config' : 'chatflows:config'}
+                    onClick={handleSpeechToText}
+                    disableRipple
+                >
                     <MicNoneOutlinedIcon />
                     Речь в текст
-                </MenuItem>
-                <MenuItem onClick={handleFlowCategory} disableRipple>
+                </PermissionMenuItem>
+                <PermissionMenuItem
+                    permissionId={isAgentCanvas ? 'agentflows:update' : 'chatflows:update'}
+                    onClick={handleFlowCategory}
+                    disableRipple
+                >
                     <FileCategoryIcon />
                     Обновить категорию
-                </MenuItem>
+                </PermissionMenuItem>
                 <Divider sx={{ my: 0.5 }} />
-                <MenuItem onClick={handleDelete} disableRipple>
+                <PermissionMenuItem
+                    permissionId={isAgentCanvas ? 'agentflows:delete' : 'chatflows:delete'}
+                    onClick={handleDelete}
+                    disableRipple
+                >
                     <FileDeleteIcon />
                     Удалить
-                </MenuItem>
+                </PermissionMenuItem>
             </StyledMenu>
             <SaveChatflowDialog
                 show={flowDialogOpen}
@@ -410,6 +453,7 @@ export default function FlowListMenu({ chatflow, isAgentCanvas, setError, update
 FlowListMenu.propTypes = {
     chatflow: PropTypes.object,
     isAgentCanvas: PropTypes.bool,
+    isAgentflowV2: PropTypes.bool,
     setError: PropTypes.func,
     updateFlowsApi: PropTypes.object
 }

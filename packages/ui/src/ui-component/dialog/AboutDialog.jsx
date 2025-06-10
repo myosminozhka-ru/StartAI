@@ -13,22 +13,11 @@ const AboutDialog = ({ show, onCancel }) => {
 
     useEffect(() => {
         if (show) {
-            const username = localStorage.getItem('username')
-            const password = localStorage.getItem('password')
-
-            const config = {}
-            if (username && password) {
-                config.auth = {
-                    username,
-                    password
-                }
-                config.headers = {
-                    'Content-type': 'application/json',
-                    'x-request-from': 'internal'
-                }
-            }
             const latestReleaseReq = axios.get('https://api.github.com/repos/FlowiseAI/Flowise/releases/latest')
-            const currentVersionReq = axios.get(`${baseURL}/api/v1/version`, { ...config })
+            const currentVersionReq = axios.get(`${baseURL}/api/v1/version`, {
+                withCredentials: true,
+                headers: { 'Content-type': 'application/json', 'x-request-from': 'internal' }
+            })
 
             Promise.all([latestReleaseReq, currentVersionReq])
                 .then(([latestReleaseData, currentVersionData]) => {
@@ -56,7 +45,7 @@ const AboutDialog = ({ show, onCancel }) => {
             aria-describedby='alert-dialog-description'
         >
             <DialogTitle sx={{ fontSize: '1rem' }} id='alert-dialog-title'>
-                Версия Flowise
+                Flowise Version
             </DialogTitle>
             <DialogContent>
                 {data && (
@@ -64,9 +53,9 @@ const AboutDialog = ({ show, onCancel }) => {
                         <Table aria-label='simple table'>
                             <TableHead>
                                 <TableRow>
-                                    <TableCell>Текущая версия</TableCell>
-                                    <TableCell>Последняя версия</TableCell>
-                                    <TableCell>Дата публикации</TableCell>
+                                    <TableCell>Current Version</TableCell>
+                                    <TableCell>Latest Version</TableCell>
+                                    <TableCell>Published At</TableCell>
                                 </TableRow>
                             </TableHead>
                             <TableBody>
@@ -79,7 +68,7 @@ const AboutDialog = ({ show, onCancel }) => {
                                             {data.name}
                                         </a>
                                     </TableCell>
-                                    <TableCell>{moment(data.published_at).format('DD.MM.YYYY')}</TableCell>
+                                    <TableCell>{moment(data.published_at).fromNow()}</TableCell>
                                 </TableRow>
                             </TableBody>
                         </Table>

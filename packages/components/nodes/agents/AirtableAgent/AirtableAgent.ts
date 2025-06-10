@@ -129,7 +129,7 @@ class Airtable_Agents implements INode {
 
         let base64String = Buffer.from(JSON.stringify(airtableData)).toString('base64')
 
-        const loggerHandler = new ConsoleCallbackHandler(options.logger)
+        const loggerHandler = new ConsoleCallbackHandler(options.logger, options?.orgId)
         const callbacks = await additionalCallbacks(nodeData, options)
 
         const pyodide = await LoadPyodide()
@@ -181,6 +181,7 @@ json.dumps(my_dict)`
         if (pythonCode) {
             try {
                 const code = `import pandas as pd\n${pythonCode}`
+                // TODO: get print console output
                 finalResult = await pyodide.runPythonAsync(code)
             } catch (error) {
                 throw new Error(`Извините, я не могу найти ответ на вопрос: "${input}" используя следующий код: "${pythonCode}"`)

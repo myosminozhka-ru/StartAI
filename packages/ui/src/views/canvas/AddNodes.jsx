@@ -55,7 +55,6 @@ function a11yProps(index) {
     }
 }
 
-// Категории, которые не отображаются в агент-канвасе
 const blacklistCategoriesForAgentCanvas = ['Agents', 'Memory', 'Record Manager', 'Utilities']
 
 const agentMemoryNodes = ['agentMemory', 'sqliteAgentMemory', 'postgresAgentMemory', 'mySQLAgentMemory']
@@ -641,11 +640,7 @@ const AddNodes = ({ nodesData, node, isAgentCanvas, isAgentflowv2, onFlowGenerat
                                                                                                                     : 'inherit'
                                                                                                         }}
                                                                                                         size='small'
-                                                                                                        label={
-                                                                                                            node.badge === 'DEPRECATING'
-                                                                                                                ? 'УСТАРЕВАЕТ'
-                                                                                                                : node.badge
-                                                                                                        }
+                                                                                                        label={node.badge}
                                                                                                     />
                                                                                                 )}
                                                                                             </div>

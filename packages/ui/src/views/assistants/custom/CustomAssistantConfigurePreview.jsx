@@ -39,6 +39,7 @@ import ViewLeadsDialog from '@/ui-component/dialog/ViewLeadsDialog'
 import Settings from '@/views/settings'
 import ConfirmDialog from '@/ui-component/dialog/ConfirmDialog'
 import PromptGeneratorDialog from '@/ui-component/dialog/PromptGeneratorDialog'
+import { Available } from '@/ui-component/rbac/available'
 import ExpandTextDialog from '@/ui-component/dialog/ExpandTextDialog'
 
 // API
@@ -52,7 +53,7 @@ import { baseURL } from '@/store/constant'
 import { SET_CHATFLOW, closeSnackbar as closeSnackbarAction, enqueueSnackbar as enqueueSnackbarAction } from '@/store/actions'
 
 // Utils
-import { initNode } from '@/utils/genericHelper'
+import { initNode, showHideInputParams } from '@/utils/genericHelper'
 import useNotifier from '@/utils/useNotifier'
 import { toolAgentFlow } from './toolAgentFlow'
 
@@ -92,7 +93,7 @@ const CustomAssistantConfigurePreview = () => {
     const [chatModelsOptions, setChatModelsOptions] = useState([])
     const [selectedChatModel, setSelectedChatModel] = useState({})
     const [selectedCustomAssistant, setSelectedCustomAssistant] = useState({})
-    const [customAssistantInstruction, setCustomAssistantInstruction] = useState('Вы очень полезный помощник')
+    const [customAssistantInstruction, setCustomAssistantInstruction] = useState('You are helpful assistant')
     const [customAssistantFlowId, setCustomAssistantFlowId] = useState()
     const [documentStoreOptions, setDocumentStoreOptions] = useState([])
     const [selectedDocumentStores, setSelectedDocumentStores] = useState([])
@@ -126,9 +127,31 @@ const CustomAssistantConfigurePreview = () => {
     const enqueueSnackbar = (...args) => dispatch(enqueueSnackbarAction(...args))
     const closeSnackbar = (...args) => dispatch(closeSnackbarAction(...args))
 
+    const handleChatModelDataChange = ({ inputParam, newValue }) => {
+        setSelectedChatModel((prevData) => {
+            const updatedData = { ...prevData }
+            updatedData.inputs[inputParam.name] = newValue
+            updatedData.inputParams = showHideInputParams(updatedData)
+            return updatedData
+        })
+    }
+
+    const handleToolDataChange =
+        (toolIndex) =>
+        ({ inputParam, newValue }) => {
+            setSelectedTools((prevTools) => {
+                const updatedTools = [...prevTools]
+                const updatedTool = { ...updatedTools[toolIndex] }
+                updatedTool.inputs[inputParam.name] = newValue
+                updatedTool.inputParams = showHideInputParams(updatedTool)
+                updatedTools[toolIndex] = updatedTool
+                return updatedTools
+            })
+        }
+
     const displayWarning = () => {
         enqueueSnackbar({
-            message: 'Пожалуйста, заполните все обязательные поля.',
+            message: 'Please fill in all mandatory fields.',
             options: {
                 key: new Date().getTime() + Math.random(),
                 variant: 'warning',
@@ -505,10 +528,10 @@ const CustomAssistantConfigurePreview = () => {
 
     const handleDeleteFlow = async () => {
         const confirmPayload = {
-            title: `Удаление`,
-            description: `Удалить ${selectedCustomAssistant.name}?`,
-            confirmButtonName: 'Удалить',
-            cancelButtonName: 'Отмена'
+            title: `Delete`,
+            description: `Delete ${selectedCustomAssistant.name}?`,
+            confirmButtonName: 'Delete',
+            cancelButtonName: 'Cancel'
         }
         const isConfirmed = await confirm(confirmPayload)
 
@@ -541,12 +564,12 @@ const CustomAssistantConfigurePreview = () => {
         const dialogProps = {
             value,
             inputParam: {
-                label: 'Инструкции',
+                label: 'Instructions',
                 name: 'instructions',
                 type: 'string'
             },
-            confirmButtonName: 'Сохранить',
-            cancelButtonName: 'Отмена'
+            confirmButtonName: 'Save',
+            cancelButtonName: 'Cancel'
         }
         setExpandDialogProps(dialogProps)
         setShowExpandDialog(true)
@@ -621,8 +644,8 @@ const CustomAssistantConfigurePreview = () => {
         }
 
         setAssistantPromptGeneratorDialogProps({
-            title: 'Сгенерировать инструкции',
-            description: 'Вы можете сгенерировать шаблон подсказки, поделившись основной информацией о вашей задаче.',
+            title: 'Generate Instructions',
+            description: 'You can generate a prompt template by sharing basic details about your task.',
             data: { selectedChatModel }
         })
         setAssistantPromptGeneratorDialogOpen(true)
@@ -630,7 +653,7 @@ const CustomAssistantConfigurePreview = () => {
 
     const onAPIDialogClick = () => {
         setAPIDialogProps({
-            title: 'Встроить на сайт или использовать как API',
+            title: 'Embed in website or use as API',
             chatflowid: customAssistantFlowId,
             chatflowApiKeyId: canvas.chatflow.apikeyid,
             isSessionMemory: true
@@ -833,8 +856,8 @@ const CustomAssistantConfigurePreview = () => {
                                                     <StyledFab
                                                         size='small'
                                                         color='secondary'
-                                                        aria-label='назад'
-                                                        title='Назад'
+                                                        aria-label='back'
+                                                        title='Back'
                                                         onClick={() => navigate(-1)}
                                                     >
                                                         <IconArrowLeft />
@@ -866,28 +889,30 @@ const CustomAssistantConfigurePreview = () => {
                                                         </Avatar>
                                                     </ButtonBase>
                                                 )}
-                                                <ButtonBase title='Сохранить' sx={{ borderRadius: '50%', mr: 2 }}>
-                                                    <Avatar
-                                                        variant='rounded'
-                                                        sx={{
-                                                            ...theme.typography.commonAvatar,
-                                                            ...theme.typography.mediumAvatar,
-                                                            transition: 'all .2s ease-in-out',
-                                                            background: theme.palette.canvasHeader.saveLight,
-                                                            color: theme.palette.canvasHeader.saveDark,
-                                                            '&:hover': {
-                                                                background: theme.palette.canvasHeader.saveDark,
-                                                                color: theme.palette.canvasHeader.saveLight
-                                                            }
-                                                        }}
-                                                        color='inherit'
-                                                        onClick={onSaveAndProcess}
-                                                    >
-                                                        <IconDeviceFloppy stroke={1.5} size='1.3rem' />
-                                                    </Avatar>
-                                                </ButtonBase>
+                                                <Available permission={'assistants:create'}>
+                                                    <ButtonBase title={`Save`} sx={{ borderRadius: '50%', mr: 2 }}>
+                                                        <Avatar
+                                                            variant='rounded'
+                                                            sx={{
+                                                                ...theme.typography.commonAvatar,
+                                                                ...theme.typography.mediumAvatar,
+                                                                transition: 'all .2s ease-in-out',
+                                                                background: theme.palette.canvasHeader.saveLight,
+                                                                color: theme.palette.canvasHeader.saveDark,
+                                                                '&:hover': {
+                                                                    background: theme.palette.canvasHeader.saveDark,
+                                                                    color: theme.palette.canvasHeader.saveLight
+                                                                }
+                                                            }}
+                                                            color='inherit'
+                                                            onClick={onSaveAndProcess}
+                                                        >
+                                                            <IconDeviceFloppy stroke={1.5} size='1.3rem' />
+                                                        </Avatar>
+                                                    </ButtonBase>
+                                                </Available>
                                                 {customAssistantFlowId && !loadingAssistant && (
-                                                    <ButtonBase ref={settingsRef} title='Настройки' sx={{ borderRadius: '50%' }}>
+                                                    <ButtonBase ref={settingsRef} title='Settings' sx={{ borderRadius: '50%' }}>
                                                         <Avatar
                                                             variant='rounded'
                                                             sx={{
@@ -908,25 +933,27 @@ const CustomAssistantConfigurePreview = () => {
                                                     </ButtonBase>
                                                 )}
                                                 {!customAssistantFlowId && !loadingAssistant && (
-                                                    <ButtonBase ref={settingsRef} title='Удалить ассистента' sx={{ borderRadius: '50%' }}>
-                                                        <Avatar
-                                                            variant='rounded'
-                                                            sx={{
-                                                                ...theme.typography.commonAvatar,
-                                                                ...theme.typography.mediumAvatar,
-                                                                transition: 'all .2s ease-in-out',
-                                                                background: theme.palette.error.light,
-                                                                color: theme.palette.error.dark,
-                                                                '&:hover': {
-                                                                    background: theme.palette.error.dark,
-                                                                    color: theme.palette.error.light
-                                                                }
-                                                            }}
-                                                            onClick={handleDeleteFlow}
-                                                        >
-                                                            <IconTrash stroke={1.5} size='1.3rem' />
-                                                        </Avatar>
-                                                    </ButtonBase>
+                                                    <Available permission={'assistants:delete'}>
+                                                        <ButtonBase ref={settingsRef} title='Delete Assistant' sx={{ borderRadius: '50%' }}>
+                                                            <Avatar
+                                                                variant='rounded'
+                                                                sx={{
+                                                                    ...theme.typography.commonAvatar,
+                                                                    ...theme.typography.mediumAvatar,
+                                                                    transition: 'all .2s ease-in-out',
+                                                                    background: theme.palette.error.light,
+                                                                    color: theme.palette.error.dark,
+                                                                    '&:hover': {
+                                                                        background: theme.palette.error.dark,
+                                                                        color: theme.palette.error.light
+                                                                    }
+                                                                }}
+                                                                onClick={handleDeleteFlow}
+                                                            >
+                                                                <IconTrash stroke={1.5} size='1.3rem' />
+                                                            </Avatar>
+                                                        </ButtonBase>
+                                                    </Available>
                                                 )}
                                             </Toolbar>
                                         </Box>
@@ -942,7 +969,7 @@ const CustomAssistantConfigurePreview = () => {
                                         >
                                             <div style={{ display: 'flex', flexDirection: 'row' }}>
                                                 <Typography>
-                                                    Выберите модель<span style={{ color: 'red' }}>&nbsp;*</span>
+                                                    Select Model<span style={{ color: 'red' }}>&nbsp;*</span>
                                                 </Typography>
                                             </div>
                                             <Dropdown
@@ -964,7 +991,7 @@ const CustomAssistantConfigurePreview = () => {
                                                         }
                                                     }
                                                 }}
-                                                value={selectedChatModel ? selectedChatModel?.name : 'выберите опцию'}
+                                                value={selectedChatModel ? selectedChatModel?.name : 'choose an option'}
                                             />
                                         </Box>
                                         <Box
@@ -979,7 +1006,7 @@ const CustomAssistantConfigurePreview = () => {
                                         >
                                             <Stack sx={{ position: 'relative', alignItems: 'center' }} direction='row'>
                                                 <Typography>
-                                                    Инструкции<span style={{ color: 'red' }}>&nbsp;*</span>
+                                                    Instructions<span style={{ color: 'red' }}>&nbsp;*</span>
                                                 </Typography>
                                                 <div style={{ flex: 1 }}></div>
                                                 <IconButton
@@ -988,7 +1015,7 @@ const CustomAssistantConfigurePreview = () => {
                                                         height: 25,
                                                         width: 25
                                                     }}
-                                                    title='Развернуть'
+                                                    title='Expand'
                                                     color='secondary'
                                                     onClick={() => onExpandDialogClicked(customAssistantInstruction)}
                                                 >
@@ -996,14 +1023,14 @@ const CustomAssistantConfigurePreview = () => {
                                                 </IconButton>
                                                 {selectedChatModel?.name && (
                                                     <Button
-                                                        title='Сгенерировать инструкции с помощью модели'
+                                                        title='Generate instructions using model'
                                                         sx={{ borderRadius: 20 }}
                                                         size='small'
                                                         variant='text'
                                                         onClick={() => generateInstruction()}
                                                         startIcon={<IconWand size={20} />}
                                                     >
-                                                        Сгенерировать
+                                                        Generate
                                                     </Button>
                                                 )}
                                             </Stack>
@@ -1027,8 +1054,8 @@ const CustomAssistantConfigurePreview = () => {
                                             }}
                                         >
                                             <Stack sx={{ position: 'relative', alignItems: 'center' }} direction='row'>
-                                                <Typography>База знаний (Хранилища документов)</Typography>
-                                                <TooltipWithParser title='Предоставьте вашему ассистенту контекст о различных источниках документов. Хранилища документов должны быть предварительно загружены.' />
+                                                <Typography>Knowledge (Document Stores)</Typography>
+                                                <TooltipWithParser title='Give your assistant context about different document sources. Document stores must be upserted in advance.' />
                                             </Stack>
                                             <MultiDropdown
                                                 key={JSON.stringify(selectedDocumentStores)}
@@ -1041,14 +1068,14 @@ const CustomAssistantConfigurePreview = () => {
                                                         onDocStoreItemSelected(newValue)
                                                     }
                                                 }}
-                                                value={selectedDocumentStores.map((ds) => ds.id) ?? 'выберите опцию'}
+                                                value={selectedDocumentStores.map((ds) => ds.id) ?? 'choose an option'}
                                             />
                                             {selectedDocumentStores.length > 0 && (
                                                 <Stack sx={{ mt: 3, position: 'relative', alignItems: 'center' }} direction='row'>
                                                     <Typography>
-                                                        Описание базы знаний<span style={{ color: 'red' }}>&nbsp;*</span>
+                                                        Describe Knowledge<span style={{ color: 'red' }}>&nbsp;*</span>
                                                     </Typography>
-                                                    <TooltipWithParser title='Опишите, о чем база знаний, это поможет ИИ понять, когда и как искать правильную информацию' />
+                                                    <TooltipWithParser title='Describe what the knowledge base is about, this is useful for the AI to know when and how to search for correct information' />
                                                 </Stack>
                                             )}
                                             {selectedDocumentStores.map((ds, index) => {
@@ -1121,13 +1148,14 @@ const CustomAssistantConfigurePreview = () => {
                                                     borderRadius: 2
                                                 }}
                                             >
-                                                {(selectedChatModel.inputParams ?? [])
-                                                    .filter((inputParam) => !inputParam.hidden)
+                                                {showHideInputParams(selectedChatModel)
+                                                    .filter((inputParam) => !inputParam.hidden && inputParam.display !== false)
                                                     .map((inputParam, index) => (
                                                         <DocStoreInputHandler
                                                             key={index}
                                                             inputParam={inputParam}
                                                             data={selectedChatModel}
+                                                            onNodeDataChange={handleChatModelDataChange}
                                                         />
                                                     ))}
                                             </Box>
@@ -1143,8 +1171,8 @@ const CustomAssistantConfigurePreview = () => {
                                             }}
                                         >
                                             <Stack sx={{ position: 'relative', alignItems: 'center' }} direction='row'>
-                                                <Typography>Инструменты</Typography>
-                                                <TooltipWithParser title='Инструменты - это действия, которые может выполнять ваш ассистент' />
+                                                <Typography>Tools</Typography>
+                                                <TooltipWithParser title='Tools are actions that your assistant can perform' />
                                             </Stack>
                                             {selectedTools.map((tool, index) => {
                                                 return (
@@ -1161,7 +1189,7 @@ const CustomAssistantConfigurePreview = () => {
                                                         <Box sx={{ pl: 2, pr: 2, pt: 2, pb: 0 }}>
                                                             <div style={{ display: 'flex', flexDirection: 'row' }}>
                                                                 <Typography>
-                                                                    Инструмент<span style={{ color: 'red' }}>&nbsp;*</span>
+                                                                    Tool<span style={{ color: 'red' }}>&nbsp;*</span>
                                                                 </Typography>
                                                                 <div style={{ flex: 1 }}></div>
                                                                 <IconButton
@@ -1198,7 +1226,7 @@ const CustomAssistantConfigurePreview = () => {
                                                                         }
                                                                     }
                                                                 }}
-                                                                value={tool?.name || 'выберите опцию'}
+                                                                value={tool?.name || 'choose an option'}
                                                             />
                                                         </Box>
                                                         {tool && Object.keys(tool).length === 0 && (
@@ -1212,13 +1240,16 @@ const CustomAssistantConfigurePreview = () => {
                                                                     mb: 1
                                                                 }}
                                                             >
-                                                                {(tool.inputParams ?? [])
-                                                                    .filter((inputParam) => !inputParam.hidden)
-                                                                    .map((inputParam, index) => (
+                                                                {showHideInputParams(tool)
+                                                                    .filter(
+                                                                        (inputParam) => !inputParam.hidden && inputParam.display !== false
+                                                                    )
+                                                                    .map((inputParam, inputIndex) => (
                                                                         <DocStoreInputHandler
-                                                                            key={index}
+                                                                            key={inputIndex}
                                                                             inputParam={inputParam}
                                                                             data={tool}
+                                                                            onNodeDataChange={handleToolDataChange(index)}
                                                                         />
                                                                     ))}
                                                             </Box>
@@ -1228,29 +1259,31 @@ const CustomAssistantConfigurePreview = () => {
                                             })}
                                             <Button
                                                 fullWidth
-                                                title='Добавить инструмент'
+                                                title='Add Tool'
                                                 sx={{ mt: 1, mb: 1, borderRadius: 20 }}
                                                 variant='outlined'
                                                 onClick={() => setSelectedTools([...selectedTools, {}])}
                                             >
-                                                Добавить инструмент
+                                                Add Tool
                                             </Button>
                                         </Box>
                                         {selectedChatModel && Object.keys(selectedChatModel).length > 0 && (
-                                            <Button
-                                                fullWidth
-                                                title='Сохранить ассистента'
-                                                sx={{
-                                                    mt: 1,
-                                                    mb: 1,
-                                                    borderRadius: 20,
-                                                    background: 'linear-gradient(45deg, #673ab7 30%, #1e88e5 90%)'
-                                                }}
-                                                variant='contained'
-                                                onClick={onSaveAndProcess}
-                                            >
-                                                Сохранить ассистента
-                                            </Button>
+                                            <Available permission={'assistants:create'}>
+                                                <Button
+                                                    fullWidth
+                                                    title='Save Assistant'
+                                                    sx={{
+                                                        mt: 1,
+                                                        mb: 1,
+                                                        borderRadius: 20,
+                                                        background: 'linear-gradient(45deg, #673ab7 30%, #1e88e5 90%)'
+                                                    }}
+                                                    variant='contained'
+                                                    onClick={onSaveAndProcess}
+                                                >
+                                                    Save Assistant
+                                                </Button>
+                                            </Available>
                                         )}
                                     </div>
                                 </Grid>
@@ -1272,7 +1305,7 @@ const CustomAssistantConfigurePreview = () => {
                                                             height: pageHeight(),
                                                             showTitle: true,
                                                             backgroundColor: '#23262c',
-                                                            title: '  Предпросмотр',
+                                                            title: '  Preview',
                                                             botMessage: {
                                                                 backgroundColor: '#32353b',
                                                                 textColor: '#ffffff'
@@ -1307,7 +1340,7 @@ const CustomAssistantConfigurePreview = () => {
                                                             height: pageHeight(),
                                                             showTitle: true,
                                                             backgroundColor: '#fafafa',
-                                                            title: '  Предпросмотр',
+                                                            title: '  Preview',
                                                             botMessage: {
                                                                 backgroundColor: '#ffffff',
                                                                 textColor: '#303235'

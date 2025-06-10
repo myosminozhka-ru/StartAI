@@ -419,6 +419,8 @@ export interface IStateWithMessages extends ICommonObject {
     [key: string]: any
 }
 
+export * from './Interface.Evaluation'
+
 export interface IServerSideEventStreamer {
     streamStartEvent(chatId: string, data: any): void
     streamTokenEvent(chatId: string, data: string): void

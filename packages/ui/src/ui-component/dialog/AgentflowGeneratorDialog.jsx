@@ -21,16 +21,16 @@ import useApi from '@/hooks/useApi'
 
 const defaultInstructions = [
     {
-        text: 'Агент, который может автономно искать в интернете и генерировать отчеты'
+        text: 'Агент, который может автономно искать в интернете и генерировать отчёт'
     },
     {
-        text: 'Суммаризировать документ'
+        text: 'Суммировать документ'
     },
     {
         text: 'Генерировать ответы на запросы пользователей и отправлять их в Slack'
     },
     {
-        text: 'Команда агентов для обработки всех запросов клиентов'
+        text: 'Команда агентов, способная обрабатывать все клиентские запросы'
     }
 ]
 
@@ -118,7 +118,7 @@ const AgentflowGeneratorDialog = ({ show, dialogProps, onCancel, onConfirm }) =>
                 onConfirm()
             } else {
                 enqueueSnackbar({
-                    message: response.error || 'Не удалось сгенерировать агент-поток',
+                    message: response.error || 'Не удалось сгенерировать Agentflow',
                     options: {
                         key: new Date().getTime() + Math.random(),
                         variant: 'error',
@@ -133,7 +133,7 @@ const AgentflowGeneratorDialog = ({ show, dialogProps, onCancel, onConfirm }) =>
             }
         } catch (error) {
             enqueueSnackbar({
-                message: error.response?.data?.message || 'Не удалось сгенерировать агент-поток',
+                message: error.response?.data?.message || 'Не удалось сгенерировать Agentflow',
                 options: {
                     key: new Date().getTime() + Math.random(),
                     variant: 'error',
@@ -179,9 +179,9 @@ const AgentflowGeneratorDialog = ({ show, dialogProps, onCancel, onConfirm }) =>
                 <DialogContent>
                     {loading ? (
                         <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', flexDirection: 'column' }}>
-                            <img src={generatorGIF} alt='Генерация агент-потока' style={{ maxWidth: '100%', height: 'auto' }} />
+                            <img src={generatorGIF} alt='Генерация Agentflow' style={{ maxWidth: '100%', height: 'auto' }} />
                             <Typography variant='h5' sx={{ mt: 2 }}>
-                                Генерация вашего агент-потока...
+                                Генерируется ваш Agentflow...
                             </Typography>
                             <Box sx={{ width: '100%', mt: 2 }}>
                                 <LinearProgress
@@ -269,7 +269,7 @@ const AgentflowGeneratorDialog = ({ show, dialogProps, onCancel, onConfirm }) =>
                             <Box sx={{ mt: 2 }}>
                                 <div style={{ display: 'flex', flexDirection: 'row' }}>
                                     <Typography>
-                                        Выберите модель для генерации агент-потока<span style={{ color: 'red' }}>&nbsp;*</span>
+                                        Выберите модель для генерации Agentflow<span style={{ color: 'red' }}>&nbsp;*</span>
                                     </Typography>
                                 </div>
                                 <Dropdown

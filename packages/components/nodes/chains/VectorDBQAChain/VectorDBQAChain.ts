@@ -84,7 +84,7 @@ class VectorDBQAChain_Chains implements INode {
             query: input
         }
 
-        const loggerHandler = new ConsoleCallbackHandler(options.logger)
+        const loggerHandler = new ConsoleCallbackHandler(options.logger, options?.orgId)
         const callbacks = await additionalCallbacks(nodeData, options)
 
         if (shouldStreamResponse) {

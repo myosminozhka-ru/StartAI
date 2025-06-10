@@ -20,6 +20,7 @@ import ConfirmDialog from '@/ui-component/dialog/ConfirmDialog'
 import ExpandedChunkDialog from './ExpandedChunkDialog'
 import ViewHeader from '@/layout/MainLayout/ViewHeader'
 import DocStoreInputHandler from '@/views/docstore/DocStoreInputHandler'
+import { PermissionButton } from '@/ui-component/button/RBACButtons'
 
 // API
 import documentsApi from '@/api/documentstore'
@@ -27,6 +28,7 @@ import nodesApi from '@/api/nodes'
 
 // Hooks
 import useApi from '@/hooks/useApi'
+import { useAuth } from '@/hooks/useAuth'
 import useNotifier from '@/utils/useNotifier'
 import { baseURL } from '@/store/constant'
 import { initNode } from '@/utils/genericHelper'
@@ -57,6 +59,7 @@ const VectorStoreQuery = () => {
     const theme = useTheme()
     const dispatch = useDispatch()
     const inputRef = useRef(null)
+    const { hasAssignedWorkspace } = useAuth()
 
     useNotifier()
 
@@ -94,7 +97,7 @@ const VectorStoreQuery = () => {
     }
 
     const handleEnter = (e) => {
-        // Check if IME composition is in progress
+        // Проверка, идет ли сейчас ввод через IME
         const isIMEComposition = e.isComposing || e.keyCode === 229
         if (e.key === 'Enter' && query && !isIMEComposition) {
             if (!e.shiftKey && query) {
@@ -141,7 +144,7 @@ const VectorStoreQuery = () => {
             setLoading(false)
             if (updateResp.data) {
                 enqueueSnackbar({
-                    message: 'Vector Store Config Successfully Updated',
+                    message: 'Конфигурация векторного хранилища успешно обновлена',
                     options: {
                         key: new Date().getTime() + Math.random(),
                         variant: 'success',
@@ -157,7 +160,7 @@ const VectorStoreQuery = () => {
             setLoading(false)
             const errorData = error.response?.data || `${error.response?.status}: ${error.response?.statusText}`
             enqueueSnackbar({
-                message: `Failed to update vector store config: ${errorData}`,
+                message: `Не удалось обновить конфигурацию векторного хранилища: ${errorData}`,
                 options: {
                     key: new Date().getTime() + Math.random(),
                     variant: 'error',
@@ -190,7 +193,7 @@ const VectorStoreQuery = () => {
         if (queryVectorStoreApi.error) {
             if (queryVectorStoreApi.error.response?.data?.message) {
                 const message = queryVectorStoreApi.error.response.data.message
-                // remove the text 'documentStoreServices.queryVectorStore - ' from the error message to make it readable
+                // удалить текст 'documentStoreServices.queryVectorStore - ' из сообщения об ошибке для читаемости
                 setRetrievalError(message.replace('documentStoreServices.queryVectorStore - ', ''))
                 setDocumentChunks([])
                 setTimeTaken(-1)
@@ -227,6 +230,10 @@ const VectorStoreQuery = () => {
 
     useEffect(() => {
         if (getSpecificDocumentStoreApi.data) {
+            if (!hasAssignedWorkspace(getSpecificDocumentStoreApi.data.workspaceId)) {
+                navigate('/unauthorized')
+                return
+            }
             setDocumentStore(getSpecificDocumentStoreApi.data)
             const vectorStoreConfig = getSpecificDocumentStoreApi.data.vectorStoreConfig
             if (vectorStoreConfig) {
@@ -245,19 +252,20 @@ const VectorStoreQuery = () => {
                     <ViewHeader
                         isBackButton={true}
                         search={false}
-                        title={documentStore?.name || 'Document Store'}
-                        description='Retrieval Playground - Test your vector store retrieval settings'
+                        title={documentStore?.name || 'Документное хранилище'}
+                        description='Песочница поиска — тестируйте настройки поиска по вашему векторному хранилищу'
                         onBack={() => navigate(-1)}
                     >
-                        <Button
+                        <PermissionButton
+                            permissionId={'documentStores:upsert-config'}
                             variant='outlined'
                             color='secondary'
                             sx={{ borderRadius: 2, height: '100%' }}
                             startIcon={<IconDeviceFloppy />}
                             onClick={saveConfig}
                         >
-                            Save Config
-                        </Button>
+                            Сохранить конфигурацию
+                        </PermissionButton>
                     </ViewHeader>
                     <div style={{ width: '100%' }}></div>
                     <div>
@@ -266,7 +274,7 @@ const VectorStoreQuery = () => {
                                 <Box>
                                     <div style={{ display: 'flex', flexDirection: 'row' }}>
                                         <Typography variant='overline'>
-                                            Enter your Query<span style={{ color: 'red' }}>&nbsp;*</span>
+                                            Введите ваш запрос<span style={{ color: 'red' }}>&nbsp;*</span>
                                         </Typography>
 
                                         <div style={{ flexGrow: 1 }}></div>
@@ -395,10 +403,10 @@ const VectorStoreQuery = () => {
                                             />
                                         </div>
                                         <Typography sx={{ ml: 2 }} variant='h3'>
-                                            Retrieved Documents
+                                            Полученные документы
                                             {timeTaken > -1 && (
                                                 <Typography variant='body2' sx={{ color: 'gray' }}>
-                                                    Count: {documentChunks.length}. Time taken: {timeTaken} millis.
+                                                    Количество: {documentChunks.length}. Время: {timeTaken} мс.
                                                 </Typography>
                                             )}
                                             {retrievalError && (
@@ -425,7 +433,7 @@ const VectorStoreQuery = () => {
                                                     alt='chunks_emptySVG'
                                                 />
                                             </Box>
-                                            <div>No Documents Retrieved</div>
+                                            <div>Документы не найдены</div>
                                         </div>
                                     )}
                                     <Grid container spacing={2}>
@@ -440,7 +448,7 @@ const VectorStoreQuery = () => {
                                                         <Card>
                                                             <CardContent sx={{ p: 2 }}>
                                                                 <Typography sx={{ wordWrap: 'break-word', mb: 1 }} variant='h5'>
-                                                                    {`#${row.chunkNo}. Characters: ${row.pageContent.length}`}
+                                                                    {`#${row.chunkNo}. Символов: ${row.pageContent.length}`}
                                                                 </Typography>
                                                                 <Typography sx={{ wordWrap: 'break-word' }} variant='body2'>
                                                                     {row.pageContent}

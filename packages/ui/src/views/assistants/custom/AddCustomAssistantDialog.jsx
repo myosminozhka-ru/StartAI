@@ -121,7 +121,6 @@ const AddCustomAssistantDialog = ({ show, dialogProps, onCancel, onConfirm }) =>
                         type='string'
                         fullWidth
                         key='customAssistantName'
-                        placeholder='Введите название ассистента'
                         onChange={(e) => setCustomAssistantName(e.target.value)}
                         value={customAssistantName ?? ''}
                     />

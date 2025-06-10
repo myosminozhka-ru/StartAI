@@ -20,7 +20,8 @@ import {
     IconCopy,
     IconTrash,
     IconInfoCircle,
-    IconLoader
+    IconLoader,
+    IconAlertCircleFilled
 } from '@tabler/icons-react'
 import StopCircleIcon from '@mui/icons-material/StopCircle'
 import CancelIcon from '@mui/icons-material/Cancel'
@@ -46,24 +47,26 @@ const StyledNodeToolbar = styled(NodeToolbar)(({ theme }) => ({
     boxShadow: '0 2px 14px 0 rgb(32 40 45 / 8%)'
 }))
 
-// ===========================|| УЗЕЛ ПОТОКА АГЕНТА ||=========================== //
+// ===========================|| CANVAS NODE ||=========================== //
 
 const AgentFlowNode = ({ data }) => {
     const theme = useTheme()
     const customization = useSelector((state) => state.customization)
+    const canvas = useSelector((state) => state.canvas)
     const ref = useRef(null)
     const updateNodeInternals = useUpdateNodeInternals()
     // eslint-disable-next-line
     const [position, setPosition] = useState(0)
     const [isHovered, setIsHovered] = useState(false)
+    const [warningMessage, setWarningMessage] = useState('')
     const { deleteNode, duplicateNode } = useContext(flowContext)
     const [showInfoDialog, setShowInfoDialog] = useState(false)
     const [infoDialogProps, setInfoDialogProps] = useState({})
 
-    const defaultColor = '#666666' // fallback color if data.color is not present
+    const defaultColor = '#666666' // цвет по умолчанию, если data.color не задан
     const nodeColor = data.color || defaultColor
 
-    // Get different shades of the color based on state
+    // Получить разные оттенки цвета в зависимости от состояния
     const getStateColor = () => {
         if (data.selected) return nodeColor
         if (isHovered) return alpha(nodeColor, 0.8)
@@ -79,7 +82,7 @@ const AgentFlowNode = ({ data }) => {
         const spacing = currentHeight / (getOutputAnchors().length + 1)
         const position = spacing * (index + 1)
 
-        // Update node internals when we get a non-zero position
+        // Обновить внутренности узла, когда получаем ненулевую позицию
         if (position > 0) {
             updateNodeInternals(data.id)
         }
@@ -89,7 +92,7 @@ const AgentFlowNode = ({ data }) => {
 
     const getMinimumHeight = () => {
         const outputCount = getOutputAnchors().length
-        // Use exactly 60px as minimum height
+        // Использовать ровно 60px как минимальную высоту
         return Math.max(60, outputCount * 20 + 40)
     }
 
@@ -132,10 +135,31 @@ const AgentFlowNode = ({ data }) => {
         }
     }, [data, ref, updateNodeInternals])
 
+    useEffect(() => {
+        const nodeOutdatedMessage = (oldVersion, newVersion) =>
+            `Версия узла ${oldVersion} устарела\nОбновите до последней версии ${newVersion}`
+        const nodeVersionEmptyMessage = (newVersion) => `Узел устарел\nОбновите до последней версии ${newVersion}`
+
+        const componentNode = canvas.componentNodes.find((nd) => nd.name === data.name)
+        if (componentNode) {
+            if (!data.version) {
+                setWarningMessage(nodeVersionEmptyMessage(componentNode.version))
+            } else if (data.version && componentNode.version > data.version) {
+                setWarningMessage(nodeOutdatedMessage(data.version, componentNode.version))
+            } else if (componentNode.badge === 'DEPRECATING') {
+                setWarningMessage(
+                    componentNode?.deprecateMessage ?? 'Этот узел будет удалён в следующем релизе. Используйте новый узел с пометкой NEW'
+                )
+            } else {
+                setWarningMessage('')
+            }
+        }
+    }, [canvas.componentNodes, data.name, data.version])
+
     return (
         <div ref={ref} onMouseEnter={() => setIsHovered(true)} onMouseLeave={() => setIsHovered(false)}>
             <StyledNodeToolbar>
-                <ButtonGroup sx={{ gap: 1 }} variant='outlined' aria-label='Группа кнопок'>
+                <ButtonGroup sx={{ gap: 1 }} variant='outlined' aria-label='Basic button group'>
                     {data.name !== 'startAgentflow' && (
                         <IconButton
                             size={'small'}
@@ -204,7 +228,7 @@ const AgentFlowNode = ({ data }) => {
                 border={false}
             >
                 {data && data.status && (
-                    <Tooltip title={data.status === 'ERROR' ? data.error || 'Error' : ''}>
+                    <Tooltip title={data.status === 'ERROR' ? data.error || 'Ошибка' : ''}>
                         <Avatar
                             variant='rounded'
                             sx={{
@@ -232,6 +256,24 @@ const AgentFlowNode = ({ data }) => {
                             ) : (
                                 <IconCheck />
                             )}
+                        </Avatar>
+                    </Tooltip>
+                )}
+
+                {warningMessage && (
+                    <Tooltip placement='right-start' title={<span style={{ whiteSpace: 'pre-line' }}>{warningMessage}</span>}>
+                        <Avatar
+                            variant='rounded'
+                            sx={{
+                                ...theme.typography.smallAvatar,
+                                borderRadius: '50%',
+                                background: 'white',
+                                position: 'absolute',
+                                top: -10,
+                                left: -10
+                            }}
+                        >
+                            <IconAlertCircleFilled color='orange' />
                         </Avatar>
                     </Tooltip>
                 )}
@@ -312,14 +354,14 @@ const AgentFlowNode = ({ data }) => {
                             </Typography>
 
                             {(() => {
-                                // Array of model configs to check and render
+                                // Массив конфигураций моделей для отображения
                                 const modelConfigs = [
                                     { model: data.inputs?.llmModel, config: data.inputs?.llmModelConfig },
                                     { model: data.inputs?.agentModel, config: data.inputs?.agentModelConfig },
                                     { model: data.inputs?.conditionAgentModel, config: data.inputs?.conditionAgentModelConfig }
                                 ]
 
-                                // Filter out undefined models and render each valid one
+                                // Фильтруем неопределённые модели и отображаем каждую подходящую
                                 return modelConfigs
                                     .filter((item) => item.model && item.config)
                                     .map((item, index) => (
@@ -353,18 +395,21 @@ const AgentFlowNode = ({ data }) => {
                             })()}
 
                             {(() => {
-                                // Array of tool configurations to check and render
+                                // Массив конфигураций инструментов для отображения
                                 const toolConfigs = [
                                     { tools: data.inputs?.llmTools, toolProperty: 'llmSelectedTool' },
                                     { tools: data.inputs?.agentTools, toolProperty: 'agentSelectedTool' },
                                     {
-                                        tools: data.inputs?.selectedTool ? [{ selectedTool: data.inputs?.selectedTool }] : [],
-                                        toolProperty: 'selectedTool'
+                                        tools:
+                                            data.inputs?.selectedTool ?? data.inputs?.toolAgentflowSelectedTool
+                                                ? [{ selectedTool: data.inputs?.selectedTool ?? data.inputs?.toolAgentflowSelectedTool }]
+                                                : [],
+                                        toolProperty: ['selectedTool', 'toolAgentflowSelectedTool']
                                     },
                                     { tools: data.inputs?.agentKnowledgeVSEmbeddings, toolProperty: ['vectorStore', 'embeddingModel'] }
                                 ]
 
-                                // Filter out undefined tools and render each valid collection
+                                // Фильтруем неопределённые инструменты и отображаем каждую подходящую коллекцию
                                 return toolConfigs
                                     .filter((config) => config.tools && config.tools.length > 0)
                                     .map((config, configIndex) => (
@@ -378,23 +423,17 @@ const AgentFlowNode = ({ data }) => {
                                                             return (
                                                                 <Box
                                                                     key={`tool-${configIndex}-${toolIndex}-${propIndex}`}
+                                                                    component='img'
+                                                                    src={`${baseURL}/api/v1/node-icon/${toolName}`}
+                                                                    alt={toolName}
                                                                     sx={{
-                                                                        backgroundColor: 'rgba(255, 255, 255, 0.2)',
+                                                                        width: 20,
+                                                                        height: 20,
                                                                         borderRadius: '50%',
-                                                                        width: 24,
-                                                                        height: 24,
-                                                                        display: 'flex',
-                                                                        justifyContent: 'center',
-                                                                        alignItems: 'center',
-                                                                        padding: '4px'
+                                                                        backgroundColor: 'rgba(255, 255, 255, 0.2)',
+                                                                        padding: 0.3
                                                                     }}
-                                                                >
-                                                                    <img
-                                                                        style={{ width: '100%', height: '100%', objectFit: 'contain' }}
-                                                                        src={`${baseURL}/api/v1/node-icon/${toolName}`}
-                                                                        alt={toolName}
-                                                                    />
-                                                                </Box>
+                                                                />
                                                             )
                                                         })
                                                 } else {
@@ -404,23 +443,17 @@ const AgentFlowNode = ({ data }) => {
                                                     return [
                                                         <Box
                                                             key={`tool-${configIndex}-${toolIndex}`}
+                                                            component='img'
+                                                            src={`${baseURL}/api/v1/node-icon/${toolName}`}
+                                                            alt={toolName}
                                                             sx={{
-                                                                backgroundColor: 'rgba(255, 255, 255, 0.2)',
+                                                                width: 20,
+                                                                height: 20,
                                                                 borderRadius: '50%',
-                                                                width: 24,
-                                                                height: 24,
-                                                                display: 'flex',
-                                                                justifyContent: 'center',
-                                                                alignItems: 'center',
-                                                                padding: '4px'
+                                                                backgroundColor: 'rgba(255, 255, 255, 0.2)',
+                                                                padding: 0.3
                                                             }}
-                                                        >
-                                                            <img
-                                                                style={{ width: '100%', height: '100%', objectFit: 'contain' }}
-                                                                src={`${baseURL}/api/v1/node-icon/${toolName}`}
-                                                                alt={toolName}
-                                                            />
-                                                        </Box>
+                                                        />
                                                     ]
                                                 }
                                             })}
@@ -454,7 +487,7 @@ const AgentFlowNode = ({ data }) => {
                                         width: 20,
                                         height: 20,
                                         borderRadius: '50%',
-                                        backgroundColor: theme.palette.background.paper, // or 'white'
+                                        backgroundColor: theme.palette.background.paper, // или 'white'
                                         pointerEvents: 'none'
                                     }}
                                 />
