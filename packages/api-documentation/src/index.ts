@@ -9,6 +9,7 @@ app.get('/', (req: Request, res: Response) => {
     res.redirect('/api-docs')
 })
 
+// @ts-ignore
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocs, swaggerExplorerOptions))
 
 app.listen(port, () => {

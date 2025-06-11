@@ -95,6 +95,16 @@ export class IdentityManager {
             return decoded
         } catch (error) {
             console.error('Error verifying license key:', error)
+            // В dev режиме или при отключенной проверке просто декодируем без верификации подписи
+            if (process.env.NODE_ENV === 'development' || process.env.DISABLE_LICENSE_VERIFICATION === 'true') {
+                try {
+                    console.log('🔓 License signature verification disabled - decoding without verification')
+                    return jwt.decode(licenseKey)
+                } catch (decodeError) {
+                    console.error('Error decoding license key:', decodeError)
+                    return null
+                }
+            }
             return null
         }
     }
@@ -121,15 +131,29 @@ export class IdentityManager {
                     if (!issuedAtSeconds) {
                         this.licenseValid = false
                     } else {
-                        const issuedAt = new Date(issuedAtSeconds * 1000)
-                        const expiryDurationInMonths = decodedLicense.expiryDurationInMonths || 0
+                        // Используем стандартное JWT exp поле если доступно
+                        if (decodedLicense.exp) {
+                            const expiresAt = new Date(decodedLicense.exp * 1000)
+                            if (new Date() > expiresAt) {
+                                this.licenseValid = false
+                            } else {
+                                this.licenseValid = true
+                            }
+                        } else if (decodedLicense.expiryDurationInMonths) {
+                            // Fallback к старой логике с expiryDurationInMonths
+                            const issuedAt = new Date(issuedAtSeconds * 1000)
+                            const expiryDurationInMonths = decodedLicense.expiryDurationInMonths
 
-                        const expiryDate = new Date(issuedAt)
-                        expiryDate.setMonth(expiryDate.getMonth() + expiryDurationInMonths)
+                            const expiryDate = new Date(issuedAt)
+                            expiryDate.setMonth(expiryDate.getMonth() + expiryDurationInMonths)
 
-                        if (new Date() > expiryDate) {
-                            this.licenseValid = false
+                            if (new Date() > expiryDate) {
+                                this.licenseValid = false
+                            } else {
+                                this.licenseValid = true
+                            }
                         } else {
+                            // Если ни exp, ни expiryDurationInMonths нет, считаем лицензию действительной
                             this.licenseValid = true
                         }
                     }

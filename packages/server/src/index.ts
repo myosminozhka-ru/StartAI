@@ -1,4 +1,4 @@
-import express, { Request, Response } from 'express'
+import express, { Request, Response, NextFunction, RequestHandler } from 'express'
 import path from 'path'
 import cors from 'cors'
 import http from 'http'
@@ -165,6 +165,7 @@ export class App {
         this.app.use(cors(getCorsOptions()))
 
         // Parse cookies
+        // @ts-ignore
         this.app.use(cookieParser())
 
         // Allow embedding from specified domains.
@@ -199,7 +200,7 @@ export class App {
 
         await initializeJwtCookieMiddleware(this.app, this.identityManager)
 
-        this.app.use(async (req, res, next) => {
+        this.app.use(async (req: any, res: any, next: any) => {
             // Step 1: Check if the req path contains /api/v1 regardless of case
             if (URL_CASE_INSENSITIVE_REGEX.test(req.path)) {
                 // Step 2: Check if the req path is casesensitive
