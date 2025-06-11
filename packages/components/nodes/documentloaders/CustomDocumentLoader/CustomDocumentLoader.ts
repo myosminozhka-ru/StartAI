@@ -16,34 +16,34 @@ class CustomDocumentLoader_DocumentLoaders implements INode {
     outputs: INodeOutputsValue[]
 
     constructor() {
-        this.label = 'Custom Document Loader'
+        this.label = 'Пользовательский загрузчик документов'
         this.name = 'customDocumentLoader'
         this.version = 1.0
         this.type = 'Document'
         this.icon = 'customDocLoader.svg'
-        this.category = 'Document Loaders'
-        this.description = `Custom function for loading documents`
+        this.category = 'Загрузчики документов'
+        this.description = `Пользовательская функция для загрузки документов`
         this.baseClasses = [this.type]
         this.inputs = [
             {
-                label: 'Input Variables',
+                label: 'Входные переменные',
                 name: 'functionInputVariables',
-                description: 'Input variables can be used in the function with prefix $. For example: $var',
+                description: 'Входные переменные могут использоваться в функции с префиксом $. Например: $var',
                 type: 'json',
                 optional: true,
                 acceptVariable: true,
                 list: true
             },
             {
-                label: 'Javascript Function',
+                label: 'Javascript функция',
                 name: 'javascriptFunction',
                 type: 'code',
-                description: `Must return an array of document objects containing metadata and pageContent if "Document" is selected in the output. If "Text" is selected in the output, it must return a string.`,
+                description: `Должна возвращать массив объектов документов, содержащих metadata и pageContent, если выбран вывод "Document". Если выбран вывод "Text", должна возвращать строку.`,
                 placeholder: `return [
   {
-    pageContent: 'Document Content',
+    pageContent: 'Содержимое документа',
     metadata: {
-      title: 'Document Title',
+      title: 'Название документа',
     }
   }
 ]`
@@ -51,15 +51,15 @@ class CustomDocumentLoader_DocumentLoaders implements INode {
         ]
         this.outputs = [
             {
-                label: 'Document',
+                label: 'Документ',
                 name: 'document',
-                description: 'Array of document objects containing metadata and pageContent',
+                description: 'Массив объектов документов, содержащих metadata и pageContent',
                 baseClasses: [...this.baseClasses, 'json']
             },
             {
-                label: 'Text',
+                label: 'Текст',
                 name: 'text',
-                description: 'Concatenated string from pageContent of documents',
+                description: 'Объединённая строка из pageContent документов',
                 baseClasses: ['string', 'json']
             }
         ]
@@ -86,11 +86,11 @@ class CustomDocumentLoader_DocumentLoaders implements INode {
                 inputVars =
                     typeof functionInputVariablesRaw === 'object' ? functionInputVariablesRaw : JSON.parse(functionInputVariablesRaw)
             } catch (exception) {
-                throw new Error('Invalid JSON in the Custom Document Loader Input Variables: ' + exception)
+                throw new Error('Некорректный JSON во входных переменных пользовательского загрузчика документов: ' + exception)
             }
         }
 
-        // Some values might be a stringified JSON, parse it
+        // Некоторые значения могут быть строкой в формате JSON, парсим их
         for (const key in inputVars) {
             let value = inputVars[key]
             if (typeof value === 'string') {
@@ -99,7 +99,7 @@ class CustomDocumentLoader_DocumentLoaders implements INode {
                     try {
                         value = JSON.parse(value)
                     } catch (e) {
-                        // ignore
+                        // игнорируем
                     }
                 }
                 inputVars[key] = value
@@ -154,7 +154,7 @@ class CustomDocumentLoader_DocumentLoaders implements INode {
                     typeof response[0].metadata === 'object'
                 )
                     return response
-                throw new Error('Document object must contain pageContent and metadata')
+                throw new Error('Объект документа должен содержать pageContent и metadata')
             }
 
             if (output === 'text' && typeof response === 'string') {

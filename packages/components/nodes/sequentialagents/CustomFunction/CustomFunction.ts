@@ -6,16 +6,16 @@ import { AIMessage, BaseMessage, HumanMessage } from '@langchain/core/messages'
 import { customGet } from '../commonUtils'
 
 const howToUseCode = `
-1. Must return a string value at the end of function.
+1. В конце функции обязательно должен быть возврат значения типа string.
 
-2. You can get default flow config, including the current "state":
+2. Вы можете получить конфиг потока по умолчанию, включая текущий "state":
     - \`$flow.sessionId\`
     - \`$flow.chatId\`
     - \`$flow.chatflowId\`
     - \`$flow.input\`
     - \`$flow.state\`
 
-3. You can get custom variables: \`$vars.<variable-name>\`
+3. Вы можете получить пользовательские переменные: \`$vars.<имя-переменной>\`
 
 `
 
@@ -31,58 +31,59 @@ class CustomFunction_SeqAgents implements INode {
     inputs: INodeParams[]
 
     constructor() {
-        this.label = 'Custom JS Function'
+        this.label = 'Пользовательская JS функция'
         this.name = 'seqCustomFunction'
         this.version = 1.0
         this.type = 'CustomFunction'
         this.icon = 'customfunction.svg'
-        this.category = 'Sequential Agents'
-        this.description = `Execute custom javascript function`
+        this.category = 'Последовательные агенты'
+        this.description = `Выполнение пользовательской javascript функции`
         this.baseClasses = [this.type]
         this.inputs = [
             {
-                label: 'Input Variables',
+                label: 'Входные переменные',
                 name: 'functionInputVariables',
-                description: 'Input variables can be used in the function with prefix $. For example: $var',
+                description: 'Входные переменные могут быть использованы в функции с префиксом $. Например: $var',
                 type: 'json',
                 optional: true,
                 acceptVariable: true,
                 list: true
             },
             {
-                label: 'Sequential Node',
+                label: 'Последовательный узел',
                 name: 'sequentialNode',
                 type: 'Start | Agent | Condition | LLMNode | ToolNode | CustomFunction | ExecuteFlow',
                 description:
-                    'Can be connected to one of the following nodes: Start, Agent, Condition, LLM Node, Tool Node, Custom Function, Execute Flow',
+                    'Может быть подключен к одному из следующих узлов: Start, Agent, Condition, LLM Node, Tool Node, Custom Function, Execute Flow',
                 list: true
             },
             {
-                label: 'Function Name',
+                label: 'Имя функции',
                 name: 'functionName',
                 type: 'string',
-                placeholder: 'My Function'
+                placeholder: 'Моя функция'
             },
             {
-                label: 'Javascript Function',
+                label: 'Javascript функция',
                 name: 'javascriptFunction',
                 type: 'code',
                 hint: {
-                    label: 'How to use',
+                    label: 'Как использовать',
                     value: howToUseCode
                 }
             },
             {
-                label: 'Return Value As',
+                label: 'Возвращаемое значение как',
                 name: 'returnValueAs',
                 type: 'options',
                 options: [
-                    { label: 'AI Message', name: 'aiMessage' },
-                    { label: 'Human Message', name: 'humanMessage' },
+                    { label: 'AI сообщение', name: 'aiMessage' },
+                    { label: 'Сообщение пользователя', name: 'humanMessage' },
                     {
-                        label: 'State Object',
+                        label: 'Объект состояния',
                         name: 'stateObj',
-                        description: "Return as state object, ex: { foo: bar }. This will update the custom state 'foo' to 'bar'"
+                        description:
+                            "Вернуть как объект состояния, например: { foo: bar }. Это обновит пользовательское состояние 'foo' на 'bar'"
                     }
                 ],
                 default: 'aiMessage'
@@ -99,7 +100,7 @@ class CustomFunction_SeqAgents implements INode {
         const sequentialNodes = nodeData.inputs?.sequentialNode as ISeqAgentNode[]
         const returnValueAs = nodeData.inputs?.returnValueAs as string
 
-        if (!sequentialNodes || !sequentialNodes.length) throw new Error('Custom function must have a predecessor!')
+        if (!sequentialNodes || !sequentialNodes.length) throw new Error('У пользовательской функции должен быть предшествующий узел!')
 
         const executeFunc = async (state: ISeqAgentsState) => {
             const variables = await getVars(appDataSource, databaseEntities, nodeData, options)
@@ -117,11 +118,11 @@ class CustomFunction_SeqAgents implements INode {
                     inputVars =
                         typeof functionInputVariablesRaw === 'object' ? functionInputVariablesRaw : JSON.parse(functionInputVariablesRaw)
                 } catch (exception) {
-                    throw new Error('Invalid JSON in the Custom Function Input Variables: ' + exception)
+                    throw new Error('Некорректный JSON во входных переменных пользовательской функции: ' + exception)
                 }
             }
 
-            // Some values might be a stringified JSON, parse it
+            // Некоторые значения могут быть строкой в формате JSON, парсим их
             for (const key in inputVars) {
                 let value = inputVars[key]
                 if (typeof value === 'string') {
@@ -138,7 +139,7 @@ class CustomFunction_SeqAgents implements INode {
                                 }
                             }
                         } catch (e) {
-                            // ignore
+                            // игнорируем
                         }
                     }
 
@@ -195,7 +196,7 @@ class CustomFunction_SeqAgents implements INode {
 
                 if (returnValueAs === 'stateObj') {
                     if (typeof response !== 'object') {
-                        throw new Error('Custom function must return an object!')
+                        throw new Error('Пользовательская функция должна возвращать объект!')
                     }
                     return {
                         ...state,
@@ -204,7 +205,7 @@ class CustomFunction_SeqAgents implements INode {
                 }
 
                 if (typeof response !== 'string') {
-                    throw new Error('Custom function must return a string!')
+                    throw new Error('Пользовательская функция должна возвращать строку!')
                 }
 
                 if (returnValueAs === 'humanMessage') {

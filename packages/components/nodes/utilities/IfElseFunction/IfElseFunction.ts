@@ -17,36 +17,36 @@ class IfElseFunction_Utilities implements INode {
     outputs: INodeOutputsValue[]
 
     constructor() {
-        this.label = 'IfElse Function'
+        this.label = 'IfElse Функция'
         this.name = 'ifElseFunction'
         this.version = 2.0
         this.type = 'IfElseFunction'
         this.icon = 'ifelsefunction.svg'
-        this.category = 'Utilities'
-        this.description = `Split flows based on If Else javascript functions`
+        this.category = 'Утилиты'
+        this.description = `Разделяет потоки на основе If Else javascript функций`
         this.baseClasses = [this.type, 'Utilities']
         this.tags = ['Utilities']
         this.inputs = [
             {
-                label: 'Input Variables',
+                label: 'Входные переменные',
                 name: 'functionInputVariables',
-                description: 'Input variables can be used in the function with prefix $. For example: $var',
+                description: 'Входные переменные могут использоваться в функции с префиксом $. Например: $var',
                 type: 'json',
                 optional: true,
                 acceptVariable: true,
                 list: true
             },
             {
-                label: 'IfElse Name',
+                label: 'Имя IfElse',
                 name: 'functionName',
                 type: 'string',
                 optional: true,
-                placeholder: 'If Condition Match'
+                placeholder: 'Если условие совпадает'
             },
             {
-                label: 'If Function',
+                label: 'If функция',
                 name: 'ifFunction',
-                description: 'Function must return a value',
+                description: 'Функция должна возвращать значение',
                 type: 'code',
                 rows: 2,
                 default: `if ("hello" == "hello") {
@@ -54,9 +54,9 @@ class IfElseFunction_Utilities implements INode {
 }`
             },
             {
-                label: 'Else Function',
+                label: 'Else функция',
                 name: 'elseFunction',
-                description: 'Function must return a value',
+                description: 'Функция должна возвращать значение',
                 type: 'code',
                 rows: 2,
                 default: `return false;`
@@ -64,13 +64,13 @@ class IfElseFunction_Utilities implements INode {
         ]
         this.outputs = [
             {
-                label: 'True',
+                label: 'Истина',
                 name: 'returnTrue',
                 baseClasses: ['string', 'number', 'boolean', 'json', 'array'],
                 isAnchor: true
             },
             {
-                label: 'False',
+                label: 'Ложь',
                 name: 'returnFalse',
                 baseClasses: ['string', 'number', 'boolean', 'json', 'array'],
                 isAnchor: true
@@ -99,11 +99,11 @@ class IfElseFunction_Utilities implements INode {
                 inputVars =
                     typeof functionInputVariablesRaw === 'object' ? functionInputVariablesRaw : JSON.parse(functionInputVariablesRaw)
             } catch (exception) {
-                throw new Error("Invalid JSON in the IfElse's Input Variables: " + exception)
+                throw new Error('Некорректный JSON во входных переменных IfElse: ' + exception)
             }
         }
 
-        // Some values might be a stringified JSON, parse it
+        // Некоторые значения могут быть строкой в формате JSON, парсим их
         for (const key in inputVars) {
             let value = inputVars[key]
             if (typeof value === 'string') {
@@ -112,7 +112,7 @@ class IfElseFunction_Utilities implements INode {
                     try {
                         value = JSON.parse(value)
                     } catch (e) {
-                        // ignore
+                        // игнорируем
                     }
                 }
                 inputVars[key] = value

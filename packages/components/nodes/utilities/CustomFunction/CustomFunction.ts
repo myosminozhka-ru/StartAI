@@ -19,54 +19,54 @@ class CustomFunction_Utilities implements INode {
     outputs: INodeOutputsValue[]
 
     constructor() {
-        this.label = 'Custom JS Function'
+        this.label = 'Пользовательская JS функция'
         this.name = 'customFunction'
         this.version = 3.0
         this.type = 'CustomFunction'
         this.icon = 'customfunction.svg'
-        this.category = 'Utilities'
-        this.description = `Execute custom javascript function`
+        this.category = 'Утилиты'
+        this.description = `Выполнить пользовательскую javascript функцию`
         this.baseClasses = [this.type, 'Utilities']
         this.tags = ['Utilities']
         this.inputs = [
             {
-                label: 'Input Variables',
+                label: 'Входные переменные',
                 name: 'functionInputVariables',
-                description: 'Input variables can be used in the function with prefix $. For example: $var',
+                description: 'Входные переменные могут быть использованы в функции с префиксом $. Например: $var',
                 type: 'json',
                 optional: true,
                 acceptVariable: true,
                 list: true
             },
             {
-                label: 'Function Name',
+                label: 'Имя функции',
                 name: 'functionName',
                 type: 'string',
                 optional: true,
-                placeholder: 'My Function'
+                placeholder: 'Моя функция'
             },
             {
-                label: 'Additional Tools',
-                description: 'Tools can be used in the function with $tools.{tool_name}.invoke(args)',
+                label: 'Дополнительные инструменты',
+                description: 'Инструменты могут быть использованы в функции через $tools.{tool_name}.invoke(args)',
                 name: 'tools',
                 type: 'Tool',
                 list: true,
                 optional: true
             },
             {
-                label: 'Javascript Function',
+                label: 'Javascript функция',
                 name: 'javascriptFunction',
                 type: 'code'
             }
         ]
         this.outputs = [
             {
-                label: 'Output',
+                label: 'Выход',
                 name: 'output',
                 baseClasses: ['string', 'number', 'boolean', 'json', 'array']
             },
             {
-                label: 'Ending Node',
+                label: 'Завершающий узел',
                 name: 'EndingNode',
                 baseClasses: [this.type]
             }
@@ -75,7 +75,7 @@ class CustomFunction_Utilities implements INode {
 
     async init(nodeData: INodeData, input: string, options: ICommonObject): Promise<any> {
         const isEndingNode = nodeData?.outputs?.output === 'EndingNode'
-        if (isEndingNode && !options.isRun) return // prevent running both init and run twice
+        if (isEndingNode && !options.isRun) return // предотвратить двойной запуск init и run
 
         const javascriptFunction = nodeData.inputs?.javascriptFunction as string
         const functionInputVariablesRaw = nodeData.inputs?.functionInputVariables
@@ -98,11 +98,11 @@ class CustomFunction_Utilities implements INode {
                 inputVars =
                     typeof functionInputVariablesRaw === 'object' ? functionInputVariablesRaw : JSON.parse(functionInputVariablesRaw)
             } catch (exception) {
-                throw new Error('Invalid JSON in the Custom Function Input Variables: ' + exception)
+                throw new Error('Некорректный JSON во входных переменных пользовательской функции: ' + exception)
             }
         }
 
-        // Some values might be a stringified JSON, parse it
+        // Некоторые значения могут быть строкой в формате JSON, парсим их
         for (const key in inputVars) {
             let value = inputVars[key]
             if (typeof value === 'string') {
@@ -111,7 +111,7 @@ class CustomFunction_Utilities implements INode {
                     try {
                         value = JSON.parse(value)
                     } catch (e) {
-                        // ignore
+                        // игнорируем
                     }
                 }
                 inputVars[key] = value

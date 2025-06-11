@@ -442,7 +442,7 @@ const DocumentStoreDetails = () => {
                                     onClick={onConfirm}
                                     size='small'
                                     color='primary'
-                                    title='Refresh Document Store'
+                                    title='Обновить хранилище документов'
                                 >
                                     <IconRefresh />
                                 </PermissionIconButton>
@@ -454,7 +454,7 @@ const DocumentStoreDetails = () => {
                                 startIcon={<IconPlus />}
                                 onClick={listLoaders}
                             >
-                                Add Document Loader
+                                Добавить загрузчик документов
                             </StyledPermissionButton>
                             <Button
                                 id='document-store-header-action-button'
@@ -468,7 +468,7 @@ const DocumentStoreDetails = () => {
                                 sx={{ minWidth: 150 }}
                                 endIcon={<KeyboardArrowDownIcon />}
                             >
-                                More Actions
+                                Другие действия
                             </Button>
                             <StyledMenu
                                 id='document-store-header-menu'
@@ -485,7 +485,7 @@ const DocumentStoreDetails = () => {
                                     disableRipple
                                 >
                                     <FileChunksIcon />
-                                    View & Edit Chunks
+                                    Просмотр и редактирование чанков
                                 </MenuItem>
                                 <Available permission={'documentStores:upsert-config'}>
                                     <MenuItem
@@ -494,7 +494,7 @@ const DocumentStoreDetails = () => {
                                         disableRipple
                                     >
                                         <NoteAddIcon />
-                                        Upsert All Chunks
+                                        Апдейт всех чанков
                                     </MenuItem>
                                 </Available>
                                 <MenuItem
@@ -503,17 +503,17 @@ const DocumentStoreDetails = () => {
                                     disableRipple
                                 >
                                     <SearchIcon />
-                                    Retrieval Query
+                                    Поиск по данным
                                 </MenuItem>
                                 <Available permission={'documentStores:upsert-config'}>
                                     <MenuItem
                                         disabled={documentStore?.totalChunks <= 0 || documentStore?.status !== 'UPSERTED'}
                                         onClick={() => onStoreRefresh(documentStore.id)}
                                         disableRipple
-                                        title='Re-process all loaders and upsert all chunks'
+                                        title='Перепроцессить все загрузчики и обновить все чанки'
                                     >
                                         <RefreshIcon />
-                                        Refresh
+                                        Обновить
                                     </MenuItem>
                                 </Available>
                                 <Divider sx={{ my: 0.5 }} />
@@ -522,7 +522,7 @@ const DocumentStoreDetails = () => {
                                     disableRipple
                                 >
                                     <FileDeleteIcon />
-                                    Delete
+                                    Удалить
                                 </MenuItem>
                             </StyledMenu>
                         </ViewHeader>
@@ -543,7 +543,7 @@ const DocumentStoreDetails = () => {
                                     }}
                                 >
                                     <IconVectorBezier2 style={{ marginRight: 5 }} size={17} />
-                                    Chatflows Used:
+                                    Используется в чатфлоу:
                                 </div>
                                 {getSpecificDocumentStore.data.whereUsed.map((chatflowUsed, index) => (
                                     <Chip
@@ -571,14 +571,14 @@ const DocumentStoreDetails = () => {
                                         alt='doc_store_details_emptySVG'
                                     />
                                 </Box>
-                                <div>No Document Added Yet</div>
+                                <div>Документы ещё не добавлены</div>
                                 <StyledButton
                                     variant='contained'
                                     sx={{ borderRadius: 2, height: '100%', mt: 2, color: 'white' }}
                                     startIcon={<IconPlus />}
                                     onClick={listLoaders}
                                 >
-                                    Add Document Loader
+                                    Добавить загрузчик документов
                                 </StyledButton>
                             </Stack>
                         ) : (
@@ -597,13 +597,13 @@ const DocumentStoreDetails = () => {
                                     >
                                         <TableRow>
                                             <StyledTableCell>&nbsp;</StyledTableCell>
-                                            <StyledTableCell>Loader</StyledTableCell>
-                                            <StyledTableCell>Splitter</StyledTableCell>
-                                            <StyledTableCell>Source(s)</StyledTableCell>
-                                            <StyledTableCell>Chunks</StyledTableCell>
-                                            <StyledTableCell>Chars</StyledTableCell>
+                                            <StyledTableCell>Загрузчик</StyledTableCell>
+                                            <StyledTableCell>Сплиттер</StyledTableCell>
+                                            <StyledTableCell>Источник(и)</StyledTableCell>
+                                            <StyledTableCell>Чанки</StyledTableCell>
+                                            <StyledTableCell>Символы</StyledTableCell>
                                             <Available permission={'documentStores:preview-process,documentStores:delete-loader'}>
-                                                <StyledTableCell>Actions</StyledTableCell>
+                                                <StyledTableCell>Действия</StyledTableCell>
                                             </Available>
                                         </TableRow>
                                     </TableHead>
@@ -698,7 +698,7 @@ const DocumentStoreDetails = () => {
                                     color='warning'
                                     style={{ color: 'darkred', fontWeight: 500, fontStyle: 'italic', fontSize: 12 }}
                                 >
-                                    Some files are pending processing. Please Refresh to get the latest status.
+                                    Некоторые файлы ожидают обработки. Пожалуйста, обновите для получения актуального статуса.
                                 </Typography>
                             </div>
                         )}
