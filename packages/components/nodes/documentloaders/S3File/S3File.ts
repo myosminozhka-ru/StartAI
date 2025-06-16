@@ -41,10 +41,10 @@ class S3_DocumentLoaders implements INode {
         this.type = 'Document'
         this.icon = 's3.svg'
         this.category = 'Document Loaders'
-        this.description = 'Load Data from S3 Buckets'
+        this.description = 'Загрузка данных из S3 бакетов'
         this.baseClasses = [this.type]
         this.credential = {
-            label: 'AWS Credential',
+            label: 'Учетные данные AWS',
             name: 'credential',
             type: 'credential',
             credentialNames: ['awsApi'],
@@ -52,15 +52,15 @@ class S3_DocumentLoaders implements INode {
         }
         this.inputs = [
             {
-                label: 'Bucket',
+                label: 'Бакет',
                 name: 'bucketName',
                 type: 'string'
             },
             {
-                label: 'Object Key',
+                label: 'Ключ объекта',
                 name: 'keyName',
                 type: 'string',
-                description: 'The object key (or key name) that uniquely identifies object in an Amazon S3 bucket',
+                description: 'Ключ объекта (или имя ключа), который уникально идентифицирует объект в бакете Amazon S3',
                 placeholder: 'AI-Paper.pdf'
             },
             {
@@ -71,40 +71,40 @@ class S3_DocumentLoaders implements INode {
                 default: 'us-east-1'
             },
             {
-                label: 'Unstructured API URL',
+                label: 'URL API Unstructured',
                 name: 'unstructuredAPIUrl',
                 description:
-                    'Your Unstructured.io URL. Read <a target="_blank" href="https://unstructured-io.github.io/unstructured/introduction.html#getting-started">more</a> on how to get started',
+                    'Ваш URL Unstructured.io. Прочитайте <a target="_blank" href="https://unstructured-io.github.io/unstructured/introduction.html#getting-started">подробнее</a> о том, как начать работу',
                 type: 'string',
                 placeholder: process.env.UNSTRUCTURED_API_URL || 'http://localhost:8000/general/v0/general',
                 optional: !!process.env.UNSTRUCTURED_API_URL
             },
             {
-                label: 'Unstructured API KEY',
+                label: 'Ключ API Unstructured',
                 name: 'unstructuredAPIKey',
                 type: 'password',
                 optional: true
             },
             {
-                label: 'Strategy',
+                label: 'Стратегия',
                 name: 'strategy',
-                description: 'The strategy to use for partitioning PDF/image. Options are fast, hi_res, auto. Default: auto.',
+                description: 'Стратегия для разделения PDF/изображения. Варианты: fast, hi_res, auto. По умолчанию: auto.',
                 type: 'options',
                 options: [
                     {
-                        label: 'Hi-Res',
+                        label: 'Высокое разрешение',
                         name: 'hi_res'
                     },
                     {
-                        label: 'Fast',
+                        label: 'Быстрая',
                         name: 'fast'
                     },
                     {
-                        label: 'OCR Only',
+                        label: 'Только OCR',
                         name: 'ocr_only'
                     },
                     {
-                        label: 'Auto',
+                        label: 'Авто',
                         name: 'auto'
                     }
                 ],
@@ -113,18 +113,18 @@ class S3_DocumentLoaders implements INode {
                 default: 'auto'
             },
             {
-                label: 'Encoding',
+                label: 'Кодировка',
                 name: 'encoding',
-                description: 'The encoding method used to decode the text input. Default: utf-8.',
+                description: 'Метод кодировки, используемый для декодирования текстового ввода. По умолчанию: utf-8.',
                 type: 'string',
                 optional: true,
                 additionalParams: true,
                 default: 'utf-8'
             },
             {
-                label: 'Skip Infer Table Types',
+                label: 'Пропустить типы таблиц',
                 name: 'skipInferTableTypes',
-                description: 'The document types that you want to skip table extraction with. Default: pdf, jpg, png.',
+                description: 'Типы документов, для которых вы хотите пропустить извлечение таблиц. По умолчанию: pdf, jpg, png.',
                 type: 'multiOptions',
                 options: [
                     {
@@ -217,32 +217,32 @@ class S3_DocumentLoaders implements INode {
                 default: '["pdf", "jpg", "png"]'
             },
             {
-                label: 'Hi-Res Model Name',
+                label: 'Имя модели высокого разрешения',
                 name: 'hiResModelName',
-                description: 'The name of the inference model used when strategy is hi_res. Default: detectron2_onnx.',
+                description: 'Название модели вывода, используемой при стратегии hi_res. По умолчанию: detectron2_onnx.',
                 type: 'options',
                 options: [
                     {
                         label: 'chipper',
                         name: 'chipper',
                         description:
-                            'Exlusive to Unstructured hosted API. The Chipper model is Unstructured in-house image-to-text model based on transformer-based Visual Document Understanding (VDU) models.'
+                            'Эксклюзивно для Unstructured hosted API. Модель Chipper - это внутренняя модель преобразования изображения в текст Unstructured, основанная на моделях Visual Document Understanding (VDU) на базе трансформеров.'
                     },
                     {
                         label: 'detectron2_onnx',
                         name: 'detectron2_onnx',
                         description:
-                            'A Computer Vision model by Facebook AI that provides object detection and segmentation algorithms with ONNX Runtime. It is the fastest model with the hi_res strategy.'
+                            'Модель компьютерного зрения от Facebook AI, которая предоставляет алгоритмы обнаружения и сегментации объектов с ONNX Runtime. Это самая быстрая модель со стратегией hi_res.'
                     },
                     {
                         label: 'yolox',
                         name: 'yolox',
-                        description: 'A single-stage real-time object detector that modifies YOLOv3 with a DarkNet53 backbone.'
+                        description: 'Детектор объектов в реальном времени в один этап, который модифицирует YOLOv3 с бэкбоном DarkNet53.'
                     },
                     {
                         label: 'yolox_quantized',
                         name: 'yolox_quantized',
-                        description: 'Runs faster than YoloX and its speed is closer to Detectron2.'
+                        description: 'Работает быстрее, чем YoloX, и его скорость ближе к Detectron2.'
                     }
                 ],
                 optional: true,
@@ -250,18 +250,18 @@ class S3_DocumentLoaders implements INode {
                 default: 'detectron2_onnx'
             },
             {
-                label: 'Chunking Strategy',
+                label: 'Стратегия разбиения',
                 name: 'chunkingStrategy',
                 description:
-                    'Use one of the supported strategies to chunk the returned elements. When omitted, no chunking is performed and any other chunking parameters provided are ignored. Default: by_title',
+                    'Используйте одну из поддерживаемых стратегий для разбиения возвращаемых элементов. Если опущено, разбиение не выполняется, и любые другие предоставленные параметры разбиения игнорируются. По умолчанию: by_title',
                 type: 'options',
                 options: [
                     {
-                        label: 'None',
+                        label: 'Нет',
                         name: 'None'
                     },
                     {
-                        label: 'By Title',
+                        label: 'По заголовку',
                         name: 'by_title'
                     }
                 ],
@@ -270,69 +270,70 @@ class S3_DocumentLoaders implements INode {
                 default: 'by_title'
             },
             {
-                label: 'OCR Languages',
+                label: 'Языки OCR',
                 name: 'ocrLanguages',
-                description: 'The languages to use for OCR. Note: Being depricated as languages is the new type. Pending langchain update.',
+                description:
+                    'Языки для использования в OCR. Примечание: Устаревает, так как languages - это новый тип. Ожидает обновления langchain.',
                 type: 'multiOptions',
                 options: [
                     {
-                        label: 'English',
+                        label: 'Английский',
                         name: 'eng'
                     },
                     {
-                        label: 'Spanish (Español)',
+                        label: 'Испанский (Español)',
                         name: 'spa'
                     },
                     {
-                        label: 'Mandarin Chinese (普通话)',
+                        label: 'Китайский (普通话)',
                         name: 'cmn'
                     },
                     {
-                        label: 'Hindi (हिन्दी)',
+                        label: 'Хинди (हिन्दी)',
                         name: 'hin'
                     },
                     {
-                        label: 'Arabic (اَلْعَرَبِيَّةُ)',
+                        label: 'Арабский (اَلْعَرَبِيَّةُ)',
                         name: 'ara'
                     },
                     {
-                        label: 'Portuguese (Português)',
+                        label: 'Португальский (Português)',
                         name: 'por'
                     },
                     {
-                        label: 'Bengali (বাংলা)',
+                        label: 'Бенгальский (বাংলা)',
                         name: 'ben'
                     },
                     {
-                        label: 'Russian (Русский)',
+                        label: 'Русский (Русский)',
                         name: 'rus'
                     },
                     {
-                        label: 'Japanese (日本語)',
+                        label: 'Японский (日本語)',
                         name: 'jpn'
                     },
                     {
-                        label: 'Punjabi (ਪੰਜਾਬੀ)',
+                        label: 'Панджаби (ਪੰਜਾਬੀ)',
                         name: 'pan'
                     },
                     {
-                        label: 'German (Deutsch)',
+                        label: 'Немецкий (Deutsch)',
                         name: 'deu'
                     },
                     {
-                        label: 'Korean (한국어)',
+                        label: 'Корейский (한국어)',
                         name: 'kor'
                     },
                     {
-                        label: 'French (Français)',
+                        label: 'Французский (Français)',
                         name: 'fra'
                     },
                     {
-                        label: 'Italian (Italiano)',
+                        label: 'Итальянский (Italiano)',
                         name: 'ita'
                     },
                     {
-                        label: 'Vietnamese (Tiếng Việt)',
+                        label: 'Вьетнамский (Tiếng Việt)',
                         name: 'vie'
                     }
                 ],
@@ -340,101 +341,93 @@ class S3_DocumentLoaders implements INode {
                 additionalParams: true
             },
             {
-                label: 'Source ID Key',
+                label: 'Ключ ID источника',
                 name: 'sourceIdKey',
                 type: 'string',
                 description:
-                    'Key used to get the true source of document, to be compared against the record. Document metadata must contain the Source ID Key.',
+                    'Ключ, используемый для получения истинного источника документа, для сравнения с записью. Метаданные документа должны содержать ключ ID источника.',
                 default: 'source',
                 placeholder: 'source',
                 optional: true,
                 additionalParams: true
             },
             {
-                label: 'Coordinates',
+                label: 'Координаты',
                 name: 'coordinates',
                 type: 'boolean',
-                description: 'If true, return coordinates for each element. Default: false.',
+                description: 'Если true, возвращает координаты для каждого элемента. По умолчанию: false.',
                 optional: true,
                 additionalParams: true,
                 default: false
             },
             {
-                label: 'XML Keep Tags',
+                label: 'Сохранять XML теги',
                 name: 'xmlKeepTags',
                 description:
-                    'If True, will retain the XML tags in the output. Otherwise it will simply extract the text from within the tags. Only applies to partition_xml.',
+                    'Если True, сохранит XML теги в выводе. В противном случае просто извлечет текст из тегов. Применяется только к partition_xml.',
                 type: 'boolean',
                 optional: true,
                 additionalParams: true
             },
             {
-                label: 'Include Page Breaks',
+                label: 'Включать разрывы страниц',
                 name: 'includePageBreaks',
-                description: 'When true, the output will include page break elements when the filetype supports it.',
+                description: 'Когда true, вывод будет включать элементы разрыва страницы, когда тип файла это поддерживает.',
                 type: 'boolean',
                 optional: true,
                 additionalParams: true
             },
             {
-                label: 'XML Keep Tags',
-                name: 'xmlKeepTags',
-                description: 'Whether to keep XML tags in the output.',
-                type: 'boolean',
-                optional: true,
-                additionalParams: true
-            },
-            {
-                label: 'Multi-Page Sections',
+                label: 'Многостраничные разделы',
                 name: 'multiPageSections',
-                description: 'Whether to treat multi-page documents as separate sections.',
+                description: 'Обрабатывать ли многостраничные документы как отдельные разделы.',
                 type: 'boolean',
                 optional: true,
                 additionalParams: true
             },
             {
-                label: 'Combine Under N Chars',
+                label: 'Объединять до N символов',
                 name: 'combineUnderNChars',
                 description:
-                    "If chunking strategy is set, combine elements until a section reaches a length of n chars. Default: value of max_characters. Can't exceed value of max_characters.",
+                    'Если установлена стратегия разбиения, объединять элементы, пока раздел не достигнет длины n символов. По умолчанию: значение max_characters. Не может превышать значение max_characters.',
                 type: 'number',
                 optional: true,
                 additionalParams: true
             },
             {
-                label: 'New After N Chars',
+                label: 'Новый после N символов',
                 name: 'newAfterNChars',
                 description:
-                    "If chunking strategy is set, cut off new sections after reaching a length of n chars (soft max). value of max_characters. Can't exceed value of max_characters.",
+                    'Если установлена стратегия разбиения, обрезать новые разделы после достижения длины n символов (мягкий максимум). Значение max_characters. Не может превышать значение max_characters.',
                 type: 'number',
                 optional: true,
                 additionalParams: true
             },
             {
-                label: 'Max Characters',
+                label: 'Максимум символов',
                 name: 'maxCharacters',
                 description:
-                    'If chunking strategy is set, cut off new sections after reaching a length of n chars (hard max). Default: 500',
+                    'Если установлена стратегия разбиения, обрезать новые разделы после достижения длины n символов (жесткий максимум). По умолчанию: 500',
                 type: 'number',
                 optional: true,
                 additionalParams: true,
                 default: '500'
             },
             {
-                label: 'Additional Metadata',
+                label: 'Дополнительные метаданные',
                 name: 'metadata',
                 type: 'json',
-                description: 'Additional metadata to be added to the extracted documents',
+                description: 'Дополнительные метаданные для добавления к извлеченным документам',
                 optional: true,
                 additionalParams: true
             },
             {
-                label: 'Omit Metadata Keys',
+                label: 'Исключить ключи метаданных',
                 name: 'omitMetadataKeys',
                 type: 'string',
                 rows: 4,
                 description:
-                    'Each document loader comes with a default set of metadata keys that are extracted from the document. You can use this field to omit some of the default metadata keys. The value should be a list of keys, seperated by comma. Use * to omit all metadata keys execept the ones you specify in the Additional Metadata field',
+                    'Каждый загрузчик документов поставляется с набором метаданных по умолчанию, которые извлекаются из документа. Вы можете использовать это поле для исключения некоторых ключей метаданных по умолчанию. Значение должно быть списком ключей, разделенных запятыми. Используйте * для исключения всех ключей метаданных, кроме тех, которые вы указали в поле Дополнительные метаданные',
                 placeholder: 'key1, key2, key3.nestedKey1',
                 optional: true,
                 additionalParams: true
@@ -442,15 +435,15 @@ class S3_DocumentLoaders implements INode {
         ]
         this.outputs = [
             {
-                label: 'Document',
+                label: 'Документ',
                 name: 'document',
-                description: 'Array of document objects containing metadata and pageContent',
+                description: 'Массив объектов документов, содержащих метаданные и содержимое страницы',
                 baseClasses: [...this.baseClasses, 'json']
             },
             {
-                label: 'Text',
+                label: 'Текст',
                 name: 'text',
-                description: 'Concatenated string from pageContent of documents',
+                description: 'Объединенная строка из содержимого страниц документов',
                 baseClasses: ['string', 'json']
             }
         ]

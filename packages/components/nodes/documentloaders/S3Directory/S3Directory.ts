@@ -36,16 +36,16 @@ class S3_DocumentLoaders implements INode {
     outputs: INodeOutputsValue[]
 
     constructor() {
-        this.label = 'S3 Directory'
+        this.label = 'S3 Директория'
         this.name = 's3Directory'
         this.version = 4.0
         this.type = 'Document'
         this.icon = 's3.svg'
         this.category = 'Document Loaders'
-        this.description = 'Load Data from S3 Buckets'
+        this.description = 'Загрузка данных из S3 бакетов'
         this.baseClasses = [this.type]
         this.credential = {
-            label: 'Credential',
+            label: 'Учетные данные',
             name: 'credential',
             type: 'credential',
             credentialNames: ['awsApi'],
@@ -53,13 +53,13 @@ class S3_DocumentLoaders implements INode {
         }
         this.inputs = [
             {
-                label: 'Text Splitter',
+                label: 'Разделитель текста',
                 name: 'textSplitter',
                 type: 'TextSplitter',
                 optional: true
             },
             {
-                label: 'Bucket',
+                label: 'Бакет',
                 name: 'bucketName',
                 type: 'string'
             },
@@ -71,32 +71,32 @@ class S3_DocumentLoaders implements INode {
                 default: 'us-east-1'
             },
             {
-                label: 'Server URL',
+                label: 'URL сервера',
                 name: 'serverUrl',
                 description:
-                    'The fully qualified endpoint of the webservice. This is only for using a custom endpoint (for example, when using a local version of S3).',
+                    'Полный URL конечной точки веб-сервиса. Используется только для пользовательской конечной точки (например, при использовании локальной версии S3).',
                 type: 'string',
                 optional: true
             },
             {
-                label: 'Prefix',
+                label: 'Префикс',
                 name: 'prefix',
                 type: 'string',
-                description: 'Limits the response to keys that begin with the specified prefix',
+                description: 'Ограничивает ответ ключами, начинающимися с указанного префикса',
                 placeholder: 'TestFolder/Something',
                 optional: true
             },
             {
-                label: 'Pdf Usage',
+                label: 'Использование PDF',
                 name: 'pdfUsage',
                 type: 'options',
                 options: [
                     {
-                        label: 'One document per page',
+                        label: 'Один документ на страницу',
                         name: 'perPage'
                     },
                     {
-                        label: 'One document per file',
+                        label: 'Один документ на файл',
                         name: 'perFile'
                     }
                 ],
@@ -105,20 +105,20 @@ class S3_DocumentLoaders implements INode {
                 additionalParams: true
             },
             {
-                label: 'Additional Metadata',
+                label: 'Дополнительные метаданные',
                 name: 'metadata',
                 type: 'json',
-                description: 'Additional metadata to be added to the extracted documents',
+                description: 'Дополнительные метаданные для добавления к извлеченным документам',
                 optional: true,
                 additionalParams: true
             },
             {
-                label: 'Omit Metadata Keys',
+                label: 'Исключить ключи метаданных',
                 name: 'omitMetadataKeys',
                 type: 'string',
                 rows: 4,
                 description:
-                    'Each document loader comes with a default set of metadata keys that are extracted from the document. You can use this field to omit some of the default metadata keys. The value should be a list of keys, seperated by comma. Use * to omit all metadata keys execept the ones you specify in the Additional Metadata field',
+                    'Каждый загрузчик документов поставляется с набором метаданных по умолчанию, которые извлекаются из документа. Вы можете использовать это поле для исключения некоторых ключей метаданных по умолчанию. Значение должно быть списком ключей, разделенных запятыми. Используйте * для исключения всех ключей метаданных, кроме тех, которые вы указали в поле Дополнительные метаданные',
                 placeholder: 'key1, key2, key3.nestedKey1',
                 optional: true,
                 additionalParams: true
@@ -126,15 +126,15 @@ class S3_DocumentLoaders implements INode {
         ]
         this.outputs = [
             {
-                label: 'Document',
+                label: 'Документ',
                 name: 'document',
-                description: 'Array of document objects containing metadata and pageContent',
+                description: 'Массив объектов документов, содержащих метаданные и содержимое страницы',
                 baseClasses: [...this.baseClasses, 'json']
             },
             {
-                label: 'Text',
+                label: 'Текст',
                 name: 'text',
-                description: 'Concatenated string from pageContent of documents',
+                description: 'Объединенная строка из содержимого страниц документов',
                 baseClasses: ['string', 'json']
             }
         ]

@@ -18,13 +18,14 @@ class NotionDB_DocumentLoaders implements INode {
     outputs: INodeOutputsValue[]
 
     constructor() {
-        this.label = 'Notion Database'
+        this.label = 'База данных Notion'
         this.name = 'notionDB'
         this.version = 2.0
         this.type = 'Document'
         this.icon = 'notion-db.svg'
         this.category = 'Document Loaders'
-        this.description = 'Load data from Notion Database (each row is a separate document with all properties as metadata)'
+        this.description =
+            'Загрузка данных из базы данных Notion (каждая строка является отдельным документом со всеми свойствами в качестве метаданных)'
         this.baseClasses = [this.type]
         this.credential = {
             label: 'Подключите учетные данные',
@@ -34,32 +35,32 @@ class NotionDB_DocumentLoaders implements INode {
         }
         this.inputs = [
             {
-                label: 'Text Splitter',
+                label: 'Разделитель текста',
                 name: 'textSplitter',
                 type: 'TextSplitter',
                 optional: true
             },
             {
-                label: 'Notion Database Id',
+                label: 'ID базы данных Notion',
                 name: 'databaseId',
                 type: 'string',
-                description: 'If your URL looks like - https://www.notion.so/abcdefh?v=long_hash_2, then abcdefh is the database ID'
+                description: 'Если ваш URL выглядит как - https://www.notion.so/abcdefh?v=long_hash_2, то abcdefh - это ID базы данных'
             },
             {
-                label: 'Additional Metadata',
+                label: 'Дополнительные метаданные',
                 name: 'metadata',
                 type: 'json',
-                description: 'Additional metadata to be added to the extracted documents',
+                description: 'Дополнительные метаданные для добавления к извлеченным документам',
                 optional: true,
                 additionalParams: true
             },
             {
-                label: 'Omit Metadata Keys',
+                label: 'Исключить ключи метаданных',
                 name: 'omitMetadataKeys',
                 type: 'string',
                 rows: 4,
                 description:
-                    'Each document loader comes with a default set of metadata keys that are extracted from the document. You can use this field to omit some of the default metadata keys. The value should be a list of keys, seperated by comma. Use * to omit all metadata keys execept the ones you specify in the Additional Metadata field',
+                    'Каждый загрузчик документов поставляется с набором метаданных по умолчанию, которые извлекаются из документа. Вы можете использовать это поле для исключения некоторых ключей метаданных по умолчанию. Значение должно быть списком ключей, разделенных запятыми. Используйте * для исключения всех ключей метаданных, кроме тех, которые вы указали в поле Дополнительные метаданные',
                 placeholder: 'key1, key2, key3.nestedKey1',
                 optional: true,
                 additionalParams: true
@@ -67,15 +68,15 @@ class NotionDB_DocumentLoaders implements INode {
         ]
         this.outputs = [
             {
-                label: 'Document',
+                label: 'Документ',
                 name: 'document',
-                description: 'Array of document objects containing metadata and pageContent',
+                description: 'Массив объектов документов, содержащих метаданные и содержимое страницы',
                 baseClasses: [...this.baseClasses, 'json']
             },
             {
-                label: 'Text',
+                label: 'Текст',
                 name: 'text',
-                description: 'Concatenated string from pageContent of documents',
+                description: 'Объединенная строка из содержимого страниц документов',
                 baseClasses: ['string', 'json']
             }
         ]

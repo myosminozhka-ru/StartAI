@@ -18,11 +18,12 @@ class RedisCache implements INode {
     credential: INodeParams
 
     constructor() {
-        this.label = 'Redis Cache'
+        this.label = 'Кэш Redis'
         this.name = 'redisCache'
         this.version = 1.0
         this.type = 'RedisCache'
-        this.description = 'Cache LLM response in Redis, useful for sharing cache across multiple processes or servers'
+        this.description =
+            'Кэширование ответов LLM в Redis, полезно для совместного использования кэша между несколькими процессами или серверами'
         this.icon = 'redis.svg'
         this.category = 'Cache'
         this.baseClasses = [this.type, ...getBaseClasses(LangchainRedisCache)]
@@ -35,7 +36,7 @@ class RedisCache implements INode {
         }
         this.inputs = [
             {
-                label: 'Time to Live (ms)',
+                label: 'Время жизни (мс)',
                 name: 'ttl',
                 type: 'number',
                 step: 1,

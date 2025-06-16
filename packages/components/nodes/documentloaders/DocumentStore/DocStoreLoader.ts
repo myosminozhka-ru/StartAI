@@ -16,17 +16,17 @@ class DocStore_DocumentLoaders implements INode {
     outputs: INodeOutputsValue[]
 
     constructor() {
-        this.label = 'Document Store'
+        this.label = 'Хранилище документов'
         this.name = 'documentStore'
         this.version = 1.0
         this.type = 'Document'
         this.icon = 'dstore.svg'
         this.category = 'Document Loaders'
-        this.description = `Load data from pre-configured document stores`
+        this.description = `Загрузка данных из предварительно настроенных хранилищ документов`
         this.baseClasses = [this.type]
         this.inputs = [
             {
-                label: 'Select Store',
+                label: 'Выберите хранилище',
                 name: 'selectedStore',
                 type: 'asyncOptions',
                 loadMethod: 'listStores'
@@ -34,15 +34,15 @@ class DocStore_DocumentLoaders implements INode {
         ]
         this.outputs = [
             {
-                label: 'Document',
+                label: 'Документ',
                 name: 'document',
-                description: 'Array of document objects containing metadata and pageContent',
+                description: 'Массив объектов документов, содержащих метаданные и содержимое страницы',
                 baseClasses: [...this.baseClasses, 'json']
             },
             {
-                label: 'Text',
+                label: 'Текст',
                 name: 'text',
-                description: 'Concatenated string from pageContent of documents',
+                description: 'Объединенная строка из содержимого страниц документов',
                 baseClasses: ['string', 'json']
             }
         ]

@@ -19,58 +19,58 @@ class Epub_DocumentLoaders implements INode {
     outputs: INodeOutputsValue[]
 
     constructor() {
-        this.label = 'Epub File'
+        this.label = 'EPUB файл'
         this.name = 'epubFile'
         this.version = 1.0
         this.type = 'Document'
         this.icon = 'epub.svg'
         this.category = 'Document Loaders'
-        this.description = 'Load data from EPUB files'
+        this.description = 'Загрузка данных из EPUB файлов'
         this.baseClasses = [this.type]
 
         this.inputs = [
             {
-                label: 'Epub File',
+                label: 'EPUB файл',
                 name: 'epubFile',
                 type: 'file',
                 fileType: '.epub'
             },
             {
-                label: 'Text Splitter',
+                label: 'Разделитель текста',
                 name: 'textSplitter',
                 type: 'TextSplitter',
                 optional: true
             },
             {
-                label: 'Usage',
+                label: 'Использование',
                 name: 'usage',
                 type: 'options',
                 options: [
                     {
-                        label: 'One document per chapter',
+                        label: 'Один документ на главу',
                         name: 'perChapter'
                     },
                     {
-                        label: 'One document per file',
+                        label: 'Один документ на файл',
                         name: 'perFile'
                     }
                 ],
                 default: 'perChapter'
             },
             {
-                label: 'Additional Metadata',
+                label: 'Дополнительные метаданные',
                 name: 'metadata',
                 type: 'json',
-                description: 'Additional metadata to be added to the extracted documents',
+                description: 'Дополнительные метаданные для добавления к извлеченным документам',
                 optional: true,
                 additionalParams: true
             },
             {
-                label: 'Omit Metadata Keys',
+                label: 'Исключить ключи метаданных',
                 name: 'omitMetadataKeys',
                 type: 'string',
                 rows: 4,
-                description: 'Metadata keys to omit, comma-separated',
+                description: 'Ключи метаданных для исключения, разделенные запятыми',
                 placeholder: 'key1, key2, key3',
                 optional: true,
                 additionalParams: true
@@ -79,15 +79,15 @@ class Epub_DocumentLoaders implements INode {
 
         this.outputs = [
             {
-                label: 'Document',
+                label: 'Документ',
                 name: 'document',
-                description: 'Array of document objects',
+                description: 'Массив объектов документов',
                 baseClasses: [...this.baseClasses, 'json']
             },
             {
-                label: 'Text',
+                label: 'Текст',
                 name: 'text',
-                description: 'Concatenated text from documents',
+                description: 'Объединенный текст из документов',
                 baseClasses: ['string', 'json']
             }
         ]

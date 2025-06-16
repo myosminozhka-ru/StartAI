@@ -604,7 +604,7 @@ class FireCrawl_DocumentLoaders implements INode {
         this.icon = 'firecrawl.png'
         this.version = 3.0
         this.category = 'Document Loaders'
-        this.description = 'Load data from URL using FireCrawl'
+        this.description = 'Загрузка данных из URL с помощью FireCrawl'
         this.baseClasses = [this.type]
         this.credential = {
             label: 'FireCrawl API',
@@ -614,133 +614,129 @@ class FireCrawl_DocumentLoaders implements INode {
         }
         this.inputs = [
             {
-                label: 'Text Splitter',
+                label: 'Разделитель текста',
                 name: 'textSplitter',
                 type: 'TextSplitter',
                 optional: true
             },
             {
-                label: 'URLs',
+                label: 'URL-адреса',
                 name: 'url',
                 type: 'string',
-                description: 'URL to be crawled/scraped/extracted',
+                description: 'URL для обхода/скрапинга/извлечения данных',
                 placeholder: 'https://docs.flowiseai.com'
             },
             {
-                label: 'Crawler type',
+                label: 'Тип краулера',
                 type: 'options',
                 name: 'crawlerType',
                 options: [
                     {
-                        label: 'Crawl',
+                        label: 'Обход',
                         name: 'crawl',
-                        description: 'Crawl a URL and all accessible subpages'
+                        description: 'Обход URL и всех доступных подстраниц'
                     },
                     {
-                        label: 'Scrape',
+                        label: 'Скрапинг',
                         name: 'scrape',
-                        description: 'Scrape a URL and get its content'
+                        description: 'Скрапинг URL и получение его содержимого'
                     },
                     {
-                        label: 'Extract',
+                        label: 'Извлечение',
                         name: 'extract',
-                        description: 'Extract data from a URL'
+                        description: 'Извлечение данных из URL'
                     }
                 ],
                 default: 'crawl'
             },
             {
-                // includeTags
-                label: '[Scrape] Include Tags',
+                label: '[Скрапинг] Включать теги',
                 name: 'includeTags',
                 type: 'string',
-                description: 'Tags to include in the output. Use comma to separate multiple tags.',
+                description: 'Теги для включения в вывод. Используйте запятую для разделения нескольких тегов.',
                 optional: true,
                 additionalParams: true
             },
             {
-                // excludeTags
-                label: '[Scrape] Exclude Tags',
+                label: '[Скрапинг] Исключить теги',
                 name: 'excludeTags',
                 type: 'string',
-                description: 'Tags to exclude from the output. Use comma to separate multiple tags.',
+                description: 'Теги для исключения из вывода. Используйте запятую для разделения нескольких тегов.',
                 optional: true,
                 additionalParams: true
             },
             {
-                // onlyMainContent
-                label: '[Scrape] Only Main Content',
+                label: '[Скрапинг] Только основной контент',
                 name: 'onlyMainContent',
                 type: 'boolean',
-                description: 'Extract only the main content of the page',
+                description: 'Извлечь только основной контент страницы',
                 optional: true,
                 additionalParams: true
             },
             {
-                // limit
-                label: '[Crawl] Limit',
+                label: '[Обход] Лимит',
                 name: 'limit',
                 type: 'string',
-                description: 'Maximum number of pages to crawl',
+                description: 'Максимальное количество страниц для обхода',
                 optional: true,
                 additionalParams: true,
                 default: '10000'
             },
             {
-                label: '[Crawl] Include Paths',
+                label: '[Обход] Включать пути',
                 name: 'includePaths',
                 type: 'string',
                 description:
-                    'URL pathname regex patterns that include matching URLs in the crawl. Only the paths that match the specified patterns will be included in the response.',
+                    'Регулярные выражения путей URL, которые включают соответствующие URL в обход. Только пути, соответствующие указанным шаблонам, будут включены в ответ.',
                 placeholder: `blog/.*, news/.*`,
                 optional: true,
                 additionalParams: true
             },
             {
-                label: '[Crawl] Exclude Paths',
+                label: '[Обход] Исключить пути',
                 name: 'excludePaths',
                 type: 'string',
-                description: 'URL pathname regex patterns that exclude matching URLs from the crawl.',
+                description: 'Регулярные выражения путей URL, которые исключают соответствующие URL из обхода.',
                 placeholder: `blog/.*, news/.*`,
                 optional: true,
                 additionalParams: true
             },
             {
-                label: '[Extract] Schema',
+                label: '[Извлечение] Схема',
                 name: 'extractSchema',
                 type: 'json',
-                description: 'JSON schema for data extraction',
+                description: 'JSON схема для извлечения данных',
                 optional: true,
                 additionalParams: true
             },
             {
-                label: '[Extract] Prompt',
+                label: '[Извлечение] Промпт',
                 name: 'extractPrompt',
                 type: 'string',
-                description: 'Prompt for data extraction',
+                description: 'Промпт для извлечения данных',
                 optional: true,
                 additionalParams: true
             },
             {
-                label: '[Extract] Job ID',
+                label: '[Извлечение] ID задачи',
                 name: 'extractJobId',
                 type: 'string',
-                description: 'ID of the extract job',
+                description: 'ID задачи извлечения',
                 optional: true,
                 additionalParams: true
             }
         ]
         this.outputs = [
             {
-                label: 'Document',
+                label: 'Документ',
                 name: 'document',
-                description: 'Array of document objects containing metadata and pageContent',
+                description: 'Массив объектов документов, содержащих метаданные и содержимое страницы',
                 baseClasses: [...this.baseClasses, 'json']
             },
             {
-                label: 'Text',
+                label: 'Текст',
                 name: 'text',
-                description: 'Concatenated string from pageContent of documents',
+                description: 'Объединенная строка из содержимого страниц документов',
                 baseClasses: ['string', 'json']
             }
         ]

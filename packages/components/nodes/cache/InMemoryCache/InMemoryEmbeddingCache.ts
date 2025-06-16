@@ -16,22 +16,22 @@ class InMemoryEmbeddingCache implements INode {
     credential: INodeParams
 
     constructor() {
-        this.label = 'InMemory Embedding Cache'
+        this.label = 'Кэш эмбеддингов в памяти'
         this.name = 'inMemoryEmbeddingCache'
         this.version = 1.0
         this.type = 'InMemoryEmbeddingCache'
-        this.description = 'Cache generated Embeddings in memory to avoid needing to recompute them.'
+        this.description = 'Кэширование сгенерированных эмбеддингов в памяти для избежания необходимости их повторного вычисления.'
         this.icon = 'Memory.svg'
         this.category = 'Cache'
         this.baseClasses = [this.type, ...getBaseClasses(CacheBackedEmbeddings)]
         this.inputs = [
             {
-                label: 'Embeddings',
+                label: 'Эмбеддинги',
                 name: 'embeddings',
                 type: 'Embeddings'
             },
             {
-                label: 'Namespace',
+                label: 'Пространство имен',
                 name: 'namespace',
                 type: 'string',
                 optional: true,
@@ -82,18 +82,18 @@ class InMemoryEmbeddingCacheExtended<T = any> extends BaseStore<string, T> {
     }
 
     /**
-     * Retrieves the values associated with the given keys from the store.
-     * @param keys Keys to retrieve values for.
-     * @returns Array of values associated with the given keys.
+     * Получает значения, связанные с указанными ключами из хранилища.
+     * @param keys Ключи, для которых нужно получить значения.
+     * @returns Массив значений, связанных с указанными ключами.
      */
     async mget(keys: string[]) {
         return keys.map((key) => this.store[key])
     }
 
     /**
-     * Sets the values for the given keys in the store.
-     * @param keyValuePairs Array of key-value pairs to set in the store.
-     * @returns Promise that resolves when all key-value pairs have been set.
+     * Устанавливает значения для указанных ключей в хранилище.
+     * @param keyValuePairs Массив пар ключ-значение для установки в хранилище.
+     * @returns Promise, который разрешается, когда все пары ключ-значение установлены.
      */
     async mset(keyValuePairs: [string, T][]): Promise<void> {
         for (const [key, value] of keyValuePairs) {
@@ -102,9 +102,9 @@ class InMemoryEmbeddingCacheExtended<T = any> extends BaseStore<string, T> {
     }
 
     /**
-     * Deletes the given keys and their associated values from the store.
-     * @param keys Keys to delete from the store.
-     * @returns Promise that resolves when all keys have been deleted.
+     * Удаляет указанные ключи и их связанные значения из хранилища.
+     * @param keys Ключи для удаления из хранилища.
+     * @returns Promise, который разрешается, когда все ключи удалены.
      */
     async mdelete(keys: string[]): Promise<void> {
         for (const key of keys) {
@@ -113,10 +113,10 @@ class InMemoryEmbeddingCacheExtended<T = any> extends BaseStore<string, T> {
     }
 
     /**
-     * Asynchronous generator that yields keys from the store. If a prefix is
-     * provided, it only yields keys that start with the prefix.
-     * @param prefix Optional prefix to filter keys.
-     * @returns AsyncGenerator that yields keys from the store.
+     * Асинхронный генератор, который выдает ключи из хранилища. Если указан префикс,
+     * он выдает только ключи, начинающиеся с этого префикса.
+     * @param prefix Опциональный префикс для фильтрации ключей.
+     * @returns AsyncGenerator, который выдает ключи из хранилища.
      */
     async *yieldKeys(prefix?: string | undefined): AsyncGenerator<string> {
         const keys = Object.keys(this.store)

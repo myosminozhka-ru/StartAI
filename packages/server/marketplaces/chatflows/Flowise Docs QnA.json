@@ -270,7 +270,7 @@
                 "name": "github",
                 "type": "Document",
                 "baseClasses": ["Document"],
-                "category": "Загрузчики документов",
+                "category": "Document Loaders",
                 "description": "Загрузка данных из репозитория GitHub",
                 "inputParams": [
                     {

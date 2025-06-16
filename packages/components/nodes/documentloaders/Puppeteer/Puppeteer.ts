@@ -19,13 +19,13 @@ class Puppeteer_DocumentLoaders implements INode {
     outputs: INodeOutputsValue[]
 
     constructor() {
-        this.label = 'Puppeteer Web Scraper'
+        this.label = 'Веб-скрапер Puppeteer'
         this.name = 'puppeteerWebScraper'
         this.version = 2.0
         this.type = 'Document'
         this.icon = 'puppeteer.svg'
         this.category = 'Document Loaders'
-        this.description = `Load data from webpages`
+        this.description = `Загрузка данных с веб-страниц`
         this.baseClasses = [this.type]
         this.inputs = [
             {
@@ -34,26 +34,26 @@ class Puppeteer_DocumentLoaders implements INode {
                 type: 'string'
             },
             {
-                label: 'Text Splitter',
+                label: 'Разделитель текста',
                 name: 'textSplitter',
                 type: 'TextSplitter',
                 optional: true
             },
             {
-                label: 'Get Relative Links Method',
+                label: 'Метод получения относительных ссылок',
                 name: 'relativeLinksMethod',
                 type: 'options',
-                description: 'Select a method to retrieve relative links',
+                description: 'Выберите метод получения относительных ссылок',
                 options: [
                     {
-                        label: 'Web Crawl',
+                        label: 'Веб-краулинг',
                         name: 'webCrawl',
-                        description: 'Crawl relative links from HTML URL'
+                        description: 'Получение относительных ссылок из HTML URL'
                     },
                     {
-                        label: 'Scrape XML Sitemap',
+                        label: 'Скрапинг XML карты сайта',
                         name: 'scrapeXMLSitemap',
-                        description: 'Scrape relative links from XML sitemap URL'
+                        description: 'Получение относительных ссылок из URL XML карты сайта'
                     }
                 ],
                 default: 'webCrawl',
@@ -61,69 +61,69 @@ class Puppeteer_DocumentLoaders implements INode {
                 additionalParams: true
             },
             {
-                label: 'Get Relative Links Limit',
+                label: 'Лимит получения относительных ссылок',
                 name: 'limit',
                 type: 'number',
                 optional: true,
                 default: '10',
                 additionalParams: true,
                 description:
-                    'Only used when "Get Relative Links Method" is selected. Set 0 to retrieve all relative links, default limit is 10.',
-                warning: `Retrieving all links might take long time, and all links will be upserted again if the flow's state changed (eg: different URL, chunk size, etc)`
+                    'Используется только когда выбран "Метод получения относительных ссылок". Установите 0 для получения всех относительных ссылок, лимит по умолчанию - 10.',
+                warning: `Получение всех ссылок может занять много времени, и все ссылки будут повторно добавлены, если состояние потока изменилось (например: другой URL, размер чанка и т.д.)`
             },
             {
-                label: 'Wait Until',
+                label: 'Ожидание до',
                 name: 'waitUntilGoToOption',
                 type: 'options',
-                description: 'Select a go to wait until option',
+                description: 'Выберите опцию ожидания перехода',
                 options: [
                     {
-                        label: 'Load',
+                        label: 'Загрузка',
                         name: 'load',
-                        description: `When the initial HTML document's DOM has been loaded and parsed`
+                        description: 'Когда DOM начального HTML документа был загружен и обработан'
                     },
                     {
-                        label: 'DOM Content Loaded',
+                        label: 'Загрузка DOM',
                         name: 'domcontentloaded',
-                        description: `When the complete HTML document's DOM has been loaded and parsed`
+                        description: 'Когда DOM полного HTML документа был загружен и обработан'
                     },
                     {
-                        label: 'Network Idle 0',
+                        label: 'Сеть простаивает 0',
                         name: 'networkidle0',
-                        description: 'Navigation is finished when there are no more than 0 network connections for at least 500 ms'
+                        description: 'Навигация завершена, когда нет более 0 сетевых соединений в течение как минимум 500 мс'
                     },
                     {
-                        label: 'Network Idle 2',
+                        label: 'Сеть простаивает 2',
                         name: 'networkidle2',
-                        description: 'Navigation is finished when there are no more than 2 network connections for at least 500 ms'
+                        description: 'Навигация завершена, когда нет более 2 сетевых соединений в течение как минимум 500 мс'
                     }
                 ],
                 optional: true,
                 additionalParams: true
             },
             {
-                label: 'Wait for selector to load',
+                label: 'Ожидание загрузки селектора',
                 name: 'waitForSelector',
                 type: 'string',
                 optional: true,
                 additionalParams: true,
-                description: 'CSS selectors like .div or #div'
+                description: 'CSS селекторы, например .div или #div'
             },
             {
-                label: 'Additional Metadata',
+                label: 'Дополнительные метаданные',
                 name: 'metadata',
                 type: 'json',
-                description: 'Additional metadata to be added to the extracted documents',
+                description: 'Дополнительные метаданные для добавления к извлеченным документам',
                 optional: true,
                 additionalParams: true
             },
             {
-                label: 'Omit Metadata Keys',
+                label: 'Исключить ключи метаданных',
                 name: 'omitMetadataKeys',
                 type: 'string',
                 rows: 4,
                 description:
-                    'Each document loader comes with a default set of metadata keys that are extracted from the document. You can use this field to omit some of the default metadata keys. The value should be a list of keys, seperated by comma. Use * to omit all metadata keys execept the ones you specify in the Additional Metadata field',
+                    'Каждый загрузчик документов поставляется с набором метаданных по умолчанию, которые извлекаются из документа. Вы можете использовать это поле для исключения некоторых ключей метаданных по умолчанию. Значение должно быть списком ключей, разделенных запятыми. Используйте * для исключения всех ключей метаданных, кроме тех, которые вы указали в поле Дополнительные метаданные',
                 placeholder: 'key1, key2, key3.nestedKey1',
                 optional: true,
                 additionalParams: true
@@ -131,15 +131,15 @@ class Puppeteer_DocumentLoaders implements INode {
         ]
         this.outputs = [
             {
-                label: 'Document',
+                label: 'Документ',
                 name: 'document',
-                description: 'Array of document objects containing metadata and pageContent',
+                description: 'Массив объектов документов, содержащих метаданные и содержимое страницы',
                 baseClasses: [...this.baseClasses, 'json']
             },
             {
-                label: 'Text',
+                label: 'Текст',
                 name: 'text',
-                description: 'Concatenated string from pageContent of documents',
+                description: 'Объединенная строка из содержимого страниц документов',
                 baseClasses: ['string', 'json']
             }
         ]

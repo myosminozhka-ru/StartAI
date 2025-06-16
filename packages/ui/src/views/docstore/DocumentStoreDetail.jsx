@@ -180,7 +180,7 @@ const DocumentStoreDetails = () => {
 
     const listLoaders = () => {
         const dialogProp = {
-            title: 'Select Document Loader'
+            title: 'Выбрать загрузчик документов'
         }
         setDocumentLoaderListDialogProps(dialogProp)
         setShowDocumentLoaderListDialog(true)
@@ -206,7 +206,7 @@ const DocumentStoreDetails = () => {
                 setBackdropLoading(false)
                 if (deleteResp.data) {
                     enqueueSnackbar({
-                        message: 'Store, Loader and associated document chunks deleted',
+                        message: 'Хранилище, загрузчик и связанные чанки документов удалены',
                         options: {
                             key: new Date().getTime() + Math.random(),
                             variant: 'success',
@@ -223,7 +223,7 @@ const DocumentStoreDetails = () => {
                 setBackdropLoading(false)
                 setError(error)
                 enqueueSnackbar({
-                    message: `Failed to delete Document Store: ${
+                    message: `Не удалось удалить хранилище документов: ${
                         typeof error.response.data === 'object' ? error.response.data.message : error.response.data
                     }`,
                     options: {
@@ -244,7 +244,7 @@ const DocumentStoreDetails = () => {
                 setBackdropLoading(false)
                 if (deleteResp.data) {
                     enqueueSnackbar({
-                        message: 'Loader and associated document chunks deleted',
+                        message: 'Загрузчик и связанные чанки документов удалены',
                         options: {
                             key: new Date().getTime() + Math.random(),
                             variant: 'success',
@@ -261,7 +261,7 @@ const DocumentStoreDetails = () => {
                 setError(error)
                 setBackdropLoading(false)
                 enqueueSnackbar({
-                    message: `Failed to delete Document Loader: ${
+                    message: `Не удалось удалить загрузчик документов: ${
                         typeof error.response.data === 'object' ? error.response.data.message : error.response.data
                     }`,
                     options: {
@@ -281,8 +281,8 @@ const DocumentStoreDetails = () => {
 
     const onLoaderDelete = (file, vectorStoreConfig, recordManagerConfig) => {
         const props = {
-            title: `Delete`,
-            description: `Delete Loader ${file.loaderName} ? This will delete all the associated document chunks.`,
+            title: `Удалить`,
+            description: `Удалить загрузчик ${file.loaderName}? Это удалит все связанные чанки документов.`,
             vectorStoreConfig,
             recordManagerConfig,
             type: 'LOADER',
@@ -295,8 +295,8 @@ const DocumentStoreDetails = () => {
 
     const onStoreDelete = (vectorStoreConfig, recordManagerConfig) => {
         const props = {
-            title: `Delete`,
-            description: `Delete Store ${getSpecificDocumentStore.data?.name} ? This will delete all the associated loaders and document chunks.`,
+            title: `Удалить`,
+            description: `Удалить хранилище ${getSpecificDocumentStore.data?.name}? Это удалит все связанные загрузчики и чанки документов.`,
             vectorStoreConfig,
             recordManagerConfig,
             type: 'STORE'
@@ -308,10 +308,10 @@ const DocumentStoreDetails = () => {
 
     const onStoreRefresh = async (storeId) => {
         const confirmPayload = {
-            title: `Refresh all loaders and upsert all chunks?`,
-            description: `This will re-process all loaders and upsert all chunks. This action might take some time.`,
-            confirmButtonName: 'Refresh',
-            cancelButtonName: 'Cancel'
+            title: `Обновить все загрузчики и чанки?`,
+            description: `Это перепроцессит все загрузчики и обновит все чанки. Это действие может занять некоторое время.`,
+            confirmButtonName: 'Обновить',
+            cancelButtonName: 'Отмена'
         }
         const isConfirmed = await confirm(confirmPayload)
 
@@ -322,7 +322,7 @@ const DocumentStoreDetails = () => {
                 const resp = await documentsApi.refreshLoader(storeId)
                 if (resp.data) {
                     enqueueSnackbar({
-                        message: 'Document store refresh successfully!',
+                        message: 'Хранилище документов успешно обновлено!',
                         options: {
                             key: new Date().getTime() + Math.random(),
                             variant: 'success',
@@ -338,7 +338,7 @@ const DocumentStoreDetails = () => {
             } catch (error) {
                 setBackdropLoading(false)
                 enqueueSnackbar({
-                    message: `Failed to refresh document store: ${
+                    message: `Не удалось обновить хранилище документов: ${
                         typeof error.response.data === 'object' ? error.response.data.message : error.response.data
                     }`,
                     options: {
@@ -364,7 +364,7 @@ const DocumentStoreDetails = () => {
         const dialogProp = {
             title: 'Редактировать хранилище документов',
             type: 'EDIT',
-            cancelButtonName: 'Отменить',
+            cancelButtonName: 'Отмена',
             confirmButtonName: 'Обновить',
             data: data
         }
@@ -385,7 +385,7 @@ const DocumentStoreDetails = () => {
 
     const onViewUpsertAPI = (storeId, loaderId) => {
         const props = {
-            title: `Upsert API`,
+            title: `Удалить`,
             storeId,
             loaderId
         }
@@ -494,7 +494,7 @@ const DocumentStoreDetails = () => {
                                         disableRipple
                                     >
                                         <NoteAddIcon />
-                                        Апдейт всех чанков
+                                        Обновить все чанки
                                     </MenuItem>
                                 </Available>
                                 <MenuItem
@@ -803,7 +803,7 @@ function LoaderRow(props) {
                                 onClick={(e) => handleClick(e)}
                                 endIcon={<KeyboardArrowDownIcon />}
                             >
-                                Options
+                                Действия
                             </Button>
                             <StyledMenu
                                 id='document-store-actions-customized-menu'
@@ -817,32 +817,32 @@ function LoaderRow(props) {
                                 <Available permission={'documentStores:preview-process'}>
                                     <MenuItem onClick={props.onEditClick} disableRipple>
                                         <FileEditIcon />
-                                        Preview & Process
+                                        Предпросмотр и обработка
                                     </MenuItem>
                                 </Available>
                                 <Available permission={'documentStores:preview-process'}>
                                     <MenuItem onClick={props.onViewChunksClick} disableRipple>
                                         <FileChunksIcon />
-                                        View & Edit Chunks
+                                        Просмотр и редактирование чанков
                                     </MenuItem>
                                 </Available>
                                 <Available permission={'documentStores:preview-process'}>
                                     <MenuItem onClick={props.onChunkUpsert} disableRipple>
                                         <NoteAddIcon />
-                                        Upsert Chunks
+                                        Обновить чанки
                                     </MenuItem>
                                 </Available>
                                 <Available permission={'documentStores:preview-process'}>
                                     <MenuItem onClick={props.onViewUpsertAPI} disableRipple>
                                         <CodeIcon />
-                                        View API
+                                        Просмотр API
                                     </MenuItem>
                                 </Available>
                                 <Divider sx={{ my: 0.5 }} />
                                 <Available permission={'documentStores:delete-loader'}>
                                     <MenuItem onClick={props.onDeleteClick} disableRipple>
                                         <FileDeleteIcon />
-                                        Delete
+                                        Удалить
                                     </MenuItem>
                                 </Available>
                             </StyledMenu>

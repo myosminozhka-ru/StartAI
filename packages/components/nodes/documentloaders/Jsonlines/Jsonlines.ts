@@ -8,9 +8,9 @@ import { Document } from '@langchain/core/documents'
 import type { readFile as ReadFileT } from 'node:fs/promises'
 
 const howToUseCode = `
-You can add metadata dynamically from the document:
+Вы можете динамически добавлять метаданные из документа:
 
-For example, if the document is:
+Например, если документ выглядит так:
 \`\`\`jsonl
 {
     "source": "www.example.com", "content": "Hello World!"
@@ -20,7 +20,7 @@ For example, if the document is:
 }
 \`\`\`
 
-You can have the "source" value as metadata by returning the following:
+Вы можете использовать значение "source" как метаданные, вернув следующее:
 \`\`\`json
 {
     "source": "/source"
@@ -40,55 +40,56 @@ class Jsonlines_DocumentLoaders implements INode {
     outputs: INodeOutputsValue[]
 
     constructor() {
-        this.label = 'Json Lines File'
+        this.label = 'JSON Lines файл'
         this.name = 'jsonlinesFile'
         this.version = 3.0
         this.type = 'Document'
         this.icon = 'jsonlines.svg'
         this.category = 'Document Loaders'
-        this.description = `Load data from JSON Lines files`
+        this.description = `Загрузка данных из JSON Lines файлов`
         this.baseClasses = [this.type]
         this.inputs = [
             {
-                label: 'Jsonlines File',
+                label: 'JSON Lines файл',
                 name: 'jsonlinesFile',
                 type: 'file',
                 fileType: '.jsonl'
             },
             {
-                label: 'Text Splitter',
+                label: 'Разделитель текста',
                 name: 'textSplitter',
                 type: 'TextSplitter',
                 optional: true
             },
             {
-                label: 'Pointer Extraction',
+                label: 'Указатель извлечения',
                 name: 'pointerName',
                 type: 'string',
                 placeholder: 'key',
-                description: 'Ex: { "key": "value" }, Pointer Extraction = "key", "value" will be extracted as pageContent of the chunk',
+                description:
+                    'Пример: { "key": "value" }, Указатель извлечения = "key", "value" будет извлечен как содержимое страницы фрагмента',
                 optional: false
             },
             {
-                label: 'Additional Metadata',
+                label: 'Дополнительные метаданные',
                 name: 'metadata',
                 type: 'json',
                 description:
-                    'Additional metadata to be added to the extracted documents. You can add metadata dynamically from the document. Ex: { "key": "value", "source": "www.example.com" }. Metadata: { "page": "/source" } will extract the value of the key "source" from the document and add it to the metadata with the key "page"',
+                    'Дополнительные метаданные для добавления к извлеченным документам. Вы можете динамически добавлять метаданные из документа. Пример: { "key": "value", "source": "www.example.com" }. Метаданные: { "page": "/source" } извлечет значение ключа "source" из документа и добавит его в метаданные с ключом "page"',
                 hint: {
-                    label: 'How to use',
+                    label: 'Как использовать',
                     value: howToUseCode
                 },
                 optional: true,
                 additionalParams: true
             },
             {
-                label: 'Omit Metadata Keys',
+                label: 'Исключить ключи метаданных',
                 name: 'omitMetadataKeys',
                 type: 'string',
                 rows: 4,
                 description:
-                    'Each document loader comes with a default set of metadata keys that are extracted from the document. You can use this field to omit some of the default metadata keys. The value should be a list of keys, seperated by comma. Use * to omit all metadata keys execept the ones you specify in the Additional Metadata field',
+                    'Каждый загрузчик документов поставляется с набором метаданных по умолчанию, которые извлекаются из документа. Вы можете использовать это поле для исключения некоторых ключей метаданных по умолчанию. Значение должно быть списком ключей, разделенных запятыми. Используйте * для исключения всех ключей метаданных, кроме тех, которые вы указали в поле Дополнительные метаданные',
                 placeholder: 'key1, key2, key3.nestedKey1',
                 optional: true,
                 additionalParams: true
@@ -96,15 +97,15 @@ class Jsonlines_DocumentLoaders implements INode {
         ]
         this.outputs = [
             {
-                label: 'Document',
+                label: 'Документ',
                 name: 'document',
-                description: 'Array of document objects containing metadata and pageContent',
+                description: 'Массив объектов документов, содержащих метаданные и содержимое страницы',
                 baseClasses: [...this.baseClasses, 'json']
             },
             {
-                label: 'Text',
+                label: 'Текст',
                 name: 'text',
-                description: 'Concatenated string from pageContent of documents',
+                description: 'Объединенная строка из содержимого страниц документов',
                 baseClasses: ['string', 'json']
             }
         ]

@@ -9,13 +9,13 @@ import { StringWithAutocomplete } from 'langchain/dist/util/types'
 import { Document } from '@langchain/core/documents'
 
 /**
- * Set the chunking_strategy to chunk text into larger or smaller elements. Defaults to None with optional arg of by_title
+ * Установите chunking_strategy для разделения текста на большие или маленькие элементы. По умолчанию None с опциональным аргументом by_title
  */
 type ChunkingStrategy = 'None' | 'by_title'
 
 /**
- * Represents an element returned by the Unstructured API. It has
- * properties for the element type, text content, and metadata.
+ * Представляет элемент, возвращаемый API Unstructured. Имеет
+ * свойства для типа элемента, текстового содержимого и метаданных.
  */
 type Element = {
     type: string
@@ -138,12 +138,12 @@ export class UnstructuredLoader extends BaseDocumentLoader {
         })
 
         if (!response.ok) {
-            throw new Error(`Failed to partition file ${this.filePath} with error ${response.status} and message ${await response.text()}`)
+            throw new Error(`Не удалось разделить файл ${this.filePath} с ошибкой ${response.status} и сообщением ${await response.text()}`)
         }
 
         const elements = await response.json()
         if (!Array.isArray(elements)) {
-            throw new Error(`Expected partitioning request to return an array, but got ${elements}`)
+            throw new Error(`Ожидалось, что запрос на разделение вернет массив, но получено ${elements}`)
         }
         return elements.filter((el) => typeof el.text === 'string') as Element[]
     }
@@ -171,6 +171,6 @@ export class UnstructuredLoader extends BaseDocumentLoader {
     }
 
     async load(): Promise<Document[]> {
-        return Promise.reject(new Error('load() is not supported for UnstructuredLoader. Use loadAndSplitBuffer() instead.'))
+        return Promise.reject(new Error('load() не поддерживается для UnstructuredLoader. Используйте вместо этого loadAndSplitBuffer().'))
     }
 }

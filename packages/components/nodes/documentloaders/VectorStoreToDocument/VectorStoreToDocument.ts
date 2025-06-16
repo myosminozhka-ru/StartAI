@@ -15,49 +15,50 @@ class VectorStoreToDocument_DocumentLoaders implements INode {
     outputs: INodeOutputsValue[]
 
     constructor() {
-        this.label = 'VectorStore To Document'
+        this.label = 'Векторное хранилище в документ'
         this.name = 'vectorStoreToDocument'
         this.version = 2.0
         this.type = 'Document'
         this.icon = 'vectorretriever.svg'
         this.category = 'Document Loaders'
-        this.description = 'Search documents with scores from vector store'
+        this.description = 'Поиск документов со оценками из векторного хранилища'
         this.baseClasses = [this.type]
         this.inputs = [
             {
-                label: 'Vector Store',
+                label: 'Векторное хранилище',
                 name: 'vectorStore',
                 type: 'VectorStore'
             },
             {
-                label: 'Query',
+                label: 'Запрос',
                 name: 'query',
                 type: 'string',
-                description: 'Query to retrieve documents from vector database. If not specified, user question will be used',
+                description:
+                    'Запрос для получения документов из векторной базы данных. Если не указан, будет использован вопрос пользователя',
                 optional: true,
                 acceptVariable: true
             },
             {
-                label: 'Minimum Score (%)',
+                label: 'Минимальный балл (%)',
                 name: 'minScore',
                 type: 'number',
                 optional: true,
                 placeholder: '75',
                 step: 1,
-                description: 'Minumum score for embeddings documents to be included'
+                description: 'Минимальный балл для включения документов с эмбеддингами'
             }
         ]
         this.outputs = [
             {
-                label: 'Document',
+                label: 'Документ',
                 name: 'document',
-                description: 'Array of document objects containing metadata and pageContent',
+                description: 'Массив объектов документа, содержащих метаданные и содержимое страницы',
                 baseClasses: [...this.baseClasses, 'json']
             },
             {
-                label: 'Text',
+                label: 'Текст',
                 name: 'text',
-                description: 'Concatenated string from pageContent of documents',
+                description: 'Объединенная строка из содержимого страниц документов',
                 baseClasses: ['string', 'json']
             }
         ]
@@ -80,7 +81,7 @@ class VectorStoreToDocument_DocumentLoaders implements INode {
 
         const docs = await vectorStore.similaritySearchWithScore(query ?? input, topK, filter)
         // eslint-disable-next-line no-console
-        console.log('\x1b[94m\x1b[1m\n*****VectorStore Documents*****\n\x1b[0m\x1b[0m')
+        console.log('\x1b[94m\x1b[1m\n*****Документы векторного хранилища*****\n\x1b[0m\x1b[0m')
         // eslint-disable-next-line no-console
         console.log(JSON.stringify(docs, null, 2))
 

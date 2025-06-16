@@ -20,11 +20,11 @@ class RedisEmbeddingsCache implements INode {
     credential: INodeParams
 
     constructor() {
-        this.label = 'Redis Embeddings Cache'
+        this.label = 'Кэш эмбеддингов Redis'
         this.name = 'redisEmbeddingsCache'
         this.version = 1.0
         this.type = 'RedisEmbeddingsCache'
-        this.description = 'Cache generated Embeddings in Redis to avoid needing to recompute them.'
+        this.description = 'Кэширование сгенерированных эмбеддингов в Redis для избежания необходимости их повторного вычисления.'
         this.icon = 'redis.svg'
         this.category = 'Cache'
         this.baseClasses = [this.type, ...getBaseClasses(CacheBackedEmbeddings)]
@@ -37,12 +37,12 @@ class RedisEmbeddingsCache implements INode {
         }
         this.inputs = [
             {
-                label: 'Embeddings',
+                label: 'Эмбеддинги',
                 name: 'embeddings',
                 type: 'Embeddings'
             },
             {
-                label: 'Time to Live (ms)',
+                label: 'Время жизни (мс)',
                 name: 'ttl',
                 type: 'number',
                 step: 10,
@@ -51,7 +51,7 @@ class RedisEmbeddingsCache implements INode {
                 additionalParams: true
             },
             {
-                label: 'Namespace',
+                label: 'Пространство имен',
                 name: 'namespace',
                 type: 'string',
                 optional: true,

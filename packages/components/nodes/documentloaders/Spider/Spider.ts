@@ -95,7 +95,7 @@ class Spider_DocumentLoaders implements INode {
         this.version = 2.0
         this.type = 'Document'
         this.icon = 'spider.svg'
-        this.category = 'Загрузчики документов'
+        this.category = 'Document Loaders'
         this.description = 'Сканирование и обход веб-страниц с помощью Spider'
         this.baseClasses = [this.type]
         this.inputs = [

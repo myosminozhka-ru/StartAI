@@ -24,7 +24,7 @@ class Figma_DocumentLoaders implements INode {
         this.type = 'Document'
         this.icon = 'figma.svg'
         this.category = 'Document Loaders'
-        this.description = 'Load data from a Figma file'
+        this.description = 'Загрузка данных из файла Figma'
         this.baseClasses = [this.type]
         this.credential = {
             label: 'Подключите учетные данные',
@@ -34,48 +34,48 @@ class Figma_DocumentLoaders implements INode {
         }
         this.inputs = [
             {
-                label: 'File Key',
+                label: 'Ключ файла',
                 name: 'fileKey',
                 type: 'string',
                 placeholder: 'key',
                 description:
-                    'The file key can be read from any Figma file URL: https://www.figma.com/file/:key/:title. For example, in https://www.figma.com/file/12345/Website, the file key is 12345'
+                    'Ключ файла можно найти в URL любого файла Figma: https://www.figma.com/file/:key/:title. Например, в https://www.figma.com/file/12345/Website ключ файла - это 12345'
             },
             {
-                label: 'Node IDs',
+                label: 'ID узлов',
                 name: 'nodeIds',
                 type: 'string',
                 placeholder: '0, 1, 2',
                 description:
-                    'A list of Node IDs, seperated by comma. Refer to <a target="_blank" href="https://www.figma.com/community/plugin/758276196886757462/Node-Inspector">official guide</a> on how to get Node IDs'
+                    'Список ID узлов, разделенных запятыми. См. <a target="_blank" href="https://www.figma.com/community/plugin/758276196886757462/Node-Inspector">официальное руководство</a> о том, как получить ID узлов'
             },
             {
-                label: 'Recursive',
+                label: 'Рекурсивно',
                 name: 'recursive',
                 type: 'boolean',
                 optional: true
             },
             {
-                label: 'Text Splitter',
+                label: 'Разделитель текста',
                 name: 'textSplitter',
                 type: 'TextSplitter',
                 optional: true
             },
             {
-                label: 'Additional Metadata',
+                label: 'Дополнительные метаданные',
                 name: 'metadata',
                 type: 'json',
-                description: 'Additional metadata to be added to the extracted documents',
+                description: 'Дополнительные метаданные для добавления к извлеченным документам',
                 optional: true,
                 additionalParams: true
             },
             {
-                label: 'Omit Metadata Keys',
+                label: 'Исключить ключи метаданных',
                 name: 'omitMetadataKeys',
                 type: 'string',
                 rows: 4,
                 description:
-                    'Each document loader comes with a default set of metadata keys that are extracted from the document. You can use this field to omit some of the default metadata keys. The value should be a list of keys, seperated by comma. Use * to omit all metadata keys execept the ones you specify in the Additional Metadata field',
+                    'Каждый загрузчик документов поставляется с набором метаданных по умолчанию, которые извлекаются из документа. Вы можете использовать это поле для исключения некоторых ключей метаданных по умолчанию. Значение должно быть списком ключей, разделенных запятыми. Используйте * для исключения всех ключей метаданных, кроме тех, которые вы указали в поле Дополнительные метаданные',
                 placeholder: 'key1, key2, key3.nestedKey1',
                 optional: true,
                 additionalParams: true
@@ -83,15 +83,15 @@ class Figma_DocumentLoaders implements INode {
         ]
         this.outputs = [
             {
-                label: 'Document',
+                label: 'Документ',
                 name: 'document',
-                description: 'Array of document objects containing metadata and pageContent',
+                description: 'Массив объектов документов, содержащих метаданные и содержимое страницы',
                 baseClasses: [...this.baseClasses, 'json']
             },
             {
-                label: 'Text',
+                label: 'Текст',
                 name: 'text',
-                description: 'Concatenated string from pageContent of documents',
+                description: 'Объединенная строка из содержимого страниц документов',
                 baseClasses: ['string', 'json']
             }
         ]

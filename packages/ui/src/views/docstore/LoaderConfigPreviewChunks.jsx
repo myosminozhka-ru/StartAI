@@ -140,7 +140,7 @@ const LoaderConfigPreviewChunks = () => {
         if (!canSubmit) {
             const fieldsList = missingFields.join(', ')
             enqueueSnackbar({
-                message: `Please fill in the following mandatory fields: ${fieldsList}`,
+                message: `Пожалуйста, заполните следующие обязательные поля: ${fieldsList}`,
                 options: {
                     key: new Date().getTime() + Math.random(),
                     variant: 'warning',
@@ -172,7 +172,7 @@ const LoaderConfigPreviewChunks = () => {
             } catch (error) {
                 setLoading(false)
                 enqueueSnackbar({
-                    message: `Failed to preview chunks: ${
+                    message: `Не удалось предпросмотреть фрагменты: ${
                         typeof error.response.data === 'object' ? error.response.data.message : error.response.data
                     }`,
                     options: {
@@ -198,7 +198,7 @@ const LoaderConfigPreviewChunks = () => {
                 setLoading(false)
                 if (saveResp.data) {
                     enqueueSnackbar({
-                        message: 'File submitted for processing. Redirecting to Document Store..',
+                        message: 'Файл отправлен на обработку. Перенаправление в хранилище документов..',
                         options: {
                             key: new Date().getTime() + Math.random(),
                             variant: 'success',
@@ -216,7 +216,7 @@ const LoaderConfigPreviewChunks = () => {
             } catch (error) {
                 setLoading(false)
                 enqueueSnackbar({
-                    message: `Failed to process chunking: ${
+                    message: `Не удалось обработать фрагменты: ${
                         typeof error.response.data === 'object' ? error.response.data.message : error.response.data
                     }`,
                     options: {
@@ -421,7 +421,7 @@ const LoaderConfigPreviewChunks = () => {
                                         sx={{ borderRadius: 2, height: '100%' }}
                                         startIcon={<IconDatabaseImport />}
                                     >
-                                        Process
+                                        Обработать
                                     </StyledButton>
                                 </Box>
                             </Toolbar>
@@ -443,8 +443,8 @@ const LoaderConfigPreviewChunks = () => {
                                                 size='small'
                                                 label={
                                                     selectedDocumentLoader?.label?.toLowerCase().includes('loader')
-                                                        ? selectedDocumentLoader.label + ' name'
-                                                        : selectedDocumentLoader?.label + ' Loader Name'
+                                                        ? selectedDocumentLoader.label + ' название'
+                                                        : selectedDocumentLoader?.label + ' Название загрузчика'
                                                 }
                                                 value={loaderName}
                                                 onChange={(e) => setLoaderName(e.target.value)}
@@ -467,7 +467,7 @@ const LoaderConfigPreviewChunks = () => {
                                                     <Typography sx={{ mr: 2 }} variant='h3'>
                                                         {(splitterOptions ?? []).find(
                                                             (splitter) => splitter.name === selectedTextSplitter?.name
-                                                        )?.label ?? 'Select Text Splitter'}
+                                                        )?.label ?? 'Выберите разделитель текста'}
                                                     </Typography>
                                                     <div
                                                         style={{
@@ -499,7 +499,7 @@ const LoaderConfigPreviewChunks = () => {
                                                     </div>
                                                 </Box>
                                                 <Box sx={{ p: 2 }}>
-                                                    <Typography>Splitter</Typography>
+                                                    <Typography>Разделитель</Typography>
                                                     <Dropdown
                                                         key={JSON.stringify(selectedTextSplitter)}
                                                         name='textSplitter'
@@ -577,12 +577,12 @@ const LoaderConfigPreviewChunks = () => {
                                                     <StyledFab
                                                         color='secondary'
                                                         aria-label='preview'
-                                                        title='Preview'
+                                                        title='Предпросмотр'
                                                         variant='extended'
                                                         onClick={onPreviewChunks}
                                                     >
                                                         <IconEye style={{ marginRight: '5px' }} />
-                                                        Preview Chunks
+                                                        Предпросмотр фрагментов
                                                     </StyledFab>
                                                 </div>
                                             </div>
@@ -590,10 +590,10 @@ const LoaderConfigPreviewChunks = () => {
                                     {documentChunks && documentChunks.length > 0 && (
                                         <>
                                             <Typography sx={{ wordWrap: 'break-word', textAlign: 'left', mb: 2 }} variant='h3'>
-                                                {currentPreviewCount} of {totalChunks} Chunks
+                                                {currentPreviewCount} из {totalChunks} фрагментов
                                             </Typography>
                                             <Box sx={{ mb: 3 }}>
-                                                <Typography>Show Chunks in Preview</Typography>
+                                                <Typography>Показать фрагментов в предпросмотре</Typography>
                                                 <div style={{ display: 'flex', flexDirection: 'row' }}>
                                                     <OutlinedInput
                                                         size='small'
@@ -607,12 +607,12 @@ const LoaderConfigPreviewChunks = () => {
                                                     <StyledFab
                                                         color='secondary'
                                                         aria-label='preview'
-                                                        title='Preview'
+                                                        title='Предпросмотр'
                                                         variant='extended'
                                                         onClick={onPreviewChunks}
                                                     >
                                                         <IconEye style={{ marginRight: '5px' }} />
-                                                        Preview
+                                                        Предпросмотр
                                                     </StyledFab>
                                                 </div>
                                             </Box>
@@ -632,7 +632,7 @@ const LoaderConfigPreviewChunks = () => {
                                                                 <Card>
                                                                     <CardContent sx={{ p: 1 }}>
                                                                         <Typography sx={{ wordWrap: 'break-word', mb: 1 }} variant='h5'>
-                                                                            {`#${index + 1}. Characters: ${row.pageContent.length}`}
+                                                                            {`#${index + 1}. Символов: ${row.pageContent.length}`}
                                                                         </Typography>
                                                                         <Typography sx={{ wordWrap: 'break-word' }} variant='body2'>
                                                                             {row.pageContent}

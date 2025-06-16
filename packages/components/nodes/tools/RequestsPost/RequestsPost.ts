@@ -14,13 +14,13 @@ class RequestsPost_Tools implements INode {
     inputs: INodeParams[]
 
     constructor() {
-        this.label = 'Requests Post'
+        this.label = 'Запрос POST'
         this.name = 'requestsPost'
         this.version = 1.0
         this.type = 'RequestsPost'
         this.icon = 'requestspost.svg'
         this.category = 'Tools'
-        this.description = 'Execute HTTP POST requests'
+        this.description = 'Выполнение HTTP POST запросов'
         this.baseClasses = [this.type, ...getBaseClasses(RequestsPostTool)]
         this.inputs = [
             {
@@ -28,31 +28,31 @@ class RequestsPost_Tools implements INode {
                 name: 'url',
                 type: 'string',
                 description:
-                    'Agent will make call to this exact URL. If not specified, agent will try to figure out itself from AIPlugin if provided',
+                    'Агент сделает запрос по этому точному URL. Если не указано, агент попытается определить URL самостоятельно из AIPlugin, если он предоставлен',
                 additionalParams: true,
                 optional: true
             },
             {
-                label: 'Body',
+                label: 'Тело запроса',
                 name: 'body',
                 type: 'json',
                 description:
-                    'JSON body for the POST request. If not specified, agent will try to figure out itself from AIPlugin if provided',
+                    'JSON тело для POST запроса. Если не указано, агент попытается определить его самостоятельно из AIPlugin, если он предоставлен',
                 additionalParams: true,
                 optional: true
             },
             {
-                label: 'Description',
+                label: 'Описание',
                 name: 'description',
                 type: 'string',
                 rows: 4,
                 default: desc,
-                description: 'Acts like a prompt to tell agent when it should use this tool',
+                description: 'Действует как подсказка для агента, когда он должен использовать этот инструмент',
                 additionalParams: true,
                 optional: true
             },
             {
-                label: 'Headers',
+                label: 'Заголовки',
                 name: 'headers',
                 type: 'json',
                 additionalParams: true,

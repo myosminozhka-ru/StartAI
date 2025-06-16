@@ -48,7 +48,7 @@ class SpiderApp {
         this.apiKey = apiKey || ''
         this.apiUrl = apiUrl || 'https://api.spider.cloud/v1'
         if (!this.apiKey) {
-            throw new Error('No API key provided')
+            throw new Error('API ключ не предоставлен')
         }
     }
 
@@ -63,15 +63,15 @@ class SpiderApp {
                 if (responseData[0].status) {
                     return { success: true, data: responseData[0] }
                 } else {
-                    throw new Error(`Failed to scrape URL. Error: ${responseData.error}`)
+                    throw new Error(`Не удалось сканировать URL. Ошибка: ${responseData.error}`)
                 }
             } else {
-                this.handleError(response, 'scrape URL')
+                this.handleError(response, 'сканировать URL')
             }
         } catch (error: any) {
             throw new Error(error.message)
         }
-        return { success: false, error: 'Internal server error.' }
+        return { success: false, error: 'Внутренняя ошибка сервера.' }
     }
 
     async crawlUrl(url: string, params: Params | null = null, idempotencyKey?: string): Promise<CrawlResponse | any> {
@@ -83,12 +83,12 @@ class SpiderApp {
             if (response.status === 200) {
                 return { success: true, data: response.data }
             } else {
-                this.handleError(response, 'start crawl job')
+                this.handleError(response, 'запустить задачу обхода')
             }
         } catch (error: any) {
             throw new Error(error.message)
         }
-        return { success: false, error: 'Internal server error.' }
+        return { success: false, error: 'Внутренняя ошибка сервера.' }
     }
 
     private prepareHeaders(idempotencyKey?: string): AxiosRequestHeaders {
@@ -105,10 +105,10 @@ class SpiderApp {
 
     private handleError(response: AxiosResponse, action: string): void {
         if ([402, 408, 409, 500].includes(response.status)) {
-            const errorMessage: string = response.data.error || 'Unknown error occurred'
-            throw new Error(`Failed to ${action}. Status code: ${response.status}. Error: ${errorMessage}`)
+            const errorMessage: string = response.data.error || 'Произошла неизвестная ошибка'
+            throw new Error(`Не удалось ${action}. Код статуса: ${response.status}. Ошибка: ${errorMessage}`)
         } else {
-            throw new Error(`Unexpected error occurred while trying to ${action}. Status code: ${response.status}`)
+            throw new Error(`Произошла непредвиденная ошибка при попытке ${action}. Код статуса: ${response.status}`)
         }
     }
 }

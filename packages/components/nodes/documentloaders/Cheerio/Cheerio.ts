@@ -20,13 +20,13 @@ class Cheerio_DocumentLoaders implements INode {
     outputs: INodeOutputsValue[]
 
     constructor() {
-        this.label = 'Cheerio Web Scraper'
+        this.label = 'Cheerio Веб-скрапер'
         this.name = 'cheerioWebScraper'
         this.version = 2.0
         this.type = 'Document'
         this.icon = 'cheerio.svg'
         this.category = 'Document Loaders'
-        this.description = `Load data from webpages`
+        this.description = `Загрузка данных с веб-страниц`
         this.baseClasses = [this.type]
         this.inputs = [
             {
@@ -35,26 +35,26 @@ class Cheerio_DocumentLoaders implements INode {
                 type: 'string'
             },
             {
-                label: 'Text Splitter',
+                label: 'Разделитель текста',
                 name: 'textSplitter',
                 type: 'TextSplitter',
                 optional: true
             },
             {
-                label: 'Get Relative Links Method',
+                label: 'Метод получения относительных ссылок',
                 name: 'relativeLinksMethod',
                 type: 'options',
-                description: 'Select a method to retrieve relative links',
+                description: 'Выберите метод получения относительных ссылок',
                 options: [
                     {
-                        label: 'Web Crawl',
+                        label: 'Веб-краулинг',
                         name: 'webCrawl',
-                        description: 'Crawl relative links from HTML URL'
+                        description: 'Обход относительных ссылок из HTML URL'
                     },
                     {
-                        label: 'Scrape XML Sitemap',
+                        label: 'Скрапинг XML карты сайта',
                         name: 'scrapeXMLSitemap',
-                        description: 'Scrape relative links from XML sitemap URL'
+                        description: 'Извлечение относительных ссылок из URL XML карты сайта'
                     }
                 ],
                 default: 'webCrawl',
@@ -62,39 +62,39 @@ class Cheerio_DocumentLoaders implements INode {
                 additionalParams: true
             },
             {
-                label: 'Get Relative Links Limit',
+                label: 'Лимит получения относительных ссылок',
                 name: 'limit',
                 type: 'number',
                 optional: true,
                 default: '10',
                 additionalParams: true,
                 description:
-                    'Only used when "Get Relative Links Method" is selected. Set 0 to retrieve all relative links, default limit is 10.',
-                warning: `Retrieving all links might take long time, and all links will be upserted again if the flow's state changed (eg: different URL, chunk size, etc)`
+                    'Используется только когда выбран "Метод получения относительных ссылок". Установите 0 для получения всех относительных ссылок, по умолчанию лимит 10.',
+                warning: `Получение всех ссылок может занять много времени, и все ссылки будут обновлены, если состояние потока изменится (например: другой URL, размер чанка и т.д.)`
             },
             {
-                label: 'Selector (CSS)',
+                label: 'Селектор (CSS)',
                 name: 'selector',
                 type: 'string',
-                description: 'Specify a CSS selector to select the content to be extracted',
+                description: 'Укажите CSS селектор для выбора контента, который нужно извлечь',
                 optional: true,
                 additionalParams: true
             },
             {
-                label: 'Additional Metadata',
+                label: 'Дополнительные метаданные',
                 name: 'metadata',
                 type: 'json',
-                description: 'Additional metadata to be added to the extracted documents',
+                description: 'Дополнительные метаданные для добавления к извлеченным документам',
                 optional: true,
                 additionalParams: true
             },
             {
-                label: 'Omit Metadata Keys',
+                label: 'Исключить ключи метаданных',
                 name: 'omitMetadataKeys',
                 type: 'string',
                 rows: 4,
                 description:
-                    'Each document loader comes with a default set of metadata keys that are extracted from the document. You can use this field to omit some of the default metadata keys. The value should be a list of keys, seperated by comma. Use * to omit all metadata keys execept the ones you specify in the Additional Metadata field',
+                    'Каждый загрузчик документов имеет стандартный набор ключей метаданных, извлекаемых из документа. Вы можете использовать это поле для исключения некоторых стандартных ключей метаданных. Значение должно быть списком ключей, разделенных запятыми. Используйте * для исключения всех ключей метаданных, кроме тех, которые вы указали в поле Дополнительные метаданные',
                 placeholder: 'key1, key2, key3.nestedKey1',
                 optional: true,
                 additionalParams: true
@@ -102,15 +102,15 @@ class Cheerio_DocumentLoaders implements INode {
         ]
         this.outputs = [
             {
-                label: 'Document',
+                label: 'Документ',
                 name: 'document',
-                description: 'Array of document objects containing metadata and pageContent',
+                description: 'Массив объектов документов, содержащих метаданные и содержимое страницы',
                 baseClasses: [...this.baseClasses, 'json']
             },
             {
-                label: 'Text',
+                label: 'Текст',
                 name: 'text',
-                description: 'Concatenated string from pageContent of documents',
+                description: 'Объединенная строка из содержимого страниц документов',
                 baseClasses: ['string', 'json']
             }
         ]

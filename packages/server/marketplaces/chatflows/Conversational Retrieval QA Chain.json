@@ -192,7 +192,7 @@
                 "name": "textFile",
                 "type": "Document",
                 "baseClasses": ["Document"],
-                "category": "Загрузчики документов",
+                "category": "Document Loaders",
                 "description": "Загрузка данных из текстовых файлов",
                 "inputParams": [
                     {
@@ -477,7 +477,7 @@
                 "name": "documentStore",
                 "type": "Document",
                 "baseClasses": ["Document"],
-                "category": "Загрузчики документов",
+                "category": "Document Loaders",
                 "description": "Загрузка данных из предварительно настроенных хранилищ документов",
                 "inputParams": [
                     {

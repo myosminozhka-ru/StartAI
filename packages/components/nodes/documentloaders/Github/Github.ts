@@ -24,37 +24,37 @@ class Github_DocumentLoaders implements INode {
         this.type = 'Document'
         this.icon = 'github.svg'
         this.category = 'Document Loaders'
-        this.description = `Load data from a GitHub repository`
+        this.description = `Загрузка данных из репозитория GitHub`
         this.baseClasses = [this.type]
         this.credential = {
             label: 'Подключите учетные данные',
             name: 'credential',
             type: 'credential',
-            description: 'Only needed when accessing private repo',
+            description: 'Требуется только при доступе к приватному репозиторию',
             optional: true,
             credentialNames: ['githubApi']
         }
         this.inputs = [
             {
-                label: 'Repo Link',
+                label: 'Ссылка на репозиторий',
                 name: 'repoLink',
                 type: 'string',
                 placeholder: 'https://github.com/FlowiseAI/Flowise'
             },
             {
-                label: 'Branch',
+                label: 'Ветка',
                 name: 'branch',
                 type: 'string',
                 default: 'main'
             },
             {
-                label: 'Recursive',
+                label: 'Рекурсивно',
                 name: 'recursive',
                 type: 'boolean',
                 optional: true
             },
             {
-                label: 'Max Concurrency',
+                label: 'Максимальная параллельность',
                 name: 'maxConcurrency',
                 type: 'number',
                 step: 1,
@@ -62,27 +62,27 @@ class Github_DocumentLoaders implements INode {
                 additionalParams: true
             },
             {
-                label: 'Github Base URL',
+                label: 'Базовый URL Github',
                 name: 'githubBaseUrl',
                 type: 'string',
                 placeholder: `https://git.example.com`,
-                description: 'Custom Github Base Url (e.g. Enterprise)',
+                description: 'Пользовательский базовый URL Github (например, для Enterprise)',
                 optional: true,
                 additionalParams: true
             },
             {
-                label: 'Github Instance API',
+                label: 'API URL Github',
                 name: 'githubInstanceApi',
                 type: 'string',
                 placeholder: `https://api.github.com`,
-                description: 'Custom Github API Url (e.g. Enterprise)',
+                description: 'Пользовательский URL API Github (например, для Enterprise)',
                 optional: true,
                 additionalParams: true
             },
             {
-                label: 'Ignore Paths',
+                label: 'Игнорировать пути',
                 name: 'ignorePath',
-                description: 'An array of paths to be ignored',
+                description: 'Массив путей для игнорирования',
                 placeholder: `["*.md"]`,
                 type: 'string',
                 rows: 4,
@@ -90,36 +90,36 @@ class Github_DocumentLoaders implements INode {
                 additionalParams: true
             },
             {
-                label: 'Max Retries',
+                label: 'Максимальное количество попыток',
                 name: 'maxRetries',
                 description:
-                    'The maximum number of retries that can be made for a single call, with an exponential backoff between each attempt. Defaults to 2.',
+                    'Максимальное количество повторных попыток для одного вызова, с экспоненциальной задержкой между попытками. По умолчанию 2.',
                 type: 'number',
                 step: 1,
                 optional: true,
                 additionalParams: true
             },
             {
-                label: 'Text Splitter',
+                label: 'Разделитель текста',
                 name: 'textSplitter',
                 type: 'TextSplitter',
                 optional: true
             },
             {
-                label: 'Additional Metadata',
+                label: 'Дополнительные метаданные',
                 name: 'metadata',
                 type: 'json',
-                description: 'Additional metadata to be added to the extracted documents',
+                description: 'Дополнительные метаданные для добавления к извлеченным документам',
                 optional: true,
                 additionalParams: true
             },
             {
-                label: 'Omit Metadata Keys',
+                label: 'Исключить ключи метаданных',
                 name: 'omitMetadataKeys',
                 type: 'string',
                 rows: 4,
                 description:
-                    'Each document loader comes with a default set of metadata keys that are extracted from the document. You can use this field to omit some of the default metadata keys. The value should be a list of keys, seperated by comma. Use * to omit all metadata keys execept the ones you specify in the Additional Metadata field',
+                    'Каждый загрузчик документов поставляется с набором метаданных по умолчанию, которые извлекаются из документа. Вы можете использовать это поле для исключения некоторых ключей метаданных по умолчанию. Значение должно быть списком ключей, разделенных запятыми. Используйте * для исключения всех ключей метаданных, кроме тех, которые вы указали в поле Дополнительные метаданные',
                 placeholder: 'key1, key2, key3.nestedKey1',
                 optional: true,
                 additionalParams: true
@@ -127,15 +127,15 @@ class Github_DocumentLoaders implements INode {
         ]
         this.outputs = [
             {
-                label: 'Document',
+                label: 'Документ',
                 name: 'document',
-                description: 'Array of document objects containing metadata and pageContent',
+                description: 'Массив объектов документов, содержащих метаданные и содержимое страницы',
                 baseClasses: [...this.baseClasses, 'json']
             },
             {
-                label: 'Text',
+                label: 'Текст',
                 name: 'text',
-                description: 'Concatenated string from pageContent of documents',
+                description: 'Объединенная строка из содержимого страниц документов',
                 baseClasses: ['string', 'json']
             }
         ]

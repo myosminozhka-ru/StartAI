@@ -15,11 +15,11 @@ class MomentoCache implements INode {
     credential: INodeParams
 
     constructor() {
-        this.label = 'Momento Cache'
+        this.label = 'Кэш Momento'
         this.name = 'momentoCache'
         this.version = 1.0
         this.type = 'MomentoCache'
-        this.description = 'Cache LLM response using Momento, a distributed, serverless cache'
+        this.description = 'Кэширование ответов LLM с использованием Momento, распределенного бессерверного кэша'
         this.icon = 'Momento.svg'
         this.category = 'Cache'
         this.baseClasses = [this.type, ...getBaseClasses(LangchainMomentoCache)]

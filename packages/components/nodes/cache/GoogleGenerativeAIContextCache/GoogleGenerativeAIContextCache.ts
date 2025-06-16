@@ -14,17 +14,17 @@ class GoogleGenerativeAIContextCache implements INode {
     credential: INodeParams
 
     constructor() {
-        this.label = 'Google GenAI Context Cache'
+        this.label = 'Кэш контекста Google GenAI'
         this.name = 'googleGenerativeAIContextCache'
         this.version = 1.0
         this.type = 'GoogleAICacheManager'
-        this.description = 'Large context cache for Google Gemini large language models'
+        this.description = 'Большой кэш контекста для больших языковых моделей Google Gemini'
         this.icon = 'GoogleGemini.svg'
         this.category = 'Cache'
         this.baseClasses = [this.type, ...getBaseClasses(FlowiseGoogleAICacheManager)]
         this.inputs = [
             {
-                label: 'TTL',
+                label: 'Время жизни кэша',
                 name: 'ttl',
                 type: 'number',
                 default: 60 * 60 * 24 * 30
@@ -36,7 +36,7 @@ class GoogleGenerativeAIContextCache implements INode {
             type: 'credential',
             credentialNames: ['googleGenerativeAI'],
             optional: false,
-            description: 'Google Generative AI credential.'
+            description: 'Учетные данные Google Generative AI.'
         }
     }
 

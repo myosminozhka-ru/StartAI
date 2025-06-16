@@ -21,7 +21,7 @@ class CustomDocumentLoader_DocumentLoaders implements INode {
         this.version = 1.0
         this.type = 'Document'
         this.icon = 'customDocLoader.svg'
-        this.category = 'Загрузчики документов'
+        this.category = 'Document Loaders'
         this.description = `Пользовательская функция для загрузки документов`
         this.baseClasses = [this.type]
         this.inputs = [
@@ -35,7 +35,7 @@ class CustomDocumentLoader_DocumentLoaders implements INode {
                 list: true
             },
             {
-                label: 'Javascript функция',
+                label: 'JavaScript функция',
                 name: 'javascriptFunction',
                 type: 'code',
                 description: `Должна возвращать массив объектов документов, содержащих metadata и pageContent, если выбран вывод "Document". Если выбран вывод "Text", должна возвращать строку.`,
@@ -59,7 +59,7 @@ class CustomDocumentLoader_DocumentLoaders implements INode {
             {
                 label: 'Текст',
                 name: 'text',
-                description: 'Объединённая строка из pageContent документов',
+                description: 'Объединенная строка из содержимого страниц документов',
                 baseClasses: ['string', 'json']
             }
         ]

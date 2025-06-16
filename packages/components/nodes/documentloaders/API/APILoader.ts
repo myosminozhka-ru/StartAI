@@ -19,23 +19,23 @@ class API_DocumentLoaders implements INode {
     outputs: INodeOutputsValue[]
 
     constructor() {
-        this.label = 'API Loader'
+        this.label = 'API Загрузчик'
         this.name = 'apiLoader'
         this.version = 2.0
         this.type = 'Document'
         this.icon = 'api.svg'
         this.category = 'Document Loaders'
-        this.description = `Load data from an API`
+        this.description = `Загрузка данных из API`
         this.baseClasses = [this.type]
         this.inputs = [
             {
-                label: 'Text Splitter',
+                label: 'Разделитель текста',
                 name: 'textSplitter',
                 type: 'TextSplitter',
                 optional: true
             },
             {
-                label: 'Method',
+                label: 'Метод',
                 name: 'method',
                 type: 'options',
                 options: [
@@ -55,36 +55,36 @@ class API_DocumentLoaders implements INode {
                 type: 'string'
             },
             {
-                label: 'Headers',
+                label: 'Заголовки',
                 name: 'headers',
                 type: 'json',
                 additionalParams: true,
                 optional: true
             },
             {
-                label: 'Body',
+                label: 'Тело запроса',
                 name: 'body',
                 type: 'json',
                 description:
-                    'JSON body for the POST request. If not specified, agent will try to figure out itself from AIPlugin if provided',
+                    'JSON тело для POST запроса. Если не указано, агент попытается определить его самостоятельно из AIPlugin, если он предоставлен',
                 additionalParams: true,
                 optional: true
             },
             {
-                label: 'Additional Metadata',
+                label: 'Дополнительные метаданные',
                 name: 'metadata',
                 type: 'json',
-                description: 'Additional metadata to be added to the extracted documents',
+                description: 'Дополнительные метаданные, которые будут добавлены к извлеченным документам',
                 optional: true,
                 additionalParams: true
             },
             {
-                label: 'Omit Metadata Keys',
+                label: 'Исключить ключи метаданных',
                 name: 'omitMetadataKeys',
                 type: 'string',
                 rows: 4,
                 description:
-                    'Each document loader comes with a default set of metadata keys that are extracted from the document. You can use this field to omit some of the default metadata keys. The value should be a list of keys, seperated by comma. Use * to omit all metadata keys execept the ones you specify in the Additional Metadata field',
+                    'Каждый загрузчик документов поставляется с набором ключей метаданных по умолчанию, которые извлекаются из документа. Вы можете использовать это поле, чтобы исключить некоторые ключи метаданных по умолчанию. Значение должно быть списком ключей, разделенных запятыми. Используйте * для исключения всех ключей метаданных, кроме тех, которые вы указываете в поле Дополнительные метаданные',
                 placeholder: 'key1, key2, key3.nestedKey1',
                 optional: true,
                 additionalParams: true
@@ -92,15 +92,15 @@ class API_DocumentLoaders implements INode {
         ]
         this.outputs = [
             {
-                label: 'Document',
+                label: 'Документ',
                 name: 'document',
-                description: 'Array of document objects containing metadata and pageContent',
+                description: 'Массив объектов документа, содержащих метаданные и содержимое страницы',
                 baseClasses: [...this.baseClasses, 'json']
             },
             {
-                label: 'Text',
+                label: 'Текст',
                 name: 'text',
-                description: 'Concatenated string from pageContent of documents',
+                description: 'Объединенная строка из содержимого страниц документов',
                 baseClasses: ['string', 'json']
             }
         ]
@@ -238,7 +238,7 @@ class ApiLoader extends BaseDocumentLoader {
             })
             return [doc]
         } catch (error) {
-            throw new Error(`Failed to fetch ${url}: ${error}`)
+            throw new Error(`Не удалось получить данные с ${url}: ${error}`)
         }
     }
 
@@ -258,7 +258,7 @@ class ApiLoader extends BaseDocumentLoader {
             })
             return [doc]
         } catch (error) {
-            throw new Error(`Failed to post ${url}: ${error}`)
+            throw new Error(`Не удалось отправить данные на ${url}: ${error}`)
         }
     }
 }

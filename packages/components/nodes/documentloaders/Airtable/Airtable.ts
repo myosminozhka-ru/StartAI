@@ -26,7 +26,7 @@ class Airtable_DocumentLoaders implements INode {
         this.version = 3.02
         this.type = 'Document'
         this.icon = 'airtable.svg'
-        this.category = 'Загрузчики документов'
+        this.category = 'Document Loaders'
         this.description = `Загрузка данных из таблицы Airtable`
         this.baseClasses = [this.type]
         this.credential = {
