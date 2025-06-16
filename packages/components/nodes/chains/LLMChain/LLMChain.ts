@@ -33,55 +33,56 @@ class LLMChain_Chains implements INode {
     outputParser: BaseOutputParser
 
     constructor() {
-        this.label = 'LLM Chain'
+        this.label = 'Цепочка LLM'
         this.name = 'llmChain'
         this.version = 3.0
         this.type = 'LLMChain'
         this.icon = 'LLM_Chain.svg'
         this.category = 'Chains'
-        this.description = 'Chain to run queries against LLMs'
+        this.description = 'Цепочка для выполнения запросов к языковым моделям'
         this.baseClasses = [this.type, ...getBaseClasses(LLMChain)]
         this.inputs = [
             {
-                label: 'Language Model',
+                label: 'Языковая модель',
                 name: 'model',
                 type: 'BaseLanguageModel'
             },
             {
-                label: 'Prompt',
+                label: 'Промпт',
                 name: 'prompt',
                 type: 'BasePromptTemplate'
             },
             {
-                label: 'Output Parser',
+                label: 'Парсер вывода',
                 name: 'outputParser',
                 type: 'BaseLLMOutputParser',
                 optional: true
             },
             {
-                label: 'Input Moderation',
-                description: 'Detect text that could generate harmful output and prevent it from being sent to the language model',
+                label: 'Модерация ввода',
+                description:
+                    'Обнаружение текста, который может генерировать вредоносный вывод, и предотвращение его отправки языковой модели',
                 name: 'inputModeration',
                 type: 'Moderation',
                 optional: true,
                 list: true
             },
             {
-                label: 'Chain Name',
+                label: 'Название цепочки',
                 name: 'chainName',
                 type: 'string',
-                placeholder: 'Name Your Chain',
+                placeholder: 'Назовите вашу цепочку',
                 optional: true
             }
         ]
         this.outputs = [
             {
-                label: 'LLM Chain',
+                label: 'Цепочка LLM',
                 name: 'llmChain',
                 baseClasses: [this.type, ...getBaseClasses(LLMChain)]
             },
             {
-                label: 'Output Prediction',
+                label: 'Предсказание вывода',
                 name: 'outputPrediction',
                 baseClasses: ['string', 'json']
             }
@@ -122,7 +123,7 @@ class LLMChain_Chains implements INode {
             const disableStreaming = true
             const res = await runPrediction(inputVariables, chain, input, promptValues, options, nodeData, disableStreaming)
             // eslint-disable-next-line no-console
-            console.log('\x1b[92m\x1b[1m\n*****OUTPUT PREDICTION*****\n\x1b[0m\x1b[0m')
+            console.log('\x1b[92m\x1b[1m\n*****ПРЕДСКАЗАНИЕ ВЫВОДА*****\n\x1b[0m\x1b[0m')
             // eslint-disable-next-line no-console
             console.log(res)
 
@@ -151,7 +152,7 @@ class LLMChain_Chains implements INode {
         promptValues = injectOutputParser(this.outputParser, chain, promptValues)
         const res = await runPrediction(inputVariables, chain, input, promptValues, options, nodeData)
         // eslint-disable-next-line no-console
-        console.log('\x1b[93m\x1b[1m\n*****FINAL RESULT*****\n\x1b[0m\x1b[0m')
+        console.log('\x1b[93m\x1b[1m\n*****ФИНАЛЬНЫЙ РЕЗУЛЬТАТ*****\n\x1b[0m\x1b[0m')
         // eslint-disable-next-line no-console
         console.log(res)
         return res
@@ -268,7 +269,7 @@ const runPrediction = async (
         } else if (seen.length === 1) {
             // If one inputVariable is not specify, use input (user's question) as value
             const lastValue = seen.pop()
-            if (!lastValue) throw new Error('Please provide Prompt Values')
+            if (!lastValue) throw new Error('Пожалуйста, укажите значения промпта')
             const options = {
                 ...promptValues,
                 [lastValue]: input
@@ -282,7 +283,7 @@ const runPrediction = async (
                 return formatResponse(res?.text)
             }
         } else {
-            throw new Error(`Please provide Prompt Values for: ${seen.join(', ')}`)
+            throw new Error(`Пожалуйста, укажите значения промпта для: ${seen.join(', ')}`)
         }
     } else {
         if (shouldStreamResponse) {

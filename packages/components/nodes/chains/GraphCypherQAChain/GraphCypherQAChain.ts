@@ -21,82 +21,83 @@ class GraphCypherQA_Chain implements INode {
     outputs: INodeOutputsValue[]
 
     constructor(fields?: { sessionId?: string }) {
-        this.label = 'Graph Cypher QA Chain'
+        this.label = 'Цепочка вопросов-ответов Graph Cypher'
         this.name = 'graphCypherQAChain'
         this.version = 1.1
         this.type = 'GraphCypherQAChain'
         this.icon = 'graphqa.svg'
         this.category = 'Chains'
-        this.description = 'Advanced chain for question-answering against a Neo4j graph by generating Cypher statements'
+        this.description = 'Продвинутая цепочка для вопросов-ответов по графу Neo4j путем генерации Cypher-запросов'
         this.baseClasses = [this.type, ...getBaseClasses(GraphCypherQAChain)]
         this.sessionId = fields?.sessionId
         this.inputs = [
             {
-                label: 'Language Model',
+                label: 'Языковая модель',
                 name: 'model',
                 type: 'BaseLanguageModel',
-                description: 'Model for generating Cypher queries and answers.'
+                description: 'Модель для генерации Cypher-запросов и ответов.'
             },
             {
-                label: 'Neo4j Graph',
+                label: 'Граф Neo4j',
                 name: 'graph',
                 type: 'Neo4j'
             },
             {
-                label: 'Cypher Generation Prompt',
+                label: 'Промпт генерации Cypher',
                 name: 'cypherPrompt',
                 optional: true,
                 type: 'BasePromptTemplate',
                 description:
-                    'Prompt template for generating Cypher queries. Must include {schema} and {question} variables. If not provided, default prompt will be used.'
+                    'Шаблон промпта для генерации Cypher-запросов. Должен включать переменные {schema} и {question}. Если не указан, будет использован промпт по умолчанию.'
             },
             {
-                label: 'Cypher Generation Model',
+                label: 'Модель генерации Cypher',
                 name: 'cypherModel',
                 optional: true,
                 type: 'BaseLanguageModel',
-                description: 'Model for generating Cypher queries. If not provided, the main model will be used.'
+                description: 'Модель для генерации Cypher-запросов. Если не указана, будет использована основная модель.'
             },
             {
-                label: 'QA Prompt',
+                label: 'Промпт вопросов-ответов',
                 name: 'qaPrompt',
                 optional: true,
                 type: 'BasePromptTemplate',
                 description:
-                    'Prompt template for generating answers. Must include {context} and {question} variables. If not provided, default prompt will be used.'
+                    'Шаблон промпта для генерации ответов. Должен включать переменные {context} и {question}. Если не указан, будет использован промпт по умолчанию.'
             },
             {
-                label: 'QA Model',
+                label: 'Модель вопросов-ответов',
                 name: 'qaModel',
                 optional: true,
                 type: 'BaseLanguageModel',
-                description: 'Model for generating answers. If not provided, the main model will be used.'
+                description: 'Модель для генерации ответов. Если не указана, будет использована основная модель.'
             },
             {
-                label: 'Input Moderation',
-                description: 'Detect text that could generate harmful output and prevent it from being sent to the language model',
+                label: 'Модерация ввода',
+                description:
+                    'Обнаружение текста, который может генерировать вредоносный вывод, и предотвращение его отправки языковой модели',
                 name: 'inputModeration',
                 type: 'Moderation',
                 optional: true,
                 list: true
             },
             {
-                label: 'Return Direct',
+                label: 'Возвращать напрямую',
                 name: 'returnDirect',
                 type: 'boolean',
                 default: false,
                 optional: true,
-                description: 'If true, return the raw query results instead of using the QA chain'
+                description: 'Если true, возвращает необработанные результаты запроса вместо использования цепочки вопросов-ответов'
             }
         ]
         this.outputs = [
             {
-                label: 'Graph Cypher QA Chain',
+                label: 'Цепочка вопросов-ответов Graph Cypher',
                 name: 'graphCypherQAChain',
                 baseClasses: [this.type, ...getBaseClasses(GraphCypherQAChain)]
             },
             {
-                label: 'Output Prediction',
+                label: 'Предсказание вывода',
                 name: 'outputPrediction',
                 baseClasses: ['string', 'json']
             }
@@ -114,7 +115,7 @@ class GraphCypherQA_Chain implements INode {
         const output = nodeData.outputs?.output as string
 
         if (!model) {
-            throw new Error('Language Model is required')
+            throw new Error('Требуется языковая модель')
         }
 
         // Handle prompt values if they exist
@@ -128,7 +129,7 @@ class GraphCypherQA_Chain implements INode {
                     inputVariables: cypherPrompt.inputVariables
                 })
                 if (!qaPrompt) {
-                    throw new Error('QA Prompt is required when Cypher Prompt is a Prompt Template')
+                    throw new Error('Требуется промпт вопросов-ответов, когда промпт Cypher является шаблоном промпта')
                 }
             } else if (cypherPrompt instanceof FewShotPromptTemplate) {
                 const examplePrompt = cypherPrompt.examplePrompt as PromptTemplate
@@ -158,7 +159,7 @@ class GraphCypherQA_Chain implements INode {
             cypherPromptTemplate &&
             (!cypherPromptTemplate?.inputVariables.includes('schema') || !cypherPromptTemplate?.inputVariables.includes('question'))
         ) {
-            throw new Error('Cypher Generation Prompt must include {schema} and {question} variables')
+            throw new Error('Промпт генерации Cypher должен включать переменные {schema} и {question}')
         }
 
         const fromLLMInput: FromLLMInput = {
@@ -246,11 +247,11 @@ class GraphCypherQA_Chain implements INode {
 
             return formatResponse(response?.result)
         } catch (error) {
-            console.error('Error in GraphCypherQAChain:', error)
+            console.error('Ошибка в GraphCypherQAChain:', error)
             if (shouldStreamResponse) {
                 streamResponse(sseStreamer, chatId, error.message)
             }
-            return formatResponse(`Error: ${error.message}`)
+            return formatResponse(`Ошибка: ${error.message}`)
         }
     }
 }

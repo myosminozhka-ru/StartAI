@@ -48,167 +48,168 @@ class VectaraChain_Chains implements INode {
     inputs: INodeParams[]
 
     constructor() {
-        this.label = 'Vectara QA Chain'
+        this.label = 'Цепочка вопросов-ответов Vectara'
         this.name = 'vectaraQAChain'
         this.version = 2.0
         this.type = 'VectaraQAChain'
         this.icon = 'vectara.png'
         this.category = 'Chains'
-        this.description = 'QA chain for Vectara'
+        this.description = 'Цепочка вопросов-ответов для Vectara'
         this.baseClasses = [this.type, ...getBaseClasses(VectorDBQAChain)]
         this.inputs = [
             {
-                label: 'Vectara Store',
+                label: 'Хранилище Vectara',
                 name: 'vectaraStore',
                 type: 'VectorStore'
             },
             {
-                label: 'Summarizer Prompt Name',
+                label: 'Название промпта суммаризации',
                 name: 'summarizerPromptName',
                 description:
-                    'Summarize the results fetched from Vectara. Read <a target="_blank" href="https://docs.vectara.com/docs/learn/grounded-generation/select-a-summarizer">more</a>',
+                    'Суммаризация результатов, полученных из Vectara. Подробнее <a target="_blank" href="https://docs.vectara.com/docs/learn/grounded-generation/select-a-summarizer">здесь</a>',
                 type: 'options',
                 options: [
                     {
                         label: 'vectara-summary-ext-v1.2.0 (gpt-3.5-turbo)',
                         name: 'vectara-summary-ext-v1.2.0',
-                        description: 'base summarizer, available to all Vectara users'
+                        description: 'базовый суммаризатор, доступен всем пользователям Vectara'
                     },
                     {
                         label: 'vectara-experimental-summary-ext-2023-10-23-small (gpt-3.5-turbo)',
                         name: 'vectara-experimental-summary-ext-2023-10-23-small',
-                        description: `In beta, available to both Growth and <a target="_blank" href="https://vectara.com/pricing/">Scale</a> Vectara users`
+                        description: `В бета-версии, доступен пользователям Vectara уровня Growth и <a target="_blank" href="https://vectara.com/pricing/">Scale</a>`
                     },
                     {
                         label: 'vectara-summary-ext-v1.3.0 (gpt-4.0)',
                         name: 'vectara-summary-ext-v1.3.0',
-                        description: 'Only available to <a target="_blank" href="https://vectara.com/pricing/">Scale</a> Vectara users'
+                        description:
+                            'Доступен только пользователям Vectara уровня <a target="_blank" href="https://vectara.com/pricing/">Scale</a>'
                     },
                     {
                         label: 'vectara-experimental-summary-ext-2023-10-23-med (gpt-4.0)',
                         name: 'vectara-experimental-summary-ext-2023-10-23-med',
-                        description: `In beta, only available to <a target="_blank" href="https://vectara.com/pricing/">Scale</a> Vectara users`
+                        description: `В бета-версии, доступен только пользователям Vectara уровня <a target="_blank" href="https://vectara.com/pricing/">Scale</a>`
                     }
                 ],
                 default: 'vectara-summary-ext-v1.2.0'
             },
             {
-                label: 'Response Language',
+                label: 'Язык ответа',
                 name: 'responseLang',
                 description:
-                    'Return the response in specific language. If not selected, Vectara will automatically detects the language. Read <a target="_blank" href="https://docs.vectara.com/docs/learn/grounded-generation/grounded-generation-response-languages">more</a>',
+                    'Возвращает ответ на указанном языке. Если не выбран, Vectara автоматически определит язык. Подробнее <a target="_blank" href="https://docs.vectara.com/docs/learn/grounded-generation/grounded-generation-response-languages">здесь</a>',
                 type: 'options',
                 options: [
                     {
-                        label: 'English',
+                        label: 'Английский',
                         name: 'eng'
                     },
                     {
-                        label: 'German',
+                        label: 'Немецкий',
                         name: 'deu'
                     },
                     {
-                        label: 'French',
+                        label: 'Французский',
                         name: 'fra'
                     },
                     {
-                        label: 'Chinese',
+                        label: 'Китайский',
                         name: 'zho'
                     },
                     {
-                        label: 'Korean',
+                        label: 'Корейский',
                         name: 'kor'
                     },
                     {
-                        label: 'Arabic',
+                        label: 'Арабский',
                         name: 'ara'
                     },
                     {
-                        label: 'Russian',
+                        label: 'Русский',
                         name: 'rus'
                     },
                     {
-                        label: 'Thai',
+                        label: 'Тайский',
                         name: 'tha'
                     },
                     {
-                        label: 'Dutch',
+                        label: 'Голландский',
                         name: 'nld'
                     },
                     {
-                        label: 'Italian',
+                        label: 'Итальянский',
                         name: 'ita'
                     },
                     {
-                        label: 'Portuguese',
+                        label: 'Португальский',
                         name: 'por'
                     },
                     {
-                        label: 'Spanish',
+                        label: 'Испанский',
                         name: 'spa'
                     },
                     {
-                        label: 'Japanese',
+                        label: 'Японский',
                         name: 'jpn'
                     },
                     {
-                        label: 'Polish',
+                        label: 'Польский',
                         name: 'pol'
                     },
                     {
-                        label: 'Turkish',
+                        label: 'Турецкий',
                         name: 'tur'
                     },
                     {
-                        label: 'Vietnamese',
+                        label: 'Вьетнамский',
                         name: 'vie'
                     },
                     {
-                        label: 'Indonesian',
+                        label: 'Индонезийский',
                         name: 'ind'
                     },
                     {
-                        label: 'Czech',
+                        label: 'Чешский',
                         name: 'ces'
                     },
                     {
-                        label: 'Ukrainian',
+                        label: 'Украинский',
                         name: 'ukr'
                     },
                     {
-                        label: 'Greek',
+                        label: 'Греческий',
                         name: 'ell'
                     },
                     {
-                        label: 'Hebrew',
+                        label: 'Иврит',
                         name: 'heb'
                     },
                     {
-                        label: 'Farsi/Persian',
+                        label: 'Фарси/Персидский',
                         name: 'fas'
                     },
                     {
-                        label: 'Hindi',
+                        label: 'Хинди',
                         name: 'hin'
                     },
                     {
-                        label: 'Urdu',
+                        label: 'Урду',
                         name: 'urd'
                     },
                     {
-                        label: 'Swedish',
+                        label: 'Шведский',
                         name: 'swe'
                     },
                     {
-                        label: 'Bengali',
+                        label: 'Бенгальский',
                         name: 'ben'
                     },
                     {
-                        label: 'Malay',
+                        label: 'Малайский',
                         name: 'msa'
                     },
                     {
-                        label: 'Romanian',
+                        label: 'Румынский',
                         name: 'ron'
                     }
                 ],
@@ -216,15 +217,16 @@ class VectaraChain_Chains implements INode {
                 default: 'eng'
             },
             {
-                label: 'Max Summarized Results',
+                label: 'Максимальное количество результатов для суммаризации',
                 name: 'maxSummarizedResults',
-                description: 'Maximum results used to build the summarized response',
+                description: 'Максимальное количество результатов, используемых для построения суммаризированного ответа',
                 type: 'number',
                 default: 7
             },
             {
-                label: 'Input Moderation',
-                description: 'Detect text that could generate harmful output and prevent it from being sent to the language model',
+                label: 'Модерация ввода',
+                description:
+                    'Обнаружение текста, который может генерировать вредоносный вывод, и предотвращение его отправки в языковую модель',
                 name: 'inputModeration',
                 type: 'Moderation',
                 optional: true,

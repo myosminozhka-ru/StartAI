@@ -29,7 +29,7 @@ import {
 import { ConsoleCallbackHandler, CustomChainHandler, additionalCallbacks } from '../../../src/handler'
 import { getBaseClasses, handleEscapeCharacters, transformBracesWithColon } from '../../../src/utils'
 
-let systemMessage = `The following is a friendly conversation between a human and an AI. The AI is talkative and provides lots of specific details from its context. If the AI does not know the answer to a question, it truthfully says it does not know.`
+let systemMessage = `Это дружеский диалог между человеком и ИИ. ИИ разговорчив и предоставляет много конкретных деталей из своего контекста. Если ИИ не знает ответа на вопрос, он честно говорит, что не знает.`
 const inputKey = 'input'
 
 class ConversationChain_Chains implements INode {
@@ -45,30 +45,31 @@ class ConversationChain_Chains implements INode {
     sessionId?: string
 
     constructor(fields?: { sessionId?: string }) {
-        this.label = 'Conversation Chain'
+        this.label = 'Цепочка диалога'
         this.name = 'conversationChain'
         this.version = 3.0
         this.type = 'ConversationChain'
         this.icon = 'conv.svg'
         this.category = 'Chains'
-        this.description = 'Chat models specific conversational chain with memory'
+        this.description = 'Специфическая диалоговая цепочка для чат-моделей с памятью'
         this.baseClasses = [this.type, ...getBaseClasses(ConversationChain)]
         this.inputs = [
             {
-                label: 'Chat Model',
+                label: 'Чат-модель',
                 name: 'model',
                 type: 'BaseChatModel'
             },
             {
-                label: 'Memory',
+                label: 'Память',
                 name: 'memory',
                 type: 'BaseMemory'
             },
             {
-                label: 'Chat Prompt Template',
+                label: 'Шаблон промпта чата',
                 name: 'chatPromptTemplate',
                 type: 'ChatPromptTemplate',
-                description: 'Override existing prompt with Chat Prompt Template. Human Message must includes {input} variable',
+                description:
+                    'Переопределить существующий промпт с помощью шаблона промпта чата. Сообщение пользователя должно включать переменную {input}',
                 optional: true
             },
             /* Deprecated
@@ -82,19 +83,20 @@ class ConversationChain_Chains implements INode {
                 list: true
             },*/
             {
-                label: 'Input Moderation',
-                description: 'Detect text that could generate harmful output and prevent it from being sent to the language model',
+                label: 'Модерация ввода',
+                description:
+                    'Обнаружение текста, который может генерировать вредоносный вывод, и предотвращение его отправки языковой модели',
                 name: 'inputModeration',
                 type: 'Moderation',
                 optional: true,
                 list: true
             },
             {
-                label: 'System Message',
+                label: 'Системное сообщение',
                 name: 'systemMessagePrompt',
                 type: 'string',
                 rows: 4,
-                description: 'If Chat Prompt Template is provided, this will be ignored',
+                description: 'Если предоставлен шаблон промпта чата, это будет проигнорировано',
                 additionalParams: true,
                 optional: true,
                 default: systemMessage,

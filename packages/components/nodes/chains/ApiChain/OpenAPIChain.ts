@@ -19,44 +19,47 @@ class OpenApiChain_Chains implements INode {
     inputs: INodeParams[]
 
     constructor() {
-        this.label = 'OpenAPI Chain'
+        this.label = 'Цепочка OpenAPI'
         this.name = 'openApiChain'
         this.version = 2.0
         this.type = 'OpenAPIChain'
         this.icon = 'openapi.svg'
         this.category = 'Chains'
-        this.description = 'Chain that automatically select and call APIs based only on an OpenAPI spec'
+        this.description = 'Цепочка, которая автоматически выбирает и вызывает API на основе только спецификации OpenAPI'
         this.baseClasses = [this.type, ...getBaseClasses(APIChain)]
         this.inputs = [
             {
-                label: 'Chat Model',
+                label: 'Чат-модель',
                 name: 'model',
                 type: 'BaseChatModel'
             },
             {
-                label: 'YAML Link',
+                label: 'Ссылка на YAML',
                 name: 'yamlLink',
                 type: 'string',
                 placeholder: 'https://api.speak.com/openapi.yaml',
-                description: 'If YAML link is provided, uploaded YAML File will be ignored and YAML link will be used instead'
+                description:
+                    'Если предоставлена ссылка на YAML, загруженный YAML файл будет проигнорирован и будет использована ссылка на YAML'
             },
             {
-                label: 'YAML File',
+                label: 'YAML файл',
                 name: 'yamlFile',
                 type: 'file',
                 fileType: '.yaml',
-                description: 'If YAML link is provided, uploaded YAML File will be ignored and YAML link will be used instead'
+                description:
+                    'Если предоставлена ссылка на YAML, загруженный YAML файл будет проигнорирован и будет использована ссылка на YAML'
             },
             {
-                label: 'Headers',
+                label: 'Заголовки',
                 name: 'headers',
                 type: 'json',
                 additionalParams: true,
                 optional: true
             },
             {
-                label: 'Input Moderation',
-                description: 'Detect text that could generate harmful output and prevent it from being sent to the language model',
+                label: 'Модерация ввода',
+                description:
+                    'Обнаружение текста, который может генерировать вредоносный вывод, и предотвращение его отправки в языковую модель',
                 name: 'inputModeration',
                 type: 'Moderation',
                 optional: true,

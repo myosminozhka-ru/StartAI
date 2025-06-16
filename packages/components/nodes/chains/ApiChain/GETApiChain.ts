@@ -28,50 +28,50 @@ class GETApiChain_Chains implements INode {
     inputs: INodeParams[]
 
     constructor() {
-        this.label = 'GET API Chain'
+        this.label = 'Цепочка GET API'
         this.name = 'getApiChain'
         this.version = 1.0
         this.type = 'GETApiChain'
         this.icon = 'get.svg'
         this.category = 'Chains'
-        this.description = 'Chain to run queries against GET API'
+        this.description = 'Цепочка для выполнения запросов к GET API'
         this.baseClasses = [this.type, ...getBaseClasses(APIChain)]
         this.inputs = [
             {
-                label: 'Language Model',
+                label: 'Языковая модель',
                 name: 'model',
                 type: 'BaseLanguageModel'
             },
             {
-                label: 'API Documentation',
+                label: 'Документация API',
                 name: 'apiDocs',
                 type: 'string',
                 description:
-                    'Description of how API works. Please refer to more <a target="_blank" href="https://github.com/langchain-ai/langchain/blob/master/libs/langchain/langchain/chains/api/open_meteo_docs.py">examples</a>',
+                    'Описание работы API. Подробнее смотрите <a target="_blank" href="https://github.com/langchain-ai/langchain/blob/master/libs/langchain/langchain/chains/api/open_meteo_docs.py">примеры</a>',
                 rows: 4
             },
             {
-                label: 'Headers',
+                label: 'Заголовки',
                 name: 'headers',
                 type: 'json',
                 additionalParams: true,
                 optional: true
             },
             {
-                label: 'URL Prompt',
+                label: 'Промпт URL',
                 name: 'urlPrompt',
                 type: 'string',
-                description: 'Prompt used to tell LLMs how to construct the URL. Must contains {api_docs} and {question}',
+                description: 'Промпт, используемый для указания LLM как построить URL. Должен содержать {api_docs} и {question}',
                 default: API_URL_RAW_PROMPT_TEMPLATE,
                 rows: 4,
                 additionalParams: true
             },
             {
-                label: 'Answer Prompt',
+                label: 'Промпт ответа',
                 name: 'ansPrompt',
                 type: 'string',
                 description:
-                    'Prompt used to tell LLMs how to return the API response. Must contains {api_response}, {api_url}, and {question}',
+                    'Промпт, используемый для указания LLM как вернуть ответ API. Должен содержать {api_response}, {api_url} и {question}',
                 default: API_RESPONSE_RAW_PROMPT_TEMPLATE,
                 rows: 4,
                 additionalParams: true

@@ -1,27 +1,27 @@
-export const CUSTOM_QUESTION_GENERATOR_CHAIN_PROMPT = `Given the following conversation and a follow up question, rephrase the follow up question to be a standalone question, answer in the same language as the follow up question. include it in the standalone question.
+export const CUSTOM_QUESTION_GENERATOR_CHAIN_PROMPT = `Учитывая следующий диалог и последующий вопрос, перефразируйте последующий вопрос в самостоятельный вопрос, ответьте на том же языке, что и последующий вопрос. включите его в самостоятельный вопрос.
 
-Chat History:
+История чата:
 {chat_history}
-Follow Up Input: {question}
-Standalone question:`
+Последующий ввод: {question}
+Самостоятельный вопрос:`
 
-export const RESPONSE_TEMPLATE = `I want you to act as a document that I am having a conversation with. Your name is "AI Assistant". Using the provided context, answer the user's question to the best of your ability using the resources provided.
-If there is nothing in the context relevant to the question at hand, just say "Hmm, I'm not sure" and stop after that. Refuse to answer any question not about the info. Never break character.
+export const RESPONSE_TEMPLATE = `Я хочу, чтобы вы действовали как документ, с которым я веду беседу. Ваше имя - "AI Assistant". Используя предоставленный контекст, ответьте на вопрос пользователя наилучшим образом, используя предоставленные ресурсы.
+Если в контексте нет ничего, относящегося к заданному вопросу, просто скажите "Хм, я не уверен" и остановитесь на этом. Откажитесь отвечать на любой вопрос, не относящийся к предоставленной информации. Никогда не выходите из роли.
 ------------
 {context}
 ------------
-REMEMBER: If there is no relevant information within the context, just say "Hmm, I'm not sure". Don't try to make up an answer. Never break character.`
+ПОМНИТЕ: Если в контексте нет релевантной информации, просто скажите "Хм, я не уверен". Не пытайтесь придумать ответ. Никогда не выходите из роли.`
 
-export const QA_TEMPLATE = `Use the following pieces of context to answer the question at the end.
+export const QA_TEMPLATE = `Используйте следующие фрагменты контекста, чтобы ответить на вопрос в конце.
 
 {context}
 
-Question: {question}
-Helpful Answer:`
+Вопрос: {question}
+Полезный ответ:`
 
-export const REPHRASE_TEMPLATE = `Given the following conversation and a follow up question, rephrase the follow up question to be a standalone question.
+export const REPHRASE_TEMPLATE = `Учитывая следующий диалог и последующий вопрос, перефразируйте последующий вопрос в самостоятельный вопрос.
 
-Chat History:
+История чата:
 {chat_history}
-Follow Up Input: {question}
-Standalone Question:`
+Последующий ввод: {question}
+Самостоятельный вопрос:`

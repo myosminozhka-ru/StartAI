@@ -104,7 +104,7 @@ export class APIChain extends BaseChain implements APIChainInput {
                 hostname.startsWith('172.16.') ||
                 hostname.includes('internal')
             ) {
-                throw new Error('Access to internal networks is not allowed')
+                throw new Error('Доступ к внутренним сетям запрещен')
             }
 
             const res = await fetch(url, {

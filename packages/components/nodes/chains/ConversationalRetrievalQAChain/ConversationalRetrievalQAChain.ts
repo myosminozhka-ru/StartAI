@@ -47,63 +47,64 @@ class ConversationalRetrievalQAChain_Chains implements INode {
     sessionId?: string
 
     constructor(fields?: { sessionId?: string }) {
-        this.label = 'Conversational Retrieval QA Chain'
+        this.label = 'Цепочка диалогового поиска вопросов-ответов'
         this.name = 'conversationalRetrievalQAChain'
         this.version = 3.0
         this.type = 'ConversationalRetrievalQAChain'
         this.icon = 'qa.svg'
         this.category = 'Chains'
-        this.description = 'Document QA - built on RetrievalQAChain to provide a chat history component'
+        this.description = 'Документальный вопрос-ответ - построен на основе RetrievalQAChain для обеспечения компонента истории чата'
         this.baseClasses = [this.type, ...getBaseClasses(ConversationalRetrievalQAChain)]
         this.inputs = [
             {
-                label: 'Chat Model',
+                label: 'Чат-модель',
                 name: 'model',
                 type: 'BaseChatModel'
             },
             {
-                label: 'Vector Store Retriever',
+                label: 'Векторное хранилище поиска',
                 name: 'vectorStoreRetriever',
                 type: 'BaseRetriever'
             },
             {
-                label: 'Memory',
+                label: 'Память',
                 name: 'memory',
                 type: 'BaseMemory',
                 optional: true,
-                description: 'If left empty, a default BufferMemory will be used'
+                description: 'Если оставить пустым, будет использоваться BufferMemory по умолчанию'
             },
             {
-                label: 'Return Source Documents',
+                label: 'Возвращать исходные документы',
                 name: 'returnSourceDocuments',
                 type: 'boolean',
                 optional: true
             },
             {
-                label: 'Rephrase Prompt',
+                label: 'Промпт перефразировки',
                 name: 'rephrasePrompt',
                 type: 'string',
-                description: 'Using previous chat history, rephrase question into a standalone question',
-                warning: 'Prompt must include input variables: {chat_history} and {question}',
+                description: 'Используя предыдущую историю чата, перефразируйте вопрос в самостоятельный вопрос',
+                warning: 'Промпт должен включать входные переменные: {chat_history} и {question}',
                 rows: 4,
                 additionalParams: true,
                 optional: true,
                 default: REPHRASE_TEMPLATE
             },
             {
-                label: 'Response Prompt',
+                label: 'Промпт ответа',
                 name: 'responsePrompt',
                 type: 'string',
-                description: 'Taking the rephrased question, search for answer from the provided context',
-                warning: 'Prompt must include input variable: {context}',
+                description: 'Используя перефразированный вопрос, найдите ответ из предоставленного контекста',
+                warning: 'Промпт должен включать входную переменную: {context}',
                 rows: 4,
                 additionalParams: true,
                 optional: true,
                 default: RESPONSE_TEMPLATE
             },
             {
-                label: 'Input Moderation',
-                description: 'Detect text that could generate harmful output and prevent it from being sent to the language model',
+                label: 'Модерация ввода',
+                description:
+                    'Обнаружение текста, который может генерировать вредоносный вывод, и предотвращение его отправки языковой модели',
                 name: 'inputModeration',
                 type: 'Moderation',
                 optional: true,

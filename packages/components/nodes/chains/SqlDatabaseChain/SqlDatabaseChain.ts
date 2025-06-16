@@ -24,7 +24,7 @@ class SqlDatabaseChain_Chains implements INode {
     inputs: INodeParams[]
 
     constructor() {
-        this.label = 'Sql Database Chain'
+        this.label = 'Цепочка SQL базы данных'
         this.name = 'sqlDatabaseChain'
         this.version = 5.0
         this.type = 'SqlDatabaseChain'
@@ -34,12 +34,12 @@ class SqlDatabaseChain_Chains implements INode {
         this.baseClasses = [this.type, ...getBaseClasses(SqlDatabaseChain)]
         this.inputs = [
             {
-                label: 'Language Model',
+                label: 'Языковая модель',
                 name: 'model',
                 type: 'BaseLanguageModel'
             },
             {
-                label: 'Database',
+                label: 'База данных',
                 name: 'database',
                 type: 'options',
                 options: [
@@ -63,64 +63,67 @@ class SqlDatabaseChain_Chains implements INode {
                 default: 'sqlite'
             },
             {
-                label: 'Connection string or file path (sqlite only)',
+                label: 'Строка подключения или путь к файлу (только для sqlite)',
                 name: 'url',
                 type: 'string',
                 placeholder: '127.0.0.1:5432/chinook'
             },
             {
-                label: 'Include Tables',
+                label: 'Включить таблицы',
                 name: 'includesTables',
                 type: 'string',
-                description: 'Tables to include for queries, separated by comma. Can only use Include Tables or Ignore Tables',
+                description:
+                    'Таблицы для включения в запросы, разделенные запятыми. Можно использовать только Включить таблицы или Игнорировать таблицы',
                 placeholder: 'table1, table2',
                 additionalParams: true,
                 optional: true
             },
             {
-                label: 'Ignore Tables',
+                label: 'Игнорировать таблицы',
                 name: 'ignoreTables',
                 type: 'string',
-                description: 'Tables to ignore for queries, separated by comma. Can only use Ignore Tables or Include Tables',
+                description:
+                    'Таблицы для исключения из запросов, разделенные запятыми. Можно использовать только Игнорировать таблицы или Включить таблицы',
                 placeholder: 'table1, table2',
                 additionalParams: true,
                 optional: true
             },
             {
-                label: "Sample table's rows info",
+                label: 'Информация о примерах строк таблицы',
                 name: 'sampleRowsInTableInfo',
                 type: 'number',
-                description: 'Number of sample row for tables to load for info.',
+                description: 'Количество примеров строк для загрузки информации о таблицах.',
                 placeholder: '3',
                 additionalParams: true,
                 optional: true
             },
             {
-                label: 'Top Keys',
+                label: 'Топ ключей',
                 name: 'topK',
                 type: 'number',
                 description:
-                    'If you are querying for several rows of a table you can select the maximum number of results you want to get by using the "top_k" parameter (default is 10). This is useful for avoiding query results that exceed the prompt max length or consume tokens unnecessarily.',
+                    'Если вы запрашиваете несколько строк таблицы, вы можете выбрать максимальное количество результатов, которое хотите получить, используя параметр "top_k" (по умолчанию 10). Это полезно для избежания результатов запроса, превышающих максимальную длину промпта или потребляющих токены без необходимости.',
                 placeholder: '10',
                 additionalParams: true,
                 optional: true
             },
             {
-                label: 'Custom Prompt',
+                label: 'Пользовательский промпт',
                 name: 'customPrompt',
                 type: 'string',
                 description:
-                    'You can provide custom prompt to the chain. This will override the existing default prompt used. See <a target="_blank" href="https://python.langchain.com/docs/integrations/tools/sqlite#customize-prompt">guide</a>',
+                    'Вы можете предоставить пользовательский промпт для цепочки. Это переопределит существующий промпт по умолчанию. См. <a target="_blank" href="https://python.langchain.com/docs/integrations/tools/sqlite#customize-prompt">руководство</a>',
                 warning:
-                    'Prompt must include 3 input variables: {input}, {dialect}, {table_info}. You can refer to official guide from description above',
+                    'Промпт должен включать 3 входные переменные: {input}, {dialect}, {table_info}. Вы можете обратиться к официальному руководству из описания выше',
                 rows: 4,
                 placeholder: DEFAULT_SQL_DATABASE_PROMPT.template + DEFAULT_SQL_DATABASE_PROMPT.templateFormat,
                 additionalParams: true,
                 optional: true
             },
             {
-                label: 'Input Moderation',
-                description: 'Detect text that could generate harmful output and prevent it from being sent to the language model',
+                label: 'Модерация ввода',
+                description:
+                    'Обнаружение текста, который может генерировать вредоносный вывод, и предотвращение его отправки языковой модели',
                 name: 'inputModeration',
                 type: 'Moderation',
                 optional: true,

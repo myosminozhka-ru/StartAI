@@ -19,28 +19,29 @@ class RetrievalQAChain_Chains implements INode {
     inputs: INodeParams[]
 
     constructor() {
-        this.label = 'Retrieval QA Chain'
+        this.label = 'Цепочка поиска вопросов-ответов'
         this.name = 'retrievalQAChain'
         this.version = 2.0
         this.type = 'RetrievalQAChain'
         this.icon = 'qa.svg'
         this.category = 'Chains'
-        this.description = 'QA chain to answer a question based on the retrieved documents'
+        this.description = 'Цепочка вопросов-ответов для ответа на вопрос на основе найденных документов'
         this.baseClasses = [this.type, ...getBaseClasses(RetrievalQAChain)]
         this.inputs = [
             {
-                label: 'Language Model',
+                label: 'Языковая модель',
                 name: 'model',
                 type: 'BaseLanguageModel'
             },
             {
-                label: 'Vector Store Retriever',
+                label: 'Векторное хранилище поиска',
                 name: 'vectorStoreRetriever',
                 type: 'BaseRetriever'
             },
             {
-                label: 'Input Moderation',
-                description: 'Detect text that could generate harmful output and prevent it from being sent to the language model',
+                label: 'Модерация ввода',
+                description:
+                    'Обнаружение текста, который может генерировать вредоносный вывод, и предотвращение его отправки языковой модели',
                 name: 'inputModeration',
                 type: 'Moderation',
                 optional: true,
