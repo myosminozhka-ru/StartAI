@@ -16,100 +16,100 @@ class Start_Agentflow implements INode {
     inputs: INodeParams[]
 
     constructor() {
-        this.label = 'Start'
+        this.label = 'Старт'
         this.name = 'startAgentflow'
         this.version = 1.1
         this.type = 'Start'
         this.category = 'Agent Flows'
-        this.description = 'Starting point of the agentflow'
+        this.description = 'Начальная точка агентского потока'
         this.baseClasses = [this.type]
         this.color = '#7EE787'
         this.hideInput = true
         this.inputs = [
             {
-                label: 'Input Type',
+                label: 'Тип ввода',
                 name: 'startInputType',
                 type: 'options',
                 options: [
                     {
-                        label: 'Chat Input',
+                        label: 'Чат',
                         name: 'chatInput',
-                        description: 'Start the conversation with chat input'
+                        description: 'Начать разговор с ввода в чате'
                     },
                     {
-                        label: 'Form Input',
+                        label: 'Форма',
                         name: 'formInput',
-                        description: 'Start the workflow with form inputs'
+                        description: 'Начать рабочий процесс с ввода формы'
                     }
                 ],
                 default: 'chatInput'
             },
             {
-                label: 'Form Title',
+                label: 'Заголовок формы',
                 name: 'formTitle',
                 type: 'string',
-                placeholder: 'Please Fill Out The Form',
+                placeholder: 'Пожалуйста, заполните форму',
                 show: {
                     startInputType: 'formInput'
                 }
             },
             {
-                label: 'Form Description',
+                label: 'Описание формы',
                 name: 'formDescription',
                 type: 'string',
-                placeholder: 'Complete all fields below to continue',
+                placeholder: 'Заполните все поля ниже для продолжения',
                 show: {
                     startInputType: 'formInput'
                 }
             },
             {
-                label: 'Form Input Types',
+                label: 'Типы полей формы',
                 name: 'formInputTypes',
-                description: 'Specify the type of form input',
+                description: 'Укажите тип поля формы',
                 type: 'array',
                 show: {
                     startInputType: 'formInput'
                 },
                 array: [
                     {
-                        label: 'Type',
+                        label: 'Тип',
                         name: 'type',
                         type: 'options',
                         options: [
                             {
-                                label: 'String',
+                                label: 'Строка',
                                 name: 'string'
                             },
                             {
-                                label: 'Number',
+                                label: 'Число',
                                 name: 'number'
                             },
                             {
-                                label: 'Boolean',
+                                label: 'Логический',
                                 name: 'boolean'
                             },
                             {
-                                label: 'Options',
+                                label: 'Варианты',
                                 name: 'options'
                             }
                         ],
                         default: 'string'
                     },
                     {
-                        label: 'Label',
+                        label: 'Метка',
                         name: 'label',
                         type: 'string',
-                        placeholder: 'Label for the input'
+                        placeholder: 'Метка для поля ввода'
                     },
                     {
-                        label: 'Variable Name',
+                        label: 'Имя переменной',
                         name: 'name',
                         type: 'string',
-                        placeholder: 'Variable name for the input (must be camel case)',
-                        description: 'Variable name must be camel case. For example: firstName, lastName, etc.'
+                        placeholder: 'Имя переменной для поля ввода (должно быть в camelCase)',
+                        description: 'Имя переменной должно быть в camelCase. Например: firstName, lastName и т.д.'
                     },
                     {
-                        label: 'Add Options',
+                        label: 'Добавить варианты',
                         name: 'addOptions',
                         type: 'array',
                         show: {
@@ -117,7 +117,7 @@ class Start_Agentflow implements INode {
                         },
                         array: [
                             {
-                                label: 'Option',
+                                label: 'Вариант',
                                 name: 'option',
                                 type: 'string'
                             }
@@ -126,27 +126,27 @@ class Start_Agentflow implements INode {
                 ]
             },
             {
-                label: 'Ephemeral Memory',
+                label: 'Временная память',
                 name: 'startEphemeralMemory',
                 type: 'boolean',
-                description: 'Start fresh for every execution without past chat history',
+                description: 'Начать заново для каждого выполнения без истории чата',
                 optional: true
             },
             {
-                label: 'Flow State',
+                label: 'Состояние потока',
                 name: 'startState',
-                description: 'Runtime state during the execution of the workflow',
+                description: 'Состояние выполнения во время работы потока',
                 type: 'array',
                 optional: true,
                 array: [
                     {
-                        label: 'Key',
+                        label: 'Ключ',
                         name: 'key',
                         type: 'string',
                         placeholder: 'Foo'
                     },
                     {
-                        label: 'Value',
+                        label: 'Значение',
                         name: 'value',
                         type: 'string',
                         placeholder: 'Bar',
@@ -155,10 +155,10 @@ class Start_Agentflow implements INode {
                 ]
             },
             {
-                label: 'Persist State',
+                label: 'Сохранить состояние',
                 name: 'startPersistState',
                 type: 'boolean',
-                description: 'Persist the state in the same session',
+                description: 'Сохранить состояние в той же сессии',
                 optional: true
             }
         ]
@@ -175,7 +175,7 @@ class Start_Agentflow implements INode {
             try {
                 flowStateArray = typeof _flowState === 'string' ? JSON.parse(_flowState) : _flowState
             } catch (error) {
-                throw new Error('Invalid Flow State')
+                throw new Error('Неверное состояние потока')
             }
         }
 

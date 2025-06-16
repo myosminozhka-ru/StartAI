@@ -75,54 +75,54 @@ class Agent_Agentflow implements INode {
     inputs: INodeParams[]
 
     constructor() {
-        this.label = 'Agent'
+        this.label = 'Агент'
         this.name = 'agentAgentflow'
         this.version = 1.0
         this.type = 'Agent'
         this.category = 'Agent Flows'
-        this.description = 'Dynamically choose and utilize tools during runtime, enabling multi-step reasoning'
+        this.description = 'Динамически выбирать и использовать инструменты во время выполнения, обеспечивая многошаговые рассуждения'
         this.color = '#4DD0E1'
         this.baseClasses = [this.type]
         this.inputs = [
             {
-                label: 'Model',
+                label: 'Модель',
                 name: 'agentModel',
                 type: 'asyncOptions',
                 loadMethod: 'listModels',
                 loadConfig: true
             },
             {
-                label: 'Messages',
+                label: 'Сообщения',
                 name: 'agentMessages',
                 type: 'array',
                 optional: true,
                 acceptVariable: true,
                 array: [
                     {
-                        label: 'Role',
+                        label: 'Роль',
                         name: 'role',
                         type: 'options',
                         options: [
                             {
-                                label: 'System',
+                                label: 'Система',
                                 name: 'system'
                             },
                             {
-                                label: 'Assistant',
+                                label: 'Ассистент',
                                 name: 'assistant'
                             },
                             {
-                                label: 'Developer',
+                                label: 'Разработчик',
                                 name: 'developer'
                             },
                             {
-                                label: 'User',
+                                label: 'Пользователь',
                                 name: 'user'
                             }
                         ]
                     },
                     {
-                        label: 'Content',
+                        label: 'Содержимое',
                         name: 'content',
                         type: 'string',
                         acceptVariable: true,
@@ -132,20 +132,20 @@ class Agent_Agentflow implements INode {
                 ]
             },
             {
-                label: 'Tools',
+                label: 'Инструменты',
                 name: 'agentTools',
                 type: 'array',
                 optional: true,
                 array: [
                     {
-                        label: 'Tool',
+                        label: 'Инструмент',
                         name: 'agentSelectedTool',
                         type: 'asyncOptions',
                         loadMethod: 'listTools',
                         loadConfig: true
                     },
                     {
-                        label: 'Require Human Input',
+                        label: 'Требуется ввод пользователя',
                         name: 'agentSelectedToolRequiresHumanInput',
                         type: 'boolean',
                         optional: true
@@ -153,28 +153,29 @@ class Agent_Agentflow implements INode {
                 ]
             },
             {
-                label: 'Knowledge (Document Stores)',
+                label: 'Знания (Хранилища документов)',
                 name: 'agentKnowledgeDocumentStores',
                 type: 'array',
-                description: 'Give your agent context about different document sources. Document stores must be upserted in advance.',
+                description:
+                    'Предоставьте вашему агенту контекст о различных источниках документов. Хранилища документов должны быть предварительно загружены.',
                 array: [
                     {
-                        label: 'Document Store',
+                        label: 'Хранилище документов',
                         name: 'documentStore',
                         type: 'asyncOptions',
                         loadMethod: 'listStores'
                     },
                     {
-                        label: 'Describe Knowledge',
+                        label: 'Опишите знания',
                         name: 'docStoreDescription',
                         type: 'string',
                         generateDocStoreDescription: true,
                         placeholder:
-                            'Describe what the knowledge base is about, this is useful for the AI to know when and how to search for correct information',
+                            'Опишите, о чем база знаний, это полезно для ИИ, чтобы знать, когда и как искать правильную информацию',
                         rows: 4
                     },
                     {
-                        label: 'Return Source Documents',
+                        label: 'Возвращать исходные документы',
                         name: 'returnSourceDocuments',
                         type: 'boolean',
                         optional: true
@@ -183,42 +184,43 @@ class Agent_Agentflow implements INode {
                 optional: true
             },
             {
-                label: 'Knowledge (Vector Embeddings)',
+                label: 'Знания (Векторные эмбеддинги)',
                 name: 'agentKnowledgeVSEmbeddings',
                 type: 'array',
-                description: 'Give your agent context about different document sources from existing vector stores and embeddings',
+                description:
+                    'Предоставьте вашему агенту контекст о различных источниках документов из существующих векторных хранилищ и эмбеддингов',
                 array: [
                     {
-                        label: 'Vector Store',
+                        label: 'Векторное хранилище',
                         name: 'vectorStore',
                         type: 'asyncOptions',
                         loadMethod: 'listVectorStores',
                         loadConfig: true
                     },
                     {
-                        label: 'Embedding Model',
+                        label: 'Модель эмбеддингов',
                         name: 'embeddingModel',
                         type: 'asyncOptions',
                         loadMethod: 'listEmbeddings',
                         loadConfig: true
                     },
                     {
-                        label: 'Knowledge Name',
+                        label: 'Название знаний',
                         name: 'knowledgeName',
                         type: 'string',
                         placeholder:
-                            'A short name for the knowledge base, this is useful for the AI to know when and how to search for correct information'
+                            'Короткое название для базы знаний, это полезно для ИИ, чтобы знать, когда и как искать правильную информацию'
                     },
                     {
-                        label: 'Describe Knowledge',
+                        label: 'Опишите знания',
                         name: 'knowledgeDescription',
                         type: 'string',
                         placeholder:
-                            'Describe what the knowledge base is about, this is useful for the AI to know when and how to search for correct information',
+                            'Опишите, о чем база знаний, это полезно для ИИ, чтобы знать, когда и как искать правильную информацию',
                         rows: 4
                     },
                     {
-                        label: 'Return Source Documents',
+                        label: 'Возвращать исходные документы',
                         name: 'returnSourceDocuments',
                         type: 'boolean',
                         optional: true
@@ -227,37 +229,37 @@ class Agent_Agentflow implements INode {
                 optional: true
             },
             {
-                label: 'Enable Memory',
+                label: 'Включить память',
                 name: 'agentEnableMemory',
                 type: 'boolean',
-                description: 'Enable memory for the conversation thread',
+                description: 'Включить память для потока разговора',
                 default: true,
                 optional: true
             },
             {
-                label: 'Memory Type',
+                label: 'Тип памяти',
                 name: 'agentMemoryType',
                 type: 'options',
                 options: [
                     {
-                        label: 'All Messages',
+                        label: 'Все сообщения',
                         name: 'allMessages',
-                        description: 'Retrieve all messages from the conversation'
+                        description: 'Получить все сообщения из разговора'
                     },
                     {
-                        label: 'Window Size',
+                        label: 'Размер окна',
                         name: 'windowSize',
-                        description: 'Uses a fixed window size to surface the last N messages'
+                        description: 'Использует фиксированный размер окна для отображения последних N сообщений'
                     },
                     {
-                        label: 'Conversation Summary',
+                        label: 'Сводка разговора',
                         name: 'conversationSummary',
-                        description: 'Summarizes the whole conversation'
+                        description: 'Обобщает весь разговор'
                     },
                     {
-                        label: 'Conversation Summary Buffer',
+                        label: 'Буфер сводки разговора',
                         name: 'conversationSummaryBuffer',
-                        description: 'Summarize conversations once token limit is reached. Default to 2000'
+                        description: 'Обобщает разговоры при достижении лимита токенов. По умолчанию 2000'
                     }
                 ],
                 optional: true,
@@ -267,30 +269,30 @@ class Agent_Agentflow implements INode {
                 }
             },
             {
-                label: 'Window Size',
+                label: 'Размер окна',
                 name: 'agentMemoryWindowSize',
                 type: 'number',
                 default: '20',
-                description: 'Uses a fixed window size to surface the last N messages',
+                description: 'Использует фиксированный размер окна для отображения последних N сообщений',
                 show: {
                     agentMemoryType: 'windowSize'
                 }
             },
             {
-                label: 'Max Token Limit',
+                label: 'Максимальный лимит токенов',
                 name: 'agentMemoryMaxTokenLimit',
                 type: 'number',
                 default: '2000',
-                description: 'Summarize conversations once token limit is reached. Default to 2000',
+                description: 'Обобщает разговоры при достижении лимита токенов. По умолчанию 2000',
                 show: {
                     agentMemoryType: 'conversationSummaryBuffer'
                 }
             },
             {
-                label: 'Input Message',
+                label: 'Входное сообщение',
                 name: 'agentUserMessage',
                 type: 'string',
-                description: 'Add an input message as user message at the end of the conversation',
+                description: 'Добавить входное сообщение как сообщение пользователя в конец разговора',
                 rows: 4,
                 optional: true,
                 acceptVariable: true,
@@ -299,38 +301,38 @@ class Agent_Agentflow implements INode {
                 }
             },
             {
-                label: 'Return Response As',
+                label: 'Возвращать ответ как',
                 name: 'agentReturnResponseAs',
                 type: 'options',
                 options: [
                     {
-                        label: 'User Message',
+                        label: 'Сообщение пользователя',
                         name: 'userMessage'
                     },
                     {
-                        label: 'Assistant Message',
+                        label: 'Сообщение ассистента',
                         name: 'assistantMessage'
                     }
                 ],
                 default: 'userMessage'
             },
             {
-                label: 'Update Flow State',
+                label: 'Обновить состояние потока',
                 name: 'agentUpdateState',
-                description: 'Update runtime state during the execution of the workflow',
+                description: 'Обновить состояние выполнения во время выполнения рабочего процесса',
                 type: 'array',
                 optional: true,
                 acceptVariable: true,
                 array: [
                     {
-                        label: 'Key',
+                        label: 'Ключ',
                         name: 'key',
                         type: 'asyncOptions',
                         loadMethod: 'listRuntimeStateKeys',
                         freeSolo: true
                     },
                     {
-                        label: 'Value',
+                        label: 'Значение',
                         name: 'value',
                         type: 'string',
                         acceptVariable: true,
@@ -475,7 +477,7 @@ class Agent_Agentflow implements INode {
             const model = nodeData.inputs?.agentModel as string
             const modelConfig = nodeData.inputs?.agentModelConfig as ICommonObject
             if (!model) {
-                throw new Error('Model is required')
+                throw new Error('Требуется модель')
             }
 
             // Extract tools
@@ -713,7 +715,7 @@ class Agent_Agentflow implements INode {
 
             if (llmNodeInstance && toolsInstance.length > 0) {
                 if (llmNodeInstance.bindTools === undefined) {
-                    throw new Error(`Agent needs to have a function calling capable models.`)
+                    throw new Error(`Агент должен иметь модели с поддержкой вызова функций.`)
                 }
 
                 // @ts-ignore
@@ -1031,7 +1033,7 @@ class Agent_Agentflow implements INode {
             if (error instanceof Error && error.message === 'Aborted') {
                 throw error
             }
-            throw new Error(`Error in Agent node: ${error instanceof Error ? error.message : String(error)}`)
+            throw new Error(`Ошибка в узле Агент: ${error instanceof Error ? error.message : String(error)}`)
         }
     }
 
@@ -1726,7 +1728,7 @@ class Agent_Agentflow implements INode {
 
         if (llmNodeInstance && toolsInstance.length > 0) {
             if (llmNodeInstance.bindTools === undefined) {
-                throw new Error(`Agent needs to have a function calling capable models.`)
+                throw new Error(`Агент должен иметь модели с поддержкой вызова функций.`)
             }
 
             // @ts-ignore

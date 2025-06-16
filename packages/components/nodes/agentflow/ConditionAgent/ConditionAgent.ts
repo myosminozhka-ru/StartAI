@@ -25,51 +25,51 @@ class ConditionAgent_Agentflow implements INode {
     outputs: INodeOutputsValue[]
 
     constructor() {
-        this.label = 'Condition Agent'
+        this.label = 'Агент условий'
         this.name = 'conditionAgentAgentflow'
         this.version = 1.0
         this.type = 'ConditionAgent'
         this.category = 'Agent Flows'
-        this.description = `Utilize an agent to split flows based on dynamic conditions`
+        this.description = `Использовать агента для разделения потоков на основе динамических условий`
         this.baseClasses = [this.type]
         this.color = '#ff8fab'
         this.inputs = [
             {
-                label: 'Model',
+                label: 'Модель',
                 name: 'conditionAgentModel',
                 type: 'asyncOptions',
                 loadMethod: 'listModels',
                 loadConfig: true
             },
             {
-                label: 'Instructions',
+                label: 'Инструкции',
                 name: 'conditionAgentInstructions',
                 type: 'string',
-                description: 'A general instructions of what the condition agent should do',
+                description: 'Общие инструкции о том, что должен делать агент условий',
                 rows: 4,
                 acceptVariable: true,
-                placeholder: 'Determine if the user is interested in learning about AI'
+                placeholder: 'Определить, интересуется ли пользователь изучением ИИ'
             },
             {
-                label: 'Input',
+                label: 'Ввод',
                 name: 'conditionAgentInput',
                 type: 'string',
-                description: 'Input to be used for the condition agent',
+                description: 'Входные данные для использования агентом условий',
                 rows: 4,
                 acceptVariable: true,
                 default: '<p><span class="variable" data-type="mention" data-id="question" data-label="question">{{ question }}</span> </p>'
             },
             {
-                label: 'Scenarios',
+                label: 'Сценарии',
                 name: 'conditionAgentScenarios',
-                description: 'Define the scenarios that will be used as the conditions to split the flow',
+                description: 'Определить сценарии, которые будут использоваться как условия для разделения потока',
                 type: 'array',
                 array: [
                     {
-                        label: 'Scenario',
+                        label: 'Сценарий',
                         name: 'scenario',
                         type: 'string',
-                        placeholder: 'User is asking for a pizza'
+                        placeholder: 'Пользователь спрашивает о пицце'
                     }
                 ],
                 default: [
@@ -82,37 +82,37 @@ class ConditionAgent_Agentflow implements INode {
                 ]
             }
             /*{
-                label: 'Enable Memory',
+                label: 'Включить память',
                 name: 'conditionAgentEnableMemory',
                 type: 'boolean',
-                description: 'Enable memory for the conversation thread',
+                description: 'Включить память для потока разговора',
                 default: true,
                 optional: true
             },
             {
-                label: 'Memory Type',
+                label: 'Тип памяти',
                 name: 'conditionAgentMemoryType',
                 type: 'options',
                 options: [
                     {
-                        label: 'All Messages',
+                        label: 'Все сообщения',
                         name: 'allMessages',
-                        description: 'Retrieve all messages from the conversation'
+                        description: 'Получить все сообщения из разговора'
                     },
                     {
-                        label: 'Window Size',
+                        label: 'Размер окна',
                         name: 'windowSize',
-                        description: 'Uses a fixed window size to surface the last N messages'
+                        description: 'Использует фиксированный размер окна для отображения последних N сообщений'
                     },
                     {
-                        label: 'Conversation Summary',
+                        label: 'Сводка разговора',
                         name: 'conversationSummary',
-                        description: 'Summarizes the whole conversation'
+                        description: 'Обобщает весь разговор'
                     },
                     {
-                        label: 'Conversation Summary Buffer',
+                        label: 'Буфер сводки разговора',
                         name: 'conversationSummaryBuffer',
-                        description: 'Summarize conversations once token limit is reached. Default to 2000'
+                        description: 'Обобщает разговоры при достижении лимита токенов. По умолчанию 2000'
                     }
                 ],
                 optional: true,
@@ -122,21 +122,21 @@ class ConditionAgent_Agentflow implements INode {
                 }
             },
             {
-                label: 'Window Size',
+                label: 'Размер окна',
                 name: 'conditionAgentMemoryWindowSize',
                 type: 'number',
                 default: '20',
-                description: 'Uses a fixed window size to surface the last N messages',
+                description: 'Использует фиксированный размер окна для отображения последних N сообщений',
                 show: {
                     conditionAgentMemoryType: 'windowSize'
                 }
             },
             {
-                label: 'Max Token Limit',
+                label: 'Максимальный лимит токенов',
                 name: 'conditionAgentMemoryMaxTokenLimit',
                 type: 'number',
                 default: '2000',
-                description: 'Summarize conversations once token limit is reached. Default to 2000',
+                description: 'Обобщает разговоры при достижении лимита токенов. По умолчанию 2000',
                 show: {
                     conditionAgentMemoryType: 'conversationSummaryBuffer'
                 }
@@ -146,12 +146,12 @@ class ConditionAgent_Agentflow implements INode {
             {
                 label: '0',
                 name: '0',
-                description: 'Condition 0'
+                description: 'Условие 0'
             },
             {
                 label: '1',
                 name: '1',
-                description: 'Else'
+                description: 'Иначе'
             }
         ]
     }
@@ -237,7 +237,7 @@ class ConditionAgent_Agentflow implements INode {
             const model = nodeData.inputs?.conditionAgentModel as string
             const modelConfig = nodeData.inputs?.conditionAgentModelConfig as ICommonObject
             if (!model) {
-                throw new Error('Model is required')
+                throw new Error('Требуется модель')
             }
             const conditionAgentInput = nodeData.inputs?.conditionAgentInput as string
             let input = conditionAgentInput || question
@@ -270,7 +270,7 @@ class ConditionAgent_Agentflow implements INode {
             const isStructuredOutput =
                 _conditionAgentScenarios && Array.isArray(_conditionAgentScenarios) && _conditionAgentScenarios.length > 0
             if (!isStructuredOutput) {
-                throw new Error('Scenarios are required')
+                throw new Error('Требуются сценарии')
             }
 
             // Prepare messages array
@@ -378,11 +378,11 @@ class ConditionAgent_Agentflow implements INode {
             try {
                 const parsedResponse = this.parseJsonMarkdown(response.content as string)
                 if (!parsedResponse.output) {
-                    throw new Error('Missing "output" key in response')
+                    throw new Error('Отсутствует ключ "output" в ответе')
                 }
                 calledOutputName = parsedResponse.output
             } catch (error) {
-                console.warn(`Failed to parse LLM response: ${error}. Using default output.`)
+                console.warn(`Не удалось разобрать ответ LLM: ${error}. Используется выход по умолчанию.`)
             }
 
             // Clean up empty inputs
@@ -448,7 +448,7 @@ class ConditionAgent_Agentflow implements INode {
             if (error instanceof Error && error.message === 'Aborted') {
                 throw error
             }
-            throw new Error(`Error in Condition Agent node: ${error instanceof Error ? error.message : String(error)}`)
+            throw new Error(`Ошибка в узле Агент условий: ${error instanceof Error ? error.message : String(error)}`)
         }
     }
 

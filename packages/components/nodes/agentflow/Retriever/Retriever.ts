@@ -33,23 +33,23 @@ class Retriever_Agentflow implements INode {
     inputs: INodeParams[]
 
     constructor() {
-        this.label = 'Retriever'
+        this.label = 'Извлечение'
         this.name = 'retrieverAgentflow'
         this.version = 1.0
         this.type = 'Retriever'
         this.category = 'Agent Flows'
-        this.description = 'Retrieve information from vector database'
+        this.description = 'Извлечение информации из векторной базы данных'
         this.baseClasses = [this.type]
         this.color = '#b8bedd'
         this.inputs = [
             {
-                label: 'Knowledge (Document Stores)',
+                label: 'База знаний (Хранилища документов)',
                 name: 'retrieverKnowledgeDocumentStores',
                 type: 'array',
-                description: 'Document stores to retrieve information from. Document stores must be upserted in advance.',
+                description: 'Хранилища документов для извлечения информации. Документы должны быть предварительно загружены.',
                 array: [
                     {
-                        label: 'Document Store',
+                        label: 'Хранилище документов',
                         name: 'documentStore',
                         type: 'asyncOptions',
                         loadMethod: 'listStores'
@@ -57,40 +57,40 @@ class Retriever_Agentflow implements INode {
                 ]
             },
             {
-                label: 'Retriever Query',
+                label: 'Запрос для извлечения',
                 name: 'retrieverQuery',
                 type: 'string',
-                placeholder: 'Enter your query here',
+                placeholder: 'Введите ваш запрос здесь',
                 rows: 4,
                 acceptVariable: true
             },
             {
-                label: 'Output Format',
+                label: 'Формат вывода',
                 name: 'outputFormat',
                 type: 'options',
                 options: [
-                    { label: 'Text', name: 'text' },
-                    { label: 'Text with Metadata', name: 'textWithMetadata' }
+                    { label: 'Текст', name: 'text' },
+                    { label: 'Текст с метаданными', name: 'textWithMetadata' }
                 ],
                 default: 'text'
             },
             {
-                label: 'Update Flow State',
+                label: 'Обновить состояние потока',
                 name: 'retrieverUpdateState',
-                description: 'Update runtime state during the execution of the workflow',
+                description: 'Обновить состояние выполнения во время работы потока',
                 type: 'array',
                 optional: true,
                 acceptVariable: true,
                 array: [
                     {
-                        label: 'Key',
+                        label: 'Ключ',
                         name: 'key',
                         type: 'asyncOptions',
                         loadMethod: 'listRuntimeStateKeys',
                         freeSolo: true
                     },
                     {
-                        label: 'Value',
+                        label: 'Значение',
                         name: 'value',
                         type: 'string',
                         acceptVariable: true,

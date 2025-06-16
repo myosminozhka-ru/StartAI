@@ -26,38 +26,38 @@ class Tool_Agentflow implements INode {
     inputs: INodeParams[]
 
     constructor() {
-        this.label = 'Tool'
+        this.label = 'Инструмент'
         this.name = 'toolAgentflow'
         this.version = 1.1
         this.type = 'Tool'
         this.category = 'Agent Flows'
-        this.description = 'Tools allow LLM to interact with external systems'
+        this.description = 'Инструменты позволяют LLM взаимодействовать с внешними системами'
         this.baseClasses = [this.type]
         this.color = '#d4a373'
         this.inputs = [
             {
-                label: 'Tool',
+                label: 'Инструмент',
                 name: 'toolAgentflowSelectedTool',
                 type: 'asyncOptions',
                 loadMethod: 'listTools',
                 loadConfig: true
             },
             {
-                label: 'Tool Input Arguments',
+                label: 'Аргументы ввода инструмента',
                 name: 'toolInputArgs',
                 type: 'array',
                 acceptVariable: true,
                 refresh: true,
                 array: [
                     {
-                        label: 'Input Argument Name',
+                        label: 'Имя аргумента ввода',
                         name: 'inputArgName',
                         type: 'asyncOptions',
                         loadMethod: 'listToolInputArgs',
                         refresh: true
                     },
                     {
-                        label: 'Input Argument Value',
+                        label: 'Значение аргумента ввода',
                         name: 'inputArgValue',
                         type: 'string',
                         acceptVariable: true
@@ -68,22 +68,22 @@ class Tool_Agentflow implements INode {
                 }
             },
             {
-                label: 'Update Flow State',
+                label: 'Обновить состояние потока',
                 name: 'toolUpdateState',
-                description: 'Update runtime state during the execution of the workflow',
+                description: 'Обновить состояние выполнения во время работы потока',
                 type: 'array',
                 optional: true,
                 acceptVariable: true,
                 array: [
                     {
-                        label: 'Key',
+                        label: 'Ключ',
                         name: 'key',
                         type: 'asyncOptions',
                         loadMethod: 'listRuntimeStateKeys',
                         freeSolo: true
                     },
                     {
-                        label: 'Value',
+                        label: 'Значение',
                         name: 'value',
                         type: 'string',
                         acceptVariable: true,
@@ -209,7 +209,7 @@ class Tool_Agentflow implements INode {
         }
 
         if (!selectedTool) {
-            throw new Error('Tool not selected')
+            throw new Error('Инструмент не выбран')
         }
 
         const nodeInstanceFilePath = options.componentNodes[selectedTool].filePath as string
@@ -264,7 +264,7 @@ class Tool_Agentflow implements INode {
                 try {
                     parsedArtifacts = JSON.parse(artifact)
                 } catch (e) {
-                    console.error('Error parsing artifacts from tool:', e)
+                    console.error('Ошибка при разборе артефактов из инструмента:', e)
                 }
             }
 

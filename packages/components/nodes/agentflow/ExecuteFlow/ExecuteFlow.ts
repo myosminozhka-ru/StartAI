@@ -28,12 +28,12 @@ class ExecuteFlow_Agentflow implements INode {
     inputs: INodeParams[]
 
     constructor() {
-        this.label = 'Execute Flow'
+        this.label = 'Выполнить поток'
         this.name = 'executeFlowAgentflow'
         this.version = 1.0
         this.type = 'ExecuteFlow'
         this.category = 'Agent Flows'
-        this.description = 'Execute another flow'
+        this.description = 'Выполнить другой поток'
         this.baseClasses = [this.type]
         this.color = '#a3b18a'
         this.credential = {
@@ -45,67 +45,67 @@ class ExecuteFlow_Agentflow implements INode {
         }
         this.inputs = [
             {
-                label: 'Select Flow',
+                label: 'Выбрать поток',
                 name: 'executeFlowSelectedFlow',
                 type: 'asyncOptions',
                 loadMethod: 'listFlows'
             },
             {
-                label: 'Input',
+                label: 'Ввод',
                 name: 'executeFlowInput',
                 type: 'string',
                 rows: 4,
                 acceptVariable: true
             },
             {
-                label: 'Override Config',
+                label: 'Переопределить конфигурацию',
                 name: 'executeFlowOverrideConfig',
-                description: 'Override the config passed to the flow',
+                description: 'Переопределить конфигурацию, передаваемую в поток',
                 type: 'json',
                 optional: true
             },
             {
-                label: 'Base URL',
+                label: 'Базовый URL',
                 name: 'executeFlowBaseURL',
                 type: 'string',
                 description:
-                    'Base URL to Flowise. By default, it is the URL of the incoming request. Useful when you need to execute flow through an alternative route.',
+                    'Базовый URL для Flowise. По умолчанию используется URL входящего запроса. Полезно, когда нужно выполнить поток через альтернативный маршрут.',
                 placeholder: 'http://localhost:3000',
                 optional: true
             },
             {
-                label: 'Return Response As',
+                label: 'Вернуть ответ как',
                 name: 'executeFlowReturnResponseAs',
                 type: 'options',
                 options: [
                     {
-                        label: 'User Message',
+                        label: 'Сообщение пользователя',
                         name: 'userMessage'
                     },
                     {
-                        label: 'Assistant Message',
+                        label: 'Сообщение ассистента',
                         name: 'assistantMessage'
                     }
                 ],
                 default: 'userMessage'
             },
             {
-                label: 'Update Flow State',
+                label: 'Обновить состояние потока',
                 name: 'executeFlowUpdateState',
-                description: 'Update runtime state during the execution of the workflow',
+                description: 'Обновить состояние выполнения во время выполнения рабочего процесса',
                 type: 'array',
                 optional: true,
                 acceptVariable: true,
                 array: [
                     {
-                        label: 'Key',
+                        label: 'Ключ',
                         name: 'key',
                         type: 'asyncOptions',
                         loadMethod: 'listRuntimeStateKeys',
                         freeSolo: true
                     },
                     {
-                        label: 'Value',
+                        label: 'Значение',
                         name: 'value',
                         type: 'string',
                         acceptVariable: true,
@@ -131,11 +131,11 @@ class ExecuteFlow_Agentflow implements INode {
             const chatflows = await appDataSource.getRepository(databaseEntities['ChatFlow']).findBy(searchOptions)
 
             for (let i = 0; i < chatflows.length; i += 1) {
-                let cfType = 'Chatflow'
+                let cfType = 'Поток чата'
                 if (chatflows[i].type === 'AGENTFLOW') {
-                    cfType = 'Agentflow V2'
+                    cfType = 'Поток агентов V2'
                 } else if (chatflows[i].type === 'MULTIAGENT') {
-                    cfType = 'Agentflow V1'
+                    cfType = 'Поток агентов V1'
                 }
                 const data = {
                     label: chatflows[i].name,
@@ -145,7 +145,7 @@ class ExecuteFlow_Agentflow implements INode {
                 returnData.push(data)
             }
 
-            // order by label
+            // сортировка по метке
             return returnData.sort((a, b) => a.label.localeCompare(b.label))
         },
         async listRuntimeStateKeys(_: INodeData, options: ICommonObject): Promise<INodeOptionsValue[]> {
@@ -178,7 +178,7 @@ class ExecuteFlow_Agentflow implements INode {
             const credentialData = await getCredentialData(nodeData.credential ?? '', options)
             const chatflowApiKey = getCredentialParam('chatflowApiKey', credentialData, nodeData)
 
-            if (selectedFlowId === options.chatflowid) throw new Error('Cannot call the same agentflow!')
+            if (selectedFlowId === options.chatflowid) throw new Error('Нельзя вызывать тот же поток агентов!')
 
             let headers: Record<string, string> = {
                 'Content-Type': 'application/json'
@@ -261,7 +261,7 @@ class ExecuteFlow_Agentflow implements INode {
 
             return returnOutput
         } catch (error) {
-            console.error('ExecuteFlow Error:', error)
+            console.error('Ошибка ExecuteFlow:', error)
 
             // Format error response
             const errorResponse: any = {
@@ -276,8 +276,8 @@ class ExecuteFlow_Agentflow implements INode {
                     ]
                 },
                 error: {
-                    name: error.name || 'Error',
-                    message: error.message || 'An error occurred during the execution of the flow'
+                    name: error.name || 'Ошибка',
+                    message: error.message || 'Произошла ошибка во время выполнения потока'
                 },
                 state
             }

@@ -34,49 +34,49 @@ class LLM_Agentflow implements INode {
         this.version = 1.0
         this.type = 'LLM'
         this.category = 'Agent Flows'
-        this.description = 'Large language models to analyze user-provided inputs and generate responses'
+        this.description = 'Большие языковые модели для анализа пользовательских входных данных и генерации ответов'
         this.color = '#64B5F6'
         this.baseClasses = [this.type]
         this.inputs = [
             {
-                label: 'Model',
+                label: 'Модель',
                 name: 'llmModel',
                 type: 'asyncOptions',
                 loadMethod: 'listModels',
                 loadConfig: true
             },
             {
-                label: 'Messages',
+                label: 'Сообщения',
                 name: 'llmMessages',
                 type: 'array',
                 optional: true,
                 acceptVariable: true,
                 array: [
                     {
-                        label: 'Role',
+                        label: 'Роль',
                         name: 'role',
                         type: 'options',
                         options: [
                             {
-                                label: 'System',
+                                label: 'Система',
                                 name: 'system'
                             },
                             {
-                                label: 'Assistant',
+                                label: 'Ассистент',
                                 name: 'assistant'
                             },
                             {
-                                label: 'Developer',
+                                label: 'Разработчик',
                                 name: 'developer'
                             },
                             {
-                                label: 'User',
+                                label: 'Пользователь',
                                 name: 'user'
                             }
                         ]
                     },
                     {
-                        label: 'Content',
+                        label: 'Содержание',
                         name: 'content',
                         type: 'string',
                         acceptVariable: true,
@@ -86,37 +86,37 @@ class LLM_Agentflow implements INode {
                 ]
             },
             {
-                label: 'Enable Memory',
+                label: 'Включить память',
                 name: 'llmEnableMemory',
                 type: 'boolean',
-                description: 'Enable memory for the conversation thread',
+                description: 'Включить память для потока разговора',
                 default: true,
                 optional: true
             },
             {
-                label: 'Memory Type',
+                label: 'Тип памяти',
                 name: 'llmMemoryType',
                 type: 'options',
                 options: [
                     {
-                        label: 'All Messages',
+                        label: 'Все сообщения',
                         name: 'allMessages',
-                        description: 'Retrieve all messages from the conversation'
+                        description: 'Получить все сообщения из разговора'
                     },
                     {
-                        label: 'Window Size',
+                        label: 'Размер окна',
                         name: 'windowSize',
-                        description: 'Uses a fixed window size to surface the last N messages'
+                        description: 'Использует фиксированный размер окна для отображения последних N сообщений'
                     },
                     {
-                        label: 'Conversation Summary',
+                        label: 'Сводка разговора',
                         name: 'conversationSummary',
-                        description: 'Summarizes the whole conversation'
+                        description: 'Обобщает весь разговор'
                     },
                     {
-                        label: 'Conversation Summary Buffer',
+                        label: 'Буфер сводки разговора',
                         name: 'conversationSummaryBuffer',
-                        description: 'Summarize conversations once token limit is reached. Default to 2000'
+                        description: 'Обобщает разговоры при достижении лимита токенов. По умолчанию 2000'
                     }
                 ],
                 optional: true,
@@ -126,30 +126,30 @@ class LLM_Agentflow implements INode {
                 }
             },
             {
-                label: 'Window Size',
+                label: 'Размер окна',
                 name: 'llmMemoryWindowSize',
                 type: 'number',
                 default: '20',
-                description: 'Uses a fixed window size to surface the last N messages',
+                description: 'Использует фиксированный размер окна для отображения последних N сообщений',
                 show: {
                     llmMemoryType: 'windowSize'
                 }
             },
             {
-                label: 'Max Token Limit',
+                label: 'Максимальный лимит токенов',
                 name: 'llmMemoryMaxTokenLimit',
                 type: 'number',
                 default: '2000',
-                description: 'Summarize conversations once token limit is reached. Default to 2000',
+                description: 'Обобщает разговоры при достижении лимита токенов. По умолчанию 2000',
                 show: {
                     llmMemoryType: 'conversationSummaryBuffer'
                 }
             },
             {
-                label: 'Input Message',
+                label: 'Входное сообщение',
                 name: 'llmUserMessage',
                 type: 'string',
-                description: 'Add an input message as user message at the end of the conversation',
+                description: 'Добавить входное сообщение как сообщение пользователя в конец разговора',
                 rows: 4,
                 optional: true,
                 acceptVariable: true,
@@ -158,88 +158,88 @@ class LLM_Agentflow implements INode {
                 }
             },
             {
-                label: 'Return Response As',
+                label: 'Возвращать ответ как',
                 name: 'llmReturnResponseAs',
                 type: 'options',
                 options: [
                     {
-                        label: 'User Message',
+                        label: 'Сообщение пользователя',
                         name: 'userMessage'
                     },
                     {
-                        label: 'Assistant Message',
+                        label: 'Сообщение ассистента',
                         name: 'assistantMessage'
                     }
                 ],
                 default: 'userMessage'
             },
             {
-                label: 'JSON Structured Output',
+                label: 'Структурированный вывод JSON',
                 name: 'llmStructuredOutput',
-                description: 'Instruct the LLM to give output in a JSON structured schema',
+                description: 'Инструктировать LLM давать вывод в структурированной схеме JSON',
                 type: 'array',
                 optional: true,
                 acceptVariable: true,
                 array: [
                     {
-                        label: 'Key',
+                        label: 'Ключ',
                         name: 'key',
                         type: 'string'
                     },
                     {
-                        label: 'Type',
+                        label: 'Тип',
                         name: 'type',
                         type: 'options',
                         options: [
                             {
-                                label: 'String',
+                                label: 'Строка',
                                 name: 'string'
                             },
                             {
-                                label: 'String Array',
+                                label: 'Массив строк',
                                 name: 'stringArray'
                             },
                             {
-                                label: 'Number',
+                                label: 'Число',
                                 name: 'number'
                             },
                             {
-                                label: 'Boolean',
+                                label: 'Логический',
                                 name: 'boolean'
                             },
                             {
-                                label: 'Enum',
+                                label: 'Перечисление',
                                 name: 'enum'
                             },
                             {
-                                label: 'JSON Array',
+                                label: 'Массив JSON',
                                 name: 'jsonArray'
                             }
                         ]
                     },
                     {
-                        label: 'Enum Values',
+                        label: 'Значения перечисления',
                         name: 'enumValues',
                         type: 'string',
-                        placeholder: 'value1, value2, value3',
-                        description: 'Enum values. Separated by comma',
+                        placeholder: 'значение1, значение2, значение3',
+                        description: 'Значения перечисления. Разделены запятыми',
                         optional: true,
                         show: {
                             'llmStructuredOutput[$index].type': 'enum'
                         }
                     },
                     {
-                        label: 'JSON Schema',
+                        label: 'Схема JSON',
                         name: 'jsonSchema',
                         type: 'code',
                         placeholder: `{
     "answer": {
         "type": "string",
-        "description": "Value of the answer"
+        "description": "Значение ответа"
     },
     "reason": {
         "type": "string",
-        "description": "Reason for the answer"
+        "description": "Причина ответа"
     },
     "optional": {
         "type": "boolean"
@@ -254,43 +254,43 @@ class LLM_Agentflow implements INode {
             "properties": {
                 "value": {
                     "type": "string",
-                    "description": "Value of the children's answer"
+                    "description": "Значение ответа дочерних элементов"
                 }
             }
         }
     }
 }`,
-                        description: 'JSON schema for the structured output',
+                        description: 'Схема JSON для структурированного вывода',
                         optional: true,
                         show: {
                             'llmStructuredOutput[$index].type': 'jsonArray'
                         }
                     },
                     {
-                        label: 'Description',
+                        label: 'Описание',
                         name: 'description',
                         type: 'string',
-                        placeholder: 'Description of the key'
+                        placeholder: 'Описание ключа'
                     }
                 ]
             },
             {
-                label: 'Update Flow State',
+                label: 'Обновить состояние потока',
                 name: 'llmUpdateState',
-                description: 'Update runtime state during the execution of the workflow',
+                description: 'Обновить состояние выполнения во время выполнения рабочего процесса',
                 type: 'array',
                 optional: true,
                 acceptVariable: true,
                 array: [
                     {
-                        label: 'Key',
+                        label: 'Ключ',
                         name: 'key',
                         type: 'asyncOptions',
                         loadMethod: 'listRuntimeStateKeys',
                         freeSolo: true
                     },
                     {
-                        label: 'Value',
+                        label: 'Значение',
                         name: 'value',
                         type: 'string',
                         acceptVariable: true,
@@ -343,7 +343,7 @@ class LLM_Agentflow implements INode {
             const model = nodeData.inputs?.llmModel as string
             const modelConfig = nodeData.inputs?.llmModelConfig as ICommonObject
             if (!model) {
-                throw new Error('Model is required')
+                throw new Error('Требуется модель')
             }
 
             // Extract memory and configuration options
@@ -596,7 +596,7 @@ class LLM_Agentflow implements INode {
             if (error instanceof Error && error.message === 'Aborted') {
                 throw error
             }
-            throw new Error(`Error in LLM node: ${error instanceof Error ? error.message : String(error)}`)
+            throw new Error(`Ошибка в узле LLM: ${error instanceof Error ? error.message : String(error)}`)
         }
     }
 

@@ -29,37 +29,37 @@ class HumanInput_Agentflow implements INode {
     outputs: INodeOutputsValue[]
 
     constructor() {
-        this.label = 'Human Input'
+        this.label = 'Ввод пользователя'
         this.name = 'humanInputAgentflow'
         this.version = 1.0
         this.type = 'HumanInput'
         this.category = 'Agent Flows'
-        this.description = 'Request human input, approval or rejection during execution'
+        this.description = 'Запросить ввод, подтверждение или отклонение от пользователя во время выполнения'
         this.color = '#6E6EFD'
         this.baseClasses = [this.type]
         this.inputs = [
             {
-                label: 'Description Type',
+                label: 'Тип описания',
                 name: 'humanInputDescriptionType',
                 type: 'options',
                 options: [
                     {
-                        label: 'Fixed',
+                        label: 'Фиксированный',
                         name: 'fixed',
-                        description: 'Specify a fixed description'
+                        description: 'Указать фиксированное описание'
                     },
                     {
-                        label: 'Dynamic',
+                        label: 'Динамический',
                         name: 'dynamic',
-                        description: 'Use LLM to generate a description'
+                        description: 'Использовать LLM для генерации описания'
                     }
                 ]
             },
             {
-                label: 'Description',
+                label: 'Описание',
                 name: 'humanInputDescription',
                 type: 'string',
-                placeholder: 'Are you sure you want to proceed?',
+                placeholder: 'Вы уверены, что хотите продолжить?',
                 acceptVariable: true,
                 rows: 4,
                 show: {
@@ -67,7 +67,7 @@ class HumanInput_Agentflow implements INode {
                 }
             },
             {
-                label: 'Model',
+                label: 'Модель',
                 name: 'humanInputModel',
                 type: 'asyncOptions',
                 loadMethod: 'listModels',
@@ -77,7 +77,7 @@ class HumanInput_Agentflow implements INode {
                 }
             },
             {
-                label: 'Prompt',
+                label: 'Промпт',
                 name: 'humanInputModelPrompt',
                 type: 'string',
                 default: DEFAULT_HUMAN_INPUT_DESCRIPTION_HTML,
@@ -89,7 +89,7 @@ class HumanInput_Agentflow implements INode {
                 }
             },
             {
-                label: 'Enable Feedback',
+                label: 'Включить обратную связь',
                 name: 'humanInputEnableFeedback',
                 type: 'boolean',
                 default: true
@@ -97,11 +97,11 @@ class HumanInput_Agentflow implements INode {
         ]
         this.outputs = [
             {
-                label: 'Proceed',
+                label: 'Продолжить',
                 name: 'proceed'
             },
             {
-                label: 'Reject',
+                label: 'Отклонить',
                 name: 'reject'
             }
         ]
@@ -205,7 +205,7 @@ class HumanInput_Agentflow implements INode {
             let humanInputDescription = ''
 
             if (humanInputDescriptionType === 'fixed') {
-                humanInputDescription = (nodeData.inputs?.humanInputDescription as string) || 'Do you want to proceed?'
+                humanInputDescription = (nodeData.inputs?.humanInputDescription as string) || 'Хотите продолжить?'
                 const messages = [...pastChatHistory, ...runtimeChatHistory]
                 // Find the last message in the messages array
                 const lastMessage = (messages[messages.length - 1] as any).content || ''

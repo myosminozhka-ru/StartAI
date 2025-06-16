@@ -18,11 +18,11 @@ interface ICustomFunctionInputVariables {
 }
 
 const exampleFunc = `/*
-* You can use any libraries imported in Flowise
-* You can use properties specified in Input Schema as variables. Ex: Property = userid, Variable = $userid
-* You can get default flow config: $flow.sessionId, $flow.chatId, $flow.chatflowId, $flow.input, $flow.state
-* You can get custom variables: $vars.<variable-name>
-* Must return a string value at the end of function
+* Вы можете использовать любые библиотеки, импортированные в Flowise
+* Вы можете использовать свойства, указанные в схеме ввода, как переменные. Например: Свойство = userid, Переменная = $userid
+* Вы можете получить конфигурацию потока по умолчанию: $flow.sessionId, $flow.chatId, $flow.chatflowId, $flow.input, $flow.state
+* Вы можете получить пользовательские переменные: $vars.<имя-переменной>
+* В конце функции должно возвращаться строковое значение
 */
 
 const fetch = require('node-fetch');
@@ -59,30 +59,30 @@ class CustomFunction_Agentflow implements INode {
     inputs: INodeParams[]
 
     constructor() {
-        this.label = 'Custom Function'
+        this.label = 'Пользовательская функция'
         this.name = 'customFunctionAgentflow'
         this.version = 1.0
         this.type = 'CustomFunction'
         this.category = 'Agent Flows'
-        this.description = 'Execute custom function'
+        this.description = 'Выполнить пользовательскую функцию'
         this.baseClasses = [this.type]
         this.color = '#E4B7FF'
         this.inputs = [
             {
-                label: 'Input Variables',
+                label: 'Входные переменные',
                 name: 'customFunctionInputVariables',
-                description: 'Input variables can be used in the function with prefix $. For example: $foo',
+                description: 'Входные переменные могут использоваться в функции с префиксом $. Например: $foo',
                 type: 'array',
                 optional: true,
                 acceptVariable: true,
                 array: [
                     {
-                        label: 'Variable Name',
+                        label: 'Имя переменной',
                         name: 'variableName',
                         type: 'string'
                     },
                     {
-                        label: 'Variable Value',
+                        label: 'Значение переменной',
                         name: 'variableValue',
                         type: 'string',
                         acceptVariable: true
@@ -90,29 +90,29 @@ class CustomFunction_Agentflow implements INode {
                 ]
             },
             {
-                label: 'Javascript Function',
+                label: 'JavaScript функция',
                 name: 'customFunctionJavascriptFunction',
                 type: 'code',
                 codeExample: exampleFunc,
-                description: 'The function to execute. Must return a string or an object that can be converted to a string.'
+                description: 'Функция для выполнения. Должна возвращать строку или объект, который может быть преобразован в строку.'
             },
             {
-                label: 'Update Flow State',
+                label: 'Обновить состояние потока',
                 name: 'customFunctionUpdateState',
-                description: 'Update runtime state during the execution of the workflow',
+                description: 'Обновить состояние выполнения во время выполнения рабочего процесса',
                 type: 'array',
                 optional: true,
                 acceptVariable: true,
                 array: [
                     {
-                        label: 'Key',
+                        label: 'Ключ',
                         name: 'key',
                         type: 'asyncOptions',
                         loadMethod: 'listRuntimeStateKeys',
                         freeSolo: true
                     },
                     {
-                        label: 'Value',
+                        label: 'Значение',
                         name: 'value',
                         type: 'string',
                         acceptVariable: true,

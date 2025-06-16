@@ -15,20 +15,20 @@ class Iteration_Agentflow implements INode {
     inputs: INodeParams[]
 
     constructor() {
-        this.label = 'Iteration'
+        this.label = 'Итерация'
         this.name = 'iterationAgentflow'
         this.version = 1.0
         this.type = 'Iteration'
         this.category = 'Agent Flows'
-        this.description = 'Execute the nodes within the iteration block through N iterations'
+        this.description = 'Выполнить узлы внутри блока итерации через N итераций'
         this.baseClasses = [this.type]
         this.color = '#9C89B8'
         this.inputs = [
             {
-                label: 'Array Input',
+                label: 'Входной массив',
                 name: 'iterationInput',
                 type: 'string',
-                description: 'The input array to iterate over',
+                description: 'Входной массив для итерации',
                 acceptVariable: true,
                 rows: 4
             }
@@ -38,7 +38,7 @@ class Iteration_Agentflow implements INode {
     async run(nodeData: INodeData, _: string, options: ICommonObject): Promise<any> {
         const iterationInput = nodeData.inputs?.iterationInput
 
-        // Helper function to clean JSON strings with redundant backslashes
+        // Вспомогательная функция для очистки JSON строк с избыточными обратными слешами
         const cleanJsonString = (str: string): string => {
             return str.replace(/\\(["'[\]{}])/g, '$1')
         }
@@ -47,7 +47,7 @@ class Iteration_Agentflow implements INode {
             typeof iterationInput === 'string' && iterationInput !== '' ? JSON.parse(cleanJsonString(iterationInput)) : iterationInput
 
         if (!iterationInputArray || !Array.isArray(iterationInputArray)) {
-            throw new Error('Invalid input array')
+            throw new Error('Неверный входной массив')
         }
 
         const state = options.agentflowRuntime?.state as ICommonObject

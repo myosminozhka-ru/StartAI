@@ -24,11 +24,11 @@ class HTTP_Agentflow implements INode {
         this.version = 1.1
         this.type = 'HTTP'
         this.category = 'Agent Flows'
-        this.description = 'Send a HTTP request'
+        this.description = 'Отправить HTTP запрос'
         this.baseClasses = [this.type]
         this.color = '#FF7F7F'
         this.credential = {
-            label: 'HTTP Credential',
+            label: 'HTTP учетные данные',
             name: 'credential',
             type: 'credential',
             credentialNames: ['httpBasicAuth', 'httpBearerToken', 'httpApiKey'],
@@ -36,7 +36,7 @@ class HTTP_Agentflow implements INode {
         }
         this.inputs = [
             {
-                label: 'Method',
+                label: 'Метод',
                 name: 'method',
                 type: 'options',
                 options: [
@@ -69,19 +69,19 @@ class HTTP_Agentflow implements INode {
                 type: 'string'
             },
             {
-                label: 'Headers',
+                label: 'Заголовки',
                 name: 'headers',
                 type: 'array',
                 acceptVariable: true,
                 array: [
                     {
-                        label: 'Key',
+                        label: 'Ключ',
                         name: 'key',
                         type: 'string',
                         default: ''
                     },
                     {
-                        label: 'Value',
+                        label: 'Значение',
                         name: 'value',
                         type: 'string',
                         default: '',
@@ -91,19 +91,19 @@ class HTTP_Agentflow implements INode {
                 optional: true
             },
             {
-                label: 'Query Params',
+                label: 'Параметры запроса',
                 name: 'queryParams',
                 type: 'array',
                 acceptVariable: true,
                 array: [
                     {
-                        label: 'Key',
+                        label: 'Ключ',
                         name: 'key',
                         type: 'string',
                         default: ''
                     },
                     {
-                        label: 'Value',
+                        label: 'Значение',
                         name: 'value',
                         type: 'string',
                         default: '',
@@ -113,7 +113,7 @@ class HTTP_Agentflow implements INode {
                 optional: true
             },
             {
-                label: 'Body Type',
+                label: 'Тип тела',
                 name: 'bodyType',
                 type: 'options',
                 options: [
@@ -122,11 +122,11 @@ class HTTP_Agentflow implements INode {
                         name: 'json'
                     },
                     {
-                        label: 'Raw',
+                        label: 'Сырой',
                         name: 'raw'
                     },
                     {
-                        label: 'Form Data',
+                        label: 'Данные формы',
                         name: 'formData'
                     },
                     {
@@ -137,7 +137,7 @@ class HTTP_Agentflow implements INode {
                 optional: true
             },
             {
-                label: 'Body',
+                label: 'Тело',
                 name: 'body',
                 type: 'string',
                 acceptVariable: true,
@@ -148,7 +148,7 @@ class HTTP_Agentflow implements INode {
                 optional: true
             },
             {
-                label: 'Body',
+                label: 'Тело',
                 name: 'body',
                 type: 'array',
                 acceptVariable: true,
@@ -157,13 +157,13 @@ class HTTP_Agentflow implements INode {
                 },
                 array: [
                     {
-                        label: 'Key',
+                        label: 'Ключ',
                         name: 'key',
                         type: 'string',
                         default: ''
                     },
                     {
-                        label: 'Value',
+                        label: 'Значение',
                         name: 'value',
                         type: 'string',
                         default: '',
@@ -173,7 +173,7 @@ class HTTP_Agentflow implements INode {
                 optional: true
             },
             {
-                label: 'Response Type',
+                label: 'Тип ответа',
                 name: 'responseType',
                 type: 'options',
                 options: [
@@ -182,7 +182,7 @@ class HTTP_Agentflow implements INode {
                         name: 'json'
                     },
                     {
-                        label: 'Text',
+                        label: 'Текст',
                         name: 'text'
                     },
                     {
@@ -190,7 +190,7 @@ class HTTP_Agentflow implements INode {
                         name: 'arraybuffer'
                     },
                     {
-                        label: 'Raw (Base64)',
+                        label: 'Сырой (Base64)',
                         name: 'base64'
                     }
                 ],
@@ -211,10 +211,10 @@ class HTTP_Agentflow implements INode {
         const state = options.agentflowRuntime?.state as ICommonObject
 
         try {
-            // Prepare headers
+            // Подготовка заголовков
             const requestHeaders: Record<string, string> = {}
 
-            // Add headers from inputs
+            // Добавление заголовков из входных данных
             if (headers && Array.isArray(headers)) {
                 for (const header of headers) {
                     if (header.key && header.value) {
@@ -223,7 +223,7 @@ class HTTP_Agentflow implements INode {
                 }
             }
 
-            // Add credentials if provided
+            // Добавление учетных данных, если они предоставлены
             const credentialData = await getCredentialData(nodeData.credential ?? '', options)
             if (credentialData && Object.keys(credentialData).length !== 0) {
                 const basicAuthUsername = getCredentialParam('basicAuthUsername', credentialData, nodeData)
@@ -232,21 +232,21 @@ class HTTP_Agentflow implements INode {
                 const apiKeyName = getCredentialParam('key', credentialData, nodeData)
                 const apiKeyValue = getCredentialParam('value', credentialData, nodeData)
 
-                // Determine which type of auth to use based on available credentials
+                // Определение типа аутентификации на основе доступных учетных данных
                 if (basicAuthUsername || basicAuthPassword) {
-                    // Basic Auth
+                    // Базовая аутентификация
                     const auth = Buffer.from(`${basicAuthUsername}:${basicAuthPassword}`).toString('base64')
                     requestHeaders['Authorization'] = `Basic ${auth}`
                 } else if (bearerToken) {
-                    // Bearer Token
+                    // Токен Bearer
                     requestHeaders['Authorization'] = `Bearer ${bearerToken}`
                 } else if (apiKeyName && apiKeyValue) {
-                    // API Key in header
+                    // API ключ в заголовке
                     requestHeaders[apiKeyName] = apiKeyValue
                 }
             }
 
-            // Prepare query parameters
+            // Подготовка параметров запроса
             let queryString = ''
             if (queryParams && Array.isArray(queryParams)) {
                 const params = new URLSearchParams()
@@ -258,10 +258,10 @@ class HTTP_Agentflow implements INode {
                 queryString = params.toString()
             }
 
-            // Build final URL with query parameters
+            // Построение финального URL с параметрами запроса
             const finalUrl = queryString ? `${url}${url.includes('?') ? '&' : '?'}${queryString}` : url
 
-            // Prepare request config
+            // Подготовка конфигурации запроса
             const requestConfig: AxiosRequestConfig = {
                 method: method as Method,
                 url: finalUrl,
@@ -269,7 +269,7 @@ class HTTP_Agentflow implements INode {
                 responseType: (responseType || 'json') as ResponseType
             }
 
-            // Handle request body based on body type
+            // Обработка тела запроса в зависимости от типа
             if (method !== 'GET' && body) {
                 switch (bodyType) {
                     case 'json':
@@ -296,10 +296,10 @@ class HTTP_Agentflow implements INode {
                 }
             }
 
-            // Make the HTTP request
+            // Выполнение HTTP запроса
             const response = await axios(requestConfig)
 
-            // Process response based on response type
+            // Обработка ответа в зависимости от типа
             let responseData
             if (responseType === 'base64' && response.data) {
                 responseData = Buffer.from(response.data, 'binary').toString('base64')
@@ -334,9 +334,9 @@ class HTTP_Agentflow implements INode {
 
             return returnOutput
         } catch (error) {
-            console.error('HTTP Request Error:', error)
+            console.error('Ошибка HTTP запроса:', error)
 
-            // Format error response
+            // Форматирование ответа с ошибкой
             const errorResponse: any = {
                 id: nodeData.id,
                 name: this.name,
@@ -352,13 +352,13 @@ class HTTP_Agentflow implements INode {
                     }
                 },
                 error: {
-                    name: error.name || 'Error',
-                    message: error.message || 'An error occurred during the HTTP request'
+                    name: error.name || 'Ошибка',
+                    message: error.message || 'Произошла ошибка во время выполнения HTTP запроса'
                 },
                 state
             }
 
-            // Add more error details if available
+            // Добавление дополнительных деталей ошибки, если они доступны
             if (error.response) {
                 errorResponse.error.status = error.response.status
                 errorResponse.error.statusText = error.response.statusText

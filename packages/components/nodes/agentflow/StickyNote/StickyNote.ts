@@ -14,20 +14,20 @@ class StickyNote_Agentflow implements INode {
     inputs: INodeParams[]
 
     constructor() {
-        this.label = 'Sticky Note'
+        this.label = 'Заметка'
         this.name = 'stickyNoteAgentflow'
         this.version = 1.0
         this.type = 'StickyNote'
         this.color = '#fee440'
         this.category = 'Agent Flows'
-        this.description = 'Add notes to the agent flow'
+        this.description = 'Добавить заметки в агентский поток'
         this.inputs = [
             {
                 label: '',
                 name: 'note',
                 type: 'string',
                 rows: 1,
-                placeholder: 'Type something here',
+                placeholder: 'Введите текст здесь',
                 optional: true
             }
         ]

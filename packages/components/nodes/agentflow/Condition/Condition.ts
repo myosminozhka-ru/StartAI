@@ -15,20 +15,20 @@ class Condition_Agentflow implements INode {
     outputs: INodeOutputsValue[]
 
     constructor() {
-        this.label = 'Condition'
+        this.label = 'Условие'
         this.name = 'conditionAgentflow'
         this.version = 1.0
         this.type = 'Condition'
         this.category = 'Agent Flows'
-        this.description = `Split flows based on If Else conditions`
+        this.description = `Разделение потоков на основе условий If Else`
         this.baseClasses = [this.type]
         this.color = '#FFB938'
         this.inputs = [
             {
-                label: 'Conditions',
+                label: 'Условия',
                 name: 'conditions',
                 type: 'array',
-                description: 'Values to compare',
+                description: 'Значения для сравнения',
                 acceptVariable: true,
                 default: [
                     {
@@ -40,20 +40,20 @@ class Condition_Agentflow implements INode {
                 ],
                 array: [
                     {
-                        label: 'Type',
+                        label: 'Тип',
                         name: 'type',
                         type: 'options',
                         options: [
                             {
-                                label: 'String',
+                                label: 'Строка',
                                 name: 'string'
                             },
                             {
-                                label: 'Number',
+                                label: 'Число',
                                 name: 'number'
                             },
                             {
-                                label: 'Boolean',
+                                label: 'Логический',
                                 name: 'boolean'
                             }
                         ],
@@ -61,70 +61,70 @@ class Condition_Agentflow implements INode {
                     },
                     /////////////////////////////////////// STRING ////////////////////////////////////////
                     {
-                        label: 'Value 1',
+                        label: 'Значение 1',
                         name: 'value1',
                         type: 'string',
                         default: '',
-                        description: 'First value to be compared with',
+                        description: 'Первое значение для сравнения',
                         acceptVariable: true,
                         show: {
                             'conditions[$index].type': 'string'
                         }
                     },
                     {
-                        label: 'Operation',
+                        label: 'Операция',
                         name: 'operation',
                         type: 'options',
                         options: [
                             {
-                                label: 'Contains',
+                                label: 'Содержит',
                                 name: 'contains'
                             },
                             {
-                                label: 'Ends With',
+                                label: 'Заканчивается на',
                                 name: 'endsWith'
                             },
                             {
-                                label: 'Equal',
+                                label: 'Равно',
                                 name: 'equal'
                             },
                             {
-                                label: 'Not Contains',
+                                label: 'Не содержит',
                                 name: 'notContains'
                             },
                             {
-                                label: 'Not Equal',
+                                label: 'Не равно',
                                 name: 'notEqual'
                             },
                             {
-                                label: 'Regex',
+                                label: 'Регулярное выражение',
                                 name: 'regex'
                             },
                             {
-                                label: 'Starts With',
+                                label: 'Начинается с',
                                 name: 'startsWith'
                             },
                             {
-                                label: 'Is Empty',
+                                label: 'Пустое',
                                 name: 'isEmpty'
                             },
                             {
-                                label: 'Not Empty',
+                                label: 'Не пустое',
                                 name: 'notEmpty'
                             }
                         ],
                         default: 'equal',
-                        description: 'Type of operation',
+                        description: 'Тип операции',
                         show: {
                             'conditions[$index].type': 'string'
                         }
                     },
                     {
-                        label: 'Value 2',
+                        label: 'Значение 2',
                         name: 'value2',
                         type: 'string',
                         default: '',
-                        description: 'Second value to be compared with',
+                        description: 'Второе значение для сравнения',
                         acceptVariable: true,
                         show: {
                             'conditions[$index].type': 'string'
@@ -135,66 +135,66 @@ class Condition_Agentflow implements INode {
                     },
                     /////////////////////////////////////// NUMBER ////////////////////////////////////////
                     {
-                        label: 'Value 1',
+                        label: 'Значение 1',
                         name: 'value1',
                         type: 'number',
                         default: '',
-                        description: 'First value to be compared with',
+                        description: 'Первое значение для сравнения',
                         acceptVariable: true,
                         show: {
                             'conditions[$index].type': 'number'
                         }
                     },
                     {
-                        label: 'Operation',
+                        label: 'Операция',
                         name: 'operation',
                         type: 'options',
                         options: [
                             {
-                                label: 'Smaller',
+                                label: 'Меньше',
                                 name: 'smaller'
                             },
                             {
-                                label: 'Smaller Equal',
+                                label: 'Меньше или равно',
                                 name: 'smallerEqual'
                             },
                             {
-                                label: 'Equal',
+                                label: 'Равно',
                                 name: 'equal'
                             },
                             {
-                                label: 'Not Equal',
+                                label: 'Не равно',
                                 name: 'notEqual'
                             },
                             {
-                                label: 'Larger',
+                                label: 'Больше',
                                 name: 'larger'
                             },
                             {
-                                label: 'Larger Equal',
+                                label: 'Больше или равно',
                                 name: 'largerEqual'
                             },
                             {
-                                label: 'Is Empty',
+                                label: 'Пустое',
                                 name: 'isEmpty'
                             },
                             {
-                                label: 'Not Empty',
+                                label: 'Не пустое',
                                 name: 'notEmpty'
                             }
                         ],
                         default: 'equal',
-                        description: 'Type of operation',
+                        description: 'Тип операции',
                         show: {
                             'conditions[$index].type': 'number'
                         }
                     },
                     {
-                        label: 'Value 2',
+                        label: 'Значение 2',
                         name: 'value2',
                         type: 'number',
                         default: 0,
-                        description: 'Second value to be compared with',
+                        description: 'Второе значение для сравнения',
                         acceptVariable: true,
                         show: {
                             'conditions[$index].type': 'number'
@@ -202,41 +202,41 @@ class Condition_Agentflow implements INode {
                     },
                     /////////////////////////////////////// BOOLEAN ////////////////////////////////////////
                     {
-                        label: 'Value 1',
+                        label: 'Значение 1',
                         name: 'value1',
                         type: 'boolean',
                         default: false,
-                        description: 'First value to be compared with',
+                        description: 'Первое значение для сравнения',
                         show: {
                             'conditions[$index].type': 'boolean'
                         }
                     },
                     {
-                        label: 'Operation',
+                        label: 'Операция',
                         name: 'operation',
                         type: 'options',
                         options: [
                             {
-                                label: 'Equal',
+                                label: 'Равно',
                                 name: 'equal'
                             },
                             {
-                                label: 'Not Equal',
+                                label: 'Не равно',
                                 name: 'notEqual'
                             }
                         ],
                         default: 'equal',
-                        description: 'Type of operation',
+                        description: 'Тип операции',
                         show: {
                             'conditions[$index].type': 'boolean'
                         }
                     },
                     {
-                        label: 'Value 2',
+                        label: 'Значение 2',
                         name: 'value2',
                         type: 'boolean',
                         default: false,
-                        description: 'Second value to be compared with',
+                        description: 'Второе значение для сравнения',
                         show: {
                             'conditions[$index].type': 'boolean'
                         }
@@ -248,12 +248,12 @@ class Condition_Agentflow implements INode {
             {
                 label: '0',
                 name: '0',
-                description: 'Condition 0'
+                description: 'Условие 0'
             },
             {
                 label: '1',
                 name: '1',
-                description: 'Else'
+                description: 'Иначе'
             }
         ]
     }
