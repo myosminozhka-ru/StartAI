@@ -31,49 +31,50 @@ class AutoGPT_Agents implements INode {
         this.type = 'AutoGPT'
         this.category = 'Agents'
         this.icon = 'autogpt.svg'
-        this.description = 'Autonomous agent with chain of thoughts for self-guided task completion'
+        this.description = 'Автономный агент с цепочкой мыслей для самостоятельного выполнения задач'
         this.baseClasses = ['AutoGPT']
         this.inputs = [
             {
-                label: 'Allowed Tools',
+                label: 'Разрешённые инструменты',
                 name: 'tools',
                 type: 'Tool',
                 list: true
             },
             {
-                label: 'Chat Model',
+                label: 'Модель чата',
                 name: 'model',
                 type: 'BaseChatModel'
             },
             {
-                label: 'Vector Store Retriever',
+                label: 'Векторный поисковик',
                 name: 'vectorStoreRetriever',
                 type: 'BaseRetriever'
             },
             {
-                label: 'AutoGPT Name',
+                label: 'Имя AutoGPT',
                 name: 'aiName',
                 type: 'string',
                 placeholder: 'Tom',
                 optional: true
             },
             {
-                label: 'AutoGPT Role',
+                label: 'Роль AutoGPT',
                 name: 'aiRole',
                 type: 'string',
                 placeholder: 'Assistant',
                 optional: true
             },
             {
-                label: 'Maximum Loop',
+                label: 'Максимальное количество циклов',
                 name: 'maxLoop',
                 type: 'number',
                 default: 5,
                 optional: true
             },
             {
-                label: 'Input Moderation',
-                description: 'Detect text that could generate harmful output and prevent it from being sent to the language model',
+                label: 'Модерация ввода',
+                description:
+                    'Обнаруживать текст, который может привести к вредоносному выводу, и предотвращать его отправку языковой модели',
                 name: 'inputModeration',
                 type: 'Moderation',
                 optional: true,
@@ -109,7 +110,7 @@ class AutoGPT_Agents implements INode {
 
         if (moderations && moderations.length > 0) {
             try {
-                // Use the output of the moderation chain as input for the AutoGPT agent
+                // Использовать результат цепочки модерации как ввод для агента AutoGPT
                 input = await checkInputs(moderations, input)
             } catch (e) {
                 await new Promise((resolve) => setTimeout(resolve, 500))
@@ -123,7 +124,7 @@ class AutoGPT_Agents implements INode {
         try {
             let totalAssistantReply = ''
             executor.run = async (goals: string[]): Promise<string | undefined> => {
-                const user_input = 'Determine which next command to use, and respond using the format specified above:'
+                const user_input = 'Определите, какую следующую команду использовать, и ответьте, используя указанный выше формат:'
                 let loopCount = 0
                 while (loopCount < executor.maxIterations) {
                     loopCount += 1
@@ -155,20 +156,20 @@ class AutoGPT_Agents implements INode {
                         try {
                             observation = await tool.call(action.args)
                         } catch (e) {
-                            observation = `Error in args: ${e}`
+                            observation = `Ошибка в аргументах: ${e}`
                         }
-                        result = `Command ${tool.name} returned: ${observation}`
+                        result = `Команда ${tool.name} вернула: ${observation}`
                     } else if (action.name === 'ERROR') {
-                        result = `Error: ${action.args}. `
+                        result = `Ошибка: ${action.args}. `
                     } else {
-                        result = `Unknown command '${action.name}'. Please refer to the 'COMMANDS' list for available commands and only respond in the specified JSON format.`
+                        result = `Неизвестная команда '${action.name}'. Пожалуйста, обратитесь к списку 'COMMANDS' для доступных команд и отвечайте только в указанном формате JSON.`
                     }
 
-                    let memoryToAdd = `Assistant Reply: ${assistantReply}\nResult: ${result} `
+                    let memoryToAdd = `Ответ ассистента: ${assistantReply}\nРезультат: ${result} `
                     if (executor.feedbackTool) {
                         const feedback = `\n${await executor.feedbackTool.call('Input: ')}`
                         if (feedback === 'q' || feedback === 'stop') {
-                            return 'EXITING'
+                            return 'ВЫХОД'
                         }
                         memoryToAdd += feedback
                     }
@@ -184,11 +185,11 @@ class AutoGPT_Agents implements INode {
             const res = await executor.run([input])
 
             if (!res) {
-                const sentence = `Unfortunately I was not able to complete all the task. Here is the chain of thoughts:`
+                const sentence = `К сожалению, мне не удалось выполнить все задачи. Вот цепочка мыслей:`
                 return `${await rephraseString(sentence, model)}\n\`\`\`javascript\n${totalAssistantReply}\n\`\`\`\n`
             }
 
-            const sentence = `I have completed all my tasks. Here is the chain of thoughts:`
+            const sentence = `Я выполнил все свои задачи. Вот цепочка мыслей:`
             let writeFilePath = ''
             const writeTool = executor.tools.find((tool) => tool.name === 'write_file')
             if (executor.tools.length && writeTool) {
@@ -197,10 +198,10 @@ class AutoGPT_Agents implements INode {
             return `${await rephraseString(
                 sentence,
                 model
-            )}\n\`\`\`javascript\n${totalAssistantReply}\n\`\`\`\nAnd the final result:\n\`\`\`javascript\n${res}\n\`\`\`\n${
+            )}\n\`\`\`javascript\n${totalAssistantReply}\n\`\`\`\nИ финальный результат:\n\`\`\`javascript\n${res}\n\`\`\`\n${
                 writeFilePath
                     ? await rephraseString(
-                          `You can download the final result displayed above, or see if a new file has been successfully written to \`${writeFilePath}\``,
+                          `Вы можете скачать финальный результат, отображённый выше, или проверить, был ли успешно записан новый файл по пути \`${writeFilePath}\``,
                           model
                       )
                     : ''
@@ -213,7 +214,7 @@ class AutoGPT_Agents implements INode {
 
 const rephraseString = async (sentence: string, model: BaseChatModel) => {
     const promptTemplate = new PromptTemplate({
-        template: 'You are a helpful Assistant that rephrase a sentence: {sentence}',
+        template: 'Вы — полезный ассистент, который перефразирует предложение: {sentence}',
         inputVariables: ['sentence']
     })
     const chain = new LLMChain({ llm: model, prompt: promptTemplate })

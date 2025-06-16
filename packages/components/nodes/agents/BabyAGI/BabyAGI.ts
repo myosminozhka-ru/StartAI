@@ -23,28 +23,30 @@ class BabyAGI_Agents implements INode {
         this.type = 'BabyAGI'
         this.category = 'Agents'
         this.icon = 'babyagi.svg'
-        this.description = 'Task Driven Autonomous Agent which creates new task and reprioritizes task list based on objective'
+        this.description =
+            'Автономный агент, управляемый задачами, который создает новые задачи и переприоритизирует список задач на основе цели'
         this.baseClasses = ['BabyAGI']
         this.inputs = [
             {
-                label: 'Chat Model',
+                label: 'Модель чата',
                 name: 'model',
                 type: 'BaseChatModel'
             },
             {
-                label: 'Vector Store',
+                label: 'Векторное хранилище',
                 name: 'vectorStore',
                 type: 'VectorStore'
             },
             {
-                label: 'Task Loop',
+                label: 'Цикл задач',
                 name: 'taskLoop',
                 type: 'number',
                 default: 3
             },
             {
-                label: 'Input Moderation',
-                description: 'Detect text that could generate harmful output and prevent it from being sent to the language model',
+                label: 'Модерация ввода',
+                description:
+                    'Обнаруживает текст, который может привести к созданию вредоносного вывода, и предотвращает его отправку в языковую модель',
                 name: 'inputModeration',
                 type: 'Moderation',
                 optional: true,
@@ -69,7 +71,7 @@ class BabyAGI_Agents implements INode {
 
         if (moderations && moderations.length > 0) {
             try {
-                // Use the output of the moderation chain as input for the BabyAGI agent
+                // Использовать результат цепочки модерации в качестве входных данных для агента BabyAGI
                 input = await checkInputs(moderations, input)
             } catch (e) {
                 await new Promise((resolve) => setTimeout(resolve, 500))

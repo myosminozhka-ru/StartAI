@@ -43,71 +43,73 @@ class ToolAgent_Agents implements INode {
     sessionId?: string
 
     constructor(fields?: { sessionId?: string }) {
-        this.label = 'Tool Agent'
+        this.label = 'Агент инструментов'
         this.name = 'toolAgent'
         this.version = 2.0
         this.type = 'AgentExecutor'
         this.category = 'Agents'
         this.icon = 'toolAgent.png'
-        this.description = `Agent that uses Function Calling to pick the tools and args to call`
+        this.description = `Агент, использующий Function Calling для выбора инструментов и аргументов для вызова`
         this.baseClasses = [this.type, ...getBaseClasses(AgentExecutor)]
         this.inputs = [
             {
-                label: 'Tools',
+                label: 'Инструменты',
                 name: 'tools',
                 type: 'Tool',
                 list: true
             },
             {
-                label: 'Memory',
+                label: 'Память',
                 name: 'memory',
                 type: 'BaseChatMemory'
             },
             {
-                label: 'Tool Calling Chat Model',
+                label: 'Чат-модель с поддержкой вызова инструментов',
                 name: 'model',
                 type: 'BaseChatModel',
                 description:
-                    'Only compatible with models that are capable of function calling: ChatOpenAI, ChatMistral, ChatAnthropic, ChatGoogleGenerativeAI, ChatVertexAI, GroqChat'
+                    'Совместимо только с моделями, поддерживающими вызов функций: ChatOpenAI, ChatMistral, ChatAnthropic, ChatGoogleGenerativeAI, ChatVertexAI, GroqChat'
             },
             {
-                label: 'Chat Prompt Template',
+                label: 'Шаблон чат-промпта',
                 name: 'chatPromptTemplate',
                 type: 'ChatPromptTemplate',
-                description: 'Override existing prompt with Chat Prompt Template. Human Message must includes {input} variable',
+                description:
+                    'Переопределить существующий промпт с помощью шаблона чат-промпта. Сообщение пользователя должно включать переменную {input}',
                 optional: true
             },
             {
-                label: 'System Message',
+                label: 'Системное сообщение',
                 name: 'systemMessage',
                 type: 'string',
-                default: `You are a helpful AI assistant.`,
-                description: 'If Chat Prompt Template is provided, this will be ignored',
+                default: `Вы - полезный ИИ-ассистент.`,
+                description: 'Если предоставлен шаблон чат-промпта, это будет проигнорировано',
                 rows: 4,
                 optional: true,
                 additionalParams: true
             },
             {
-                label: 'Input Moderation',
-                description: 'Detect text that could generate harmful output and prevent it from being sent to the language model',
+                label: 'Модерация ввода',
+                description:
+                    'Обнаружение текста, который может генерировать вредоносный вывод, и предотвращение его отправки в языковую модель',
                 name: 'inputModeration',
                 type: 'Moderation',
                 optional: true,
                 list: true
             },
             {
-                label: 'Max Iterations',
+                label: 'Максимальное количество итераций',
                 name: 'maxIterations',
                 type: 'number',
                 optional: true,
                 additionalParams: true
             },
             {
-                label: 'Enable Detailed Streaming',
+                label: 'Включить детальное стриминг',
                 name: 'enableDetailedStreaming',
                 type: 'boolean',
                 default: false,
-                description: 'Stream detailed intermediate steps during agent execution',
+                description: 'Стриминг детальных промежуточных шагов во время выполнения агента',
                 optional: true,
                 additionalParams: true
             }
@@ -130,7 +132,7 @@ class ToolAgent_Agents implements INode {
 
         if (moderations && moderations.length > 0) {
             try {
-                // Use the output of the moderation chain as input for the OpenAI Function Agent
+                // Использовать выходные данные цепочки модерации как входные данные для агента OpenAI Function
                 input = await checkInputs(moderations, input)
             } catch (e) {
                 await new Promise((resolve) => setTimeout(resolve, 500))
@@ -221,7 +223,7 @@ class ToolAgent_Agents implements INode {
         output = extractOutputFromArray(res?.output)
         output = removeInvalidImageMarkdown(output)
 
-        // Claude 3 Opus tends to spit out <thinking>..</thinking> as well, discard that in final output
+        // Claude 3 Opus имеет тенденцию выводить <thinking>..</thinking>, удаляем это из финального вывода
         // https://docs.anthropic.com/en/docs/build-with-claude/tool-use#chain-of-thought
         const regexPattern: RegExp = /<thinking>[\s\S]*?<\/thinking>/
         const matches: RegExpMatchArray | null = output.match(regexPattern)
@@ -344,7 +346,7 @@ const prepareAgent = async (
     }
 
     if (model.bindTools === undefined) {
-        throw new Error(`This agent requires that the "bindTools()" method be implemented on the input model.`)
+        throw new Error(`Этот агент требует, чтобы метод "bindTools()" был реализован во входной модели.`)
     }
 
     const modelWithTools = model.bindTools(tools)

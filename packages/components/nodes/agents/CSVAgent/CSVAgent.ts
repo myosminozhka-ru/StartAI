@@ -27,42 +27,43 @@ class CSV_Agents implements INode {
         this.type = 'AgentExecutor'
         this.category = 'Agents'
         this.icon = 'CSVagent.svg'
-        this.description = 'Agent used to answer queries on CSV data'
+        this.description = 'Агент, используемый для ответов на запросы по данным CSV'
         this.baseClasses = [this.type, ...getBaseClasses(AgentExecutor)]
         this.inputs = [
             {
-                label: 'Csv File',
+                label: 'CSV файл',
                 name: 'csvFile',
                 type: 'file',
                 fileType: '.csv'
             },
             {
-                label: 'Language Model',
+                label: 'Языковая модель',
                 name: 'model',
                 type: 'BaseLanguageModel'
             },
             {
-                label: 'System Message',
+                label: 'Системное сообщение',
                 name: 'systemMessagePrompt',
                 type: 'string',
                 rows: 4,
                 additionalParams: true,
                 optional: true,
                 placeholder:
-                    'I want you to act as a document that I am having a conversation with. Your name is "AI Assistant". You will provide me with answers from the given info. If the answer is not included, say exactly "Hmm, I am not sure." and stop after that. Refuse to answer any question not about the info. Never break character.'
+                    'Я хочу, чтобы вы действовали как документ, с которым я веду беседу. Ваше имя - "AI Assistant". Вы будете предоставлять мне ответы из данной информации. Если ответ не включен, скажите точно "Хм, я не уверен." и остановитесь на этом. Откажитесь отвечать на любой вопрос не о предоставленной информации. Никогда не выходите из роли.'
             },
             {
-                label: 'Input Moderation',
-                description: 'Detect text that could generate harmful output and prevent it from being sent to the language model',
+                label: 'Модерация ввода',
+                description:
+                    'Обнаружение текста, который может генерировать вредоносный вывод, и предотвращение его отправки в языковую модель',
                 name: 'inputModeration',
                 type: 'Moderation',
                 optional: true,
                 list: true
             },
             {
-                label: 'Custom Pandas Read_CSV Code',
+                label: 'Пользовательский код Pandas Read_CSV',
                 description:
-                    'Custom Pandas <a target="_blank" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.read_csv.html">read_csv</a> function. Takes in an input: "csv_data"',
+                    'Пользовательская функция Pandas <a target="_blank" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.read_csv.html">read_csv</a>. Принимает входной параметр: "csv_data"',
                 name: 'customReadCSV',
                 default: 'read_csv(csv_data)',
                 type: 'code',
@@ -139,8 +140,8 @@ class CSV_Agents implements INode {
 
         const pyodide = await LoadPyodide()
 
-        // First load the csv file and get the dataframe dictionary of column types
-        // For example using titanic.csv: {'PassengerId': 'int64', 'Survived': 'int64', 'Pclass': 'int64', 'Name': 'object', 'Sex': 'object', 'Age': 'float64', 'SibSp': 'int64', 'Parch': 'int64', 'Ticket': 'object', 'Fare': 'float64', 'Cabin': 'object', 'Embarked': 'object'}
+        // Сначала загружаем csv файл и получаем словарь типов столбцов dataframe
+        // Например, используя titanic.csv: {'PassengerId': 'int64', 'Survived': 'int64', 'Pclass': 'int64', 'Name': 'object', 'Sex': 'object', 'Age': 'float64', 'SibSp': 'int64', 'Parch': 'int64', 'Ticket': 'object', 'Fare': 'float64', 'Cabin': 'object', 'Embarked': 'object'}
         let dataframeColDict = ''
         let customReadCSVFunc = _customReadCSV ? _customReadCSV : 'read_csv(csv_data)'
         try {
@@ -164,8 +165,8 @@ json.dumps(my_dict)`
             throw new Error(error)
         }
 
-        // Then tell GPT to come out with ONLY python code
-        // For example: len(df), df[df['SibSp'] > 3]['PassengerId'].count()
+        // Затем просим GPT сгенерировать ТОЛЬКО python код
+        // Например: len(df), df[df['SibSp'] > 3]['PassengerId'].count()
         let pythonCode = ''
         if (dataframeColDict) {
             const chain = new LLMChain({
@@ -183,19 +184,19 @@ json.dumps(my_dict)`
             pythonCode = pythonCode.replace(/^```[a-z]+\n|\n```$/gm, '')
         }
 
-        // Then run the code using Pyodide
+        // Затем запускаем код с помощью Pyodide
         let finalResult = ''
         if (pythonCode) {
             try {
                 const code = `import pandas as pd\n${pythonCode}`
-                // TODO: get print console output
+                // TODO: получить вывод консоли print
                 finalResult = await pyodide.runPythonAsync(code)
             } catch (error) {
-                throw new Error(`Sorry, I'm unable to find answer for question: "${input}" using following code: "${pythonCode}"`)
+                throw new Error(`Извините, я не могу найти ответ на вопрос: "${input}" используя следующий код: "${pythonCode}"`)
             }
         }
 
-        // Finally, return a complete answer
+        // В конце возвращаем полный ответ
         if (finalResult) {
             const chain = new LLMChain({
                 llm: model,

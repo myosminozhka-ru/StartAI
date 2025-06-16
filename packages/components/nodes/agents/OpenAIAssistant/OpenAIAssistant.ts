@@ -41,54 +41,55 @@ class OpenAIAssistant_Agents implements INode {
         this.type = 'OpenAIAssistant'
         this.category = 'Agents'
         this.icon = 'assistant.svg'
-        this.description = `An agent that uses OpenAI Assistant API to pick the tool and args to call`
+        this.description = `Агент, использующий OpenAI Assistant API для выбора инструмента и аргументов для вызова`
         this.baseClasses = [this.type]
         this.inputs = [
             {
-                label: 'Select Assistant',
+                label: 'Выберите ассистента',
                 name: 'selectedAssistant',
                 type: 'asyncOptions',
                 loadMethod: 'listAssistants'
             },
             {
-                label: 'Allowed Tools',
+                label: 'Разрешенные инструменты',
                 name: 'tools',
                 type: 'Tool',
                 list: true
             },
             {
-                label: 'Input Moderation',
-                description: 'Detect text that could generate harmful output and prevent it from being sent to the language model',
+                label: 'Модерация ввода',
+                description:
+                    'Обнаружение текста, который может генерировать вредоносный вывод, и предотвращение его отправки в языковую модель',
                 name: 'inputModeration',
                 type: 'Moderation',
                 optional: true,
                 list: true
             },
             {
-                label: 'Tool Choice',
+                label: 'Выбор инструмента',
                 name: 'toolChoice',
                 type: 'string',
                 description:
-                    'Controls which (if any) tool is called by the model. Can be "none", "auto", "required", or the name of a tool. Refer <a href="https://platform.openai.com/docs/api-reference/runs/createRun#runs-createrun-tool_choice" target="_blank">here</a> for more information',
+                    'Управляет тем, какой (если есть) инструмент будет вызван моделью. Может быть "none", "auto", "required" или имя инструмента. Подробнее <a href="https://platform.openai.com/docs/api-reference/runs/createRun#runs-createrun-tool_choice" target="_blank">здесь</a>',
                 placeholder: 'file_search',
                 optional: true,
                 additionalParams: true
             },
             {
-                label: 'Parallel Tool Calls',
+                label: 'Параллельные вызовы инструментов',
                 name: 'parallelToolCalls',
                 type: 'boolean',
-                description: 'Whether to enable parallel function calling during tool use. Defaults to true',
+                description: 'Включить ли параллельный вызов функций при использовании инструментов. По умолчанию true',
                 default: true,
                 optional: true,
                 additionalParams: true
             },
             {
-                label: 'Disable File Download',
+                label: 'Отключить загрузку файлов',
                 name: 'disableFileDownload',
                 type: 'boolean',
                 description:
-                    'Messages can contain text, images, or files. In some cases, you may want to prevent others from downloading the files. Learn more from OpenAI File Annotation <a target="_blank" href="https://platform.openai.com/docs/assistants/how-it-works/managing-threads-and-messages">docs</a>',
+                    'Сообщения могут содержать текст, изображения или файлы. В некоторых случаях вы можете захотеть запретить другим загружать файлы. Подробнее в документации OpenAI File Annotation <a target="_blank" href="https://platform.openai.com/docs/assistants/how-it-works/managing-threads-and-messages">docs</a>',
                 optional: true,
                 additionalParams: true
             }
@@ -239,7 +240,7 @@ class OpenAIAssistant_Agents implements INode {
 
         const openai = new OpenAI({ apiKey: openAIApiKey })
 
-        // Start analytics
+        // Начать аналитику
         const analyticHandlers = AnalyticHandler.getInstance(nodeData, options)
         await analyticHandlers.init()
         const parentIds = await analyticHandlers.onChainStart('OpenAIAssistant', input)
@@ -248,7 +249,7 @@ class OpenAIAssistant_Agents implements INode {
             const assistantDetails = JSON.parse(assistant.details)
             const openAIAssistantId = assistantDetails.id
 
-            // Retrieve assistant
+            // Получить ассистента
             const retrievedAssistant = await openai.beta.assistants.retrieve(openAIAssistantId)
 
             if (formattedTools.length) {
@@ -337,13 +338,13 @@ class OpenAIAssistant_Agents implements INode {
                 await promise(threadId)
             }
 
-            // Add message to thread
+            // Добавить сообщение в поток
             await openai.beta.threads.messages.create(threadId, {
                 role: 'user',
                 content: input
             })
 
-            // Run assistant thread
+            // Запустить поток ассистента
             const llmIds = await analyticHandlers.onLLMStart('ChatOpenAI', input, parentIds)
 
             let text = ''
@@ -545,7 +546,7 @@ class OpenAIAssistant_Agents implements INode {
                                 try {
                                     args = JSON.parse(functionCall.arguments)
                                 } catch (e) {
-                                    console.error('Error parsing arguments, default to empty object')
+                                    console.error('Ошибка парсинга аргументов, используем пустой объект по умолчанию')
                                 }
                                 actions.push({
                                     tool: functionCall.name,
@@ -579,9 +580,9 @@ class OpenAIAssistant_Agents implements INode {
                                     })
                                 } catch (e) {
                                     await analyticHandlers.onToolEnd(toolIds, e)
-                                    console.error('Error executing tool', e)
+                                    console.error('Ошибка выполнения инструмента', e)
                                     throw new Error(
-                                        `Error executing tool. Tool: ${tool.name}. Thread ID: ${threadId}. Run ID: ${runThreadId}`
+                                        `Ошибка выполнения инструмента. Инструмент: ${tool.name}. ID потока: ${threadId}. ID запуска: ${runThreadId}`
                                     )
                                 }
                             }
@@ -605,10 +606,10 @@ class OpenAIAssistant_Agents implements INode {
                                     isStreamingStarted
                                 })
                             } catch (error) {
-                                console.error('Error submitting tool outputs:', error)
+                                console.error('Ошибка отправки выходных данных инструмента:', error)
                                 await openai.beta.threads.runs.cancel(threadId, runThreadId)
 
-                                const errMsg = `Error submitting tool outputs. Thread ID: ${threadId}. Run ID: ${runThreadId}`
+                                const errMsg = `Ошибка отправки выходных данных инструмента. ID потока: ${threadId}. ID запуска: ${runThreadId}`
 
                                 await analyticHandlers.onLLMError(llmIds, errMsg)
                                 await analyticHandlers.onChainError(parentIds, errMsg, true)
@@ -619,13 +620,13 @@ class OpenAIAssistant_Agents implements INode {
                     }
                 }
 
-                // List messages
+                // Список сообщений
                 const messages = await openai.beta.threads.messages.list(threadId)
                 const messageData = messages.data ?? []
                 const assistantMessages = messageData.filter((msg) => msg.role === 'assistant')
                 if (!assistantMessages.length) return ''
 
-                // Remove images from the logging text
+                // Удалить изображения из текста логирования
                 let llmOutput = text.replace(imageRegex, '')
                 llmOutput = llmOutput.replace('<br/>', '')
 
@@ -667,7 +668,7 @@ class OpenAIAssistant_Agents implements INode {
                                         try {
                                             args = JSON.parse(functionCall.arguments)
                                         } catch (e) {
-                                            console.error('Error parsing arguments, default to empty object')
+                                            console.error('Ошибка парсинга аргументов, используем пустой объект по умолчанию')
                                         }
                                         actions.push({
                                             tool: functionCall.name,
@@ -704,11 +705,11 @@ class OpenAIAssistant_Agents implements INode {
                                             })
                                         } catch (e) {
                                             await analyticHandlers.onToolEnd(toolIds, e)
-                                            console.error('Error executing tool', e)
+                                            console.error('Ошибка выполнения инструмента', e)
                                             clearInterval(timeout)
                                             reject(
                                                 new Error(
-                                                    `Error processing thread: ${state}, Thread ID: ${threadId}, Run ID: ${runId}, Tool: ${tool.name}`
+                                                    `Ошибка обработки потока: ${state}, ID потока: ${threadId}, Run ID: ${runId}, Tool: ${tool.name}`
                                                 )
                                             )
                                             return
@@ -731,7 +732,9 @@ class OpenAIAssistant_Agents implements INode {
                                     } catch (e) {
                                         clearInterval(timeout)
                                         reject(
-                                            new Error(`Error submitting tool outputs: ${state}, Thread ID: ${threadId}, Run ID: ${runId}`)
+                                            new Error(
+                                                `Ошибка отправки выходных данных инструмента: ${state}, ID потока: ${threadId}, Run ID: ${runId}`
+                                            )
                                         )
                                     }
                                 }
@@ -739,7 +742,7 @@ class OpenAIAssistant_Agents implements INode {
                                 clearInterval(timeout)
                                 reject(
                                     new Error(
-                                        `Error processing thread: ${state}, Thread ID: ${threadId}, Run ID: ${runId}, Status: ${state}`
+                                        `Ошибка обработки потока: ${state}, ID потока: ${threadId}, Run ID: ${runId}, Status: ${state}`
                                     )
                                 )
                             }
@@ -790,13 +793,13 @@ class OpenAIAssistant_Agents implements INode {
                     runThreadId = newRunThread.id
                     state = await promise(threadId, newRunThread.id)
                 } else {
-                    const errMsg = `Error processing thread: ${state}, Thread ID: ${threadId}`
+                    const errMsg = `Ошибка обработки потока: ${state}, ID потока: ${threadId}`
                     await analyticHandlers.onChainError(parentIds, errMsg, true)
                     throw new Error(errMsg)
                 }
             }
 
-            // List messages
+            // Список сообщений
             const messages = await openai.beta.threads.messages.list(threadId)
             const messageData = messages.data ?? []
             const assistantMessages = messageData.filter((msg) => msg.role === 'assistant')
@@ -985,7 +988,7 @@ const downloadFile = async (
 
         return { path, totalSize }
     } catch (error) {
-        console.error('Error downloading or writing the file:', error)
+        console.error('Ошибка загрузки или записи файла:', error)
         return { path: '', totalSize: 0 }
     }
 }
@@ -1063,7 +1066,7 @@ async function handleToolSubmission(params: ToolSubmissionParams): Promise<ToolS
                         try {
                             args = JSON.parse(functionCall.arguments)
                         } catch (e) {
-                            console.error('Error parsing arguments, default to empty object')
+                            console.error('Ошибка парсинга аргументов, используем пустой объект по умолчанию')
                         }
                         actions.push({
                             tool: functionCall.name,
@@ -1097,8 +1100,10 @@ async function handleToolSubmission(params: ToolSubmissionParams): Promise<ToolS
                             })
                         } catch (e) {
                             await analyticHandlers.onToolEnd(toolIds, e)
-                            console.error('Error executing tool', e)
-                            throw new Error(`Error executing tool. Tool: ${tool.name}. Thread ID: ${threadId}. Run ID: ${runThreadId}`)
+                            console.error('Ошибка выполнения инструмента', e)
+                            throw new Error(
+                                `Ошибка выполнения инструмента. Инструмент: ${tool.name}. ID потока: ${threadId}. Run ID: ${runThreadId}`
+                            )
                         }
                     }
 
@@ -1135,10 +1140,10 @@ async function handleToolSubmission(params: ToolSubmissionParams): Promise<ToolS
             isStreamingStarted: updatedIsStreamingStarted
         }
     } catch (error) {
-        console.error('Error submitting tool outputs:', error)
+        console.error('Ошибка отправки выходных данных инструмента:', error)
         await openai.beta.threads.runs.cancel(threadId, runThreadId)
 
-        const errMsg = `Error submitting tool outputs. Thread ID: ${threadId}. Run ID: ${runThreadId}`
+        const errMsg = `Ошибка отправки выходных данных инструмента. ID потока: ${threadId}. ID запуска: ${runThreadId}`
 
         await analyticHandlers.onLLMError(llmIds, errMsg)
         await analyticHandlers.onChainError(parentIds, errMsg, true)

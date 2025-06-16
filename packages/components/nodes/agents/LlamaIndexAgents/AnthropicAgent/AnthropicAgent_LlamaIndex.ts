@@ -24,28 +24,28 @@ class AnthropicAgent_LlamaIndex_Agents implements INode {
         this.type = 'AnthropicAgent'
         this.category = 'Agents'
         this.icon = 'Anthropic.svg'
-        this.description = `Agent that uses Anthropic Claude Function Calling to pick the tools and args to call using LlamaIndex`
+        this.description = `Агент, использующий Anthropic Claude Function Calling для выбора инструментов и аргументов для вызова с помощью LlamaIndex`
         this.baseClasses = [this.type, ...getBaseClasses(AnthropicAgent)]
         this.tags = ['LlamaIndex']
         this.inputs = [
             {
-                label: 'Tools',
+                label: 'Инструменты',
                 name: 'tools',
                 type: 'Tool_LlamaIndex',
                 list: true
             },
             {
-                label: 'Memory',
+                label: 'Память',
                 name: 'memory',
                 type: 'BaseChatMemory'
             },
             {
-                label: 'Anthropic Claude Model',
+                label: 'Модель Anthropic Claude',
                 name: 'model',
                 type: 'BaseChatModel_LlamaIndex'
             },
             {
-                label: 'System Message',
+                label: 'Системное сообщение',
                 name: 'systemMessage',
                 type: 'string',
                 rows: 4,
@@ -100,7 +100,7 @@ class AnthropicAgent_LlamaIndex_Agents implements INode {
             verbose: process.env.DEBUG === 'true'
         })
 
-        // these are needed for evaluation runs
+        // эти данные необходимы для оценочных запусков
         await EvaluationRunTracerLlama.injectEvaluationMetadata(nodeData, options, agent)
 
         let text = ''

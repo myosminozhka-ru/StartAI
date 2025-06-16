@@ -47,55 +47,56 @@ class ConversationalRetrievalToolAgent_Agents implements INode {
         this.type = 'AgentExecutor'
         this.category = 'Agents'
         this.icon = 'toolAgent.png'
-        this.description = `Agent that calls a vector store retrieval and uses Function Calling to pick the tools and args to call`
+        this.description = `Агент, который вызывает поиск в векторном хранилище и использует Function Calling для выбора инструментов и аргументов для вызова`
         this.baseClasses = [this.type, ...getBaseClasses(AgentExecutor)]
         this.inputs = [
             {
-                label: 'Tools',
+                label: 'Инструменты',
                 name: 'tools',
                 type: 'Tool',
                 list: true
             },
             {
-                label: 'Memory',
+                label: 'Память',
                 name: 'memory',
                 type: 'BaseChatMemory'
             },
             {
-                label: 'Tool Calling Chat Model',
+                label: 'Чат-модель с поддержкой вызова инструментов',
                 name: 'model',
                 type: 'BaseChatModel',
                 description:
-                    'Only compatible with models that are capable of function calling. ChatOpenAI, ChatMistral, ChatAnthropic, ChatVertexAI'
+                    'Совместимо только с моделями, способными к вызову функций. ChatOpenAI, ChatMistral, ChatAnthropic, ChatVertexAI'
             },
             {
-                label: 'System Message',
+                label: 'Системное сообщение',
                 name: 'systemMessage',
                 type: 'string',
-                description: 'Taking the rephrased question, search for answer from the provided context',
-                warning: 'Prompt must include input variable: {context}',
+                description: 'Используя переформулированный вопрос, ищите ответ в предоставленном контексте',
+                warning: 'Промпт должен включать переменную ввода: {context}',
                 rows: 4,
                 additionalParams: true,
                 optional: true,
                 default: RESPONSE_TEMPLATE
             },
             {
-                label: 'Input Moderation',
-                description: 'Detect text that could generate harmful output and prevent it from being sent to the language model',
+                label: 'Модерация ввода',
+                description:
+                    'Обнаружение текста, который может генерировать вредоносный вывод, и предотвращение его отправки в языковую модель',
                 name: 'inputModeration',
                 type: 'Moderation',
                 optional: true,
                 list: true
             },
             {
-                label: 'Max Iterations',
+                label: 'Максимальное количество итераций',
                 name: 'maxIterations',
                 type: 'number',
                 optional: true,
                 additionalParams: true
             },
             {
-                label: 'Vector Store Retriever',
+                label: 'Векторное хранилище для поиска',
                 name: 'vectorStoreRetriever',
                 type: 'BaseRetriever'
             }
@@ -160,7 +161,7 @@ class ConversationalRetrievalToolAgent_Agents implements INode {
 
         let output = res?.output as string
 
-        // Claude 3 Opus tends to spit out <thinking>..</thinking> as well, discard that in final output
+        // Claude 3 Opus имеет тенденцию выводить <thinking>..</thinking>, удаляем это из финального вывода
         const regexPattern: RegExp = /<thinking>[\s\S]*?<\/thinking>/
         const matches: RegExpMatchArray | null = output.match(regexPattern)
         if (matches) {
@@ -222,7 +223,7 @@ const prepareAgent = async (
     systemMessage = transformBracesWithColon(systemMessage)
 
     const prompt = ChatPromptTemplate.fromMessages([
-        ['system', systemMessage ? systemMessage : `You are a helpful AI assistant.`],
+        ['system', systemMessage ? systemMessage : `Вы - полезный ИИ-ассистент.`],
         new MessagesPlaceholder(memoryKey),
         ['human', `{${inputKey}}`],
         new MessagesPlaceholder('agent_scratchpad')
@@ -258,7 +259,7 @@ const prepareAgent = async (
     }
 
     if (model.bindTools === undefined) {
-        throw new Error(`This agent requires that the "bindTools()" method be implemented on the input model.`)
+        throw new Error(`Этот агент требует, чтобы метод "bindTools()" был реализован во входной модели.`)
     }
 
     const modelWithTools = model.bindTools(tools)

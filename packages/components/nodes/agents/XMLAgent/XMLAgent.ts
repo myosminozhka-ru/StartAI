@@ -22,28 +22,28 @@ import { AgentExecutor, XMLAgentOutputParser } from '../../../src/agents'
 import { Moderation, checkInputs } from '../../moderation/Moderation'
 import { formatResponse } from '../../outputparsers/OutputParserHelpers'
 
-const defaultSystemMessage = `You are a helpful assistant. Help the user answer any questions.
+const defaultSystemMessage = `Вы - полезный ассистент. Помогите пользователю ответить на любые вопросы.
 
-You have access to the following tools:
+У вас есть доступ к следующим инструментам:
 
 {tools}
 
-In order to use a tool, you can use <tool></tool> and <tool_input></tool_input> tags. You will then get back a response in the form <observation></observation>
-For example, if you have a tool called 'search' that could run a google search, in order to search for the weather in SF you would respond:
+Для использования инструмента вы можете использовать теги <tool></tool> и <tool_input></tool_input>. Затем вы получите ответ в форме <observation></observation>
+Например, если у вас есть инструмент 'search', который может выполнить поиск в Google, чтобы найти погоду в SF, вы ответите:
 
-<tool>search</tool><tool_input>weather in SF</tool_input>
-<observation>64 degrees</observation>
+<tool>search</tool><tool_input>погода в SF</tool_input>
+<observation>64 градуса</observation>
 
-When you are done, respond with a final answer between <final_answer></final_answer>. For example:
+Когда вы закончите, ответьте финальным ответом между <final_answer></final_answer>. Например:
 
-<final_answer>The weather in SF is 64 degrees</final_answer>
+<final_answer>Погода в SF 64 градуса</final_answer>
 
-Begin!
+Начнем!
 
-Previous Conversation:
+Предыдущий разговор:
 {chat_history}
 
-Question: {input}
+Вопрос: {input}
 {agent_scratchpad}`
 
 class XMLAgent_Agents implements INode {
@@ -59,50 +59,51 @@ class XMLAgent_Agents implements INode {
     sessionId?: string
 
     constructor(fields?: { sessionId?: string }) {
-        this.label = 'XML Agent'
+        this.label = 'XML Агент'
         this.name = 'xmlAgent'
         this.version = 2.0
         this.type = 'XMLAgent'
         this.category = 'Agents'
         this.icon = 'xmlagent.svg'
-        this.description = `Agent that is designed for LLMs that are good for reasoning/writing XML (e.g: Anthropic Claude)`
+        this.description = `Агент, разработанный для языковых моделей, которые хорошо работают с рассуждениями/написанием XML (например: Anthropic Claude)`
         this.baseClasses = [this.type, ...getBaseClasses(AgentExecutor)]
         this.inputs = [
             {
-                label: 'Tools',
+                label: 'Инструменты',
                 name: 'tools',
                 type: 'Tool',
                 list: true
             },
             {
-                label: 'Memory',
+                label: 'Память',
                 name: 'memory',
                 type: 'BaseChatMemory'
             },
             {
-                label: 'Chat Model',
+                label: 'Чат-модель',
                 name: 'model',
                 type: 'BaseChatModel'
             },
             {
-                label: 'System Message',
+                label: 'Системное сообщение',
                 name: 'systemMessage',
                 type: 'string',
-                warning: 'Prompt must include input variables: {tools}, {chat_history}, {input} and {agent_scratchpad}',
+                warning: 'Промпт должен включать входные переменные: {tools}, {chat_history}, {input} и {agent_scratchpad}',
                 rows: 4,
                 default: defaultSystemMessage,
                 additionalParams: true
             },
             {
-                label: 'Input Moderation',
-                description: 'Detect text that could generate harmful output and prevent it from being sent to the language model',
+                label: 'Модерация ввода',
+                description:
+                    'Обнаружение текста, который может генерировать вредоносный вывод, и предотвращение его отправки в языковую модель',
                 name: 'inputModeration',
                 type: 'Moderation',
                 optional: true,
                 list: true
             },
             {
-                label: 'Max Iterations',
+                label: 'Максимальное количество итераций',
                 name: 'maxIterations',
                 type: 'number',
                 optional: true,
@@ -126,7 +127,7 @@ class XMLAgent_Agents implements INode {
 
         if (moderations && moderations.length > 0) {
             try {
-                // Use the output of the moderation chain as input for the OpenAI Function Agent
+                // Использовать выходные данные цепочки модерации как входные данные для агента OpenAI Function
                 input = await checkInputs(moderations, input)
             } catch (e) {
                 await new Promise((resolve) => setTimeout(resolve, 500))
@@ -160,7 +161,7 @@ class XMLAgent_Agents implements INode {
                 }
                 usedTools = res.usedTools
             }
-            // If the tool is set to returnDirect, stream the output to the client
+            // Если инструмент настроен на прямой возврат, передаем вывод клиенту
             if (res.usedTools && res.usedTools.length) {
                 let inputTools = nodeData.inputs?.tools
                 inputTools = flatten(inputTools)
@@ -243,7 +244,7 @@ const prepareAgent = async (
     const missingVariables = ['tools', 'agent_scratchpad'].filter((v) => !prompt.inputVariables.includes(v))
 
     if (missingVariables.length > 0) {
-        throw new Error(`Provided prompt is missing required input variables: ${JSON.stringify(missingVariables)}`)
+        throw new Error(`Предоставленный промпт не содержит необходимых входных переменных: ${JSON.stringify(missingVariables)}`)
     }
 
     const llmWithStop = model.bind({ stop: ['</tool_input>', '</final_answer>'] })
@@ -252,9 +253,9 @@ const prepareAgent = async (
     let chatHistoryMsgTxt = ''
     for (const message of messages) {
         if (message.type === 'apiMessage') {
-            chatHistoryMsgTxt += `\\nAI:${message.message}`
+            chatHistoryMsgTxt += `\\nИИ:${message.message}`
         } else if (message.type === 'userMessage') {
-            chatHistoryMsgTxt += `\\nHuman:${message.message}`
+            chatHistoryMsgTxt += `\\nЧеловек:${message.message}`
         }
     }
 

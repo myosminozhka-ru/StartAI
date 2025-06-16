@@ -26,41 +26,43 @@ class ReActAgentChat_Agents implements INode {
     sessionId?: string
 
     constructor(fields?: { sessionId?: string }) {
-        this.label = 'ReAct Agent for Chat Models'
+        this.label = 'ReAct Agent для чат-моделей'
         this.name = 'reactAgentChat'
         this.version = 4.0
         this.type = 'AgentExecutor'
         this.category = 'Agents'
         this.icon = 'agent.svg'
-        this.description = 'Agent that uses the ReAct logic to decide what action to take, optimized to be used with Chat Models'
+        this.description =
+            'Агент, использующий логику ReAct для принятия решений о действиях, оптимизированный для использования с чат-моделями'
         this.baseClasses = [this.type, ...getBaseClasses(AgentExecutor)]
         this.inputs = [
             {
-                label: 'Allowed Tools',
+                label: 'Разрешенные инструменты',
                 name: 'tools',
                 type: 'Tool',
                 list: true
             },
             {
-                label: 'Chat Model',
+                label: 'Чат-модель',
                 name: 'model',
                 type: 'BaseChatModel'
             },
             {
-                label: 'Memory',
+                label: 'Память',
                 name: 'memory',
                 type: 'BaseChatMemory'
             },
             {
-                label: 'Input Moderation',
-                description: 'Detect text that could generate harmful output and prevent it from being sent to the language model',
+                label: 'Модерация ввода',
+                description:
+                    'Обнаружение текста, который может генерировать вредоносный вывод, и предотвращение его отправки в языковую модель',
                 name: 'inputModeration',
                 type: 'Moderation',
                 optional: true,
                 list: true
             },
             {
-                label: 'Max Iterations',
+                label: 'Максимальное количество итераций',
                 name: 'maxIterations',
                 type: 'number',
                 optional: true,
@@ -84,7 +86,7 @@ class ReActAgentChat_Agents implements INode {
 
         if (moderations && moderations.length > 0) {
             try {
-                // Use the output of the moderation chain as input for the ReAct Agent for Chat Models
+                // Использовать выходные данные цепочки модерации как входные данные для ReAct Agent для чат-моделей
                 input = await checkInputs(moderations, input)
             } catch (e) {
                 await new Promise((resolve) => setTimeout(resolve, 500))
@@ -104,7 +106,7 @@ class ReActAgentChat_Agents implements INode {
             const messageContent = await addImagesToMessages(nodeData, options, model.multiModalOption)
 
             if (messageContent?.length) {
-                // Change model to vision supported
+                // Изменить модель на поддерживающую визуальные данные
                 visionChatModel.setVisionModel()
                 const oldTemplate = prompt.template as string
 
@@ -117,7 +119,7 @@ class ReActAgentChat_Agents implements INode {
                 msg.inputVariables = prompt.inputVariables
                 chatPromptTemplate = ChatPromptTemplate.fromMessages([msg])
             } else {
-                // revert to previous values if image upload is empty
+                // вернуться к предыдущим значениям, если загрузка изображения пуста
                 visionChatModel.revertToOriginalModel()
             }
         }

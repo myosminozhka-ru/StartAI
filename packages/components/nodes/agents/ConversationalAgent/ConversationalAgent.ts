@@ -24,22 +24,22 @@ import { addImagesToMessages, llmSupportsVision } from '../../../src/multiModalU
 import { checkInputs, Moderation, streamResponse } from '../../moderation/Moderation'
 import { formatResponse } from '../../outputparsers/OutputParserHelpers'
 
-const DEFAULT_PREFIX = `Assistant is a large language model trained by OpenAI.
+const DEFAULT_PREFIX = `Ассистент - это большая языковая модель, обученная OpenAI.
 
-Assistant is designed to be able to assist with a wide range of tasks, from answering simple questions to providing in-depth explanations and discussions on a wide range of topics. As a language model, Assistant is able to generate human-like text based on the input it receives, allowing it to engage in natural-sounding conversations and provide responses that are coherent and relevant to the topic at hand.
+Ассистент разработан для оказания помощи в широком спектре задач, от ответов на простые вопросы до предоставления подробных объяснений и обсуждений на различные темы. Как языковая модель, Ассистент способен генерировать текст, похожий на человеческий, на основе полученного ввода, что позволяет ему вести естественно звучащие беседы и давать ответы, которые логичны и релевантны обсуждаемой теме.
 
-Assistant is constantly learning and improving, and its capabilities are constantly evolving. It is able to process and understand large amounts of text, and can use this knowledge to provide accurate and informative responses to a wide range of questions. Additionally, Assistant is able to generate its own text based on the input it receives, allowing it to engage in discussions and provide explanations and descriptions on a wide range of topics.
+Ассистент постоянно учится и совершенствуется, его возможности постоянно развиваются. Он способен обрабатывать и понимать большие объемы текста и может использовать эти знания для предоставления точных и информативных ответов на широкий спектр вопросов. Кроме того, Ассистент способен генерировать свой собственный текст на основе полученного ввода, что позволяет ему участвовать в обсуждениях и предоставлять объяснения и описания на различные темы.
 
-Overall, Assistant is a powerful system that can help with a wide range of tasks and provide valuable insights and information on a wide range of topics. Whether you need help with a specific question or just want to have a conversation about a particular topic, Assistant is here to assist.`
+В целом, Ассистент - это мощная система, которая может помочь с широким спектром задач и предоставить ценные идеи и информацию по различным темам. Независимо от того, нужна ли вам помощь с конкретным вопросом или вы просто хотите поговорить на определенную тему, Ассистент здесь, чтобы помочь.`
 
-const TEMPLATE_TOOL_RESPONSE = `TOOL RESPONSE:
+const TEMPLATE_TOOL_RESPONSE = `ОТВЕТ ИНСТРУМЕНТА:
 ---------------------
 {observation}
 
-USER'S INPUT
+ВВОД ПОЛЬЗОВАТЕЛЯ
 --------------------
 
-Okay, so what is the response to my last comment? If using information obtained from the tools you must mention it explicitly without mentioning the tool names - I have forgotten all TOOL RESPONSES! Remember to respond with a markdown code snippet of a json blob with a single action, and NOTHING else.`
+Хорошо, так каков ответ на мой последний комментарий? Если вы используете информацию, полученную из инструментов, вы должны явно упомянуть об этом, не упоминая названия инструментов - я забыл все ОТВЕТЫ ИНСТРУМЕНТОВ! Помните, что нужно ответить фрагментом кода markdown с json-объектом, содержащим одно действие, и НИЧЕГО больше.`
 
 class ConversationalAgent_Agents implements INode {
     label: string
@@ -60,27 +60,27 @@ class ConversationalAgent_Agents implements INode {
         this.type = 'AgentExecutor'
         this.category = 'Agents'
         this.icon = 'agent.svg'
-        this.description = 'Conversational agent for a chat model. It will utilize chat specific prompts'
+        this.description = 'Разговорный агент для чат-модели. Будет использовать специальные промпты для чата'
         this.baseClasses = [this.type, ...getBaseClasses(AgentExecutor)]
         this.inputs = [
             {
-                label: 'Allowed Tools',
+                label: 'Разрешенные инструменты',
                 name: 'tools',
                 type: 'Tool',
                 list: true
             },
             {
-                label: 'Chat Model',
+                label: 'Чат-модель',
                 name: 'model',
                 type: 'BaseChatModel'
             },
             {
-                label: 'Memory',
+                label: 'Память',
                 name: 'memory',
                 type: 'BaseChatMemory'
             },
             {
-                label: 'System Message',
+                label: 'Системное сообщение',
                 name: 'systemMessage',
                 type: 'string',
                 rows: 4,
@@ -89,15 +89,16 @@ class ConversationalAgent_Agents implements INode {
                 additionalParams: true
             },
             {
-                label: 'Input Moderation',
-                description: 'Detect text that could generate harmful output and prevent it from being sent to the language model',
+                label: 'Модерация ввода',
+                description:
+                    'Обнаружение текста, который может генерировать вредоносный вывод, и предотвращение его отправки в языковую модель',
                 name: 'inputModeration',
                 type: 'Moderation',
                 optional: true,
                 list: true
             },
             {
-                label: 'Max Iterations',
+                label: 'Максимальное количество итераций',
                 name: 'maxIterations',
                 type: 'number',
                 optional: true,
