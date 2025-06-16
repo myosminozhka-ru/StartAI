@@ -55,20 +55,20 @@ const UserProfile = () => {
         const validationErrors = []
         setAuthErrors([])
         if (!isAuthenticated) {
-            validationErrors.push('User is not authenticated')
+            validationErrors.push('Пользователь не аутентифицирован')
         }
         if (currentUser.isSSO) {
-            validationErrors.push('User is a SSO user, unable to update details')
+            validationErrors.push('Пользователь SSO, невозможно обновить данные')
         }
         if (!usernameVal) {
-            validationErrors.push('Name cannot be left blank!')
+            validationErrors.push('Имя не может быть пустым!')
         }
         if (!emailVal) {
-            validationErrors.push('Email cannot be left blank!')
+            validationErrors.push('Email не может быть пустым!')
         }
         if (newPasswordVal || confirmPasswordVal) {
             if (newPasswordVal !== confirmPasswordVal) {
-                validationErrors.push('New Password and Confirm Password do not match')
+                validationErrors.push('Новый пароль и подтверждение пароля не совпадают')
             }
             const passwordErrors = validatePassword(newPasswordVal)
             if (passwordErrors.length > 0) {
@@ -93,7 +93,7 @@ const UserProfile = () => {
             if (updateResponse.data) {
                 store.dispatch(userProfileUpdated(updateResponse.data))
                 enqueueSnackbar({
-                    message: 'User Details Updated!',
+                    message: 'Данные пользователя обновлены!',
                     options: {
                         key: new Date().getTime() + Math.random(),
                         variant: 'success',
@@ -109,7 +109,7 @@ const UserProfile = () => {
             setLoading(false)
             setAuthErrors([typeof error.response.data === 'object' ? error.response.data.message : error.response.data])
             enqueueSnackbar({
-                message: `Failed to update user details`,
+                message: `Не удалось обновить данные пользователя`,
                 options: {
                     key: new Date().getTime() + Math.random(),
                     variant: 'error',
@@ -155,7 +155,7 @@ const UserProfile = () => {
                     <ErrorBoundary error={error} />
                 ) : (
                     <Stack flexDirection='column' sx={{ gap: 3 }}>
-                        <ViewHeader search={false} title='Settings' />
+                        <ViewHeader search={false} title='Настройки' />
                         {authErrors && authErrors.length > 0 && (
                             <div
                                 style={{
@@ -193,7 +193,7 @@ const UserProfile = () => {
                                     Save
                                 </StyledButton>
                             }
-                            title='Profile'
+                            title='Профиль'
                         >
                             <Box
                                 sx={{
@@ -214,7 +214,7 @@ const UserProfile = () => {
                                         type='string'
                                         fullWidth
                                         size='small'
-                                        placeholder='Your login Id'
+                                        placeholder='Ваш логин'
                                         name='name'
                                         onChange={(e) => setEmailVal(e.target.value)}
                                         value={emailVal}
@@ -223,7 +223,7 @@ const UserProfile = () => {
                                 <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
                                     <div style={{ display: 'flex', flexDirection: 'row' }}>
                                         <Typography>
-                                            Full Name<span style={{ color: 'red' }}>&nbsp;*</span>
+                                            Полное имя<span style={{ color: 'red' }}>&nbsp;*</span>
                                         </Typography>
                                         <div style={{ flexGrow: 1 }}></div>
                                     </div>
@@ -232,7 +232,7 @@ const UserProfile = () => {
                                         type='string'
                                         fullWidth
                                         size='small'
-                                        placeholder='Your Name'
+                                        placeholder='Ваше имя'
                                         name='name'
                                         onChange={(e) => setUsernameVal(e.target.value)}
                                         value={usernameVal}
@@ -241,7 +241,7 @@ const UserProfile = () => {
                                 <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
                                     <div style={{ display: 'flex', flexDirection: 'row' }}>
                                         <Typography>
-                                            New Password<span style={{ color: 'red' }}>&nbsp;*</span>
+                                            Новый пароль<span style={{ color: 'red' }}>&nbsp;*</span>
                                         </Typography>
                                         <div style={{ flexGrow: 1 }}></div>
                                     </div>
@@ -256,15 +256,15 @@ const UserProfile = () => {
                                     />
                                     <Typography variant='caption'>
                                         <i>
-                                            Password must be at least 8 characters long and contain at least one lowercase letter, one
-                                            uppercase letter, one digit, and one special character.
+                                            Пароль должен содержать минимум 8 символов, включая хотя бы одну строчную букву, одну заглавную
+                                            букву, одну цифру и один специальный символ.
                                         </i>
                                     </Typography>
                                 </Box>
                                 <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
                                     <div style={{ display: 'flex', flexDirection: 'row' }}>
                                         <Typography>
-                                            Confirm Password<span style={{ color: 'red' }}>&nbsp;*</span>
+                                            Подтверждение пароля<span style={{ color: 'red' }}>&nbsp;*</span>
                                         </Typography>
                                         <div style={{ flexGrow: 1 }}></div>
                                     </div>
@@ -278,7 +278,7 @@ const UserProfile = () => {
                                         value={confirmPasswordVal}
                                     />
                                     <Typography variant='caption'>
-                                        <i>Retype your new password. Must match the password typed above.</i>
+                                        <i>Повторите новый пароль. Должен совпадать с паролем, введенным выше.</i>
                                     </Typography>
                                 </Box>
                             </Box>
