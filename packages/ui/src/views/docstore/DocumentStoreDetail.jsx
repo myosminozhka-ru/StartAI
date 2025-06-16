@@ -362,10 +362,10 @@ const DocumentStoreDetails = () => {
             id: documentStore.id
         }
         const dialogProp = {
-            title: 'Edit Document Store',
+            title: 'Редактировать хранилище документов',
             type: 'EDIT',
-            cancelButtonName: 'Cancel',
-            confirmButtonName: 'Update',
+            cancelButtonName: 'Отменить',
+            confirmButtonName: 'Обновить',
             data: data
         }
         setDialogProps(dialogProp)

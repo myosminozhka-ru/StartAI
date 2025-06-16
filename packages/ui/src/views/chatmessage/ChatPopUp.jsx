@@ -86,10 +86,10 @@ const ChatPopUp = ({ chatflowid, isAgentCanvas, onOpenChange }) => {
 
     const clearChat = async () => {
         const confirmPayload = {
-            title: `Clear Chat History`,
-            description: `Are you sure you want to clear all chat history?`,
-            confirmButtonName: 'Clear',
-            cancelButtonName: 'Cancel'
+            title: `Очистить историю чата`,
+            description: `Вы уверены, что хотите очистить всю историю чата?`,
+            confirmButtonName: 'Очистить',
+            cancelButtonName: 'Отмена'
         }
         const isConfirmed = await confirm(confirmPayload)
 
@@ -101,7 +101,7 @@ const ChatPopUp = ({ chatflowid, isAgentCanvas, onOpenChange }) => {
                 removeLocalStorageChatHistory(chatflowid)
                 resetChatDialog()
                 enqueueSnackbar({
-                    message: 'Succesfully cleared all chat history',
+                    message: 'История чата успешно очищена',
                     options: {
                         key: new Date().getTime() + Math.random(),
                         variant: 'success',

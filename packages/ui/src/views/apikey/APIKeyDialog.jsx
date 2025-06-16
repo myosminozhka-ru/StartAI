@@ -207,7 +207,7 @@ const APIKeyDialog = ({ show, dialogProps, onCancel, onConfirm, setError }) => {
                         id='keyName'
                         type='string'
                         fullWidth
-                        placeholder='My New Key'
+                        placeholder='Мой новый ключ'
                         value={keyName}
                         name='keyName'
                         onChange={(e) => setKeyName(e.target.value)}

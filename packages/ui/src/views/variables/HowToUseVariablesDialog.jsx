@@ -64,12 +64,6 @@ const HowToUseVariablesDialog = ({ show, onCancel }) => {
                     lang={'js'}
                     basicSetup={{ highlightActiveLine: false, highlightActiveLineGutter: false }}
                 />
-                <p>
-                    Подробнее в{' '}
-                    <a target='_blank' rel='noreferrer' href='https://docs.flowiseai.com/using-flowise/variables'>
-                        документации
-                    </a>
-                </p>
             </DialogContent>
         </Dialog>
     ) : null
