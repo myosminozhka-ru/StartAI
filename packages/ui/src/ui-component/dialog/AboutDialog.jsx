@@ -45,7 +45,7 @@ const AboutDialog = ({ show, onCancel }) => {
             aria-describedby='alert-dialog-description'
         >
             <DialogTitle sx={{ fontSize: '1rem' }} id='alert-dialog-title'>
-                Flowise Version
+                Версия Flowise
             </DialogTitle>
             <DialogContent>
                 {data && (
@@ -53,9 +53,9 @@ const AboutDialog = ({ show, onCancel }) => {
                         <Table aria-label='simple table'>
                             <TableHead>
                                 <TableRow>
-                                    <TableCell>Current Version</TableCell>
-                                    <TableCell>Latest Version</TableCell>
-                                    <TableCell>Published At</TableCell>
+                                    <TableCell>Текущая версия</TableCell>
+                                    <TableCell>Последняя версия</TableCell>
+                                    <TableCell>Дата публикации</TableCell>
                                 </TableRow>
                             </TableHead>
                             <TableBody>

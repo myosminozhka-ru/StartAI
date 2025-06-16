@@ -60,7 +60,7 @@ const ValidationPopUp = ({ chatflowid, hidden }) => {
 
             if (response.data.length === 0) {
                 enqueueSnackbar({
-                    message: 'No issues found in your flow!',
+                    message: 'В вашем потоке не обнаружено проблем!',
                     options: {
                         key: new Date().getTime() + Math.random(),
                         variant: 'success',
@@ -71,7 +71,7 @@ const ValidationPopUp = ({ chatflowid, hidden }) => {
         } catch (error) {
             console.error(error)
             enqueueSnackbar({
-                message: error.message || 'Failed to validate flow',
+                message: error.message || 'Не удалось проверить поток',
                 options: {
                     key: new Date().getTime() + Math.random(),
                     variant: 'error',
@@ -146,7 +146,7 @@ const ValidationPopUp = ({ chatflowid, hidden }) => {
                     size='small'
                     color='teal'
                     aria-label='validation'
-                    title='Validate Nodes'
+                    title='Проверить узлы'
                     onClick={handleToggle}
                 >
                     {open ? <IconX /> : <IconChecklist />}
@@ -189,7 +189,7 @@ const ValidationPopUp = ({ chatflowid, hidden }) => {
                                     shadow={theme.shadows[16]}
                                 >
                                     <Typography variant='h4' sx={{ mt: 1, mb: 2 }}>
-                                        Checklist ({previews.length})
+                                        Контрольный список ({previews.length})
                                     </Typography>
 
                                     <Box
@@ -280,7 +280,7 @@ const ValidationPopUp = ({ chatflowid, hidden }) => {
                                             startIcon={loading ? null : <IconCheckbox size={18} />}
                                             sx={{ color: 'white', minWidth: '120px' }}
                                         >
-                                            {loading ? 'Validating...' : 'Validate Flow'}
+                                            {loading ? 'Проверка...' : 'Проверить поток'}
                                         </Button>
                                     </Box>
                                 </MainCard>

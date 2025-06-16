@@ -178,7 +178,7 @@ const ChatMessage = ({ open, chatflowid, isAgentCanvas, isDialog, previews, setP
     const [loading, setLoading] = useState(false)
     const [messages, setMessages] = useState([
         {
-            message: 'Hi there! How can I help?',
+            message: 'Привет! Как я могу помочь?',
             type: 'apiMessage'
         }
     ])
@@ -671,7 +671,7 @@ const ChatMessage = ({ open, chatflowid, isAgentCanvas, isDialog, previews, setP
             inputRef.current?.focus()
         }, 100)
         enqueueSnackbar({
-            message: 'Message stopped',
+            message: 'Сообщение остановлено',
             options: {
                 key: new Date().getTime() + Math.random(),
                 variant: 'success',
@@ -684,7 +684,7 @@ const ChatMessage = ({ open, chatflowid, isAgentCanvas, isDialog, previews, setP
         })
     }
 
-    const handleError = (message = 'Oops! There seems to be an error. Please try again.') => {
+    const handleError = (message = 'Упс! Похоже, произошла ошибка. Пожалуйста, попробуйте снова.') => {
         message = message.replace(`Unable to parse JSON response from chat agent.\n\n`, '')
         setMessages((prevMessages) => [...prevMessages, { message, type: 'apiMessage' }])
         setLoading(false)
@@ -1355,7 +1355,7 @@ const ChatMessage = ({ open, chatflowid, isAgentCanvas, isDialog, previews, setP
             setLoading(false)
             setMessages([
                 {
-                    message: 'Hi there! How can I help?',
+                    message: 'Привет! Как я могу помочь?',
                     type: 'apiMessage'
                 }
             ])
@@ -1492,7 +1492,7 @@ const ChatMessage = ({ open, chatflowid, isAgentCanvas, isDialog, previews, setP
                 let allMessages = [...cloneDeep(prevMessages)]
                 if (allMessages[allMessages.length - 1].type !== 'leadCaptureMessage') return allMessages
                 allMessages[allMessages.length - 1].message =
-                    leadsConfig.successMessage || 'Thank you for submitting your contact information.'
+                    leadsConfig.successMessage || 'Благодарим вас за предоставление вашей контактной информации.'
                 return allMessages
             })
         }
@@ -2474,13 +2474,13 @@ const ChatMessage = ({ open, chatflowid, isAgentCanvas, isDialog, previews, setP
                     setFeedback('')
                 }}
             >
-                <DialogTitle variant='h5'>Provide Feedback</DialogTitle>
+                <DialogTitle variant='h5'>Предоставить обратную связь</DialogTitle>
                 <DialogContent>
                     <TextField
                         // eslint-disable-next-line
                         autoFocus
                         margin='dense'
-                        label='Feedback'
+                        label='Обратная связь'
                         fullWidth
                         multiline
                         rows={4}
@@ -2489,9 +2489,9 @@ const ChatMessage = ({ open, chatflowid, isAgentCanvas, isDialog, previews, setP
                     />
                 </DialogContent>
                 <DialogActions>
-                    <Button onClick={handleSubmitFeedback}>Cancel</Button>
+                    <Button onClick={handleSubmitFeedback}>Отмена</Button>
                     <Button onClick={handleSubmitFeedback} variant='contained'>
-                        Submit
+                        Отправить
                     </Button>
                 </DialogActions>
             </Dialog>

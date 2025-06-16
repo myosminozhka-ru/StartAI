@@ -148,7 +148,7 @@ const ChatPopUp = ({ chatflowid, isAgentCanvas, onOpenChange }) => {
                 size='small'
                 color='secondary'
                 aria-label='chat'
-                title='Chat'
+                title='Чат'
                 onClick={handleToggle}
             >
                 {open ? <IconX /> : <IconMessage />}
@@ -161,7 +161,7 @@ const ChatPopUp = ({ chatflowid, isAgentCanvas, onOpenChange }) => {
                     size='small'
                     color='error'
                     aria-label='clear'
-                    title='Clear Chat History'
+                    title='Очистить историю чата'
                 >
                     <IconEraser />
                 </StyledFab>
@@ -173,7 +173,7 @@ const ChatPopUp = ({ chatflowid, isAgentCanvas, onOpenChange }) => {
                     size='small'
                     color='primary'
                     aria-label='expand'
-                    title='Expand Chat'
+                    title='Развернуть чат'
                 >
                     <IconArrowsMaximize />
                 </StyledFab>
