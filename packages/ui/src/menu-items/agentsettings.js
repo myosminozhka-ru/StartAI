@@ -33,21 +33,21 @@ const agent_settings = {
     children: [
         {
             id: 'viewMessages',
-            title: 'View Messages',
+            title: 'Просмотр сообщений',
             type: 'item',
             url: '',
             icon: icons.IconMessage
         },
         {
             id: 'viewLeads',
-            title: 'View Leads',
+            title: 'Просмотр лидов',
             type: 'item',
             url: '',
             icon: icons.IconUsers
         },
         {
             id: 'chatflowConfiguration',
-            title: 'Configuration',
+            title: 'Конфигурация',
             type: 'item',
             url: '',
             icon: icons.IconAdjustmentsHorizontal,
@@ -55,7 +55,7 @@ const agent_settings = {
         },
         {
             id: 'saveAsTemplate',
-            title: 'Save As Template',
+            title: 'Сохранить как шаблон',
             type: 'item',
             url: '',
             icon: icons.IconTemplate,
@@ -63,14 +63,14 @@ const agent_settings = {
         },
         {
             id: 'saveAsTemplate',
-            title: 'Save As Template',
+            title: 'Сохранить как шаблон',
             type: 'item',
             url: '',
             icon: icons.IconTemplate
         },
         {
             id: 'duplicateChatflow',
-            title: 'Duplicate Agents',
+            title: 'Дублировать агентов',
             type: 'item',
             url: '',
             icon: icons.IconCopy,
@@ -78,7 +78,7 @@ const agent_settings = {
         },
         {
             id: 'loadChatflow',
-            title: 'Load Agents',
+            title: 'Загрузить агентов',
             type: 'item',
             url: '',
             icon: icons.IconFileUpload,
@@ -86,7 +86,7 @@ const agent_settings = {
         },
         {
             id: 'exportChatflow',
-            title: 'Export Agents',
+            title: 'Экспорт агентов',
             type: 'item',
             url: '',
             icon: icons.IconFileExport,
@@ -94,7 +94,7 @@ const agent_settings = {
         },
         {
             id: 'deleteChatflow',
-            title: 'Delete Agents',
+            title: 'Удалить агентов',
             type: 'item',
             url: '',
             icon: icons.IconTrash,

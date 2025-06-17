@@ -198,7 +198,7 @@ const CreateEditRoleDialog = ({ show, dialogProps, onCancel, onConfirm, setError
             // if roleName has a space, raise an error
             if (roleName.indexOf(' ') > -1) {
                 enqueueSnackbar({
-                    message: `Role Name cannot contain spaces.`,
+                    message: `Название роли не может содержать пробелы.`,
                     options: {
                         key: new Date().getTime() + Math.random(),
                         variant: 'error',
@@ -238,7 +238,7 @@ const CreateEditRoleDialog = ({ show, dialogProps, onCancel, onConfirm, setError
             }
             if (saveResp.data) {
                 enqueueSnackbar({
-                    message: dialogProps.type === 'EDIT' ? 'Role Updated Successfully' : 'New Role Created!',
+                    message: dialogProps.type === 'EDIT' ? 'Роль успешно обновлена' : 'Новая роль создана!',
                     options: {
                         key: new Date().getTime() + Math.random(),
                         variant: 'success',
@@ -253,7 +253,7 @@ const CreateEditRoleDialog = ({ show, dialogProps, onCancel, onConfirm, setError
             }
         } catch (error) {
             enqueueSnackbar({
-                message: `Failed : ${typeof error.response.data === 'object' ? error.response.data.message : error.response.data}`,
+                message: `Ошибка: ${typeof error.response.data === 'object' ? error.response.data.message : error.response.data}`,
                 options: {
                     key: new Date().getTime() + Math.random(),
                     variant: 'error',
@@ -308,14 +308,18 @@ const CreateEditRoleDialog = ({ show, dialogProps, onCancel, onConfirm, setError
             <DialogTitle sx={{ fontSize: '1rem' }} id='alert-dialog-title'>
                 <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
                     <IconUser style={{ marginRight: '10px' }} />
-                    {dialogProps.type === 'EDIT' ? 'Edit Role' : dialogProps.type === 'VIEW' ? 'View Role' : 'Create New Role'}
+                    {dialogProps.type === 'EDIT'
+                        ? 'Редактировать роль'
+                        : dialogProps.type === 'VIEW'
+                        ? 'Просмотр роли'
+                        : 'Создать новую роль'}
                 </div>
             </DialogTitle>
             <DialogContent sx={{ backgroundColor: 'transparent' }}>
                 <div className='role-editor'>
                     <Box>
                         <Typography sx={{ mb: 1 }} variant='h5'>
-                            <span style={{ color: 'red' }}>*&nbsp;&nbsp;</span>Role Name
+                            <span style={{ color: 'red' }}>*&nbsp;&nbsp;</span>Название роли
                         </Typography>
                         <OutlinedInput
                             id='roleName'
@@ -323,7 +327,7 @@ const CreateEditRoleDialog = ({ show, dialogProps, onCancel, onConfirm, setError
                             size='small'
                             fullWidth
                             disabled={dialogProps.type === 'EDIT' || dialogProps.type === 'VIEW'}
-                            placeholder='Enter role name'
+                            placeholder='Введите название роли'
                             value={roleName}
                             name='roleName'
                             onChange={handleRoleNameChange}
@@ -331,7 +335,7 @@ const CreateEditRoleDialog = ({ show, dialogProps, onCancel, onConfirm, setError
                     </Box>
                     <Box>
                         <Typography sx={{ mb: 1 }} variant='h5'>
-                            Role Description
+                            Описание роли
                         </Typography>
                         <OutlinedInput
                             id='roleDesc'
@@ -339,14 +343,14 @@ const CreateEditRoleDialog = ({ show, dialogProps, onCancel, onConfirm, setError
                             size='small'
                             fullWidth
                             disabled={dialogProps.type === 'VIEW'}
-                            placeholder='Description of the role'
+                            placeholder='Описание роли'
                             value={roleDescription}
                             name='roleDesc'
                             onChange={handleRoleDescChange}
                         />
                     </Box>
                     <div className='permissions-container'>
-                        <p>Permissions</p>
+                        <p>Разрешения</p>
                         <div className='permissions-list-wrapper'>
                             {permissions &&
                                 Object.keys(permissions).map((category) => (
@@ -363,7 +367,7 @@ const CreateEditRoleDialog = ({ show, dialogProps, onCancel, onConfirm, setError
                                                 hidden={dialogProps.type === 'VIEW'}
                                                 onClick={() => handleSelectAll(category)}
                                             >
-                                                Select All
+                                                Выбрать все
                                             </button>
                                         </div>
                                         <div className='permissions-list'>
@@ -395,11 +399,11 @@ const CreateEditRoleDialog = ({ show, dialogProps, onCancel, onConfirm, setError
             </DialogContent>
             <DialogActions>
                 <Button variant='outlined' onClick={onCancel}>
-                    {dialogProps.type !== 'VIEW' ? 'Cancel' : 'Close'}
+                    {dialogProps.type !== 'VIEW' ? 'Отмена' : 'Закрыть'}
                 </Button>
                 {dialogProps.type !== 'VIEW' && (
                     <StyledButton disabled={checkDisabled()} variant='contained' onClick={createRole}>
-                        {dialogProps.type !== 'EDIT' ? 'Create Role' : 'Update Role'}
+                        {dialogProps.type !== 'EDIT' ? 'Создать роль' : 'Обновить роль'}
                     </StyledButton>
                 )}
             </DialogActions>

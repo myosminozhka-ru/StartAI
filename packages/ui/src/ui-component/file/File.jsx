@@ -99,7 +99,7 @@ export const File = ({ value, formDataUpload, fileType, onChange, onFormDataChan
                 startIcon={<IconUpload />}
                 sx={{ marginRight: '1rem' }}
             >
-                {'Upload File'}
+                {'Загрузить файл'}
                 <input
                     type='file'
                     multiple

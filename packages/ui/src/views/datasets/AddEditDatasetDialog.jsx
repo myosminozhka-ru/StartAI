@@ -27,11 +27,11 @@ import useNotifier from '@/utils/useNotifier'
 
 // const
 import { HIDE_CANVAS_DIALOG, SHOW_CANVAS_DIALOG } from '@/store/actions'
-const CSVFORMAT = `Only the first 2 columns will be considered:
+const CSVFORMAT = `Только первые 2 столбца будут учтены:
 ----------------------------
-| Input      | Output      |
+| Ввод       | Вывод       |
 ----------------------------
-| test input | test output |
+| тест ввод  | тест вывод  |
 ----------------------------
 `
 
@@ -94,7 +94,7 @@ const AddEditDatasetDialog = ({ show, dialogProps, onCancel, onConfirm }) => {
             const createResp = await datasetApi.createDataset(obj)
             if (createResp.data) {
                 enqueueSnackbar({
-                    message: 'New Dataset added',
+                    message: 'Новый набор данных добавлен',
                     options: {
                         key: new Date().getTime() + Math.random(),
                         variant: 'success',
@@ -109,7 +109,7 @@ const AddEditDatasetDialog = ({ show, dialogProps, onCancel, onConfirm }) => {
             }
         } catch (error) {
             enqueueSnackbar({
-                message: `Failed to add new Dataset: ${
+                message: `Не удалось добавить новый набор данных: ${
                     typeof error.response.data === 'object' ? error.response.data.message : error.response.data
                 }`,
                 options: {
@@ -137,7 +137,7 @@ const AddEditDatasetDialog = ({ show, dialogProps, onCancel, onConfirm }) => {
             const saveResp = await datasetApi.updateDataset(dataset.id, saveObj)
             if (saveResp.data) {
                 enqueueSnackbar({
-                    message: 'Dataset saved',
+                    message: 'Набор данных сохранен',
                     options: {
                         key: new Date().getTime() + Math.random(),
                         variant: 'success',
@@ -152,7 +152,7 @@ const AddEditDatasetDialog = ({ show, dialogProps, onCancel, onConfirm }) => {
             }
         } catch (error) {
             enqueueSnackbar({
-                message: `Failed to save Dataset: ${
+                message: `Не удалось сохранить набор данных: ${
                     typeof error.response.data === 'object' ? error.response.data.message : error.response.data
                 }`,
                 options: {
@@ -182,14 +182,14 @@ const AddEditDatasetDialog = ({ show, dialogProps, onCancel, onConfirm }) => {
             <DialogTitle sx={{ fontSize: '1rem' }} id='alert-dialog-title'>
                 <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
                     <IconDatabase style={{ marginRight: '10px' }} />
-                    {dialogProps.type === 'ADD' ? 'Add Dataset' : 'Edit Dataset'}
+                    {dialogProps.type === 'ADD' ? 'Добавить набор данных' : 'Редактировать набор данных'}
                 </div>
             </DialogTitle>
             <DialogContent>
                 <Box sx={{ p: 2 }}>
                     <div style={{ display: 'flex', flexDirection: 'row' }}>
                         <Typography>
-                            Name<span style={{ color: 'red' }}>&nbsp;*</span>
+                            Название<span style={{ color: 'red' }}>&nbsp;*</span>
                         </Typography>
                         <div style={{ flexGrow: 1 }}></div>
                     </div>
@@ -205,7 +205,7 @@ const AddEditDatasetDialog = ({ show, dialogProps, onCancel, onConfirm }) => {
                 </Box>
                 <Box sx={{ p: 2 }}>
                     <div style={{ display: 'flex', flexDirection: 'row' }}>
-                        <Typography>Description</Typography>
+                        <Typography>Описание</Typography>
                         <div style={{ flexGrow: 1 }}></div>
                     </div>
                     <OutlinedInput
@@ -224,7 +224,7 @@ const AddEditDatasetDialog = ({ show, dialogProps, onCancel, onConfirm }) => {
                     <Box sx={{ p: 2 }}>
                         <div style={{ display: 'flex', flexDirection: 'column' }}>
                             <Typography>
-                                Upload CSV
+                                Загрузить CSV
                                 <TooltipWithParser style={{ mb: 1, mt: 2 }} title={`<pre>${CSVFORMAT}</pre>`} />
                             </Typography>
                             <div style={{ flexGrow: 1 }}></div>
@@ -233,12 +233,12 @@ const AddEditDatasetDialog = ({ show, dialogProps, onCancel, onConfirm }) => {
                             disabled={false}
                             fileType='.csv'
                             onChange={(newValue) => setSelectedFile(newValue)}
-                            value={selectedFile ?? 'Choose a file to upload'}
+                            value={selectedFile ?? 'Выберите файл для загрузки'}
                         />
                         <SwitchInput
                             value={firstRowHeaders}
                             onChange={setFirstRowHeaders}
-                            label={'Treat First Row as headers in the upload file?'}
+                            label={'Считать первую строку заголовками в загружаемом файле?'}
                         />
                     </Box>
                 )}

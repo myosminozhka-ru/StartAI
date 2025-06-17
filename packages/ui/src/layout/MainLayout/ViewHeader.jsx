@@ -22,7 +22,7 @@ const ViewHeader = ({
     filters = null,
     onSearchChange,
     search,
-    searchPlaceholder = 'Search',
+    searchPlaceholder = 'Поиск',
     title,
     description,
     isBackButton,

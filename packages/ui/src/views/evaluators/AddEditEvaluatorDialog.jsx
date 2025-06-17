@@ -80,8 +80,8 @@ const AddEditEvaluatorDialog = ({ show, dialogProps, onCancel, onConfirm }) => {
         const dialogProps = {
             value: prompt,
             inputParam,
-            confirmButtonName: 'Save',
-            cancelButtonName: 'Cancel'
+            confirmButtonName: 'Сохранить',
+            cancelButtonName: 'Отмена'
         }
         setSamplePromptDialogProps(dialogProps)
         setShowSamplePromptDialog(true)
@@ -90,8 +90,8 @@ const AddEditEvaluatorDialog = ({ show, dialogProps, onCancel, onConfirm }) => {
         const dialogProps = {
             value: prompt,
             inputParam,
-            confirmButtonName: 'Save',
-            cancelButtonName: 'Cancel'
+            confirmButtonName: 'Сохранить',
+            cancelButtonName: 'Отмена'
         }
         setExpandDialogProps(dialogProps)
         setShowExpandDialog(true)
@@ -134,23 +134,23 @@ const AddEditEvaluatorDialog = ({ show, dialogProps, onCancel, onConfirm }) => {
 
     const columns = useMemo(
         () => [
-            { field: 'property', headerName: 'Property', editable: true, flex: 1 },
+            { field: 'property', headerName: 'Свойство', editable: true, flex: 1 },
             {
                 field: 'type',
-                headerName: 'Type',
+                headerName: 'Тип',
                 type: 'singleSelect',
                 valueOptions: ['string', 'number', 'boolean'],
                 editable: true,
                 width: 120
             },
-            { field: 'description', headerName: 'Description', editable: true, flex: 1 },
-            { field: 'required', headerName: 'Required', type: 'boolean', editable: true, width: 80 },
+            { field: 'description', headerName: 'Описание', editable: true, flex: 1 },
+            { field: 'required', headerName: 'Обязательное', type: 'boolean', editable: true, width: 80 },
             {
                 field: 'actions',
                 type: 'actions',
                 width: 80,
                 getActions: (params) => [
-                    <GridActionsCellItem key={'Delete'} icon={<DeleteIcon />} label='Delete' onClick={deleteItem(params.id)} />
+                    <GridActionsCellItem key={'Delete'} icon={<DeleteIcon />} label='Удалить' onClick={deleteItem(params.id)} />
                 ]
             }
         ],
@@ -195,7 +195,7 @@ const AddEditEvaluatorDialog = ({ show, dialogProps, onCancel, onConfirm }) => {
             const updateResp = await evaluatorsApi.updateEvaluator(dialogProps.data.id, data)
             if (updateResp.data) {
                 enqueueSnackbar({
-                    message: `Evaluator ${name} updated`,
+                    message: `Оценщик ${name} обновлен`,
                     options: {
                         key: new Date().getTime() + Math.random(),
                         variant: 'success',
@@ -210,7 +210,7 @@ const AddEditEvaluatorDialog = ({ show, dialogProps, onCancel, onConfirm }) => {
             }
         } catch (error) {
             enqueueSnackbar({
-                message: `Failed to update Evaluator ${name}: ${
+                message: `Не удалось обновить оценщик ${name}: ${
                     typeof error.response.data === 'object' ? error.response.data.message : error.response.data
                 }`,
                 options: {
@@ -254,7 +254,7 @@ const AddEditEvaluatorDialog = ({ show, dialogProps, onCancel, onConfirm }) => {
             const createResp = await evaluatorsApi.createEvaluator(data)
             if (createResp.data) {
                 enqueueSnackbar({
-                    message: 'New Evaluator added',
+                    message: 'Новый оценщик добавлен',
                     options: {
                         key: new Date().getTime() + Math.random(),
                         variant: 'success',
@@ -269,7 +269,7 @@ const AddEditEvaluatorDialog = ({ show, dialogProps, onCancel, onConfirm }) => {
             }
         } catch (error) {
             enqueueSnackbar({
-                message: `Failed to add new Evaluator: ${
+                message: `Не удалось добавить новый оценщик: ${
                     typeof error.response.data === 'object' ? error.response.data.message : error.response.data
                 }`,
                 options: {
@@ -343,12 +343,12 @@ const AddEditEvaluatorDialog = ({ show, dialogProps, onCancel, onConfirm }) => {
             <DialogTitle sx={{ fontSize: '1rem' }} id='alert-dialog-title'>
                 <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
                     <IconPuzzle style={{ marginRight: '10px' }} />
-                    {dialogProps.type === 'ADD' ? 'Add Evaluator' : 'Edit Evaluator'}
+                    {dialogProps.type === 'ADD' ? 'Добавить оценщик' : 'Редактировать оценщик'}
                 </div>
             </DialogTitle>
             <DialogContent>
                 <Box sx={{ pb: 2 }}>
-                    <Typography variant='overline'>Name</Typography>
+                    <Typography variant='overline'>Название</Typography>
                     <OutlinedInput
                         size='small'
                         multiline={false}
@@ -360,11 +360,11 @@ const AddEditEvaluatorDialog = ({ show, dialogProps, onCancel, onConfirm }) => {
                     />
                 </Box>
                 <Box sx={{ pb: 2 }}>
-                    <Typography variant='overline'>Evaluator Type</Typography>
+                    <Typography variant='overline'>Тип оценщика</Typography>
                     <Dropdown
                         key={evaluatorType}
                         name='evaluatorType'
-                        defaultOption='Select Type'
+                        defaultOption='Выберите тип'
                         options={evaluatorTypes}
                         onSelect={(newValue) => onEvaluatorTypeChange(newValue)}
                         value={evaluatorType}
@@ -372,11 +372,11 @@ const AddEditEvaluatorDialog = ({ show, dialogProps, onCancel, onConfirm }) => {
                 </Box>
                 {evaluatorType && evaluatorType !== 'llm' && (
                     <Box sx={{ pb: 2 }}>
-                        <Typography variant='overline'>Available Evaluators</Typography>
+                        <Typography variant='overline'>Доступные оценщики</Typography>
                         <Dropdown
                             key={selectedEvaluator}
                             name='availableEvaluators'
-                            defaultOption='Select Dataset'
+                            defaultOption='Выберите набор данных'
                             options={availableEvaluators}
                             onSelect={(e) => setSelectedEvaluator(e)}
                             value={selectedEvaluator}
@@ -386,7 +386,7 @@ const AddEditEvaluatorDialog = ({ show, dialogProps, onCancel, onConfirm }) => {
                 {evaluatorType === 'numeric' && selectedEvaluator && (
                     <>
                         <Box sx={{ pb: 2 }}>
-                            <Typography variant='overline'>Select Operator</Typography>
+                            <Typography variant='overline'>Выберите оператор</Typography>
                             <Dropdown
                                 key={selectedMetricOperator}
                                 name='metric'
@@ -397,7 +397,7 @@ const AddEditEvaluatorDialog = ({ show, dialogProps, onCancel, onConfirm }) => {
                             />
                         </Box>
                         <Box sx={{ pb: 2 }}>
-                            <Typography variant='overline'>Value</Typography>
+                            <Typography variant='overline'>Значение</Typography>
                             <OutlinedInput
                                 size='small'
                                 type='number'
@@ -415,7 +415,7 @@ const AddEditEvaluatorDialog = ({ show, dialogProps, onCancel, onConfirm }) => {
                 {evaluatorType === 'text' && selectedEvaluator && (
                     <>
                         <Box sx={{ pb: 2 }}>
-                            <Typography variant='overline'>Value</Typography>
+                            <Typography variant='overline'>Значение</Typography>
                             <OutlinedInput
                                 size='small'
                                 multiline={true}
@@ -438,15 +438,15 @@ const AddEditEvaluatorDialog = ({ show, dialogProps, onCancel, onConfirm }) => {
                         <Box sx={{ pb: 2 }}>
                             <Stack style={{ position: 'relative', justifyContent: 'space-between' }} direction='row'>
                                 <Stack style={{ position: 'relative', alignItems: 'center' }} direction='row'>
-                                    <Typography variant='overline'>Output Schema</Typography>
-                                    <TooltipWithParser title={'What is the output format in JSON?'} />
+                                    <Typography variant='overline'>Схема вывода</Typography>
+                                    <TooltipWithParser title={'Какой формат вывода в JSON?'} />
                                 </Stack>
                                 <Stack style={{ position: 'relative', alignItems: 'right' }} direction='row'>
                                     <Button variant='outlined' onClick={onShowPromptDialogClicked} startIcon={<IconNotes />} sx={{ mr: 1 }}>
-                                        Load from Pre defined Samples
+                                        Загрузить из предустановленных образцов
                                     </Button>
                                     <Button variant='outlined' onClick={addNewRow} startIcon={<IconPlus />}>
-                                        Add Item
+                                        Добавить элемент
                                     </Button>
                                 </Stack>
                             </Stack>
@@ -454,7 +454,7 @@ const AddEditEvaluatorDialog = ({ show, dialogProps, onCancel, onConfirm }) => {
                         </Box>
                         <Box sx={{ pb: 2 }}>
                             <div style={{ display: 'flex', flexDirection: 'row' }}>
-                                <Typography variant='overline'>Prompt</Typography>
+                                <Typography variant='overline'>Промпт</Typography>
                                 <div style={{ flexGrow: 1 }}></div>
                                 {prompt && (
                                     <IconButton
@@ -463,11 +463,11 @@ const AddEditEvaluatorDialog = ({ show, dialogProps, onCancel, onConfirm }) => {
                                             height: 25,
                                             width: 25
                                         }}
-                                        title='Expand'
+                                        title='Развернуть'
                                         color='primary'
                                         onClick={() =>
                                             onExpandDialogClicked({
-                                                label: 'Evaluation Prompt',
+                                                label: 'Промпт оценки',
                                                 name: 'evaluationPrompt',
                                                 type: 'string'
                                             })
@@ -507,8 +507,9 @@ const AddEditEvaluatorDialog = ({ show, dialogProps, onCancel, onConfirm }) => {
                                 >
                                     <IconBulb size={25} color='#2d6a4f' />
                                     <span style={{ color: '#2d6a4f', marginLeft: 10, fontWeight: 400 }}>
-                                        You can use <strong>&#123;question&#125;</strong> <strong>&#123;actualOutput&#125;</strong>{' '}
-                                        <strong>&#123;expectedOutput&#125;</strong> to inject runtime values into your prompt.
+                                        Вы можете использовать <strong>&#123;question&#125;</strong>{' '}
+                                        <strong>&#123;actualOutput&#125;</strong> <strong>&#123;expectedOutput&#125;</strong> для внедрения
+                                        значений времени выполнения в ваш промпт.
                                     </span>
                                 </div>
                             </div>

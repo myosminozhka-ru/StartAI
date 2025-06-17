@@ -29,16 +29,16 @@ const ChatExpandDialog = ({ show, dialogProps, isAgentCanvas, onClear, onCancel,
                         <StyledButton
                             variant='outlined'
                             color='error'
-                            title='Clear Conversation'
+                            title='Очистить разговор'
                             onClick={onClear}
                             startIcon={<IconEraser />}
                         >
-                            Clear Chat
+                            Очистить чат
                         </StyledButton>
                     )}
                     {!customization.isDarkMode && (
-                        <Button variant='outlined' color='error' title='Clear Conversation' onClick={onClear} startIcon={<IconEraser />}>
-                            Clear Chat
+                        <Button variant='outlined' color='error' title='Очистить разговор' onClick={onClear} startIcon={<IconEraser />}>
+                            Очистить чат
                         </Button>
                     )}
                 </div>

@@ -55,13 +55,13 @@ import { enqueueSnackbar as enqueueSnackbarAction, closeSnackbar as closeSnackba
 import { PermissionButton } from '@/ui-component/button/RBACButtons'
 
 const activityTypes = [
-    'Login Success',
-    'Logout Success',
-    'Unknown User',
-    'Incorrect Credential',
-    'User Disabled',
-    'No Assigned Workspace',
-    'Unknown Activity'
+    'Успешный вход',
+    'Успешный выход',
+    'Неизвестный пользователь',
+    'Неверные учетные данные',
+    'Пользователь отключен',
+    'Нет назначенного рабочего пространства',
+    'Неизвестная активность'
 ]
 const MenuProps = {
     PaperProps: {
@@ -184,35 +184,35 @@ const LoginActivity = () => {
     function getActivityDescription(activityCode) {
         switch (activityCode) {
             case 0:
-                return 'Login Success'
+                return 'Успешный вход'
             case 1:
-                return 'Logout Success'
+                return 'Успешный выход'
             case -1:
-                return 'Unknown User'
+                return 'Неизвестный пользователь'
             case -2:
-                return 'Incorrect Credential'
+                return 'Неверные учетные данные'
             case -3:
-                return 'User Disabled'
+                return 'Пользователь отключен'
             case -4:
-                return 'No Assigned Workspace'
+                return 'Нет назначенного рабочего пространства'
             default:
-                return 'Unknown Activity'
+                return 'Неизвестная активность'
         }
     }
 
     function getActivityCode(activityDescription) {
         switch (activityDescription) {
-            case 'Login Success':
+            case 'Успешный вход':
                 return 0
-            case 'Logout Success':
+            case 'Успешный выход':
                 return 1
-            case 'Unknown User':
+            case 'Неизвестный пользователь':
                 return -1
-            case 'Incorrect Credential':
+            case 'Неверные учетные данные':
                 return -2
-            case 'User Disabled':
+            case 'Пользователь отключен':
                 return -3
-            case 'No Assigned Workspace':
+            case 'Нет назначенного рабочего пространства':
                 return -4
             default:
                 return -99
@@ -221,10 +221,10 @@ const LoginActivity = () => {
 
     const deleteLoginActivity = async () => {
         const confirmPayload = {
-            title: `Delete`,
-            description: `Delete ${selected.length} ${selected.length > 1 ? 'records' : 'record'}? `,
-            confirmButtonName: 'Delete',
-            cancelButtonName: 'Cancel'
+            title: `Удалить`,
+            description: `Удалить ${selected.length} ${selected.length > 1 ? 'записей' : 'запись'}? `,
+            confirmButtonName: 'Удалить',
+            cancelButtonName: 'Отмена'
         }
         const isConfirmed = await confirm(confirmPayload)
         //
@@ -235,7 +235,7 @@ const LoginActivity = () => {
                 })
                 if (deleteResp.data) {
                     enqueueSnackbar({
-                        message: selected.length + ' Login Activity Records Deleted Successfully',
+                        message: selected.length + ' записей активности входа успешно удалено',
                         options: {
                             key: new Date().getTime() + Math.random(),
                             variant: 'success',
@@ -250,7 +250,7 @@ const LoginActivity = () => {
                 }
             } catch (error) {
                 enqueueSnackbar({
-                    message: `Failed to delete records: ${
+                    message: `Не удалось удалить записи: ${
                         typeof error.response.data === 'object' ? error.response.data.message : error.response.data
                     }`,
                     options: {
@@ -309,7 +309,7 @@ const LoginActivity = () => {
                     <ErrorBoundary error={error} />
                 ) : (
                     <Stack flexDirection='column' sx={{ gap: 3 }}>
-                        <ViewHeader search={false} title='Login Activity'></ViewHeader>
+                        <ViewHeader search={false} title='Активность входа'></ViewHeader>
                         <Stack flexDirection='row'>
                             <Box sx={{ p: 2, height: 'auto', width: '100%' }}>
                                 <div
@@ -330,7 +330,7 @@ const LoginActivity = () => {
                                         }}
                                     >
                                         <div style={{ marginRight: 10 }}>
-                                            <b style={{ marginRight: 10 }}>From: </b>
+                                            <b style={{ marginRight: 10 }}>От: </b>
                                             <DatePicker
                                                 selected={startDate}
                                                 onChange={(date) => onStartDateSelected(date)}
@@ -341,7 +341,7 @@ const LoginActivity = () => {
                                             />
                                         </div>
                                         <div style={{ marginRight: 10 }}>
-                                            <b style={{ marginRight: 10 }}>To: </b>
+                                            <b style={{ marginRight: 10 }}>До: </b>
                                             <DatePicker
                                                 selected={endDate}
                                                 onChange={(date) => onEndDateSelected(date)}
@@ -365,7 +365,7 @@ const LoginActivity = () => {
                                                 }}
                                             >
                                                 <InputLabel size='small' id='type-label'>
-                                                    Filter By
+                                                    Фильтр по
                                                 </InputLabel>
                                                 <Select
                                                     size='small'
@@ -426,7 +426,7 @@ const LoginActivity = () => {
                                                     }
                                                 />
                                             </IconButton>
-                                            Showing {Math.min(start, totalRecords)}-{end} of {totalRecords} Records
+                                            Показано {Math.min(start, totalRecords)}-{end} из {totalRecords} записей
                                             <IconButton
                                                 size='small'
                                                 onClick={() => changePage(currentPage + 1)}
@@ -456,7 +456,7 @@ const LoginActivity = () => {
                                             color='error'
                                             startIcon={<IconTrash />}
                                         >
-                                            {'Delete Selected'}
+                                            {'Удалить выбранные'}
                                         </PermissionButton>
                                     </div>
                                 </div>
@@ -482,11 +482,11 @@ const LoginActivity = () => {
                                                         onChange={onSelectAllClick}
                                                     />
                                                 </StyledTableCell>
-                                                <StyledTableCell>Activity</StyledTableCell>
-                                                <StyledTableCell>User</StyledTableCell>
-                                                <StyledTableCell>Date</StyledTableCell>
-                                                <StyledTableCell>Method</StyledTableCell>
-                                                <StyledTableCell>Message</StyledTableCell>
+                                                <StyledTableCell>Активность</StyledTableCell>
+                                                <StyledTableCell>Пользователь</StyledTableCell>
+                                                <StyledTableCell>Дата</StyledTableCell>
+                                                <StyledTableCell>Метод</StyledTableCell>
+                                                <StyledTableCell>Сообщение</StyledTableCell>
                                             </TableRow>
                                         </TableHead>
                                         <TableBody>
@@ -612,10 +612,10 @@ const LoginActivity = () => {
                                                             </StyledTableCell>
                                                             <StyledTableCell>{item.username}</StyledTableCell>
                                                             <StyledTableCell>
-                                                                {moment(item.attemptedDateTime).format('MMMM Do, YYYY, HH:mm')}
+                                                                {moment(item.attemptedDateTime).format('DD.MM.YYYY HH:mm')}
                                                             </StyledTableCell>
                                                             <StyledTableCell>
-                                                                {item.loginMode ? item.loginMode : 'Email/Password'}
+                                                                {item.loginMode ? item.loginMode : 'Email/Пароль'}
                                                             </StyledTableCell>
                                                             <StyledTableCell>{item.message}</StyledTableCell>
                                                         </StyledTableRow>

@@ -39,16 +39,16 @@ DatePickerCustomInput.propTypes = {
 }
 
 const searchTimeRanges = [
-    'Last hour',
-    'Last 4 hours',
-    'Last 24 hours',
-    'Last 2 days',
-    'Last 7 days',
-    'Last 14 days',
-    'Last 1 month',
-    'Last 2 months',
-    'Last 3 months',
-    'Custom'
+    'Последний час',
+    'Последние 4 часа',
+    'Последние 24 часа',
+    'Последние 2 дня',
+    'Последние 7 дней',
+    'Последние 14 дней',
+    'Последний месяц',
+    'Последние 2 месяца',
+    'Последние 3 месяца',
+    'Пользовательский'
 ]
 
 const getDateBefore = (unit, value) => {
@@ -125,41 +125,41 @@ const Logs = () => {
 
     const [isLoading, setLoading] = useState(true)
     const [logData, setLogData] = useState('')
-    const [selectedTimeSearch, setSelectedTimeSearch] = useState('Last hour')
+    const [selectedTimeSearch, setSelectedTimeSearch] = useState('Последний час')
     const [startDate, setStartDate] = useState(getDateBefore('hours', 1))
     const [endDate, setEndDate] = useState(new Date())
 
     const handleTimeSelectionChange = (event) => {
         setSelectedTimeSearch(event.target.value)
         switch (event.target.value) {
-            case 'Last hour':
+            case 'Последний час':
                 getLogsApi.request(subtractTime(0, 0, 1), getDateTimeFormatted())
                 break
-            case 'Last 4 hours':
+            case 'Последние 4 часа':
                 getLogsApi.request(subtractTime(0, 0, 4), getDateTimeFormatted())
                 break
-            case 'Last 24 hours':
+            case 'Последние 24 часа':
                 getLogsApi.request(subtractTime(0, 0, 24), getDateTimeFormatted())
                 break
-            case 'Last 2 days':
+            case 'Последние 2 дня':
                 getLogsApi.request(subtractTime(0, 2, 0), getDateTimeFormatted())
                 break
-            case 'Last 7 days':
+            case 'Последние 7 дней':
                 getLogsApi.request(subtractTime(0, 7, 0), getDateTimeFormatted())
                 break
-            case 'Last 14 days':
+            case 'Последние 14 дней':
                 getLogsApi.request(subtractTime(0, 14, 0), getDateTimeFormatted())
                 break
-            case 'Last 1 month':
+            case 'Последний месяц':
                 getLogsApi.request(subtractTime(1, 0, 0), getDateTimeFormatted())
                 break
-            case 'Last 2 months':
+            case 'Последние 2 месяца':
                 getLogsApi.request(subtractTime(2, 0, 0), getDateTimeFormatted())
                 break
-            case 'Last 3 months':
+            case 'Последние 3 месяца':
                 getLogsApi.request(subtractTime(3, 0, 0), getDateTimeFormatted())
                 break
-            case 'Custom':
+            case 'Пользовательский':
                 setStartDate(getDateBefore('hours', 1))
                 setEndDate(new Date())
                 getLogsApi.request(subtractTime(0, 0, 1), getDateTimeFormatted())
@@ -207,7 +207,7 @@ const Logs = () => {
                 <ErrorBoundary error={error} />
             ) : (
                 <Stack flexDirection='column' sx={{ gap: 2 }}>
-                    <ViewHeader title='Logs' />
+                    <ViewHeader title='Логи' />
                     {isLoading ? (
                         <Box display='flex' flexDirection='column' gap={gridSpacing}>
                             <Skeleton width='25%' height={32} />
@@ -239,10 +239,10 @@ const Logs = () => {
                                         </MenuItem>
                                     ))}
                                 </Select>
-                                {selectedTimeSearch === 'Custom' && (
+                                {selectedTimeSearch === 'Пользовательский' && (
                                     <>
                                         <Stack sx={{ alignItems: 'center', justifyContent: 'flex-start', gap: 2 }} flexDirection='row'>
-                                            <b>From</b>
+                                            <b>От</b>
                                             <DatePicker
                                                 selected={startDate}
                                                 onChange={(date) => onStartDateSelected(date)}
@@ -258,7 +258,7 @@ const Logs = () => {
                                             />
                                         </Stack>
                                         <Stack sx={{ alignItems: 'center', justifyContent: 'flex-start', gap: 2 }} flexDirection='row'>
-                                            <b>To</b>
+                                            <b>До</b>
                                             <DatePicker
                                                 selected={endDate}
                                                 onChange={(date) => onEndDateSelected(date)}
@@ -301,7 +301,7 @@ const Logs = () => {
                                             alt='LogsEmptySVG'
                                         />
                                     </Box>
-                                    <div>No Logs Yet</div>
+                                    <div>Логов пока нет</div>
                                 </Stack>
                             )}
                         </>

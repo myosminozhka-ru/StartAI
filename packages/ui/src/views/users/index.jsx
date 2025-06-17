@@ -134,7 +134,7 @@ function ShowUserRow(props) {
                         <>
                             {' '}
                             <br />
-                            <Chip size='small' label={'ORGANIZATION OWNER'} />{' '}
+                            <Chip size='small' label={'ВЛАДЕЛЕЦ ОРГАНИЗАЦИИ'} />{' '}
                         </>
                     )}
                 </StyledTableCell>
@@ -155,12 +155,14 @@ function ShowUserRow(props) {
                     {'INVITED' === props.row.status.toUpperCase() && <Chip color={'warning'} label={props.row.status.toUpperCase()} />}
                     {'INACTIVE' === props.row.status.toUpperCase() && <Chip color={'error'} label={props.row.status.toUpperCase()} />}
                 </StyledTableCell>
-                <StyledTableCell>{!props.row.lastLogin ? 'Never' : moment(props.row.lastLogin).format('DD/MM/YYYY HH:mm')}</StyledTableCell>
+                <StyledTableCell>
+                    {!props.row.lastLogin ? 'Никогда' : moment(props.row.lastLogin).format('DD/MM/YYYY HH:mm')}
+                </StyledTableCell>
                 <StyledTableCell>
                     {props.row.status.toUpperCase() === 'INVITED' && (
                         <PermissionIconButton
                             permissionId={'workspace:add-user,users:manage'}
-                            title='Edit'
+                            title='Редактировать'
                             color='primary'
                             onClick={() => props.onEditClick(props.row)}
                         >
@@ -174,7 +176,7 @@ function ShowUserRow(props) {
                         ) : (
                             <PermissionIconButton
                                 permissionId={'workspace:unlink-user,users:manage'}
-                                title='Delete'
+                                title='Удалить'
                                 color='error'
                                 onClick={() => props.onDeleteClick(props.row.user)}
                             >
@@ -186,7 +188,7 @@ function ShowUserRow(props) {
             <Drawer anchor='right' open={open} onClose={() => setOpen(false)} sx={{ minWidth: 320 }}>
                 <Box sx={{ p: 4, height: 'auto', width: 650 }}>
                     <Typography sx={{ textAlign: 'left', mb: 2 }} variant='h2'>
-                        Assigned Roles
+                        Назначенные роли
                     </Typography>
                     <TableContainer
                         style={{ display: 'flex', flexDirection: 'row' }}
@@ -201,8 +203,8 @@ function ShowUserRow(props) {
                                 }}
                             >
                                 <TableRow>
-                                    <StyledTableCell sx={{ width: '50%' }}>Role</StyledTableCell>
-                                    <StyledTableCell sx={{ width: '50%' }}>Workspace</StyledTableCell>
+                                    <StyledTableCell sx={{ width: '50%' }}>Роль</StyledTableCell>
+                                    <StyledTableCell sx={{ width: '50%' }}>Рабочее пространство</StyledTableCell>
                                 </TableRow>
                             </TableHead>
                             <TableBody>
@@ -272,8 +274,8 @@ const Users = () => {
     const addNew = () => {
         const dialogProp = {
             type: 'ADD',
-            cancelButtonName: 'Cancel',
-            confirmButtonName: 'Send Invite',
+            cancelButtonName: 'Отмена',
+            confirmButtonName: 'Отправить приглашение',
             data: null
         }
         setInviteDialogProps(dialogProp)
@@ -291,8 +293,8 @@ const Users = () => {
     const editInvite = (user) => {
         const dialogProp = {
             type: 'EDIT',
-            cancelButtonName: 'Cancel',
-            confirmButtonName: 'Update Invite',
+            cancelButtonName: 'Отмена',
+            confirmButtonName: 'Обновить приглашение',
             data: user
         }
         setInviteDialogProps(dialogProp)
@@ -302,8 +304,8 @@ const Users = () => {
     const editUser = (user) => {
         const dialogProp = {
             type: 'EDIT',
-            cancelButtonName: 'Cancel',
-            confirmButtonName: 'Save',
+            cancelButtonName: 'Отмена',
+            confirmButtonName: 'Сохранить',
             data: user
         }
         setInviteDialogProps(dialogProp)
@@ -312,10 +314,10 @@ const Users = () => {
 
     const deleteUser = async (user) => {
         const confirmPayload = {
-            title: `Delete`,
-            description: `Remove ${user.name ?? user.email} from organization?`,
-            confirmButtonName: 'Delete',
-            cancelButtonName: 'Cancel'
+            title: `Удалить`,
+            description: `Удалить ${user.name ?? user.email} из организации?`,
+            confirmButtonName: 'Удалить',
+            cancelButtonName: 'Отмена'
         }
         const isConfirmed = await confirm(confirmPayload)
 
@@ -325,7 +327,7 @@ const Users = () => {
                 const deleteResp = await userApi.deleteOrganizationUser(currentUser.activeOrganizationId, user.id)
                 if (deleteResp.data) {
                     enqueueSnackbar({
-                        message: 'User removed from organization successfully',
+                        message: 'Пользователь успешно удален из организации',
                         options: {
                             key: new Date().getTime() + Math.random(),
                             variant: 'success',
@@ -340,7 +342,7 @@ const Users = () => {
                 }
             } catch (error) {
                 enqueueSnackbar({
-                    message: `Failed to delete User: ${
+                    message: `Не удалось удалить пользователя: ${
                         typeof error.response.data === 'object' ? error.response.data.message : error.response.data
                     }`,
                     options: {
@@ -400,7 +402,12 @@ const Users = () => {
                     <ErrorBoundary error={error} />
                 ) : (
                     <Stack flexDirection='column' sx={{ gap: 3 }}>
-                        <ViewHeader onSearchChange={onSearchChange} search={true} searchPlaceholder='Search Users' title='User Management'>
+                        <ViewHeader
+                            onSearchChange={onSearchChange}
+                            search={true}
+                            searchPlaceholder='Поиск пользователей'
+                            title='Управление пользователями'
+                        >
                             <StyledPermissionButton
                                 permissionId={'workspace:add-user,users:manage'}
                                 variant='contained'
@@ -409,7 +416,7 @@ const Users = () => {
                                 startIcon={<IconPlus />}
                                 id='btn_createUser'
                             >
-                                Invite User
+                                Пригласить пользователя
                             </StyledPermissionButton>
                         </ViewHeader>
                         {!isLoading && users.length === 0 ? (
@@ -421,7 +428,7 @@ const Users = () => {
                                         alt='users_emptySVG'
                                     />
                                 </Box>
-                                <div>No Users Yet</div>
+                                <div>Пользователей пока нет</div>
                             </Stack>
                         ) : (
                             <>
@@ -443,10 +450,10 @@ const Users = () => {
                                                 >
                                                     <TableRow>
                                                         <StyledTableCell>&nbsp;</StyledTableCell>
-                                                        <StyledTableCell>Email/Name</StyledTableCell>
-                                                        <StyledTableCell>Assigned Roles</StyledTableCell>
-                                                        <StyledTableCell>Status</StyledTableCell>
-                                                        <StyledTableCell>Last Login</StyledTableCell>
+                                                        <StyledTableCell>Email/Имя</StyledTableCell>
+                                                        <StyledTableCell>Назначенные роли</StyledTableCell>
+                                                        <StyledTableCell>Статус</StyledTableCell>
+                                                        <StyledTableCell>Последний вход</StyledTableCell>
                                                         <StyledTableCell> </StyledTableCell>
                                                     </TableRow>
                                                 </TableHead>

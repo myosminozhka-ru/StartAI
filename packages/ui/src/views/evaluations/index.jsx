@@ -108,8 +108,8 @@ const EvalsEvaluation = () => {
     const createEvaluation = () => {
         const dialogProp = {
             type: 'ADD',
-            cancelButtonName: 'Cancel',
-            confirmButtonName: 'Start New Evaluation',
+            cancelButtonName: 'Отмена',
+            confirmButtonName: 'Запустить новую оценку',
             data: {}
         }
         setDialogProps(dialogProp)
@@ -118,12 +118,10 @@ const EvalsEvaluation = () => {
 
     const deleteEvaluationsAllVersions = async () => {
         const confirmPayload = {
-            title: `Delete`,
-            description: `Delete ${selected.length} ${
-                selected.length > 1 ? 'evaluations' : 'evaluation'
-            }? This will delete all versions of the evaluation.`,
-            confirmButtonName: 'Delete',
-            cancelButtonName: 'Cancel'
+            title: `Удалить`,
+            description: `Удалить ${selected.length} ${selected.length > 1 ? 'оценки' : 'оценку'}? Это удалит все версии оценки.`,
+            confirmButtonName: 'Удалить',
+            cancelButtonName: 'Отмена'
         }
         const isConfirmed = await confirm(confirmPayload)
 
@@ -133,7 +131,7 @@ const EvalsEvaluation = () => {
                 const deleteResp = await evaluationApi.deleteEvaluations(selected, isDeleteAllVersion)
                 if (deleteResp.data) {
                     enqueueSnackbar({
-                        message: `${selected.length} ${selected.length > 1 ? 'evaluations' : 'evaluation'} deleted`,
+                        message: `${selected.length} ${selected.length > 1 ? 'оценок' : 'оценка'} удалена`,
                         options: {
                             key: new Date().getTime() + Math.random(),
                             variant: 'success',
@@ -148,7 +146,7 @@ const EvalsEvaluation = () => {
                 }
             } catch (error) {
                 enqueueSnackbar({
-                    message: `Failed to delete ${selected.length > 1 ? 'evaluations' : 'evaluation'}: ${
+                    message: `Не удалось удалить ${selected.length > 1 ? 'оценки' : 'оценку'}: ${
                         typeof error.response.data === 'object' ? error.response.data.message : error.response.data
                     }`,
                     options: {
@@ -219,10 +217,10 @@ const EvalsEvaluation = () => {
         if (createNewEvaluation.error) {
             // Change to Notifstack
             enqueueSnackbar({
-                message: `Failed to create new evaluation: ${
+                message: `Не удалось создать новую оценку: ${
                     typeof createNewEvaluation.error.response?.data === 'object'
                         ? createNewEvaluation.error.response.data.message
-                        : createNewEvaluation.error.response?.data || createNewEvaluation.error.message || 'Unknown error'
+                        : createNewEvaluation.error.response?.data || createNewEvaluation.error.message || 'Неизвестная ошибка'
                 }`,
                 options: {
                     key: new Date().getTime() + Math.random(),
@@ -255,7 +253,7 @@ const EvalsEvaluation = () => {
                     <ErrorBoundary error={error} />
                 ) : (
                     <Stack flexDirection='column' sx={{ gap: 3 }}>
-                        <ViewHeader isBackButton={false} isEditButton={false} search={false} title={'Evaluations'} description=''>
+                        <ViewHeader isBackButton={false} isEditButton={false} search={false} title={'Оценки'} description=''>
                             <StyledButton
                                 color='secondary'
                                 variant='outlined'
@@ -263,7 +261,7 @@ const EvalsEvaluation = () => {
                                 onClick={onRefresh}
                                 startIcon={<IconRefresh />}
                             >
-                                Refresh
+                                Обновить
                             </StyledButton>
                             <StyledPermissionButton
                                 permissionId={'evaluations:create'}
@@ -271,7 +269,7 @@ const EvalsEvaluation = () => {
                                 onClick={createEvaluation}
                                 startIcon={<IconPlus />}
                             >
-                                New Evaluation
+                                Новая оценка
                             </StyledPermissionButton>
                         </ViewHeader>
                         {selected.length > 0 && (
@@ -283,7 +281,7 @@ const EvalsEvaluation = () => {
                                 color='error'
                                 startIcon={<IconTrash />}
                             >
-                                Delete {selected.length} {selected.length === 1 ? 'evaluation' : 'evaluations'}
+                                Удалить {selected.length} {selected.length === 1 ? 'оценку' : 'оценки'}
                             </StyledPermissionButton>
                         )}
                         {!isTableLoading && rows.length <= 0 ? (
@@ -295,7 +293,7 @@ const EvalsEvaluation = () => {
                                         alt='empty_evalSVG'
                                     />
                                 </Box>
-                                <div>No Evaluations Yet</div>
+                                <div>Пока нет оценок</div>
                             </Stack>
                         ) : (
                             <TableContainer
@@ -323,12 +321,12 @@ const EvalsEvaluation = () => {
                                                 />
                                             </TableCell>
                                             <TableCell width={10}> </TableCell>
-                                            <TableCell>Name</TableCell>
-                                            <TableCell>Latest Version</TableCell>
-                                            <TableCell>Average Metrics</TableCell>
-                                            <TableCell>Last Evaluated</TableCell>
-                                            <TableCell>Chatflow(s)</TableCell>
-                                            <TableCell>Dataset</TableCell>
+                                            <TableCell>Название</TableCell>
+                                            <TableCell>Последняя версия</TableCell>
+                                            <TableCell>Средние метрики</TableCell>
+                                            <TableCell>Последняя оценка</TableCell>
+                                            <TableCell>Чатфлоу(ы)</TableCell>
+                                            <TableCell>Набор данных</TableCell>
                                             <TableCell> </TableCell>
                                         </TableRow>
                                     </TableHead>
@@ -468,10 +466,10 @@ function EvaluationRunRow(props) {
 
     const deleteChildEvaluations = async () => {
         const confirmPayload = {
-            title: `Delete`,
-            description: `Delete ${childSelected.length} ${childSelected.length > 1 ? 'evaluations' : 'evaluation'}?`,
-            confirmButtonName: 'Delete',
-            cancelButtonName: 'Cancel'
+            title: `Удалить`,
+            description: `Удалить ${childSelected.length} ${childSelected.length > 1 ? 'оценки' : 'оценку'}?`,
+            confirmButtonName: 'Удалить',
+            cancelButtonName: 'Отмена'
         }
         const isConfirmed = await confirm(confirmPayload)
 
@@ -480,7 +478,7 @@ function EvaluationRunRow(props) {
                 const deleteResp = await evaluationApi.deleteEvaluations(childSelected)
                 if (deleteResp.data) {
                     enqueueSnackbar({
-                        message: `${childSelected.length} evaluations deleted.`,
+                        message: `${childSelected.length} оценок удалено.`,
                         options: {
                             key: new Date().getTime() + Math.random(),
                             variant: 'success',
@@ -495,7 +493,7 @@ function EvaluationRunRow(props) {
                 }
             } catch (error) {
                 enqueueSnackbar({
-                    message: `Failed to delete Evaluation: ${
+                    message: `Не удалось удалить оценку: ${
                         typeof error.response.data === 'object' ? error.response.data.message : error.response.data
                     }`,
                     options: {
@@ -579,8 +577,8 @@ function EvaluationRunRow(props) {
                             color='info'
                             label={
                                 props.item.average_metrics?.totalRuns
-                                    ? 'Total Runs: ' + props.item.average_metrics?.totalRuns
-                                    : 'Total Runs: N/A'
+                                    ? 'Всего запусков: ' + props.item.average_metrics?.totalRuns
+                                    : 'Всего запусков: Н/Д'
                             }
                         />
                         {props.item.average_metrics?.averageCost && (
@@ -592,8 +590,8 @@ function EvaluationRunRow(props) {
                             color='info'
                             label={
                                 props.item.average_metrics?.averageLatency
-                                    ? 'Avg Latency: ' + props.item.average_metrics?.averageLatency + 'ms'
-                                    : 'Avg Latency: N/A'
+                                    ? 'Ср. задержка: ' + props.item.average_metrics?.averageLatency + 'мс'
+                                    : 'Ср. задержка: Н/Д'
                             }
                         />
                         {props.item.average_metrics?.passPcnt >= 0 && (
@@ -606,8 +604,8 @@ function EvaluationRunRow(props) {
                                 }}
                                 label={
                                     props.item.average_metrics?.passPcnt
-                                        ? 'Pass Rate: ' + props.item.average_metrics.passPcnt + '%'
-                                        : 'Pass Rate: N/A'
+                                        ? 'Процент прохождения: ' + props.item.average_metrics.passPcnt + '%'
+                                        : 'Процент прохождения: Н/Д'
                                 }
                             />
                         )}
@@ -650,7 +648,7 @@ function EvaluationRunRow(props) {
                 </StyledTableCell>
                 <TableCell>
                     <IconButton
-                        title='View Results'
+                        title='Просмотр результатов'
                         color='primary'
                         disabled={props.item.status === 'pending'}
                         onClick={() => showResults(props.item)}
@@ -669,7 +667,7 @@ function EvaluationRunRow(props) {
                             color='error'
                             startIcon={<IconTrash />}
                         >
-                            Delete {childSelected.length} {childSelected.length === 1 ? 'evaluation' : 'evaluations'}
+                            Удалить {childSelected.length} {childSelected.length === 1 ? 'оценку' : 'оценки'}
                         </Button>
                     </StyledTableCell>
                 </TableRow>
@@ -690,10 +688,10 @@ function EvaluationRunRow(props) {
                                                         onChange={onSelectAllChildClick}
                                                     />
                                                 </TableCell>
-                                                <TableCell>Version</TableCell>
-                                                <TableCell>Last Run</TableCell>
-                                                <TableCell>Average Metrics</TableCell>
-                                                <TableCell>Status</TableCell>
+                                                <TableCell>Версия</TableCell>
+                                                <TableCell>Последний запуск</TableCell>
+                                                <TableCell>Средние метрики</TableCell>
+                                                <TableCell>Статус</TableCell>
                                                 <TableCell> </TableCell>
                                             </TableRow>
                                         </TableHead>
@@ -724,8 +722,8 @@ function EvaluationRunRow(props) {
                                                                         color='info'
                                                                         label={
                                                                             childItem.average_metrics?.totalRuns
-                                                                                ? 'Total Runs: ' + childItem.average_metrics?.totalRuns
-                                                                                : 'Total Runs: N/A'
+                                                                                ? 'Всего запусков: ' + childItem.average_metrics?.totalRuns
+                                                                                : 'Всего запусков: Н/Д'
                                                                         }
                                                                     />
                                                                     {childItem.average_metrics?.averageCost && (
@@ -742,10 +740,10 @@ function EvaluationRunRow(props) {
                                                                         color='info'
                                                                         label={
                                                                             childItem.average_metrics?.averageLatency
-                                                                                ? 'Avg Latency: ' +
+                                                                                ? 'Ср. задержка: ' +
                                                                                   childItem.average_metrics?.averageLatency +
-                                                                                  'ms'
-                                                                                : 'Avg Latency: N/A'
+                                                                                  'мс'
+                                                                                : 'Ср. задержка: Н/Д'
                                                                         }
                                                                     />
                                                                     {childItem.average_metrics?.passPcnt >= 0 && (
@@ -760,10 +758,10 @@ function EvaluationRunRow(props) {
                                                                             }}
                                                                             label={
                                                                                 childItem.average_metrics?.passPcnt
-                                                                                    ? 'Pass rate: ' +
+                                                                                    ? 'Процент прохождения: ' +
                                                                                       childItem.average_metrics.passPcnt +
                                                                                       '%'
-                                                                                    : 'Pass rate: N/A'
+                                                                                    : 'Процент прохождения: Н/Д'
                                                                             }
                                                                         />
                                                                     )}
@@ -785,7 +783,7 @@ function EvaluationRunRow(props) {
                                                             </StyledTableCell>
                                                             <StyledTableCell>
                                                                 <IconButton
-                                                                    title='View Results'
+                                                                    title='Просмотр результатов'
                                                                     color='primary'
                                                                     disabled={childItem.status === 'pending'}
                                                                     onClick={() => showResults(childItem)}

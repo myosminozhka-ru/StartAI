@@ -3,141 +3,141 @@ export const evaluators = [
     {
         type: 'text',
         name: 'ContainsAny',
-        label: 'Contains Any',
-        description: 'Returns true if any of the specified comma separated values are present in the response.'
+        label: 'Содержит Любое',
+        description: 'Возвращает true, если любое из указанных значений, разделенных запятыми, присутствует в ответе.'
     },
     {
         type: 'text',
         name: 'ContainsAll',
-        label: 'Contains All',
-        description: 'Returns true if ALL of the specified comma separated values are present in the response.'
+        label: 'Содержит Все',
+        description: 'Возвращает true, если ВСЕ указанные значения, разделенные запятыми, присутствуют в ответе.'
     },
     {
         type: 'text',
         name: 'DoesNotContainAny',
-        label: 'Does Not Contains Any',
-        description: 'Returns true if any of the specified comma separated values are present in the response.'
+        label: 'Не Содержит Любое',
+        description: 'Возвращает true, если любое из указанных значений, разделенных запятыми, присутствует в ответе.'
     },
     {
         type: 'text',
         name: 'DoesNotContainAll',
-        label: 'Does Not Contains All',
-        description: 'Returns true if ALL of the specified comma separated values are present in the response.'
+        label: 'Не Содержит Все',
+        description: 'Возвращает true, если ВСЕ указанные значения, разделенные запятыми, присутствуют в ответе.'
     },
     {
         type: 'text',
         name: 'StartsWith',
-        label: 'Starts With',
-        description: 'Returns true if the response starts with the specified value.'
+        label: 'Начинается С',
+        description: 'Возвращает true, если ответ начинается с указанного значения.'
     },
     {
         type: 'text',
         name: 'NotStartsWith',
-        label: 'Does Not Start With',
-        description: 'Returns true if the response does not start with the specified value.'
+        label: 'Не Начинается С',
+        description: 'Возвращает true, если ответ не начинается с указанного значения.'
     },
     {
         type: 'json',
         name: 'IsValidJSON',
-        label: 'Is Valid JSON',
-        description: 'Returns true if the response is a valid JSON.'
+        label: 'Является Валидным JSON',
+        description: 'Возвращает true, если ответ является валидным JSON.'
     },
     {
         type: 'json',
         name: 'IsNotValidJSON',
-        label: 'Is Not a Valid JSON',
-        description: 'Returns true if the response is a not a valid JSON.'
+        label: 'Не Является Валидным JSON',
+        description: 'Возвращает true, если ответ не является валидным JSON.'
     },
     {
         type: 'numeric',
         name: 'totalTokens',
-        label: 'Total Tokens',
-        description: 'Sum of Prompt Tokens and Completion Tokens.'
+        label: 'Всего Токенов',
+        description: 'Сумма токенов промпта и токенов завершения.'
     },
     {
         type: 'numeric',
-        label: 'Prompt Tokens',
+        label: 'Токены Промпта',
         name: 'promptTokens',
-        description: 'This is the number of tokens in your prompt.'
+        description: 'Это количество токенов в вашем промпте.'
     },
     {
         type: 'numeric',
-        label: 'Completion Tokens',
+        label: 'Токены Завершения',
         name: 'completionTokens',
-        description: 'Completion tokens are any tokens that the model generates in response to your input.'
+        description: 'Токены завершения - это любые токены, которые модель генерирует в ответ на ваш ввод.'
     },
     {
         type: 'numeric',
-        label: 'Total API Latency',
+        label: 'Общая Задержка API',
         name: 'apiLatency',
-        description: 'Total time taken for the Flowise Prediction API call (milliseconds).'
+        description: 'Общее время, затраченное на вызов Flowise Prediction API (миллисекунды).'
     },
     {
         type: 'numeric',
-        label: 'LLM Latency',
+        label: 'Задержка LLM',
         name: 'llm',
-        description: 'Actual LLM invocation time (milliseconds).'
+        description: 'Фактическое время вызова LLM (миллисекунды).'
     },
     {
         type: 'numeric',
-        label: 'Chatflow Latency',
+        label: 'Задержка Чатфлоу',
         name: 'chain',
-        description: 'Actual time spent in executing the chatflow (milliseconds).'
+        description: 'Фактическое время, затраченное на выполнение чатфлоу (миллисекунды).'
     },
     {
         type: 'numeric',
-        label: 'Output Chars Length',
+        label: 'Длина Ответа в Символах',
         name: 'responseLength',
-        description: 'Number of characters in the response.'
+        description: 'Количество символов в ответе.'
     }
 ]
 
 export const evaluatorTypes = [
     {
-        label: 'Evaluate Result (Text Based)',
+        label: 'Оценка Результата (На Основе Текста)',
         name: 'text',
-        description: 'Set of Evaluators to evaluate the result of a Chatflow.'
+        description: 'Набор оценщиков для оценки результата чатфлоу.'
     },
     {
-        label: 'Evaluate Result (JSON)',
+        label: 'Оценка Результата (JSON)',
         name: 'json',
-        description: 'Set of Evaluators to evaluate the JSON response of a Chatflow.'
+        description: 'Набор оценщиков для оценки JSON-ответа чатфлоу.'
     },
     {
-        label: 'Evaluate Metrics (Numeric)',
+        label: 'Оценка Метрик (Числовые)',
         name: 'numeric',
-        description: 'Set of Evaluators that evaluate the metrics (latency, tokens, cost, length of response) of a Chatflow.'
+        description: 'Набор оценщиков, которые оценивают метрики (задержка, токены, стоимость, длина ответа) чатфлоу.'
     },
     {
-        label: 'LLM based Grading (JSON)',
+        label: 'Оценка на Основе LLM (JSON)',
         name: 'llm',
-        description: 'Post execution, grades the answers by using an LLM.'
+        description: 'После выполнения оценивает ответы, используя LLM.'
     }
 ]
 
 export const numericOperators = [
     {
-        label: 'Equals',
+        label: 'Равно',
         name: 'equals'
     },
     {
-        label: 'Not Equals',
+        label: 'Не Равно',
         name: 'notEquals'
     },
     {
-        label: 'Greater Than',
+        label: 'Больше Чем',
         name: 'greaterThan'
     },
     {
-        label: 'Less Than',
+        label: 'Меньше Чем',
         name: 'lessThan'
     },
     {
-        label: 'Greater Than or Equals',
+        label: 'Больше Или Равно',
         name: 'greaterThanOrEquals'
     },
     {
-        label: 'Less Than or Equals',
+        label: 'Меньше Или Равно',
         name: 'lessThanOrEquals'
     }
 ]

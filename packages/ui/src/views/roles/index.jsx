@@ -132,7 +132,7 @@ function ViewPermissionsDrawer(props) {
                 )}
                 <Box sx={{ overflowY: 'auto' }}>
                     <Typography sx={{ mb: 1 }} variant='h3'>
-                        Permissions
+                        Разрешения
                     </Typography>
                     <Box>
                         {permissions &&
@@ -241,7 +241,7 @@ function ShowRoleRow(props) {
                         </Typography>
                         <PermissionIconButton
                             permissionId={'roles:manage'}
-                            title='View'
+                            title='Просмотр'
                             color='primary'
                             onClick={() => setOpenViewPermissionsDrawer(!openViewPermissionsDrawer)}
                         >
@@ -266,7 +266,7 @@ function ShowRoleRow(props) {
                 <StyledTableCell>
                     <PermissionIconButton
                         permissionId={'roles:manage'}
-                        title='Edit'
+                        title='Редактировать'
                         color='primary'
                         onClick={() => props.onEditClick(props.role)}
                     >
@@ -276,7 +276,7 @@ function ShowRoleRow(props) {
                         permissionId={'roles:manage'}
                         disabled={props.role.userCount > 0}
                         color='error'
-                        title={props.role.userCount > 0 ? 'Remove users with the role from Workspace first' : 'Delete'}
+                        title={props.role.userCount > 0 ? 'Сначала удалите пользователей с этой ролью из рабочего пространства' : 'Удалить'}
                         onClick={() => props.onDeleteClick(props.role)}
                     >
                         <IconTrash />
@@ -286,7 +286,7 @@ function ShowRoleRow(props) {
             <Drawer anchor='right' open={openAssignedUsersDrawer} onClose={() => setOpenAssignedUsersDrawer(false)} sx={{ minWidth: 320 }}>
                 <Box sx={{ p: 4, height: 'auto', width: 650 }}>
                     <Typography sx={{ textAlign: 'left', mb: 2 }} variant='h2'>
-                        Assigned Users
+                        Назначенные пользователи
                     </Typography>
                     <TableContainer
                         style={{ display: 'flex', flexDirection: 'row' }}
@@ -301,8 +301,8 @@ function ShowRoleRow(props) {
                                 }}
                             >
                                 <TableRow>
-                                    <StyledTableCell sx={{ width: '50%' }}>User</StyledTableCell>
-                                    <StyledTableCell sx={{ width: '50%' }}>Workspace</StyledTableCell>
+                                    <StyledTableCell sx={{ width: '50%' }}>Пользователь</StyledTableCell>
+                                    <StyledTableCell sx={{ width: '50%' }}>Рабочее пространство</StyledTableCell>
                                 </TableRow>
                             </TableHead>
                             <TableBody>
@@ -371,8 +371,8 @@ const Roles = () => {
     const addNew = () => {
         const dialogProp = {
             type: 'ADD',
-            cancelButtonName: 'Cancel',
-            confirmButtonName: 'Invite',
+            cancelButtonName: 'Отмена',
+            confirmButtonName: 'Пригласить',
             data: {}
         }
         setDialogProps(dialogProp)
@@ -382,8 +382,8 @@ const Roles = () => {
     const edit = (role) => {
         const dialogProp = {
             type: 'EDIT',
-            cancelButtonName: 'Cancel',
-            confirmButtonName: 'Invite',
+            cancelButtonName: 'Отмена',
+            confirmButtonName: 'Пригласить',
             data: {
                 ...role
             }
@@ -395,8 +395,8 @@ const Roles = () => {
     const view = (role) => {
         const dialogProp = {
             type: 'VIEW',
-            cancelButtonName: 'Cancel',
-            confirmButtonName: 'Invite',
+            cancelButtonName: 'Отмена',
+            confirmButtonName: 'Пригласить',
             data: {
                 ...role
             }
@@ -407,10 +407,10 @@ const Roles = () => {
 
     const deleteRole = async (role) => {
         const confirmPayload = {
-            title: `Delete`,
-            description: `Delete Role ${role.name}?`,
-            confirmButtonName: 'Delete',
-            cancelButtonName: 'Cancel'
+            title: `Удалить`,
+            description: `Удалить роль ${role.name}?`,
+            confirmButtonName: 'Удалить',
+            cancelButtonName: 'Отмена'
         }
         const isConfirmed = await confirm(confirmPayload)
 
@@ -419,7 +419,7 @@ const Roles = () => {
                 const deleteResp = await roleApi.deleteRole(role.id, currentUser.activeOrganizationId)
                 if (deleteResp.data) {
                     enqueueSnackbar({
-                        message: 'Role deleted',
+                        message: 'Роль удалена',
                         options: {
                             key: new Date().getTime() + Math.random(),
                             variant: 'success',
@@ -434,7 +434,7 @@ const Roles = () => {
                 }
             } catch (error) {
                 enqueueSnackbar({
-                    message: `Failed to delete Role: ${
+                    message: `Не удалось удалить роль: ${
                         typeof error.response.data === 'object' ? error.response.data.message : error.response.data
                     }`,
                     options: {
@@ -485,7 +485,7 @@ const Roles = () => {
                     <ErrorBoundary error={error} />
                 ) : (
                     <Stack flexDirection='column' sx={{ gap: 3 }}>
-                        <ViewHeader onSearchChange={onSearchChange} search={true} searchPlaceholder='Search Roles' title='Roles'>
+                        <ViewHeader onSearchChange={onSearchChange} search={true} searchPlaceholder='Поиск ролей' title='Роли'>
                             <StyledPermissionButton
                                 permissionId={'roles:manage'}
                                 variant='contained'
@@ -494,7 +494,7 @@ const Roles = () => {
                                 startIcon={<IconPlus />}
                                 id='btn_createUser'
                             >
-                                Add Role
+                                Добавить роль
                             </StyledPermissionButton>
                         </ViewHeader>
                         {!isLoading && roles.length === 0 ? (
@@ -506,7 +506,7 @@ const Roles = () => {
                                         alt='roles_emptySVG'
                                     />
                                 </Box>
-                                <div>No Roles Yet</div>
+                                <div>Роли пока нет</div>
                             </Stack>
                         ) : (
                             <>
@@ -527,10 +527,10 @@ const Roles = () => {
                                                     }}
                                                 >
                                                     <TableRow>
-                                                        <StyledTableCell>Name</StyledTableCell>
-                                                        <StyledTableCell>Description</StyledTableCell>
-                                                        <StyledTableCell>Permissions</StyledTableCell>
-                                                        <StyledTableCell>Assigned Users</StyledTableCell>
+                                                        <StyledTableCell>Название</StyledTableCell>
+                                                        <StyledTableCell>Описание</StyledTableCell>
+                                                        <StyledTableCell>Разрешения</StyledTableCell>
+                                                        <StyledTableCell>Назначенные пользователи</StyledTableCell>
                                                         <StyledTableCell> </StyledTableCell>
                                                     </TableRow>
                                                 </TableHead>

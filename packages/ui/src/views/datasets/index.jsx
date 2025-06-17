@@ -81,8 +81,8 @@ const EvalDatasets = () => {
     const addNew = () => {
         const dialogProp = {
             type: 'ADD',
-            cancelButtonName: 'Cancel',
-            confirmButtonName: 'Add',
+            cancelButtonName: 'Отмена',
+            confirmButtonName: 'Добавить',
             data: {}
         }
         setDatasetDialogProps(dialogProp)
@@ -92,8 +92,8 @@ const EvalDatasets = () => {
     const edit = (dataset) => {
         const dialogProp = {
             type: 'EDIT',
-            cancelButtonName: 'Cancel',
-            confirmButtonName: 'Save',
+            cancelButtonName: 'Отмена',
+            confirmButtonName: 'Сохранить',
             data: dataset
         }
         setDatasetDialogProps(dialogProp)
@@ -102,10 +102,10 @@ const EvalDatasets = () => {
 
     const deleteDataset = async (dataset) => {
         const confirmPayload = {
-            title: `Delete`,
-            description: `Delete dataset ${dataset.name}?`,
-            confirmButtonName: 'Delete',
-            cancelButtonName: 'Cancel'
+            title: `Удалить`,
+            description: `Удалить набор данных ${dataset.name}?`,
+            confirmButtonName: 'Удалить',
+            cancelButtonName: 'Отмена'
         }
         const isConfirmed = await confirm(confirmPayload)
 
@@ -114,7 +114,7 @@ const EvalDatasets = () => {
                 const deleteResp = await datasetsApi.deleteDataset(dataset.id)
                 if (deleteResp.data) {
                     enqueueSnackbar({
-                        message: 'Dataset deleted',
+                        message: 'Набор данных удален',
                         options: {
                             key: new Date().getTime() + Math.random(),
                             variant: 'success',
@@ -129,7 +129,7 @@ const EvalDatasets = () => {
                 }
             } catch (error) {
                 enqueueSnackbar({
-                    message: `Failed to delete dataset: ${
+                    message: `Не удалось удалить набор данных: ${
                         typeof error.response.data === 'object' ? error.response.data.message : error.response.data
                     }`,
                     options: {
@@ -184,7 +184,7 @@ const EvalDatasets = () => {
                             isEditButton={false}
                             onSearchChange={onSearchChange}
                             search={true}
-                            title='Datasets'
+                            title='Наборы данных'
                             description=''
                         >
                             <StyledPermissionButton
@@ -194,7 +194,7 @@ const EvalDatasets = () => {
                                 onClick={addNew}
                                 startIcon={<IconPlus />}
                             >
-                                Add New
+                                Добавить новый
                             </StyledPermissionButton>
                         </ViewHeader>
                         {!isLoading && datasets.length <= 0 ? (
@@ -206,7 +206,7 @@ const EvalDatasets = () => {
                                         alt='empty_datasetSVG'
                                     />
                                 </Box>
-                                <div>No Datasets Yet</div>
+                                <div>Пока нет наборов данных</div>
                             </Stack>
                         ) : (
                             <TableContainer
@@ -223,10 +223,10 @@ const EvalDatasets = () => {
                                         }}
                                     >
                                         <TableRow>
-                                            <TableCell>Name</TableCell>
-                                            <TableCell>Description</TableCell>
-                                            <TableCell>Rows</TableCell>
-                                            <TableCell>Last Updated</TableCell>
+                                            <TableCell>Название</TableCell>
+                                            <TableCell>Описание</TableCell>
+                                            <TableCell>Строки</TableCell>
+                                            <TableCell>Последнее обновление</TableCell>
                                             <Available permission={'datasets:update,datasets:create'}>
                                                 <TableCell> </TableCell>
                                             </Available>
@@ -302,14 +302,14 @@ const EvalDatasets = () => {
                                                         </TableCell>
                                                         <Available permission={'datasets:update,datasets:create'}>
                                                             <TableCell>
-                                                                <IconButton title='Edit' color='primary' onClick={() => edit(ds)}>
+                                                                <IconButton title='Редактировать' color='primary' onClick={() => edit(ds)}>
                                                                     <IconEdit />
                                                                 </IconButton>
                                                             </TableCell>
                                                         </Available>
                                                         <Available permission={'datasets:delete'}>
                                                             <TableCell>
-                                                                <IconButton title='Delete' color='error' onClick={() => deleteDataset(ds)}>
+                                                                <IconButton title='Удалить' color='error' onClick={() => deleteDataset(ds)}>
                                                                     <IconTrash />
                                                                 </IconButton>
                                                             </TableCell>

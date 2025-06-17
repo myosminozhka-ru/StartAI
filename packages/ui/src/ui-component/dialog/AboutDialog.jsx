@@ -1,39 +1,37 @@
 import { createPortal } from 'react-dom'
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import PropTypes from 'prop-types'
 import { Dialog, DialogContent, DialogTitle, TableContainer, Table, TableHead, TableRow, TableCell, TableBody, Paper } from '@mui/material'
 import moment from 'moment'
-import axios from 'axios'
-import { baseURL } from '@/store/constant'
 
 const AboutDialog = ({ show, onCancel }) => {
     const portalElement = document.getElementById('portal')
 
     const [data, setData] = useState({})
 
-    useEffect(() => {
-        if (show) {
-            const latestReleaseReq = axios.get('https://api.github.com/repos/FlowiseAI/Flowise/releases/latest')
-            const currentVersionReq = axios.get(`${baseURL}/api/v1/version`, {
-                withCredentials: true,
-                headers: { 'Content-type': 'application/json', 'x-request-from': 'internal' }
-            })
+    // useEffect(() => {
+    //     if (show) {
+    //         const latestReleaseReq = axios.get('https://osmi-it.ru/')
+    //         const currentVersionReq = axios.get(`${baseURL}/api/v1/version`, {
+    //             withCredentials: true,
+    //             headers: { 'Content-type': 'application/json', 'x-request-from': 'internal' }
+    //         })
 
-            Promise.all([latestReleaseReq, currentVersionReq])
-                .then(([latestReleaseData, currentVersionData]) => {
-                    const finalData = {
-                        ...latestReleaseData.data,
-                        currentVersion: currentVersionData.data.version
-                    }
-                    setData(finalData)
-                })
-                .catch((error) => {
-                    console.error('Error fetching data:', error)
-                })
-        }
+    //         Promise.all([latestReleaseReq, currentVersionReq])
+    //             .then(([latestReleaseData, currentVersionData]) => {
+    //                 const finalData = {
+    //                     ...latestReleaseData.data,
+    //                     currentVersion: currentVersionData.data.version
+    //                 }
+    //                 setData(finalData)
+    //             })
+    //             .catch((error) => {
+    //                 console.error('Error fetching data:', error)
+    //             })
+    //     }
 
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [show])
+    //     // eslint-disable-next-line react-hooks/exhaustive-deps
+    // }, [show])
 
     const component = show ? (
         <Dialog
@@ -45,7 +43,7 @@ const AboutDialog = ({ show, onCancel }) => {
             aria-describedby='alert-dialog-description'
         >
             <DialogTitle sx={{ fontSize: '1rem' }} id='alert-dialog-title'>
-                Версия Flowise
+                Версия Osmi AI
             </DialogTitle>
             <DialogContent>
                 {data && (
@@ -64,8 +62,8 @@ const AboutDialog = ({ show, onCancel }) => {
                                         {data.currentVersion}
                                     </TableCell>
                                     <TableCell component='th' scope='row'>
-                                        <a target='_blank' rel='noreferrer' href={data.html_url}>
-                                            {data.name}
+                                        <a target='_blank' rel='noreferrer' href='https://osmi-it.ru/'>
+                                            Osmi-it
                                         </a>
                                     </TableCell>
                                     <TableCell>{moment(data.published_at).fromNow()}</TableCell>
