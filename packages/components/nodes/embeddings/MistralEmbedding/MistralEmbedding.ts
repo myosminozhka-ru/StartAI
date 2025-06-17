@@ -22,7 +22,7 @@ class MistralEmbedding_Embeddings implements INode {
         this.type = 'MistralAIEmbeddings'
         this.icon = 'MistralAI.svg'
         this.category = 'Embeddings'
-        this.description = 'MistralAI API to generate embeddings for a given text'
+        this.description = 'MistralAI API для генерации эмбеддингов для заданного текста'
         this.baseClasses = [this.type, ...getBaseClasses(MistralAIEmbeddings)]
         this.credential = {
             label: 'Подключите учетные данные',
@@ -32,14 +32,14 @@ class MistralEmbedding_Embeddings implements INode {
         }
         this.inputs = [
             {
-                label: 'Model Name',
+                label: 'Название модели',
                 name: 'modelName',
                 type: 'asyncOptions',
                 loadMethod: 'listModels',
                 default: 'mistral-embed'
             },
             {
-                label: 'Batch Size',
+                label: 'Размер пакета',
                 name: 'batchSize',
                 type: 'number',
                 step: 1,
@@ -48,7 +48,7 @@ class MistralEmbedding_Embeddings implements INode {
                 additionalParams: true
             },
             {
-                label: 'Strip New Lines',
+                label: 'Удалить переносы строк',
                 name: 'stripNewLines',
                 type: 'boolean',
                 default: true,
@@ -56,7 +56,7 @@ class MistralEmbedding_Embeddings implements INode {
                 additionalParams: true
             },
             {
-                label: 'Override Endpoint',
+                label: 'Переопределить endpoint',
                 name: 'overrideEndpoint',
                 type: 'string',
                 optional: true,

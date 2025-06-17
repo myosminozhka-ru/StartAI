@@ -22,7 +22,7 @@ class ChatTogetherAI_ChatModels implements INode {
         this.type = 'ChatTogetherAI'
         this.icon = 'togetherai.png'
         this.category = 'Chat Models'
-        this.description = 'Wrapper around TogetherAI large language models'
+        this.description = 'Обертка вокруг больших языковых моделей TogetherAI'
         this.baseClasses = [this.type, ...getBaseClasses(ChatTogetherAI)]
         this.credential = {
             label: 'Подключите учетные данные',
@@ -32,20 +32,20 @@ class ChatTogetherAI_ChatModels implements INode {
         }
         this.inputs = [
             {
-                label: 'Cache',
+                label: 'Кэш',
                 name: 'cache',
                 type: 'BaseCache',
                 optional: true
             },
             {
-                label: 'Model Name',
+                label: 'Название модели',
                 name: 'modelName',
                 type: 'string',
                 placeholder: 'mixtral-8x7b-32768',
-                description: 'Refer to <a target="_blank" href="https://docs.together.ai/docs/inference-models">models</a> page'
+                description: 'См. страницу <a target="_blank" href="https://docs.together.ai/docs/inference-models">моделей</a>'
             },
             {
-                label: 'Temperature',
+                label: 'Температура',
                 name: 'temperature',
                 type: 'number',
                 step: 0.1,
@@ -53,7 +53,7 @@ class ChatTogetherAI_ChatModels implements INode {
                 optional: true
             },
             {
-                label: 'Streaming',
+                label: 'Потоковая передача',
                 name: 'streaming',
                 type: 'boolean',
                 default: true,

@@ -23,7 +23,7 @@ class AWSBedrockEmbedding_Embeddings implements INode {
         this.type = 'AWSBedrockEmbeddings'
         this.icon = 'aws.svg'
         this.category = 'Embeddings'
-        this.description = 'AWSBedrock embedding models to generate embeddings for a given text'
+        this.description = 'Модели эмбеддингов AWSBedrock для генерации эмбеддингов для заданного текста'
         this.baseClasses = [this.type, ...getBaseClasses(BedrockEmbeddings)]
         this.credential = {
             label: 'AWS Credential',
@@ -41,62 +41,65 @@ class AWSBedrockEmbedding_Embeddings implements INode {
                 default: 'us-east-1'
             },
             {
-                label: 'Model Name',
+                label: 'Название модели',
                 name: 'model',
                 type: 'asyncOptions',
                 loadMethod: 'listModels',
                 default: 'amazon.titan-embed-text-v1'
             },
             {
-                label: 'Custom Model Name',
+                label: 'Пользовательское название модели',
                 name: 'customModel',
-                description: 'If provided, will override model selected from Model Name option',
+                description: 'Если указано, переопределит модель, выбранную из опции Название модели',
                 type: 'string',
                 optional: true
             },
             {
-                label: 'Cohere Input Type',
+                label: 'Тип ввода Cohere',
                 name: 'inputType',
                 type: 'options',
                 description:
-                    'Specifies the type of input passed to the model. Required for cohere embedding models v3 and higher. <a target="_blank" href="https://docs.cohere.com/reference/embed">Official Docs</a>',
+                    'Указывает тип ввода, передаваемого в модель. Требуется для моделей эмбеддингов cohere v3 и выше. <a target="_blank" href="https://docs.cohere.com/reference/embed">Официальная документация</a>',
                 options: [
                     {
                         label: 'search_document',
                         name: 'search_document',
-                        description: 'Use this to encode documents for embeddings that you store in a vector database for search use-cases'
+                        description:
+                            'Используйте это для кодирования документов для эмбеддингов, которые вы храните в векторной базе данных для случаев поиска'
                     },
                     {
                         label: 'search_query',
                         name: 'search_query',
-                        description: 'Use this when you query your vector DB to find relevant documents.'
+                        description: 'Используйте это, когда вы запрашиваете вашу векторную БД для поиска соответствующих документов.'
                     },
                     {
                         label: 'classification',
                         name: 'classification',
-                        description: 'Use this when you use the embeddings as an input to a text classifier'
+                        description: 'Используйте это, когда вы используете эмбеддинги как вход для текстового классификатора'
                     },
                     {
                         label: 'clustering',
                         name: 'clustering',
-                        description: 'Use this when you want to cluster the embeddings.'
+                        description: 'Используйте это, когда вы хотите кластеризовать эмбеддинги.'
                     }
                 ],
                 optional: true
             },
             {
-                label: 'Batch Size',
+                label: 'Размер пакета',
                 name: 'batchSize',
-                description: 'Documents batch size to send to AWS API for Titan model embeddings. Used to avoid throttling.',
+                description:
+                    'Размер пакета документов для отправки в AWS API для эмбеддингов модели Titan. Используется для избежания ограничений.',
                 type: 'number',
                 optional: true,
                 default: 50,
                 additionalParams: true
             },
             {
-                label: 'Max AWS API retries',
+                label: 'Максимум повторных попыток AWS API',
                 name: 'maxRetries',
-                description: 'This will limit the nubmer of AWS API for Titan model embeddings call retries. Used to avoid throttling.',
+                description:
+                    'Это ограничит количество повторных попыток вызова AWS API для эмбеддингов модели Titan. Используется для избежания ограничений.',
                 type: 'number',
                 optional: true,
                 default: 5,

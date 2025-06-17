@@ -23,7 +23,7 @@ class GoogleGenerativeAIEmbedding_Embeddings implements INode {
         this.type = 'GoogleGenerativeAiEmbeddings'
         this.icon = 'GoogleGemini.svg'
         this.category = 'Embeddings'
-        this.description = 'Google Generative API to generate embeddings for a given text'
+        this.description = 'Google Generative API для генерации эмбеддингов для заданного текста'
         this.baseClasses = [this.type, ...getBaseClasses(GoogleGenerativeAIEmbeddings)]
         this.credential = {
             label: 'Подключите учетные данные',
@@ -31,21 +31,21 @@ class GoogleGenerativeAIEmbedding_Embeddings implements INode {
             type: 'credential',
             credentialNames: ['googleGenerativeAI'],
             optional: false,
-            description: 'Google Generative AI credential.'
+            description: 'Google Generative AI учетные данные.'
         }
         this.inputs = [
             {
-                label: 'Model Name',
+                label: 'Название модели',
                 name: 'modelName',
                 type: 'asyncOptions',
                 loadMethod: 'listModels',
                 default: 'embedding-001'
             },
             {
-                label: 'Task Type',
+                label: 'Тип задачи',
                 name: 'tasktype',
                 type: 'options',
-                description: 'Type of task for which the embedding will be used',
+                description: 'Тип задачи, для которой будет использоваться эмбеддинг',
                 options: [
                     { label: 'TASK_TYPE_UNSPECIFIED', name: 'TASK_TYPE_UNSPECIFIED' },
                     { label: 'RETRIEVAL_QUERY', name: 'RETRIEVAL_QUERY' },

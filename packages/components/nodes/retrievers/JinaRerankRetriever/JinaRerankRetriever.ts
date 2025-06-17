@@ -19,13 +19,13 @@ class JinaRerankRetriever_Retrievers implements INode {
     outputs: INodeOutputsValue[]
 
     constructor() {
-        this.label = 'Jina AI Rerank Retriever'
+        this.label = 'Jina AI Ранжирующий ретривер'
         this.name = 'JinaRerankRetriever'
         this.version = 1.0
         this.type = 'JinaRerankRetriever'
         this.icon = 'JinaAI.svg'
         this.category = 'Retrievers'
-        this.description = 'Jina AI Rerank indexes the documents from most to least semantically relevant to the query.'
+        this.description = 'Jina AI Rerank индексирует документы от наиболее до наименее семантически релевантных запросу.'
         this.baseClasses = [this.type, 'BaseRetriever']
         this.credential = {
             label: 'Подключите учетные данные',
@@ -35,12 +35,12 @@ class JinaRerankRetriever_Retrievers implements INode {
         }
         this.inputs = [
             {
-                label: 'Vector Store Retriever',
+                label: 'Ретривер векторного хранилища',
                 name: 'baseRetriever',
                 type: 'VectorStoreRetriever'
             },
             {
-                label: 'Model Name',
+                label: 'Название модели',
                 name: 'model',
                 type: 'options',
                 options: [
@@ -57,17 +57,17 @@ class JinaRerankRetriever_Retrievers implements INode {
                 optional: true
             },
             {
-                label: 'Query',
+                label: 'Запрос',
                 name: 'query',
                 type: 'string',
-                description: 'Query to retrieve documents from retriever. If not specified, user question will be used',
+                description: 'Запрос для извлечения документов из ретривера. Если не указан, будет использован вопрос пользователя',
                 optional: true,
                 acceptVariable: true
             },
             {
                 label: 'Top N',
                 name: 'topN',
-                description: 'Number of top results to fetch. Default to 4',
+                description: 'Количество лучших результатов для получения. По умолчанию 4',
                 placeholder: '4',
                 default: 4,
                 type: 'number',
@@ -77,20 +77,20 @@ class JinaRerankRetriever_Retrievers implements INode {
         ]
         this.outputs = [
             {
-                label: 'Jina AI Rerank Retriever',
+                label: 'Jina AI Ранжирующий ретривер',
                 name: 'retriever',
                 baseClasses: this.baseClasses
             },
             {
-                label: 'Document',
+                label: 'Документ',
                 name: 'document',
-                description: 'Array of document objects containing metadata and pageContent',
+                description: 'Массив объектов документов, содержащих метаданные и pageContent',
                 baseClasses: ['Document', 'json']
             },
             {
-                label: 'Text',
+                label: 'Текст',
                 name: 'text',
-                description: 'Concatenated string from pageContent of documents',
+                description: 'Объединенная строка из pageContent документов',
                 baseClasses: ['string', 'json']
             }
         ]

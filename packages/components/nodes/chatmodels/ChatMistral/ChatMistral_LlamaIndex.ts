@@ -34,14 +34,14 @@ class ChatMistral_LlamaIndex_ChatModels implements INode {
         }
         this.inputs = [
             {
-                label: 'Model Name',
+                label: 'Название модели',
                 name: 'modelName',
                 type: 'asyncOptions',
                 loadMethod: 'listModels',
                 default: 'mistral-tiny'
             },
             {
-                label: 'Temperature',
+                label: 'Температура',
                 name: 'temperature',
                 type: 'number',
                 step: 0.1,
@@ -49,7 +49,7 @@ class ChatMistral_LlamaIndex_ChatModels implements INode {
                 optional: true
             },
             {
-                label: 'Max Tokens',
+                label: 'Максимум токенов',
                 name: 'maxTokensToSample',
                 type: 'number',
                 step: 1,

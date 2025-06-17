@@ -18,37 +18,37 @@ class HydeRetriever_Retrievers implements INode {
     outputs: INodeOutputsValue[]
 
     constructor() {
-        this.label = 'HyDE Retriever'
+        this.label = 'HyDE Ретривер'
         this.name = 'HydeRetriever'
         this.version = 3.0
         this.type = 'HydeRetriever'
         this.icon = 'hyderetriever.svg'
         this.category = 'Retrievers'
-        this.description = 'Use HyDE retriever to retrieve from a vector store'
+        this.description = 'Использовать HyDE ретривер для извлечения из векторного хранилища'
         this.baseClasses = [this.type, 'BaseRetriever']
         this.inputs = [
             {
-                label: 'Language Model',
+                label: 'Языковая модель',
                 name: 'model',
                 type: 'BaseLanguageModel'
             },
             {
-                label: 'Vector Store',
+                label: 'Векторное хранилище',
                 name: 'vectorStore',
                 type: 'VectorStore'
             },
             {
-                label: 'Query',
+                label: 'Запрос',
                 name: 'query',
                 type: 'string',
-                description: 'Query to retrieve documents from retriever. If not specified, user question will be used',
+                description: 'Запрос для извлечения документов из ретривера. Если не указан, будет использован вопрос пользователя',
                 optional: true,
                 acceptVariable: true
             },
             {
-                label: 'Select Defined Prompt',
+                label: 'Выберите определенный промпт',
                 name: 'promptKey',
-                description: 'Select a pre-defined prompt',
+                description: 'Выберите предопределенный промпт',
                 type: 'options',
                 options: [
                     {
@@ -111,9 +111,9 @@ Passage:`
                 default: 'websearch'
             },
             {
-                label: 'Custom Prompt',
+                label: 'Пользовательский промпт',
                 name: 'customPrompt',
-                description: 'If custom prompt is used, this will override Defined Prompt',
+                description: 'Если используется пользовательский промпт, это переопределит определенный промпт',
                 placeholder: 'Please write a passage to answer the question\nQuestion: {question}\nPassage:',
                 type: 'string',
                 rows: 4,
@@ -123,7 +123,7 @@ Passage:`
             {
                 label: 'Top K',
                 name: 'topK',
-                description: 'Number of top results to fetch. Default to 4',
+                description: 'Количество лучших результатов для получения. По умолчанию 4',
                 placeholder: '4',
                 type: 'number',
                 default: 4,
@@ -133,20 +133,20 @@ Passage:`
         ]
         this.outputs = [
             {
-                label: 'HyDE Retriever',
+                label: 'HyDE Ретривер',
                 name: 'retriever',
                 baseClasses: this.baseClasses
             },
             {
-                label: 'Document',
+                label: 'Документ',
                 name: 'document',
-                description: 'Array of document objects containing metadata and pageContent',
+                description: 'Массив объектов документов, содержащих метаданные и pageContent',
                 baseClasses: ['Document', 'json']
             },
             {
-                label: 'Text',
+                label: 'Текст',
                 name: 'text',
-                description: 'Concatenated string from pageContent of documents',
+                description: 'Объединенная строка из pageContent документов',
                 baseClasses: ['string', 'json']
             }
         ]

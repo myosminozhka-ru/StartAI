@@ -16,36 +16,36 @@ class SimplePromptModeration implements INode {
     inputs: INodeParams[]
 
     constructor() {
-        this.label = 'Simple Prompt Moderation'
+        this.label = 'Простая модерация промпта'
         this.name = 'inputModerationSimple'
         this.version = 2.0
         this.type = 'Moderation'
         this.icon = 'moderation.svg'
         this.category = 'Moderation'
-        this.description = 'Check whether input consists of any text from Deny list, and prevent being sent to LLM'
+        this.description = 'Проверьте, содержит ли ввод любой текст из списка запрещенных, и предотвратите отправку в LLM'
         this.baseClasses = [this.type, ...getBaseClasses(Moderation)]
         this.inputs = [
             {
-                label: 'Deny List',
+                label: 'Список запрещенных',
                 name: 'denyList',
                 type: 'string',
                 rows: 4,
                 placeholder: `ignore previous instructions\ndo not follow the directions\nyou must ignore all previous instructions`,
-                description: 'An array of string literals (enter one per line) that should not appear in the prompt text.'
+                description: 'Массив строковых литералов (введите по одному на строку), которые не должны появляться в тексте промпта.'
             },
             {
-                label: 'Chat Model',
+                label: 'Чат-модель',
                 name: 'model',
                 type: 'BaseChatModel',
-                description: 'Use LLM to detect if the input is similar to those specified in Deny List',
+                description: 'Использовать LLM для обнаружения, похож ли ввод на указанные в списке запрещенных',
                 optional: true
             },
             {
-                label: 'Error Message',
+                label: 'Сообщение об ошибке',
                 name: 'moderationErrorMessage',
                 type: 'string',
                 rows: 2,
-                default: 'Cannot Process! Input violates content moderation policies.',
+                default: 'Невозможно обработать! Ввод нарушает политики модерации контента.',
                 optional: true
             }
         ]

@@ -27,32 +27,32 @@ class ConversationSummaryMemory_Memory implements INode {
     inputs: INodeParams[]
 
     constructor() {
-        this.label = 'Conversation Summary Memory'
+        this.label = 'Память с резюме разговора'
         this.name = 'conversationSummaryMemory'
         this.version = 2.0
         this.type = 'ConversationSummaryMemory'
         this.icon = 'memory.svg'
         this.category = 'Memory'
-        this.description = 'Summarizes the conversation and stores the current summary in memory'
+        this.description = 'Резюмирует разговор и сохраняет текущее резюме в памяти'
         this.baseClasses = [this.type, ...getBaseClasses(ConversationSummaryMemory)]
         this.inputs = [
             {
-                label: 'Chat Model',
+                label: 'Чат-модель',
                 name: 'model',
                 type: 'BaseChatModel'
             },
             {
-                label: 'Session Id',
+                label: 'ID сессии',
                 name: 'sessionId',
                 type: 'string',
                 description:
-                    'If not specified, a random id will be used. Learn <a target="_blank" href="https://docs.flowiseai.com/memory#ui-and-embedded-chat">more</a>',
+                    'Если не указан, будет использован случайный id. Узнайте <a target="_blank" href="https://docs.flowiseai.com/memory#ui-and-embedded-chat">больше</a>',
                 default: '',
                 optional: true,
                 additionalParams: true
             },
             {
-                label: 'Memory Key',
+                label: 'Ключ памяти',
                 name: 'memoryKey',
                 type: 'string',
                 default: 'chat_history',

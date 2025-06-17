@@ -19,13 +19,13 @@ class SQLiteAgentMemory_Memory implements INode {
     credential: INodeParams
 
     constructor() {
-        this.label = 'SQLite Agent Memory'
+        this.label = 'SQLite Память агента'
         this.name = 'sqliteAgentMemory'
         this.version = 1.0
         this.type = 'SQLiteAgentMemory'
         this.icon = 'sqlite.png'
         this.category = 'Memory'
-        this.description = 'Memory for agentflow to remember the state of the conversation using SQLite database'
+        this.description = 'Память для agentflow для запоминания состояния разговора с использованием базы данных SQLite'
         this.baseClasses = [this.type, ...getBaseClasses(SqliteSaver)]
         this.inputs = [
             /*{
@@ -37,7 +37,7 @@ class SQLiteAgentMemory_Memory implements INode {
                 optional: true
             },*/
             {
-                label: 'Additional Connection Configuration',
+                label: 'Дополнительная конфигурация подключения',
                 name: 'additionalConfig',
                 type: 'json',
                 additionalParams: true,

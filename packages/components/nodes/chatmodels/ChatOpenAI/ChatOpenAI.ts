@@ -25,7 +25,7 @@ class ChatOpenAI_ChatModels implements INode {
         this.type = 'ChatOpenAI'
         this.icon = 'openai.svg'
         this.category = 'Chat Models'
-        this.description = 'Wrapper around OpenAI large language models that use the Chat endpoint'
+        this.description = 'Обертка вокруг больших языковых моделей OpenAI, использующих Chat endpoint'
         this.baseClasses = [this.type, ...getBaseClasses(LangchainChatOpenAI)]
         this.credential = {
             label: 'Подключите учетные данные',
@@ -35,20 +35,20 @@ class ChatOpenAI_ChatModels implements INode {
         }
         this.inputs = [
             {
-                label: 'Cache',
+                label: 'Кэш',
                 name: 'cache',
                 type: 'BaseCache',
                 optional: true
             },
             {
-                label: 'Model Name',
+                label: 'Название модели',
                 name: 'modelName',
                 type: 'asyncOptions',
                 loadMethod: 'listModels',
                 default: 'gpt-4o-mini'
             },
             {
-                label: 'Temperature',
+                label: 'Температура',
                 name: 'temperature',
                 type: 'number',
                 step: 0.1,
@@ -56,7 +56,7 @@ class ChatOpenAI_ChatModels implements INode {
                 optional: true
             },
             {
-                label: 'Streaming',
+                label: 'Потоковая передача',
                 name: 'streaming',
                 type: 'boolean',
                 default: true,
@@ -64,7 +64,7 @@ class ChatOpenAI_ChatModels implements INode {
                 additionalParams: true
             },
             {
-                label: 'Max Tokens',
+                label: 'Максимум токенов',
                 name: 'maxTokens',
                 type: 'number',
                 step: 1,
@@ -72,7 +72,7 @@ class ChatOpenAI_ChatModels implements INode {
                 additionalParams: true
             },
             {
-                label: 'Top Probability',
+                label: 'Вероятность Top P',
                 name: 'topP',
                 type: 'number',
                 step: 0.1,
@@ -80,7 +80,7 @@ class ChatOpenAI_ChatModels implements INode {
                 additionalParams: true
             },
             {
-                label: 'Frequency Penalty',
+                label: 'Штраф за частоту',
                 name: 'frequencyPenalty',
                 type: 'number',
                 step: 0.1,
@@ -88,7 +88,7 @@ class ChatOpenAI_ChatModels implements INode {
                 additionalParams: true
             },
             {
-                label: 'Presence Penalty',
+                label: 'Штраф за присутствие',
                 name: 'presencePenalty',
                 type: 'number',
                 step: 0.1,
@@ -96,7 +96,7 @@ class ChatOpenAI_ChatModels implements INode {
                 additionalParams: true
             },
             {
-                label: 'Timeout',
+                label: 'Таймаут',
                 name: 'timeout',
                 type: 'number',
                 step: 1,
@@ -104,69 +104,69 @@ class ChatOpenAI_ChatModels implements INode {
                 additionalParams: true
             },
             {
-                label: 'Strict Tool Calling',
+                label: 'Строгий вызов инструментов',
                 name: 'strictToolCalling',
                 type: 'boolean',
                 description:
-                    'Whether the model supports the `strict` argument when passing in tools. If not specified, the `strict` argument will not be passed to OpenAI.',
+                    'Поддерживает ли модель аргумент `strict` при передаче инструментов. Если не указано, аргумент `strict` не будет передан в OpenAI.',
                 optional: true,
                 additionalParams: true
             },
             {
-                label: 'Stop Sequence',
+                label: 'Стоп-последовательность',
                 name: 'stopSequence',
                 type: 'string',
                 rows: 4,
                 optional: true,
-                description: 'List of stop words to use when generating. Use comma to separate multiple stop words.',
+                description: 'Список стоп-слов для использования при генерации. Используйте запятую для разделения нескольких стоп-слов.',
                 additionalParams: true
             },
             {
-                label: 'BasePath',
+                label: 'Базовый путь',
                 name: 'basepath',
                 type: 'string',
                 optional: true,
                 additionalParams: true
             },
             {
-                label: 'Proxy Url',
+                label: 'URL прокси',
                 name: 'proxyUrl',
                 type: 'string',
                 optional: true,
                 additionalParams: true
             },
             {
-                label: 'BaseOptions',
+                label: 'Базовые опции',
                 name: 'baseOptions',
                 type: 'json',
                 optional: true,
                 additionalParams: true
             },
             {
-                label: 'Allow Image Uploads',
+                label: 'Разрешить загрузку изображений',
                 name: 'allowImageUploads',
                 type: 'boolean',
                 description:
-                    'Allow image input. Refer to the <a href="https://docs.flowiseai.com/using-flowise/uploads#image" target="_blank">docs</a> for more details.',
+                    'Разрешить ввод изображений. См. <a href="https://docs.flowiseai.com/using-flowise/uploads#image" target="_blank">документацию</a> для подробностей.',
                 default: false,
                 optional: true
             },
             {
-                label: 'Image Resolution',
-                description: 'This parameter controls the resolution in which the model views the image.',
+                label: 'Разрешение изображения',
+                description: 'Этот параметр контролирует разрешение, в котором модель просматривает изображение.',
                 name: 'imageResolution',
                 type: 'options',
                 options: [
                     {
-                        label: 'Low',
+                        label: 'Низкое',
                         name: 'low'
                     },
                     {
-                        label: 'High',
+                        label: 'Высокое',
                         name: 'high'
                     },
                     {
-                        label: 'Auto',
+                        label: 'Авто',
                         name: 'auto'
                     }
                 ],
@@ -177,21 +177,21 @@ class ChatOpenAI_ChatModels implements INode {
                 }
             },
             {
-                label: 'Reasoning Effort',
-                description: 'Constrains effort on reasoning for reasoning models. Only applicable for o1 and o3 models.',
+                label: 'Усилие рассуждения',
+                description: 'Ограничивает усилия на рассуждения для моделей рассуждений. Применимо только для моделей o1 и o3.',
                 name: 'reasoningEffort',
                 type: 'options',
                 options: [
                     {
-                        label: 'Low',
+                        label: 'Низкое',
                         name: 'low'
                     },
                     {
-                        label: 'Medium',
+                        label: 'Среднее',
                         name: 'medium'
                     },
                     {
-                        label: 'High',
+                        label: 'Высокое',
                         name: 'high'
                     }
                 ],

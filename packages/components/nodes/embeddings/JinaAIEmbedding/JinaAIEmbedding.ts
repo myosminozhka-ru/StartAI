@@ -31,7 +31,7 @@ class JinaAIEmbedding_Embeddings implements INode {
         this.type = 'JinaEmbeddings'
         this.icon = 'JinaAIEmbedding.svg'
         this.category = 'Embeddings'
-        this.description = 'JinaAI API to generate embeddings for a given text'
+        this.description = 'JinaAI API для генерации эмбеддингов для заданного текста'
         this.baseClasses = [this.type, ...getBaseClasses(JinaEmbeddings)]
         this.credential = {
             label: 'Подключите учетные данные',
@@ -41,26 +41,25 @@ class JinaAIEmbedding_Embeddings implements INode {
         }
         this.inputs = [
             {
-                label: 'Model Name',
+                label: 'Название модели',
                 name: 'modelName',
                 type: 'string',
                 default: 'jina-embeddings-v3',
-                description: 'Refer to <a href="https://jina.ai/embeddings/" target="_blank">JinaAI documentation</a> for available models'
+                description: 'См. <a href="https://jina.ai/embeddings/" target="_blank">документацию JinaAI</a> для доступных моделей'
             },
             {
-                label: 'Dimensions',
+                label: 'Размерности',
                 name: 'modelDimensions',
                 type: 'number',
                 default: 1024,
-                description:
-                    'Refer to <a href="https://jina.ai/embeddings/" target="_blank">JinaAI documentation</a> for available dimensions'
+                description: 'См. <a href="https://jina.ai/embeddings/" target="_blank">документацию JinaAI</a> для доступных размерностей'
             },
             {
-                label: 'Allow Late Chunking',
+                label: 'Разрешить позднее разбиение',
                 name: 'allowLateChunking',
                 type: 'boolean',
                 description:
-                    'Refer to <a href="https://jina.ai/embeddings/" target="_blank">JinaAI documentation</a> guidance on late chunking',
+                    'См. <a href="https://jina.ai/embeddings/" target="_blank">документацию JinaAI</a> руководство по позднему разбиению',
                 default: false,
                 optional: true
             }

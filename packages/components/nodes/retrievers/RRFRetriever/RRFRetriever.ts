@@ -20,37 +20,37 @@ class RRFRetriever_Retrievers implements INode {
     outputs: INodeOutputsValue[]
 
     constructor() {
-        this.label = 'Reciprocal Rank Fusion Retriever'
+        this.label = 'Ретривер с взаимным ранжированием'
         this.name = 'RRFRetriever'
         this.version = 1.0
         this.type = 'RRFRetriever'
         this.icon = 'rrfRetriever.svg'
         this.category = 'Retrievers'
-        this.description = 'Reciprocal Rank Fusion to re-rank search results by multiple query generation.'
+        this.description = 'Взаимное ранжирование для переранжирования результатов поиска путем генерации множественных запросов.'
         this.baseClasses = [this.type, 'BaseRetriever']
         this.inputs = [
             {
-                label: 'Vector Store Retriever',
+                label: 'Ретривер векторного хранилища',
                 name: 'baseRetriever',
                 type: 'VectorStoreRetriever'
             },
             {
-                label: 'Language Model',
+                label: 'Языковая модель',
                 name: 'model',
                 type: 'BaseLanguageModel'
             },
             {
-                label: 'Query',
+                label: 'Запрос',
                 name: 'query',
                 type: 'string',
-                description: 'Query to retrieve documents from retriever. If not specified, user question will be used',
+                description: 'Запрос для извлечения документов из ретривера. Если не указан, будет использован вопрос пользователя',
                 optional: true,
                 acceptVariable: true
             },
             {
-                label: 'Query Count',
+                label: 'Количество запросов',
                 name: 'queryCount',
-                description: 'Number of synthetic queries to generate. Default to 4',
+                description: 'Количество синтетических запросов для генерации. По умолчанию 4',
                 placeholder: '4',
                 type: 'number',
                 default: 4,
@@ -60,18 +60,18 @@ class RRFRetriever_Retrievers implements INode {
             {
                 label: 'Top K',
                 name: 'topK',
-                description: 'Number of top results to fetch. Default to the TopK of the Base Retriever',
+                description: 'Количество лучших результатов для получения. По умолчанию равно TopK базового ретривера',
                 placeholder: '0',
                 type: 'number',
                 additionalParams: true,
                 optional: true
             },
             {
-                label: 'Constant',
+                label: 'Константа',
                 name: 'c',
                 description:
-                    'A constant added to the rank, controlling the balance between the importance of high-ranked items and the consideration given to lower-ranked items.\n' +
-                    'Default is 60',
+                    'Константа, добавляемая к рангу, контролирующая баланс между важностью высокоранжированных элементов и рассмотрением низкоранжированных элементов.\n' +
+                    'По умолчанию 60',
                 placeholder: '60',
                 type: 'number',
                 default: 60,
@@ -81,20 +81,20 @@ class RRFRetriever_Retrievers implements INode {
         ]
         this.outputs = [
             {
-                label: 'Reciprocal Rank Fusion Retriever',
+                label: 'Ретривер с взаимным ранжированием',
                 name: 'retriever',
                 baseClasses: this.baseClasses
             },
             {
-                label: 'Document',
+                label: 'Документ',
                 name: 'document',
-                description: 'Array of document objects containing metadata and pageContent',
+                description: 'Массив объектов документов, содержащих метаданные и pageContent',
                 baseClasses: ['Document', 'json']
             },
             {
-                label: 'Text',
+                label: 'Текст',
                 name: 'text',
-                description: 'Concatenated string from pageContent of documents',
+                description: 'Объединенная строка из pageContent документов',
                 baseClasses: ['string', 'json']
             }
         ]

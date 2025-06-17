@@ -24,7 +24,7 @@ class ChatPerplexity_ChatModels implements INode {
         this.type = 'ChatPerplexity'
         this.icon = 'perplexity.svg'
         this.category = 'Chat Models'
-        this.description = 'Wrapper around Perplexity large language models that use the Chat endpoint'
+        this.description = 'Обертка вокруг больших языковых моделей Perplexity, использующих Chat endpoint'
         this.baseClasses = [this.type, ...getBaseClasses(LangchainChatPerplexity)]
         this.credential = {
             label: 'Подключите учетные данные',
@@ -34,20 +34,20 @@ class ChatPerplexity_ChatModels implements INode {
         }
         this.inputs = [
             {
-                label: 'Cache',
+                label: 'Кэш',
                 name: 'cache',
                 type: 'BaseCache',
                 optional: true
             },
             {
-                label: 'Model Name',
+                label: 'Название модели',
                 name: 'model',
                 type: 'asyncOptions',
                 loadMethod: 'listModels',
                 default: 'sonar'
             },
             {
-                label: 'Temperature',
+                label: 'Температура',
                 name: 'temperature',
                 type: 'number',
                 step: 0.1,
@@ -55,7 +55,7 @@ class ChatPerplexity_ChatModels implements INode {
                 optional: true
             },
             {
-                label: 'Max Tokens',
+                label: 'Максимум токенов',
                 name: 'maxTokens',
                 type: 'number',
                 step: 1,
@@ -79,7 +79,7 @@ class ChatPerplexity_ChatModels implements INode {
                 additionalParams: true
             },
             {
-                label: 'Presence Penalty',
+                label: 'Штраф за присутствие',
                 name: 'presencePenalty',
                 type: 'number',
                 step: 0.1,
@@ -87,7 +87,7 @@ class ChatPerplexity_ChatModels implements INode {
                 additionalParams: true
             },
             {
-                label: 'Frequency Penalty',
+                label: 'Штраф за частоту',
                 name: 'frequencyPenalty',
                 type: 'number',
                 step: 0.1,
@@ -95,7 +95,7 @@ class ChatPerplexity_ChatModels implements INode {
                 additionalParams: true
             },
             {
-                label: 'Streaming',
+                label: 'Потоковая передача',
                 name: 'streaming',
                 type: 'boolean',
                 default: true,
@@ -103,7 +103,7 @@ class ChatPerplexity_ChatModels implements INode {
                 additionalParams: true
             },
             {
-                label: 'Timeout',
+                label: 'Таймаут',
                 name: 'timeout',
                 type: 'number',
                 step: 1,
@@ -111,56 +111,56 @@ class ChatPerplexity_ChatModels implements INode {
                 additionalParams: true
             },
             // {
-            //     label: 'Search Domain Filter',
+            //     label: 'Фильтр домена поиска',
             //     name: 'searchDomainFilter',
             //     type: 'json',
             //     optional: true,
             //     additionalParams: true,
-            //     description: 'Limit citations to URLs from specified domains (e.g., ["example.com", "anotherexample.org"])'
+            //     description: 'Ограничить цитирования URL-адресами из указанных доменов (например, ["example.com", "anotherexample.org"])'
             // },
-            // Currently disabled as output is stored as additional_kwargs
+            // В настоящее время отключено, так как вывод сохраняется как additional_kwargs
             // {
-            //     label: 'Return Images',
+            //     label: 'Возвращать изображения',
             //     name: 'returnImages',
             //     type: 'boolean',
             //     optional: true,
             //     additionalParams: true,
-            //     description: 'Whether the model should return images (if supported by the model)'
+            //     description: 'Должна ли модель возвращать изображения (если поддерживается моделью)'
             // },
-            // Currently disabled as output is stored as additional_kwargs
+            // В настоящее время отключено, так как вывод сохраняется как additional_kwargs
             // {
-            //     label: 'Return Related Questions',
+            //     label: 'Возвращать связанные вопросы',
             //     name: 'returnRelatedQuestions',
             //     type: 'boolean',
             //     optional: true,
             //     additionalParams: true,
-            //     description: 'Whether the online model should return related questions'
+            //     description: 'Должна ли онлайн-модель возвращать связанные вопросы'
             // },
             // {
-            //     label: 'Search Recency Filter',
+            //     label: 'Фильтр актуальности поиска',
             //     name: 'searchRecencyFilter',
             //     type: 'options',
             //     options: [
-            //         { label: 'Not Set', name: '' },
-            //         { label: 'Month', name: 'month' },
-            //         { label: 'Week', name: 'week' },
-            //         { label: 'Day', name: 'day' },
-            //         { label: 'Hour', name: 'hour' }
+            //         { label: 'Не установлено', name: '' },
+            //         { label: 'Месяц', name: 'month' },
+            //         { label: 'Неделя', name: 'week' },
+            //         { label: 'День', name: 'day' },
+            //         { label: 'Час', name: 'hour' }
             //     ],
             //     default: '',
             //     optional: true,
             //     additionalParams: true,
-            //     description: 'Filter search results by time interval (does not apply to images)'
+            //     description: 'Фильтровать результаты поиска по временному интервалу (не применяется к изображениям)'
             // },
             {
-                label: 'Proxy Url',
+                label: 'URL прокси',
                 name: 'proxyUrl',
                 type: 'string',
                 optional: true,
                 additionalParams: true
             }
-            // LangchainJS currently does not has a web_search_options, search_after_date_filter or search_before_date_filter parameter.
-            // To add web_search_options (user_location, search_context_size) and search_after_date_filter, search_before_date_filter as a modelKwargs parameter.
+            // LangchainJS в настоящее время не имеет параметра web_search_options, search_after_date_filter или search_before_date_filter.
+            // Чтобы добавить web_search_options (user_location, search_context_size) и search_after_date_filter, search_before_date_filter как параметр modelKwargs.
         ]
     }
 

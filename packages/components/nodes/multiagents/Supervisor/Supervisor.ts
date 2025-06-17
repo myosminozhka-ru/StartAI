@@ -47,7 +47,7 @@ class Supervisor_MultiAgents implements INode {
     badge?: string
 
     constructor() {
-        this.label = 'Supervisor'
+        this.label = 'Супервайзер'
         this.name = 'supervisor'
         this.version = 3.0
         this.type = 'Supervisor'
@@ -56,53 +56,54 @@ class Supervisor_MultiAgents implements INode {
         this.baseClasses = [this.type]
         this.inputs = [
             {
-                label: 'Supervisor Name',
+                label: 'Имя супервайзера',
                 name: 'supervisorName',
                 type: 'string',
                 placeholder: 'Supervisor',
                 default: 'Supervisor'
             },
             {
-                label: 'Supervisor Prompt',
+                label: 'Промпт супервайзера',
                 name: 'supervisorPrompt',
                 type: 'string',
-                description: 'Prompt must contains {team_members}',
+                description: 'Промпт должен содержать {team_members}',
                 rows: 4,
                 default: sysPrompt,
                 additionalParams: true
             },
             {
-                label: 'Tool Calling Chat Model',
+                label: 'Чат-модель с вызовом инструментов',
                 name: 'model',
                 type: 'BaseChatModel',
-                description: `Only compatible with models that are capable of function calling: ChatOpenAI, ChatMistral, ChatAnthropic, ChatGoogleGenerativeAI, GroqChat. Best result with GPT-4 model`
+                description: `Совместимо только с моделями, способными к вызову функций: ChatOpenAI, ChatMistral, ChatAnthropic, ChatGoogleGenerativeAI, GroqChat. Лучший результат с моделью GPT-4`
             },
             {
-                label: 'Agent Memory',
+                label: 'Память агента',
                 name: 'agentMemory',
                 type: 'BaseCheckpointSaver',
-                description: 'Save the state of the agent',
+                description: 'Сохранить состояние агента',
                 optional: true
             },
             {
-                label: 'Summarization',
+                label: 'Резюмирование',
                 name: 'summarization',
                 type: 'boolean',
-                description: 'Return final output as a summarization of the conversation',
+                description: 'Возвращать финальный вывод как резюме разговора',
                 optional: true,
                 additionalParams: true
             },
             {
-                label: 'Recursion Limit',
+                label: 'Лимит рекурсии',
                 name: 'recursionLimit',
                 type: 'number',
-                description: 'Maximum number of times a call can recurse. If not provided, defaults to 100.',
+                description: 'Максимальное количество раз, которое может рекурсивно вызываться. Если не указано, по умолчанию 100.',
                 default: 100,
                 additionalParams: true
             },
             {
-                label: 'Input Moderation',
-                description: 'Detect text that could generate harmful output and prevent it from being sent to the language model',
+                label: 'Модерация ввода',
+                description:
+                    'Обнаруживать текст, который может генерировать вредоносный вывод, и предотвращать его отправку в языковую модель',
                 name: 'inputModeration',
                 type: 'Moderation',
                 optional: true,

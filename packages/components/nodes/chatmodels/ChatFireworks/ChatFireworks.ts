@@ -32,20 +32,20 @@ class ChatFireworks_ChatModels implements INode {
         }
         this.inputs = [
             {
-                label: 'Cache',
+                label: 'Кэш',
                 name: 'cache',
                 type: 'BaseCache',
                 optional: true
             },
             {
-                label: 'Model',
+                label: 'Модель',
                 name: 'modelName',
                 type: 'string',
                 default: 'accounts/fireworks/models/llama-v2-13b-chat',
                 placeholder: 'accounts/fireworks/models/llama-v2-13b-chat'
             },
             {
-                label: 'Temperature',
+                label: 'Температура',
                 name: 'temperature',
                 type: 'number',
                 step: 0.1,
@@ -53,7 +53,7 @@ class ChatFireworks_ChatModels implements INode {
                 optional: true
             },
             {
-                label: 'Streaming',
+                label: 'Потоковая передача',
                 name: 'streaming',
                 type: 'boolean',
                 default: true,

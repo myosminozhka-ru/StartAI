@@ -23,7 +23,7 @@ class OpenAIEmbedding_LlamaIndex_Embeddings implements INode {
         this.type = 'OpenAIEmbedding'
         this.icon = 'openai.svg'
         this.category = 'Embeddings'
-        this.description = 'OpenAI Embedding specific for LlamaIndex'
+        this.description = 'OpenAI Embedding специально для LlamaIndex'
         this.baseClasses = [this.type, 'BaseEmbedding_LlamaIndex', ...getBaseClasses(OpenAIEmbedding)]
         this.tags = ['LlamaIndex']
         this.credential = {
@@ -34,21 +34,21 @@ class OpenAIEmbedding_LlamaIndex_Embeddings implements INode {
         }
         this.inputs = [
             {
-                label: 'Model Name',
+                label: 'Название модели',
                 name: 'modelName',
                 type: 'asyncOptions',
                 loadMethod: 'listModels',
                 default: 'text-embedding-ada-002'
             },
             {
-                label: 'Timeout',
+                label: 'Таймаут',
                 name: 'timeout',
                 type: 'number',
                 optional: true,
                 additionalParams: true
             },
             {
-                label: 'BasePath',
+                label: 'Базовый путь',
                 name: 'basepath',
                 type: 'string',
                 optional: true,

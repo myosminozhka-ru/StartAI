@@ -34,25 +34,25 @@ class ChatLitellm_ChatModels implements INode {
         }
         this.inputs = [
             {
-                label: 'Cache',
+                label: 'Кэш',
                 name: 'cache',
                 type: 'BaseCache',
                 optional: true
             },
             {
-                label: 'Base URL',
+                label: 'Базовый URL',
                 name: 'basePath',
                 type: 'string',
                 placeholder: 'http://localhost:8000'
             },
             {
-                label: 'Model Name',
+                label: 'Название модели',
                 name: 'modelName',
                 type: 'string',
                 placeholder: 'model_name'
             },
             {
-                label: 'Temperature',
+                label: 'Температура',
                 name: 'temperature',
                 type: 'number',
                 step: 0.1,
@@ -60,7 +60,7 @@ class ChatLitellm_ChatModels implements INode {
                 optional: true
             },
             {
-                label: 'Streaming',
+                label: 'Потоковая передача',
                 name: 'streaming',
                 type: 'boolean',
                 default: true,
@@ -68,7 +68,7 @@ class ChatLitellm_ChatModels implements INode {
                 additionalParams: true
             },
             {
-                label: 'Max Tokens',
+                label: 'Максимум токенов',
                 name: 'maxTokens',
                 type: 'number',
                 step: 1,
@@ -84,7 +84,7 @@ class ChatLitellm_ChatModels implements INode {
                 additionalParams: true
             },
             {
-                label: 'Timeout',
+                label: 'Таймаут',
                 name: 'timeout',
                 type: 'number',
                 step: 1,

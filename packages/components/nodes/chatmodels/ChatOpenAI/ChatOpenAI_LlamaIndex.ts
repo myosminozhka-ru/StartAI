@@ -23,7 +23,7 @@ class ChatOpenAI_LlamaIndex_LLMs implements INode {
         this.type = 'ChatOpenAI'
         this.icon = 'openai.svg'
         this.category = 'Chat Models'
-        this.description = 'Wrapper around OpenAI Chat LLM specific for LlamaIndex'
+        this.description = 'Обертка вокруг OpenAI Chat LLM специально для LlamaIndex'
         this.baseClasses = [this.type, 'BaseChatModel_LlamaIndex', ...getBaseClasses(OpenAI)]
         this.tags = ['LlamaIndex']
         this.credential = {
@@ -34,14 +34,14 @@ class ChatOpenAI_LlamaIndex_LLMs implements INode {
         }
         this.inputs = [
             {
-                label: 'Model Name',
+                label: 'Название модели',
                 name: 'modelName',
                 type: 'asyncOptions',
                 loadMethod: 'listModels',
                 default: 'gpt-3.5-turbo'
             },
             {
-                label: 'Temperature',
+                label: 'Температура',
                 name: 'temperature',
                 type: 'number',
                 step: 0.1,
@@ -49,7 +49,7 @@ class ChatOpenAI_LlamaIndex_LLMs implements INode {
                 optional: true
             },
             {
-                label: 'Max Tokens',
+                label: 'Максимум токенов',
                 name: 'maxTokens',
                 type: 'number',
                 step: 1,
@@ -57,7 +57,7 @@ class ChatOpenAI_LlamaIndex_LLMs implements INode {
                 additionalParams: true
             },
             {
-                label: 'Top Probability',
+                label: 'Вероятность Top P',
                 name: 'topP',
                 type: 'number',
                 step: 0.1,
@@ -65,7 +65,7 @@ class ChatOpenAI_LlamaIndex_LLMs implements INode {
                 additionalParams: true
             },
             {
-                label: 'Timeout',
+                label: 'Таймаут',
                 name: 'timeout',
                 type: 'number',
                 step: 1,
@@ -73,7 +73,7 @@ class ChatOpenAI_LlamaIndex_LLMs implements INode {
                 additionalParams: true
             },
             {
-                label: 'BasePath',
+                label: 'Базовый путь',
                 name: 'basepath',
                 type: 'string',
                 optional: true,

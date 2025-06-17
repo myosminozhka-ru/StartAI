@@ -18,13 +18,13 @@ class MySQLAgentMemory_Memory implements INode {
     credential: INodeParams
 
     constructor() {
-        this.label = 'MySQL Agent Memory'
+        this.label = 'MySQL Память агента'
         this.name = 'mySQLAgentMemory'
         this.version = 1.0
         this.type = 'AgentMemory'
         this.icon = 'mysql.png'
         this.category = 'Memory'
-        this.description = 'Memory for agentflow to remember the state of the conversation using MySQL database'
+        this.description = 'Память для agentflow для запоминания состояния разговора с использованием базы данных MySQL'
         this.baseClasses = [this.type, ...getBaseClasses(MySQLSaver)]
         this.credential = {
             label: 'Подключите учетные данные',
@@ -35,23 +35,23 @@ class MySQLAgentMemory_Memory implements INode {
         }
         this.inputs = [
             {
-                label: 'Host',
+                label: 'Хост',
                 name: 'host',
                 type: 'string'
             },
             {
-                label: 'Database',
+                label: 'База данных',
                 name: 'database',
                 type: 'string'
             },
             {
-                label: 'Port',
+                label: 'Порт',
                 name: 'port',
                 type: 'number',
                 default: '3306'
             },
             {
-                label: 'Additional Connection Configuration',
+                label: 'Дополнительная конфигурация подключения',
                 name: 'additionalConfig',
                 type: 'json',
                 additionalParams: true,

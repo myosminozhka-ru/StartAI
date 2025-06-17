@@ -15,21 +15,21 @@ class CSVListOutputParser implements INode {
     credential: INodeParams
 
     constructor() {
-        this.label = 'CSV Output Parser'
+        this.label = 'CSV Парсер вывода'
         this.name = 'csvOutputParser'
         this.version = 1.0
         this.type = 'CSVListOutputParser'
-        this.description = 'Parse the output of an LLM call as a comma-separated list of values'
+        this.description = 'Парсить вывод вызова LLM как список значений, разделенных запятыми'
         this.icon = 'csv.svg'
         this.category = CATEGORY
         this.baseClasses = [this.type, ...getBaseClasses(BaseOutputParser)]
         this.inputs = [
             {
-                label: 'Autofix',
+                label: 'Автоисправление',
                 name: 'autofixParser',
                 type: 'boolean',
                 optional: true,
-                description: 'In the event that the first call fails, will make another call to the model to fix any errors.'
+                description: 'В случае неудачи первого вызова, сделает еще один вызов к модели для исправления любых ошибок.'
             }
         ]
     }

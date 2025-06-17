@@ -23,7 +23,7 @@ class ChatGroq_LlamaIndex_ChatModels implements INode {
         this.type = 'ChatGroq'
         this.icon = 'groq.png'
         this.category = 'Chat Models'
-        this.description = 'Wrapper around Groq LLM specific for LlamaIndex'
+        this.description = 'Обертка вокруг Groq LLM специально для LlamaIndex'
         this.baseClasses = [this.type, 'BaseChatModel_LlamaIndex', ...getBaseClasses(Groq)]
         this.tags = ['LlamaIndex']
         this.credential = {
@@ -35,14 +35,14 @@ class ChatGroq_LlamaIndex_ChatModels implements INode {
         }
         this.inputs = [
             {
-                label: 'Model Name',
+                label: 'Название модели',
                 name: 'modelName',
                 type: 'asyncOptions',
                 loadMethod: 'listModels',
                 placeholder: 'llama3-70b-8192'
             },
             {
-                label: 'Temperature',
+                label: 'Температура',
                 name: 'temperature',
                 type: 'number',
                 step: 0.1,
@@ -50,7 +50,7 @@ class ChatGroq_LlamaIndex_ChatModels implements INode {
                 optional: true
             },
             {
-                label: 'Max Tokens',
+                label: 'Максимум токенов',
                 name: 'maxTokens',
                 type: 'number',
                 step: 1,

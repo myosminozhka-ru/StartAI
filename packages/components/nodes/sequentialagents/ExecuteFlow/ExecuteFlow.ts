@@ -34,13 +34,13 @@ class ExecuteFlow_SeqAgents implements INode {
     credential: INodeParams
 
     constructor() {
-        this.label = 'Execute Flow'
+        this.label = 'Выполнить поток'
         this.name = 'seqExecuteFlow'
         this.version = 1.0
         this.type = 'ExecuteFlow'
         this.icon = 'executeflow.svg'
         this.category = 'Sequential Agents'
-        this.description = `Execute chatflow/agentflow and return final response`
+        this.description = `Выполнить поток чата/агента и вернуть финальный ответ`
         this.baseClasses = [this.type]
         this.credential = {
             label: 'Подключите учетные данные',
@@ -51,78 +51,79 @@ class ExecuteFlow_SeqAgents implements INode {
         }
         this.inputs = [
             {
-                label: 'Sequential Node',
+                label: 'Последовательный узел',
                 name: 'sequentialNode',
                 type: 'Start | Agent | Condition | LLMNode | ToolNode | CustomFunction | ExecuteFlow',
                 description:
-                    'Can be connected to one of the following nodes: Start, Agent, Condition, LLM Node, Tool Node, Custom Function, Execute Flow',
+                    'Может быть подключен к одному из следующих узлов: Start, Agent, Condition, LLM Node, Tool Node, Custom Function, Execute Flow',
                 list: true
             },
             {
-                label: 'Name',
+                label: 'Название',
                 name: 'seqExecuteFlowName',
                 type: 'string'
             },
             {
-                label: 'Select Flow',
+                label: 'Выбрать поток',
                 name: 'selectedFlow',
                 type: 'asyncOptions',
                 loadMethod: 'listFlows'
             },
             {
-                label: 'Input',
+                label: 'Входные данные',
                 name: 'seqExecuteFlowInput',
                 type: 'options',
-                description: 'Select one of the following or enter custom input',
+                description: 'Выберите один из следующих вариантов или введите пользовательские входные данные',
                 freeSolo: true,
                 loadPreviousNodes: true,
                 options: [
                     {
                         label: '{{ question }}',
                         name: 'userQuestion',
-                        description: 'Use the user question from the chat as input.'
+                        description: 'Использовать вопрос пользователя из чата как входные данные.'
                     }
                 ]
             },
             {
-                label: 'Override Config',
+                label: 'Переопределить конфигурацию',
                 name: 'overrideConfig',
-                description: 'Override the config passed to the flow.',
+                description: 'Переопределить конфигурацию, передаваемую в поток.',
                 type: 'json',
                 optional: true,
                 additionalParams: true
             },
             {
-                label: 'Base URL',
+                label: 'Базовый URL',
                 name: 'baseURL',
                 type: 'string',
                 description:
-                    'Base URL to Flowise. By default, it is the URL of the incoming request. Useful when you need to execute flow through an alternative route.',
+                    'Базовый URL для Flowise. По умолчанию это URL входящего запроса. Полезно, когда вам нужно выполнить поток через альтернативный маршрут.',
                 placeholder: 'http://localhost:3000',
                 optional: true,
                 additionalParams: true
             },
             {
-                label: 'Start new session per message',
+                label: 'Начать новую сессию для каждого сообщения',
                 name: 'startNewSession',
                 type: 'boolean',
                 description:
-                    'Whether to continue the session or start a new one with each interaction. Useful for flows with memory if you want to avoid it.',
+                    'Продолжить сессию или начать новую с каждым взаимодействием. Полезно для потоков с памятью, если вы хотите избежать этого.',
                 default: false,
                 optional: true,
                 additionalParams: true
             },
             {
-                label: 'Return Value As',
+                label: 'Возвращать значение как',
                 name: 'returnValueAs',
                 type: 'options',
                 options: [
-                    { label: 'AI Message', name: 'aiMessage' },
-                    { label: 'Human Message', name: 'humanMessage' },
+                    { label: 'AI сообщение', name: 'aiMessage' },
+                    { label: 'Сообщение пользователя', name: 'humanMessage' },
                     {
-                        label: 'State Object',
+                        label: 'Объект состояния',
                         name: 'stateObj',
-                        description: "Return as state object, ex: { foo: bar }. This will update the custom state 'foo' to 'bar'"
+                        description:
+                            "Вернуть как объект состояния, например: { foo: bar }. Это обновит пользовательское состояние 'foo' на 'bar'"
                     }
                 ],
                 default: 'aiMessage'

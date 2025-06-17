@@ -21,7 +21,7 @@ class LocalAIEmbedding_Embeddings implements INode {
         this.type = 'LocalAI Embeddings'
         this.icon = 'localai.png'
         this.category = 'Embeddings'
-        this.description = 'Use local embeddings models like llama.cpp'
+        this.description = 'Использование локальных моделей эмбеддингов, таких как llama.cpp'
         this.baseClasses = [this.type, 'Embeddings']
         this.credential = {
             label: 'Подключите учетные данные',
@@ -32,13 +32,13 @@ class LocalAIEmbedding_Embeddings implements INode {
         }
         this.inputs = [
             {
-                label: 'Base Path',
+                label: 'Базовый путь',
                 name: 'basePath',
                 type: 'string',
                 placeholder: 'http://localhost:8080/v1'
             },
             {
-                label: 'Model Name',
+                label: 'Название модели',
                 name: 'modelName',
                 type: 'string',
                 placeholder: 'text-embedding-ada-002'

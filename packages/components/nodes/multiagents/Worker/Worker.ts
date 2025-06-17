@@ -26,7 +26,7 @@ class Worker_MultiAgents implements INode {
     badge?: string
 
     constructor() {
-        this.label = 'Worker'
+        this.label = 'Работник'
         this.name = 'worker'
         this.version = 2.0
         this.type = 'Worker'
@@ -36,39 +36,39 @@ class Worker_MultiAgents implements INode {
         this.hideOutput = true
         this.inputs = [
             {
-                label: 'Worker Name',
+                label: 'Имя работника',
                 name: 'workerName',
                 type: 'string',
                 placeholder: 'Worker'
             },
             {
-                label: 'Worker Prompt',
+                label: 'Промпт работника',
                 name: 'workerPrompt',
                 type: 'string',
                 rows: 4,
                 default: examplePrompt
             },
             {
-                label: 'Tools',
+                label: 'Инструменты',
                 name: 'tools',
                 type: 'Tool',
                 list: true,
                 optional: true
             },
             {
-                label: 'Supervisor',
+                label: 'Супервайзер',
                 name: 'supervisor',
                 type: 'Supervisor'
             },
             {
-                label: 'Tool Calling Chat Model',
+                label: 'Чат-модель с вызовом инструментов',
                 name: 'model',
                 type: 'BaseChatModel',
                 optional: true,
-                description: `Only compatible with models that are capable of function calling: ChatOpenAI, ChatMistral, ChatAnthropic, ChatGoogleGenerativeAI, ChatVertexAI, GroqChat. If not specified, supervisor's model will be used`
+                description: `Совместимо только с моделями, способными к вызову функций: ChatOpenAI, ChatMistral, ChatAnthropic, ChatGoogleGenerativeAI, ChatVertexAI, GroqChat. Если не указано, будет использована модель супервайзера`
             },
             {
-                label: 'Format Prompt Values',
+                label: 'Форматировать значения промпта',
                 name: 'promptValues',
                 type: 'json',
                 optional: true,
@@ -76,7 +76,7 @@ class Worker_MultiAgents implements INode {
                 list: true
             },
             {
-                label: 'Max Iterations',
+                label: 'Максимальные итерации',
                 name: 'maxIterations',
                 type: 'number',
                 optional: true

@@ -18,48 +18,48 @@ class StructuredOutputParser implements INode {
     credential: INodeParams
 
     constructor() {
-        this.label = 'Structured Output Parser'
+        this.label = 'Структурированный парсер вывода'
         this.name = 'structuredOutputParser'
         this.version = 1.0
         this.type = 'StructuredOutputParser'
-        this.description = 'Parse the output of an LLM call into a given (JSON) structure.'
+        this.description = 'Парсить вывод вызова LLM в заданную (JSON) структуру.'
         this.icon = 'structure.svg'
         this.category = CATEGORY
         this.baseClasses = [this.type, ...getBaseClasses(BaseOutputParser)]
         this.inputs = [
             {
-                label: 'Autofix',
+                label: 'Автоисправление',
                 name: 'autofixParser',
                 type: 'boolean',
                 optional: true,
-                description: 'In the event that the first call fails, will make another call to the model to fix any errors.'
+                description: 'В случае неудачи первого вызова, сделает еще один вызов к модели для исправления любых ошибок.'
             },
             {
-                label: 'JSON Structure',
+                label: 'JSON структура',
                 name: 'jsonStructure',
                 type: 'datagrid',
-                description: 'JSON structure for LLM to return',
+                description: 'JSON структура для возврата LLM',
                 datagrid: [
-                    { field: 'property', headerName: 'Property', editable: true },
+                    { field: 'property', headerName: 'Свойство', editable: true },
                     {
                         field: 'type',
-                        headerName: 'Type',
+                        headerName: 'Тип',
                         type: 'singleSelect',
                         valueOptions: ['string', 'number', 'boolean'],
                         editable: true
                     },
-                    { field: 'description', headerName: 'Description', editable: true, flex: 1 }
+                    { field: 'description', headerName: 'Описание', editable: true, flex: 1 }
                 ],
                 default: [
                     {
                         property: 'answer',
                         type: 'string',
-                        description: `answer to the user's question`
+                        description: `ответ на вопрос пользователя`
                     },
                     {
                         property: 'source',
                         type: 'string',
-                        description: `sources used to answer the question, should be websites`
+                        description: `источники, использованные для ответа на вопрос, должны быть веб-сайтами`
                     }
                 ],
                 additionalParams: true

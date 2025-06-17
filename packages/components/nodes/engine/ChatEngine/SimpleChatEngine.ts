@@ -26,33 +26,33 @@ class SimpleChatEngine_LlamaIndex implements INode {
     sessionId?: string
 
     constructor(fields?: { sessionId?: string }) {
-        this.label = 'Simple Chat Engine'
+        this.label = 'Простой движок чата'
         this.name = 'simpleChatEngine'
         this.version = 1.0
         this.type = 'SimpleChatEngine'
         this.icon = 'chat-engine.png'
         this.category = 'Engine'
-        this.description = 'Simple engine to handle back and forth conversations'
+        this.description = 'Простой движок для обработки диалогов'
         this.baseClasses = [this.type]
         this.tags = ['LlamaIndex']
         this.inputs = [
             {
-                label: 'Chat Model',
+                label: 'Чат-модель',
                 name: 'model',
                 type: 'BaseChatModel_LlamaIndex'
             },
             {
-                label: 'Memory',
+                label: 'Память',
                 name: 'memory',
                 type: 'BaseChatMemory'
             },
             {
-                label: 'System Message',
+                label: 'Системное сообщение',
                 name: 'systemMessagePrompt',
                 type: 'string',
                 rows: 4,
                 optional: true,
-                placeholder: 'You are a helpful assistant'
+                placeholder: 'Ты полезный ассистент'
             }
         ]
         this.sessionId = fields?.sessionId

@@ -20,13 +20,13 @@ class CohereRerankRetriever_Retrievers implements INode {
     outputs: INodeOutputsValue[]
 
     constructor() {
-        this.label = 'Cohere Rerank Retriever'
+        this.label = 'Cohere Ранжирующий ретривер'
         this.name = 'cohereRerankRetriever'
         this.version = 1.0
         this.type = 'Cohere Rerank Retriever'
         this.icon = 'Cohere.svg'
         this.category = 'Retrievers'
-        this.description = 'Cohere Rerank indexes the documents from most to least semantically relevant to the query.'
+        this.description = 'Cohere Rerank индексирует документы от наиболее до наименее семантически релевантных запросу.'
         this.baseClasses = [this.type, 'BaseRetriever']
         this.credential = {
             label: 'Подключите учетные данные',
@@ -36,12 +36,12 @@ class CohereRerankRetriever_Retrievers implements INode {
         }
         this.inputs = [
             {
-                label: 'Vector Store Retriever',
+                label: 'Ретривер векторного хранилища',
                 name: 'baseRetriever',
                 type: 'VectorStoreRetriever'
             },
             {
-                label: 'Model Name',
+                label: 'Название модели',
                 name: 'model',
                 type: 'options',
                 options: [
@@ -62,26 +62,26 @@ class CohereRerankRetriever_Retrievers implements INode {
                 optional: true
             },
             {
-                label: 'Query',
+                label: 'Запрос',
                 name: 'query',
                 type: 'string',
-                description: 'Query to retrieve documents from retriever. If not specified, user question will be used',
+                description: 'Запрос для извлечения документов из ретривера. Если не указан, будет использован вопрос пользователя',
                 optional: true,
                 acceptVariable: true
             },
             {
                 label: 'Top K',
                 name: 'topK',
-                description: 'Number of top results to fetch. Default to the TopK of the Base Retriever',
+                description: 'Количество лучших результатов для получения. По умолчанию равно TopK базового ретривера',
                 placeholder: '4',
                 type: 'number',
                 additionalParams: true,
                 optional: true
             },
             {
-                label: 'Max Chunks Per Doc',
+                label: 'Максимум фрагментов на документ',
                 name: 'maxChunksPerDoc',
-                description: 'The maximum number of chunks to produce internally from a document. Default to 10',
+                description: 'Максимальное количество фрагментов, производимых внутренне из документа. По умолчанию 10',
                 placeholder: '10',
                 type: 'number',
                 additionalParams: true,
@@ -90,20 +90,20 @@ class CohereRerankRetriever_Retrievers implements INode {
         ]
         this.outputs = [
             {
-                label: 'Cohere Rerank Retriever',
+                label: 'Cohere Ранжирующий ретривер',
                 name: 'retriever',
                 baseClasses: this.baseClasses
             },
             {
-                label: 'Document',
+                label: 'Документ',
                 name: 'document',
-                description: 'Array of document objects containing metadata and pageContent',
+                description: 'Массив объектов документов, содержащих метаданные и pageContent',
                 baseClasses: ['Document', 'json']
             },
             {
-                label: 'Text',
+                label: 'Текст',
                 name: 'text',
-                description: 'Concatenated string from pageContent of documents',
+                description: 'Объединенная строка из pageContent документов',
                 baseClasses: ['string', 'json']
             }
         ]

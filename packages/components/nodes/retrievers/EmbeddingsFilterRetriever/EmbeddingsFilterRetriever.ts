@@ -19,38 +19,38 @@ class EmbeddingsFilterRetriever_Retrievers implements INode {
     badge: string
 
     constructor() {
-        this.label = 'Embeddings Filter Retriever'
+        this.label = 'Ретривер с фильтром эмбеддингов'
         this.name = 'embeddingsFilterRetriever'
         this.version = 1.0
         this.type = 'EmbeddingsFilterRetriever'
         this.icon = 'compressionRetriever.svg'
         this.category = 'Retrievers'
-        this.description = 'A document compressor that uses embeddings to drop documents unrelated to the query'
+        this.description = 'Компрессор документов, который использует эмбеддинги для отбрасывания документов, не связанных с запросом'
         this.baseClasses = [this.type, 'BaseRetriever']
         this.inputs = [
             {
-                label: 'Vector Store Retriever',
+                label: 'Ретривер векторного хранилища',
                 name: 'baseRetriever',
                 type: 'VectorStoreRetriever'
             },
             {
-                label: 'Embeddings',
+                label: 'Эмбеддинги',
                 name: 'embeddings',
                 type: 'Embeddings'
             },
             {
-                label: 'Query',
+                label: 'Запрос',
                 name: 'query',
                 type: 'string',
-                description: 'Query to retrieve documents from retriever. If not specified, user question will be used',
+                description: 'Запрос для извлечения документов из ретривера. Если не указан, будет использован вопрос пользователя',
                 optional: true,
                 acceptVariable: true
             },
             {
-                label: 'Similarity Threshold',
+                label: 'Порог сходства',
                 name: 'similarityThreshold',
                 description:
-                    'Threshold for determining when two documents are similar enough to be considered redundant. Must be specified if `k` is not set',
+                    'Порог для определения того, когда два документа достаточно похожи, чтобы считаться избыточными. Должен быть указан, если `k` не установлен',
                 type: 'number',
                 default: 0.8,
                 step: 0.1,
@@ -60,7 +60,7 @@ class EmbeddingsFilterRetriever_Retrievers implements INode {
                 label: 'K',
                 name: 'k',
                 description:
-                    'The number of relevant documents to return. Can be explicitly set to undefined, in which case similarity_threshold must be specified. Defaults to 20',
+                    'Количество релевантных документов для возврата. Может быть явно установлено как undefined, в этом случае должен быть указан similarity_threshold. По умолчанию 20',
                 type: 'number',
                 default: 20,
                 step: 1,
@@ -70,20 +70,20 @@ class EmbeddingsFilterRetriever_Retrievers implements INode {
         ]
         this.outputs = [
             {
-                label: 'Embeddings Filter Retriever',
+                label: 'Ретривер с фильтром эмбеддингов',
                 name: 'retriever',
                 baseClasses: this.baseClasses
             },
             {
-                label: 'Document',
+                label: 'Документ',
                 name: 'document',
-                description: 'Array of document objects containing metadata and pageContent',
+                description: 'Массив объектов документов, содержащих метаданные и pageContent',
                 baseClasses: ['Document', 'json']
             },
             {
-                label: 'Text',
+                label: 'Текст',
                 name: 'text',
-                description: 'Concatenated string from pageContent of documents',
+                description: 'Объединенная строка из pageContent документов',
                 baseClasses: ['string', 'json']
             }
         ]

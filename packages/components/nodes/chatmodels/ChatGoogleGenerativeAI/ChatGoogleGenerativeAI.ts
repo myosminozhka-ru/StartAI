@@ -38,35 +38,35 @@ class GoogleGenerativeAI_ChatModels implements INode {
         }
         this.inputs = [
             {
-                label: 'Cache',
+                label: 'Кэш',
                 name: 'cache',
                 type: 'BaseCache',
                 optional: true
             },
             {
-                label: 'Context Cache',
+                label: 'Кэш контекста',
                 name: 'contextCache',
                 type: 'GoogleAICacheManager',
                 optional: true
             },
             {
-                label: 'Model Name',
+                label: 'Название модели',
                 name: 'modelName',
                 type: 'asyncOptions',
                 loadMethod: 'listModels',
                 default: 'gemini-1.5-flash-latest'
             },
             {
-                label: 'Custom Model Name',
+                label: 'Пользовательское название модели',
                 name: 'customModelName',
                 type: 'string',
                 placeholder: 'gemini-1.5-pro-exp-0801',
-                description: 'Custom model name to use. If provided, it will override the model selected',
+                description: 'Пользовательское название модели для использования. Если указано, переопределит выбранную модель',
                 additionalParams: true,
                 optional: true
             },
             {
-                label: 'Temperature',
+                label: 'Температура',
                 name: 'temperature',
                 type: 'number',
                 step: 0.1,
@@ -74,7 +74,7 @@ class GoogleGenerativeAI_ChatModels implements INode {
                 optional: true
             },
             {
-                label: 'Streaming',
+                label: 'Потоковая передача',
                 name: 'streaming',
                 type: 'boolean',
                 default: true,
@@ -82,7 +82,7 @@ class GoogleGenerativeAI_ChatModels implements INode {
                 additionalParams: true
             },
             {
-                label: 'Max Output Tokens',
+                label: 'Максимум выходных токенов',
                 name: 'maxOutputTokens',
                 type: 'number',
                 step: 1,
@@ -90,7 +90,7 @@ class GoogleGenerativeAI_ChatModels implements INode {
                 additionalParams: true
             },
             {
-                label: 'Top Probability',
+                label: 'Вероятность Top P',
                 name: 'topP',
                 type: 'number',
                 step: 0.1,
@@ -98,35 +98,35 @@ class GoogleGenerativeAI_ChatModels implements INode {
                 additionalParams: true
             },
             {
-                label: 'Top Next Highest Probability Tokens',
+                label: 'Top K токенов с наивысшей вероятностью',
                 name: 'topK',
                 type: 'number',
-                description: `Decode using top-k sampling: consider the set of top_k most probable tokens. Must be positive`,
+                description: `Декодирование с использованием top-k сэмплинга: рассмотрите набор из top_k наиболее вероятных токенов. Должно быть положительным`,
                 step: 1,
                 optional: true,
                 additionalParams: true
             },
             {
-                label: 'Harm Category',
+                label: 'Категория вреда',
                 name: 'harmCategory',
                 type: 'multiOptions',
                 description:
-                    'Refer to <a target="_blank" href="https://cloud.google.com/vertex-ai/docs/generative-ai/multimodal/configure-safety-attributes#safety_attribute_definitions">official guide</a> on how to use Harm Category',
+                    'См. <a target="_blank" href="https://cloud.google.com/vertex-ai/docs/generative-ai/multimodal/configure-safety-attributes#safety_attribute_definitions">официальное руководство</a> по использованию категории вреда',
                 options: [
                     {
-                        label: 'Dangerous',
+                        label: 'Опасный',
                         name: HarmCategory.HARM_CATEGORY_DANGEROUS_CONTENT
                     },
                     {
-                        label: 'Harassment',
+                        label: 'Домогательство',
                         name: HarmCategory.HARM_CATEGORY_HARASSMENT
                     },
                     {
-                        label: 'Hate Speech',
+                        label: 'Речь ненависти',
                         name: HarmCategory.HARM_CATEGORY_HATE_SPEECH
                     },
                     {
-                        label: 'Sexually Explicit',
+                        label: 'Сексуально откровенный',
                         name: HarmCategory.HARM_CATEGORY_SEXUALLY_EXPLICIT
                     }
                 ],
@@ -134,30 +134,30 @@ class GoogleGenerativeAI_ChatModels implements INode {
                 additionalParams: true
             },
             {
-                label: 'Harm Block Threshold',
+                label: 'Порог блокировки вреда',
                 name: 'harmBlockThreshold',
                 type: 'multiOptions',
                 description:
-                    'Refer to <a target="_blank" href="https://cloud.google.com/vertex-ai/docs/generative-ai/multimodal/configure-safety-attributes#safety_setting_thresholds">official guide</a> on how to use Harm Block Threshold',
+                    'См. <a target="_blank" href="https://cloud.google.com/vertex-ai/docs/generative-ai/multimodal/configure-safety-attributes#safety_setting_thresholds">официальное руководство</a> по использованию порога блокировки вреда',
                 options: [
                     {
-                        label: 'Low and Above',
+                        label: 'Низкий и выше',
                         name: HarmBlockThreshold.BLOCK_LOW_AND_ABOVE
                     },
                     {
-                        label: 'Medium and Above',
+                        label: 'Средний и выше',
                         name: HarmBlockThreshold.BLOCK_MEDIUM_AND_ABOVE
                     },
                     {
-                        label: 'None',
+                        label: 'Нет',
                         name: HarmBlockThreshold.BLOCK_NONE
                     },
                     {
-                        label: 'Only High',
+                        label: 'Только высокий',
                         name: HarmBlockThreshold.BLOCK_ONLY_HIGH
                     },
                     {
-                        label: 'Threshold Unspecified',
+                        label: 'Порог не указан',
                         name: HarmBlockThreshold.HARM_BLOCK_THRESHOLD_UNSPECIFIED
                     }
                 ],
@@ -165,19 +165,19 @@ class GoogleGenerativeAI_ChatModels implements INode {
                 additionalParams: true
             },
             {
-                label: 'Base URL',
+                label: 'Базовый URL',
                 name: 'baseUrl',
                 type: 'string',
-                description: 'Base URL for the API. Leave empty to use the default.',
+                description: 'Базовый URL для API. Оставьте пустым для использования по умолчанию.',
                 optional: true,
                 additionalParams: true
             },
             {
-                label: 'Allow Image Uploads',
+                label: 'Разрешить загрузку изображений',
                 name: 'allowImageUploads',
                 type: 'boolean',
                 description:
-                    'Allow image input. Refer to the <a href="https://docs.flowiseai.com/using-flowise/uploads#image" target="_blank">docs</a> for more details.',
+                    'Разрешить ввод изображений. См. <a href="https://docs.flowiseai.com/using-flowise/uploads#image" target="_blank">документацию</a> для получения дополнительной информации.',
                 default: false,
                 optional: true
             }

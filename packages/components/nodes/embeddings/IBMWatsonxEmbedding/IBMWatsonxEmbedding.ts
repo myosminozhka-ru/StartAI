@@ -22,7 +22,7 @@ class IBMWatsonx_Embeddings implements INode {
         this.type = 'WatsonxEmbeddings'
         this.icon = 'ibm.png'
         this.category = 'Embeddings'
-        this.description = 'Generate embeddings for a given text using open source model on IBM Watsonx'
+        this.description = 'Генерация эмбеддингов для заданного текста с использованием открытой модели на IBM Watsonx'
         this.baseClasses = [this.type, ...getBaseClasses(WatsonxEmbeddings)]
         this.credential = {
             label: 'Подключите учетные данные',
@@ -32,34 +32,34 @@ class IBMWatsonx_Embeddings implements INode {
         }
         this.inputs = [
             {
-                label: 'Model Name',
+                label: 'Название модели',
                 name: 'modelName',
                 type: 'string',
                 default: 'ibm/slate-30m-english-rtrvr'
             },
             {
-                label: 'Truncate Input Tokens',
+                label: 'Обрезать входные токены',
                 name: 'truncateInputTokens',
                 type: 'number',
-                description: 'Truncate the input tokens.',
+                description: 'Обрезать входные токены.',
                 step: 1,
                 optional: true,
                 additionalParams: true
             },
             {
-                label: 'Max Retries',
+                label: 'Максимум повторных попыток',
                 name: 'maxRetries',
                 type: 'number',
-                description: 'The maximum number of retries.',
+                description: 'Максимальное количество повторных попыток.',
                 step: 1,
                 optional: true,
                 additionalParams: true
             },
             {
-                label: 'Max Concurrency',
+                label: 'Максимум параллелизма',
                 name: 'maxConcurrency',
                 type: 'number',
-                description: 'The maximum number of concurrencies.',
+                description: 'Максимальное количество параллельных операций.',
                 step: 1,
                 optional: true,
                 additionalParams: true

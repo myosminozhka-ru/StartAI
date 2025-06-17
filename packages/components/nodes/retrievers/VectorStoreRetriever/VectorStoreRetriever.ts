@@ -13,32 +13,32 @@ class VectorStoreRetriever_Retrievers implements INode {
     inputs: INodeParams[]
 
     constructor() {
-        this.label = 'Vector Store Retriever'
+        this.label = 'Ретривер векторного хранилища'
         this.name = 'vectorStoreRetriever'
         this.version = 1.0
         this.type = 'VectorStoreRetriever'
         this.icon = 'vectorretriever.svg'
         this.category = 'Retrievers'
-        this.description = 'Store vector store as retriever to be later queried by MultiRetrievalQAChain'
+        this.description = 'Сохранить векторное хранилище как ретривер для последующего запроса MultiRetrievalQAChain'
         this.baseClasses = [this.type]
         this.inputs = [
             {
-                label: 'Vector Store',
+                label: 'Векторное хранилище',
                 name: 'vectorStore',
                 type: 'VectorStore'
             },
             {
-                label: 'Retriever Name',
+                label: 'Название ретривера',
                 name: 'name',
                 type: 'string',
                 placeholder: 'netflix movies'
             },
             {
-                label: 'Retriever Description',
+                label: 'Описание ретривера',
                 name: 'description',
                 type: 'string',
                 rows: 3,
-                description: 'Description of when to use the vector store retriever',
+                description: 'Описание того, когда использовать ретривер векторного хранилища',
                 placeholder: 'Good for answering questions about netflix movies'
             }
         ]

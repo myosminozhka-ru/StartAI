@@ -18,13 +18,13 @@ class PostgresAgentMemory_Memory implements INode {
     credential: INodeParams
 
     constructor() {
-        this.label = 'Postgres Agent Memory'
+        this.label = 'Postgres Память агента'
         this.name = 'postgresAgentMemory'
         this.version = 1.0
         this.type = 'AgentMemory'
         this.icon = 'postgres.svg'
         this.category = 'Memory'
-        this.description = 'Memory for agentflow to remember the state of the conversation using Postgres database'
+        this.description = 'Память для agentflow для запоминания состояния разговора с использованием базы данных Postgres'
         this.baseClasses = [this.type, ...getBaseClasses(PostgresSaver)]
         this.credential = {
             label: 'Подключите учетные данные',
@@ -35,23 +35,23 @@ class PostgresAgentMemory_Memory implements INode {
         }
         this.inputs = [
             {
-                label: 'Host',
+                label: 'Хост',
                 name: 'host',
                 type: 'string'
             },
             {
-                label: 'Database',
+                label: 'База данных',
                 name: 'database',
                 type: 'string'
             },
             {
-                label: 'Port',
+                label: 'Порт',
                 name: 'port',
                 type: 'number',
                 default: '5432'
             },
             {
-                label: 'Additional Connection Configuration',
+                label: 'Дополнительная конфигурация подключения',
                 name: 'additionalConfig',
                 type: 'json',
                 additionalParams: true,

@@ -17,30 +17,30 @@ class PromptLangfuse_Prompts implements INode {
     inputs: INodeParams[]
 
     constructor() {
-        this.label = 'LangFuse Prompt Template'
+        this.label = 'LangFuse Шаблон промпта'
         this.name = 'promptLangFuse'
         this.version = 1.0
         this.type = 'PromptTemplate'
         this.icon = 'prompt.svg'
         this.category = 'Prompts'
         this.author = 'Lucas Cruz'
-        this.description = 'Fetch schema from LangFuse to represent a prompt for an LLM'
+        this.description = 'Получить схему из LangFuse для представления промпта для LLM'
         this.baseClasses = [...getBaseClasses(PromptTemplate)]
         this.credential = {
-            label: 'Langfuse Credential',
+            label: 'Учетные данные Langfuse',
             name: 'credential',
             type: 'credential',
             credentialNames: ['langfuseApi']
         }
         this.inputs = [
             {
-                label: 'Prompt Name',
+                label: 'Название промпта',
                 name: 'template',
                 type: 'string',
                 placeholder: `Name of the template`
             },
             {
-                label: 'Format Prompt Values',
+                label: 'Форматировать значения промпта',
                 name: 'promptValues',
                 type: 'json',
                 optional: true,

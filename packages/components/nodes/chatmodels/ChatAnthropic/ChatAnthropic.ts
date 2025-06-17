@@ -35,20 +35,20 @@ class ChatAnthropic_ChatModels implements INode {
         }
         this.inputs = [
             {
-                label: 'Cache',
+                label: 'Кэш',
                 name: 'cache',
                 type: 'BaseCache',
                 optional: true
             },
             {
-                label: 'Model Name',
+                label: 'Название модели',
                 name: 'modelName',
                 type: 'asyncOptions',
                 loadMethod: 'listModels',
                 default: 'claude-3-haiku'
             },
             {
-                label: 'Temperature',
+                label: 'Температура',
                 name: 'temperature',
                 type: 'number',
                 step: 0.1,
@@ -56,7 +56,7 @@ class ChatAnthropic_ChatModels implements INode {
                 optional: true
             },
             {
-                label: 'Streaming',
+                label: 'Потоковая передача',
                 name: 'streaming',
                 type: 'boolean',
                 default: true,
@@ -64,7 +64,7 @@ class ChatAnthropic_ChatModels implements INode {
                 additionalParams: true
             },
             {
-                label: 'Max Tokens',
+                label: 'Максимум токенов',
                 name: 'maxTokensToSample',
                 type: 'number',
                 step: 1,
@@ -88,29 +88,30 @@ class ChatAnthropic_ChatModels implements INode {
                 additionalParams: true
             },
             {
-                label: 'Extended Thinking',
+                label: 'Расширенное мышление',
                 name: 'extendedThinking',
                 type: 'boolean',
-                description: 'Enable extended thinking for reasoning model such as Claude Sonnet 3.7',
+                description: 'Включить расширенное мышление для модели рассуждений, такой как Claude Sonnet 3.7',
                 optional: true,
                 additionalParams: true
             },
             {
-                label: 'Budget Tokens',
+                label: 'Бюджет токенов',
                 name: 'budgetTokens',
                 type: 'number',
                 step: 1,
                 default: 1024,
-                description: 'Maximum number of tokens Claude is allowed use for its internal reasoning process',
+                description:
+                    'Максимальное количество токенов, которое Claude может использовать для своего внутреннего процесса рассуждения',
                 optional: true,
                 additionalParams: true
             },
             {
-                label: 'Allow Image Uploads',
+                label: 'Разрешить загрузку изображений',
                 name: 'allowImageUploads',
                 type: 'boolean',
                 description:
-                    'Allow image input. Refer to the <a href="https://docs.flowiseai.com/using-flowise/uploads#image" target="_blank">docs</a> for more details.',
+                    'Разрешить ввод изображений. См. <a href="https://docs.flowiseai.com/using-flowise/uploads#image" target="_blank">документацию</a> для получения дополнительной информации.',
                 default: false,
                 optional: true
             }

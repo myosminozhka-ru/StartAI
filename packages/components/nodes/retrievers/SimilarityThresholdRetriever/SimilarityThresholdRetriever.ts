@@ -16,49 +16,49 @@ class SimilarityThresholdRetriever_Retrievers implements INode {
     outputs: INodeOutputsValue[]
 
     constructor() {
-        this.label = 'Similarity Score Threshold Retriever'
+        this.label = 'Ретривер с порогом сходства'
         this.name = 'similarityThresholdRetriever'
         this.version = 2.0
         this.type = 'SimilarityThresholdRetriever'
         this.icon = 'similaritythreshold.svg'
         this.category = 'Retrievers'
-        this.description = 'Return results based on the minimum similarity percentage'
+        this.description = 'Возвращать результаты на основе минимального процента сходства'
         this.baseClasses = [this.type, 'BaseRetriever']
         this.inputs = [
             {
-                label: 'Vector Store',
+                label: 'Векторное хранилище',
                 name: 'vectorStore',
                 type: 'VectorStore'
             },
             {
-                label: 'Query',
+                label: 'Запрос',
                 name: 'query',
                 type: 'string',
-                description: 'Query to retrieve documents from retriever. If not specified, user question will be used',
+                description: 'Запрос для извлечения документов из ретривера. Если не указан, будет использован вопрос пользователя',
                 optional: true,
                 acceptVariable: true
             },
             {
-                label: 'Minimum Similarity Score (%)',
+                label: 'Минимальный балл сходства (%)',
                 name: 'minSimilarityScore',
-                description: 'Finds results with at least this similarity score',
+                description: 'Находит результаты с как минимум этим баллом сходства',
                 type: 'number',
                 default: 80,
                 step: 1
             },
             {
-                label: 'Max K',
+                label: 'Максимум K',
                 name: 'maxK',
-                description: `The maximum number of results to fetch`,
+                description: `Максимальное количество результатов для получения`,
                 type: 'number',
                 default: 20,
                 step: 1,
                 additionalParams: true
             },
             {
-                label: 'K Increment',
+                label: 'K инкремент',
                 name: 'kIncrement',
-                description: `How much to increase K by each time. It'll fetch N results, then N + kIncrement, then N + kIncrement * 2, etc.`,
+                description: `На сколько увеличивать K каждый раз. Он будет получать N результатов, затем N + kIncrement, затем N + kIncrement * 2 и т.д.`,
                 type: 'number',
                 default: 2,
                 step: 1,
@@ -67,20 +67,20 @@ class SimilarityThresholdRetriever_Retrievers implements INode {
         ]
         this.outputs = [
             {
-                label: 'Similarity Threshold Retriever',
+                label: 'Ретривер с порогом сходства',
                 name: 'retriever',
                 baseClasses: this.baseClasses
             },
             {
-                label: 'Document',
+                label: 'Документ',
                 name: 'document',
-                description: 'Array of document objects containing metadata and pageContent',
+                description: 'Массив объектов документов, содержащих метаданные и pageContent',
                 baseClasses: ['Document', 'json']
             },
             {
-                label: 'Text',
+                label: 'Текст',
                 name: 'text',
-                description: 'Concatenated string from pageContent of documents',
+                description: 'Объединенная строка из pageContent документов',
                 baseClasses: ['string', 'json']
             }
         ]

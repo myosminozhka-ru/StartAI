@@ -27,7 +27,7 @@ class AzureOpenAIEmbedding_Embeddings implements INode {
         this.type = 'AzureOpenAIEmbeddings'
         this.icon = 'Azure.svg'
         this.category = 'Embeddings'
-        this.description = 'Azure OpenAI API to generate embeddings for a given text'
+        this.description = 'Azure OpenAI API для генерации эмбеддингов для заданного текста'
         this.baseClasses = [this.type, ...getBaseClasses(AzureOpenAIEmbeddings)]
         this.credential = {
             label: 'Подключите учетные данные',
@@ -38,7 +38,7 @@ class AzureOpenAIEmbedding_Embeddings implements INode {
         }
         this.inputs = [
             {
-                label: 'Batch Size',
+                label: 'Размер пакета',
                 name: 'batchSize',
                 type: 'number',
                 default: '100',
@@ -46,21 +46,21 @@ class AzureOpenAIEmbedding_Embeddings implements INode {
                 additionalParams: true
             },
             {
-                label: 'Timeout',
+                label: 'Таймаут',
                 name: 'timeout',
                 type: 'number',
                 optional: true,
                 additionalParams: true
             },
             {
-                label: 'BasePath',
+                label: 'Базовый путь',
                 name: 'basepath',
                 type: 'string',
                 optional: true,
                 additionalParams: true
             },
             {
-                label: 'BaseOptions',
+                label: 'Базовые опции',
                 name: 'baseOptions',
                 type: 'json',
                 optional: true,

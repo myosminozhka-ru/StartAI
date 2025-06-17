@@ -13,31 +13,31 @@ class PromptRetriever_Retrievers implements INode {
     inputs: INodeParams[]
 
     constructor() {
-        this.label = 'Prompt Retriever'
+        this.label = 'Промпт ретривер'
         this.name = 'promptRetriever'
         this.version = 1.0
         this.type = 'PromptRetriever'
         this.icon = 'promptretriever.svg'
         this.category = 'Retrievers'
-        this.description = 'Store prompt template with name & description to be later queried by MultiPromptChain'
+        this.description = 'Сохранить шаблон промпта с именем и описанием для последующего запроса MultiPromptChain'
         this.baseClasses = [this.type]
         this.inputs = [
             {
-                label: 'Prompt Name',
+                label: 'Название промпта',
                 name: 'name',
                 type: 'string',
                 placeholder: 'physics-qa'
             },
             {
-                label: 'Prompt Description',
+                label: 'Описание промпта',
                 name: 'description',
                 type: 'string',
                 rows: 3,
-                description: 'Description of what the prompt does and when it should be used',
+                description: 'Описание того, что делает промпт и когда его следует использовать',
                 placeholder: 'Good for answering questions about physics'
             },
             {
-                label: 'Prompt System Message',
+                label: 'Системное сообщение промпта',
                 name: 'systemMessage',
                 type: 'string',
                 rows: 4,

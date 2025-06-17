@@ -24,7 +24,7 @@ class OpenAI_LLMs implements INode {
         this.type = 'OpenAI'
         this.icon = 'openai.svg'
         this.category = 'LLMs'
-        this.description = 'Wrapper around OpenAI large language models'
+        this.description = 'Обертка вокруг больших языковых моделей OpenAI'
         this.baseClasses = [this.type, ...getBaseClasses(OpenAI)]
         this.credential = {
             label: 'Подключите учетные данные',
@@ -34,20 +34,20 @@ class OpenAI_LLMs implements INode {
         }
         this.inputs = [
             {
-                label: 'Cache',
+                label: 'Кэш',
                 name: 'cache',
                 type: 'BaseCache',
                 optional: true
             },
             {
-                label: 'Model Name',
+                label: 'Название модели',
                 name: 'modelName',
                 type: 'asyncOptions',
                 loadMethod: 'listModels',
                 default: 'gpt-3.5-turbo-instruct'
             },
             {
-                label: 'Temperature',
+                label: 'Температура',
                 name: 'temperature',
                 type: 'number',
                 step: 0.1,
@@ -55,7 +55,7 @@ class OpenAI_LLMs implements INode {
                 optional: true
             },
             {
-                label: 'Max Tokens',
+                label: 'Максимальное количество токенов',
                 name: 'maxTokens',
                 type: 'number',
                 step: 1,
@@ -63,7 +63,7 @@ class OpenAI_LLMs implements INode {
                 additionalParams: true
             },
             {
-                label: 'Top Probability',
+                label: 'Верхняя вероятность',
                 name: 'topP',
                 type: 'number',
                 step: 0.1,
@@ -71,7 +71,7 @@ class OpenAI_LLMs implements INode {
                 additionalParams: true
             },
             {
-                label: 'Best Of',
+                label: 'Лучший из',
                 name: 'bestOf',
                 type: 'number',
                 step: 1,
@@ -79,7 +79,7 @@ class OpenAI_LLMs implements INode {
                 additionalParams: true
             },
             {
-                label: 'Frequency Penalty',
+                label: 'Штраф за частоту',
                 name: 'frequencyPenalty',
                 type: 'number',
                 step: 0.1,
@@ -87,7 +87,7 @@ class OpenAI_LLMs implements INode {
                 additionalParams: true
             },
             {
-                label: 'Presence Penalty',
+                label: 'Штраф за присутствие',
                 name: 'presencePenalty',
                 type: 'number',
                 step: 0.1,
@@ -95,7 +95,7 @@ class OpenAI_LLMs implements INode {
                 additionalParams: true
             },
             {
-                label: 'Batch Size',
+                label: 'Размер пакета',
                 name: 'batchSize',
                 type: 'number',
                 step: 1,
@@ -103,7 +103,7 @@ class OpenAI_LLMs implements INode {
                 additionalParams: true
             },
             {
-                label: 'Timeout',
+                label: 'Таймаут',
                 name: 'timeout',
                 type: 'number',
                 step: 1,
@@ -111,14 +111,14 @@ class OpenAI_LLMs implements INode {
                 additionalParams: true
             },
             {
-                label: 'BasePath',
+                label: 'Базовый путь',
                 name: 'basepath',
                 type: 'string',
                 optional: true,
                 additionalParams: true
             },
             {
-                label: 'BaseOptions',
+                label: 'Базовые опции',
                 name: 'baseOptions',
                 type: 'json',
                 optional: true,

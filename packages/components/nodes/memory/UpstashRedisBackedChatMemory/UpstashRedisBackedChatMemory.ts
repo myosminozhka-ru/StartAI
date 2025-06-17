@@ -25,19 +25,19 @@ class UpstashRedisBackedChatMemory_Memory implements INode {
     inputs: INodeParams[]
 
     constructor() {
-        this.label = 'Upstash Redis-Backed Chat Memory'
+        this.label = 'Upstash Redis-поддерживаемая память чата'
         this.name = 'upstashRedisBackedChatMemory'
         this.version = 2.0
         this.type = 'UpstashRedisBackedChatMemory'
         this.icon = 'upstash.svg'
         this.category = 'Memory'
-        this.description = 'Summarizes the conversation and stores the memory in Upstash Redis server'
+        this.description = 'Резюмирует разговор и сохраняет память в Upstash Redis сервере'
         this.baseClasses = [this.type, ...getBaseClasses(BufferMemory)]
         this.credential = {
             label: 'Подключите учетные данные',
             name: 'credential',
             type: 'credential',
-            description: 'Configure password authentication on your upstash redis instance',
+            description: 'Настройте аутентификацию по паролю на вашем экземпляре upstash redis',
             credentialNames: ['upstashRedisMemoryApi']
         }
         this.inputs = [
@@ -48,25 +48,25 @@ class UpstashRedisBackedChatMemory_Memory implements INode {
                 placeholder: 'https://<your-url>.upstash.io'
             },
             {
-                label: 'Session Id',
+                label: 'ID сессии',
                 name: 'sessionId',
                 type: 'string',
                 description:
-                    'If not specified, a random id will be used. Learn <a target="_blank" href="https://docs.flowiseai.com/memory/long-term-memory#ui-and-embedded-chat">more</a>',
+                    'Если не указан, будет использован случайный id. Узнайте <a target="_blank" href="https://docs.flowiseai.com/memory/long-term-memory#ui-and-embedded-chat">больше</a>',
                 default: '',
                 additionalParams: true,
                 optional: true
             },
             {
-                label: 'Session Timeouts',
+                label: 'Таймауты сессии',
                 name: 'sessionTTL',
                 type: 'number',
-                description: 'Seconds till a session expires. If not specified, the session will never expire.',
+                description: 'Секунды до истечения сессии. Если не указано, сессия никогда не истечет.',
                 additionalParams: true,
                 optional: true
             },
             {
-                label: 'Memory Key',
+                label: 'Ключ памяти',
                 name: 'memoryKey',
                 type: 'string',
                 default: 'chat_history',

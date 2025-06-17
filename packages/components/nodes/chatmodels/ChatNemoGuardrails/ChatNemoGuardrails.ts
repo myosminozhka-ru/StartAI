@@ -92,13 +92,13 @@ class ChatNemoGuardrailsChatModel implements INode {
         this.baseClasses = [this.type, ...getBaseClasses(ChatNemoGuardrailsModel)]
         this.inputs = [
             {
-                label: 'Configuration ID',
+                label: 'ID конфигурации',
                 name: 'configurationId',
                 type: 'string',
                 optional: false
             },
             {
-                label: 'Base URL',
+                label: 'Базовый URL',
                 name: 'baseUrl',
                 type: 'string',
                 optional: false

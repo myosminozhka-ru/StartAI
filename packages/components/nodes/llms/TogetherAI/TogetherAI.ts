@@ -23,7 +23,7 @@ class TogetherAI_LLMs implements INode {
         this.type = 'TogetherAI'
         this.icon = 'togetherai.png'
         this.category = 'LLMs'
-        this.description = 'Wrapper around TogetherAI large language models'
+        this.description = 'Обертка вокруг больших языковых моделей TogetherAI'
         this.baseClasses = [this.type, ...getBaseClasses(TogetherAI)]
         this.credential = {
             label: 'Подключите учетные данные',
@@ -33,76 +33,76 @@ class TogetherAI_LLMs implements INode {
         }
         this.inputs = [
             {
-                label: 'Cache',
+                label: 'Кэш',
                 name: 'cache',
                 type: 'BaseCache',
                 optional: true
             },
             {
-                label: 'Model Name',
+                label: 'Название модели',
                 name: 'modelName',
                 type: 'string',
-                description: 'The name of the model to query.'
+                description: 'Название модели для запроса.'
             },
             {
-                label: 'Top K',
+                label: 'Верхний K',
                 name: 'topK',
                 type: 'number',
                 description:
-                    'The topK parameter is used to limit the number of choices for the next predicted word or token. It specifies the maximum number of tokens to consider at each step, based on their probability of occurrence. This technique helps to speed up the generation process and can improve the quality of the generated text by focusing on the most likely options.',
+                    'Параметр topK используется для ограничения количества вариантов для следующего предсказанного слова или токена. Он указывает максимальное количество токенов для рассмотрения на каждом шаге на основе их вероятности появления. Эта техника помогает ускорить процесс генерации и может улучшить качество сгенерированного текста, фокусируясь на наиболее вероятных вариантах.',
                 step: 1,
                 default: 50
             },
             {
-                label: 'Top P',
+                label: 'Верхний P',
                 name: 'topP',
                 type: 'number',
                 description:
-                    'The topP (nucleus) parameter is used to dynamically adjust the number of choices for each predicted token based on the cumulative probabilities. It specifies a probability threshold, below which all less likely tokens are filtered out. This technique helps to maintain diversity and generate more fluent and natural-sounding text.',
+                    'Параметр topP (ядро) используется для динамической настройки количества вариантов для каждого предсказанного токена на основе кумулятивных вероятностей. Он указывает порог вероятности, ниже которого все менее вероятные токены отфильтровываются. Эта техника помогает поддерживать разнообразие и генерировать более беглый и естественно звучащий текст.',
                 step: 0.1,
                 default: 0.7
             },
             {
-                label: 'Temperature',
+                label: 'Температура',
                 name: 'temperature',
                 type: 'number',
                 description:
-                    'A decimal number that determines the degree of randomness in the response. A value of 1 will always yield the same output. A temperature less than 1 favors more correctness and is appropriate for question answering or summarization. A value greater than 1 introduces more randomness in the output.',
+                    'Десятичное число, которое определяет степень случайности в ответе. Значение 1 всегда даст одинаковый результат. Температура меньше 1 предпочитает более правильность и подходит для ответов на вопросы или резюмирования. Значение больше 1 вносит больше случайности в результат.',
                 step: 0.1,
                 default: 0.7
             },
             {
-                label: 'Repeat Penalty',
+                label: 'Штраф за повторение',
                 name: 'repeatPenalty',
                 type: 'number',
                 description:
-                    'A number that controls the diversity of generated text by reducing the likelihood of repeated sequences. Higher values decrease repetition.',
+                    'Число, которое контролирует разнообразие сгенерированного текста, уменьшая вероятность повторяющихся последовательностей. Более высокие значения уменьшают повторение.',
                 step: 0.1,
                 default: 1
             },
             {
-                label: 'Streaming',
+                label: 'Потоковая передача',
                 name: 'streaming',
                 type: 'boolean',
                 default: false,
-                description: 'Whether or not to stream tokens as they are generated'
+                description: 'Потоковая передача токенов по мере их генерации'
             },
             {
-                label: 'Max Tokens',
+                label: 'Максимальное количество токенов',
                 name: 'maxTokens',
                 type: 'number',
                 step: 1,
-                description: 'Limit the number of tokens generated.',
+                description: 'Ограничить количество генерируемых токенов.',
                 optional: true,
                 additionalParams: true
             },
             {
-                label: 'Stop Sequence',
+                label: 'Стоп-последовательность',
                 name: 'stop',
                 type: 'string',
                 rows: 4,
                 placeholder: 'AI assistant:',
-                description: 'A list of tokens at which the generation should stop.',
+                description: 'Список токенов, на которых должна остановиться генерация.',
                 optional: true,
                 additionalParams: true
             }

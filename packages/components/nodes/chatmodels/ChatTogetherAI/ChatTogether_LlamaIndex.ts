@@ -22,7 +22,7 @@ class ChatTogetherAI_LlamaIndex_ChatModels implements INode {
         this.type = 'ChatTogetherAI'
         this.icon = 'togetherai.png'
         this.category = 'Chat Models'
-        this.description = 'Wrapper around ChatTogetherAI LLM specific for LlamaIndex'
+        this.description = 'Обертка вокруг ChatTogetherAI LLM специально для LlamaIndex'
         this.baseClasses = [this.type, 'BaseChatModel_LlamaIndex', ...getBaseClasses(TogetherLLM)]
         this.tags = ['LlamaIndex']
         this.credential = {
@@ -33,14 +33,14 @@ class ChatTogetherAI_LlamaIndex_ChatModels implements INode {
         }
         this.inputs = [
             {
-                label: 'Model Name',
+                label: 'Название модели',
                 name: 'modelName',
                 type: 'string',
                 placeholder: 'mixtral-8x7b-32768',
-                description: 'Refer to <a target="_blank" href="https://docs.together.ai/docs/inference-models">models</a> page'
+                description: 'См. страницу <a target="_blank" href="https://docs.together.ai/docs/inference-models">моделей</a>'
             },
             {
-                label: 'Temperature',
+                label: 'Температура',
                 name: 'temperature',
                 type: 'number',
                 step: 0.1,

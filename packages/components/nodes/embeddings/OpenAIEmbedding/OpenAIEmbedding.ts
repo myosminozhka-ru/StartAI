@@ -22,7 +22,7 @@ class OpenAIEmbedding_Embeddings implements INode {
         this.type = 'OpenAIEmbeddings'
         this.icon = 'openai.svg'
         this.category = 'Embeddings'
-        this.description = 'OpenAI API to generate embeddings for a given text'
+        this.description = 'OpenAI API для генерации эмбеддингов для заданного текста'
         this.baseClasses = [this.type, ...getBaseClasses(OpenAIEmbeddings)]
         this.credential = {
             label: 'Подключите учетные данные',
@@ -32,42 +32,42 @@ class OpenAIEmbedding_Embeddings implements INode {
         }
         this.inputs = [
             {
-                label: 'Model Name',
+                label: 'Название модели',
                 name: 'modelName',
                 type: 'asyncOptions',
                 loadMethod: 'listModels',
                 default: 'text-embedding-ada-002'
             },
             {
-                label: 'Strip New Lines',
+                label: 'Удалить переносы строк',
                 name: 'stripNewLines',
                 type: 'boolean',
                 optional: true,
                 additionalParams: true
             },
             {
-                label: 'Batch Size',
+                label: 'Размер пакета',
                 name: 'batchSize',
                 type: 'number',
                 optional: true,
                 additionalParams: true
             },
             {
-                label: 'Timeout',
+                label: 'Таймаут',
                 name: 'timeout',
                 type: 'number',
                 optional: true,
                 additionalParams: true
             },
             {
-                label: 'BasePath',
+                label: 'Базовый путь',
                 name: 'basepath',
                 type: 'string',
                 optional: true,
                 additionalParams: true
             },
             {
-                label: 'Dimensions',
+                label: 'Размерности',
                 name: 'dimensions',
                 type: 'number',
                 optional: true,

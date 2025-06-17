@@ -27,31 +27,31 @@ class QueryEngine_LlamaIndex implements INode {
     sessionId?: string
 
     constructor(fields?: { sessionId?: string }) {
-        this.label = 'Query Engine'
+        this.label = 'Движок запросов'
         this.name = 'queryEngine'
         this.version = 2.0
         this.type = 'QueryEngine'
         this.icon = 'query-engine.png'
         this.category = 'Engine'
-        this.description = 'Simple query engine built to answer question over your data, without memory'
+        this.description = 'Простой движок запросов, созданный для ответов на вопросы по вашим данным, без памяти'
         this.baseClasses = [this.type, 'BaseQueryEngine']
         this.tags = ['LlamaIndex']
         this.inputs = [
             {
-                label: 'Vector Store Retriever',
+                label: 'Векторный хранилище ретривер',
                 name: 'vectorStoreRetriever',
                 type: 'VectorIndexRetriever'
             },
             {
-                label: 'Response Synthesizer',
+                label: 'Синтезатор ответов',
                 name: 'responseSynthesizer',
                 type: 'ResponseSynthesizer',
                 description:
-                    'ResponseSynthesizer is responsible for sending the query, nodes, and prompt templates to the LLM to generate a response. See <a target="_blank" href="https://ts.llamaindex.ai/modules/response_synthesizer">more</a>',
+                    'ResponseSynthesizer отвечает за отправку запроса, узлов и шаблонов промптов в LLM для генерации ответа. См. <a target="_blank" href="https://ts.llamaindex.ai/modules/response_synthesizer">подробнее</a>',
                 optional: true
             },
             {
-                label: 'Return Source Documents',
+                label: 'Возвращать исходные документы',
                 name: 'returnSourceDocuments',
                 type: 'boolean',
                 optional: true

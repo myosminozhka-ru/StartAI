@@ -15,19 +15,19 @@ class TreeSummarize_LlamaIndex implements INode {
     outputs: INodeOutputsValue[]
 
     constructor() {
-        this.label = 'TreeSummarize'
+        this.label = 'Древовидное суммирование'
         this.name = 'treeSummarizeLlamaIndex'
         this.version = 1.0
         this.type = 'TreeSummarize'
         this.icon = 'treesummarize.svg'
         this.category = 'Response Synthesizer'
         this.description =
-            'Given a set of text chunks and the query, recursively construct a tree and return the root node as the response. Good for summarization purposes.'
+            'Учитывая набор текстовых фрагментов и запрос, рекурсивно построить дерево и вернуть корневой узел как ответ. Хорошо для целей суммирования.'
         this.baseClasses = [this.type, 'ResponseSynthesizer']
         this.tags = ['LlamaIndex']
         this.inputs = [
             {
-                label: 'Prompt',
+                label: 'Промпт',
                 name: 'prompt',
                 type: 'string',
                 rows: 4,
@@ -38,7 +38,7 @@ class TreeSummarize_LlamaIndex implements INode {
 Given the information from multiple sources and not prior knowledge, answer the query.
 Query: {query}
 Answer:`,
-                warning: `Prompt can contains no variables, or up to 2 variables. Variables must be {context} and {query}`,
+                warning: `Промпт может содержать от 0 до 2 переменных. Переменные должны быть {context} и {query}`,
                 optional: true
             }
         ]

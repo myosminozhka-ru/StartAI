@@ -23,7 +23,7 @@ class Groq_ChatModels implements INode {
         this.type = 'GroqChat'
         this.icon = 'groq.png'
         this.category = 'Chat Models'
-        this.description = 'Wrapper around Groq API with LPU Inference Engine'
+        this.description = 'Обертка вокруг Groq API с LPU Inference Engine'
         this.baseClasses = [this.type, ...getBaseClasses(ChatGroq)]
         this.credential = {
             label: 'Подключите учетные данные',
@@ -34,20 +34,20 @@ class Groq_ChatModels implements INode {
         }
         this.inputs = [
             {
-                label: 'Cache',
+                label: 'Кэш',
                 name: 'cache',
                 type: 'BaseCache',
                 optional: true
             },
             {
-                label: 'Model Name',
+                label: 'Название модели',
                 name: 'modelName',
                 type: 'asyncOptions',
                 loadMethod: 'listModels',
                 placeholder: 'llama3-70b-8192'
             },
             {
-                label: 'Temperature',
+                label: 'Температура',
                 name: 'temperature',
                 type: 'number',
                 step: 0.1,
@@ -55,7 +55,7 @@ class Groq_ChatModels implements INode {
                 optional: true
             },
             {
-                label: 'Max Tokens',
+                label: 'Максимум токенов',
                 name: 'maxTokens',
                 type: 'number',
                 step: 1,
@@ -63,7 +63,7 @@ class Groq_ChatModels implements INode {
                 additionalParams: true
             },
             {
-                label: 'Streaming',
+                label: 'Потоковая передача',
                 name: 'streaming',
                 type: 'boolean',
                 default: true,

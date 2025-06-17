@@ -149,39 +149,39 @@ class ConditionAgent_SeqAgents implements INode {
     outputs: INodeOutputsValue[]
 
     constructor() {
-        this.label = 'Condition Agent'
+        this.label = 'Условный агент'
         this.name = 'seqConditionAgent'
         this.version = 3.1
         this.type = 'ConditionAgent'
         this.icon = 'condition.svg'
         this.category = 'Sequential Agents'
-        this.description = 'Uses an agent to determine which route to take next'
+        this.description = 'Использует агента для определения, какой маршрут выбрать дальше'
         this.baseClasses = [this.type]
         this.documentation = 'https://docs.flowiseai.com/using-flowise/agentflows/sequential-agents#id-8.-conditional-agent-node'
         this.inputs = [
             {
-                label: 'Name',
+                label: 'Название',
                 name: 'conditionAgentName',
                 type: 'string',
                 placeholder: 'Condition Agent'
             },
             {
-                label: 'Sequential Node',
+                label: 'Последовательный узел',
                 name: 'sequentialNode',
                 type: 'Start | Agent | LLMNode | ToolNode | CustomFunction | ExecuteFlow',
                 description:
-                    'Can be connected to one of the following nodes: Start, Agent, LLM Node, Tool Node, Custom Function, Execute Flow',
+                    'Может быть подключен к одному из следующих узлов: Start, Agent, LLM Node, Tool Node, Custom Function, Execute Flow',
                 list: true
             },
             {
-                label: 'Chat Model',
+                label: 'Чат модель',
                 name: 'model',
                 type: 'BaseChatModel',
                 optional: true,
-                description: `Overwrite model to be used for this agent`
+                description: `Переопределить модель для использования этим агентом`
             },
             {
-                label: 'System Prompt',
+                label: 'Системный промпт',
                 name: 'systemMessagePrompt',
                 type: 'string',
                 rows: 4,
@@ -190,55 +190,56 @@ class ConditionAgent_SeqAgents implements INode {
                 optional: true
             },
             {
-                label: 'Conversation History',
+                label: 'История разговора',
                 name: 'conversationHistorySelection',
                 type: 'options',
                 options: [
                     {
-                        label: 'User Question',
+                        label: 'Вопрос пользователя',
                         name: 'user_question',
-                        description: 'Use the user question from the historical conversation messages as input.'
+                        description: 'Использовать вопрос пользователя из исторических сообщений разговора как входные данные.'
                     },
                     {
-                        label: 'Last Conversation Message',
+                        label: 'Последнее сообщение разговора',
                         name: 'last_message',
-                        description: 'Use the last conversation message from the historical conversation messages as input.'
+                        description: 'Использовать последнее сообщение разговора из исторических сообщений разговора как входные данные.'
                     },
                     {
-                        label: 'All Conversation Messages',
+                        label: 'Все сообщения разговора',
                         name: 'all_messages',
-                        description: 'Use all conversation messages from the historical conversation messages as input.'
+                        description: 'Использовать все сообщения разговора из исторических сообщений разговора как входные данные.'
                     },
                     {
-                        label: 'Empty',
+                        label: 'Пусто',
                         name: 'empty',
                         description:
-                            'Do not use any messages from the conversation history. ' +
-                            'Ensure to use either System Prompt, Human Prompt, or Messages History.'
+                            'Не использовать никакие сообщения из истории разговора. ' +
+                            'Убедитесь, что используете либо системный промпт, либо человеческий промпт.'
                     }
                 ],
                 default: 'all_messages',
                 optional: true,
                 description:
-                    'Select which messages from the conversation history to include in the prompt. ' +
-                    'The selected messages will be inserted between the System Prompt (if defined) and ' +
-                    'Human Prompt.',
+                    'Выберите, какие сообщения из истории разговора включить в промпт. ' +
+                    'Выбранные сообщения будут вставлены между системным промптом (если определен) и ' +
+                    'человеческим промптом.',
                 additionalParams: true
             },
             {
-                label: 'Human Prompt',
+                label: 'Человеческий промпт',
                 name: 'humanMessagePrompt',
                 type: 'string',
-                description: 'This prompt will be added at the end of the messages as human message',
+                description: 'Этот промпт будет добавлен в конец сообщений как человеческое сообщение',
                 rows: 4,
                 default: exampleHumanPrompt,
                 additionalParams: true,
                 optional: true
             },
             {
-                label: 'Format Prompt Values',
+                label: 'Форматировать значения промпта',
                 name: 'promptValues',
-                description: 'Assign values to the prompt variables. You can also use $flow.state.<variable-name> to get the state value',
+                description:
+                    'Назначить значения переменным промпта. Вы также можете использовать $flow.state.<имя-переменной> для получения значения состояния',
                 type: 'json',
                 optional: true,
                 acceptVariable: true,
@@ -246,68 +247,68 @@ class ConditionAgent_SeqAgents implements INode {
                 additionalParams: true
             },
             {
-                label: 'JSON Structured Output',
+                label: 'Структурированный JSON вывод',
                 name: 'conditionAgentStructuredOutput',
                 type: 'datagrid',
-                description: 'Instruct the LLM to give output in a JSON structured schema',
+                description: 'Инструктировать LLM давать вывод в структурированной JSON схеме',
                 datagrid: [
-                    { field: 'key', headerName: 'Key', editable: true },
+                    { field: 'key', headerName: 'Ключ', editable: true },
                     {
                         field: 'type',
-                        headerName: 'Type',
+                        headerName: 'Тип',
                         type: 'singleSelect',
                         valueOptions: ['String', 'String Array', 'Number', 'Boolean', 'Enum'],
                         editable: true
                     },
-                    { field: 'enumValues', headerName: 'Enum Values', editable: true },
-                    { field: 'description', headerName: 'Description', flex: 1, editable: true }
+                    { field: 'enumValues', headerName: 'Значения Enum', editable: true },
+                    { field: 'description', headerName: 'Описание', flex: 1, editable: true }
                 ],
                 optional: true,
                 additionalParams: true
             },
             {
-                label: 'Condition',
+                label: 'Условие',
                 name: 'condition',
                 type: 'conditionFunction', // This is a custom type to show as button on the UI and render anchor points when saved
                 tabIdentifier: TAB_IDENTIFIER,
                 tabs: [
                     {
-                        label: 'Condition (Table)',
+                        label: 'Условие (Таблица)',
                         name: 'conditionUI',
                         type: 'datagrid',
-                        description: 'If a condition is met, the node connected to the respective output will be executed',
+                        description: 'Если условие выполнено, будет выполнен узел, подключенный к соответствующему выходу',
                         optional: true,
                         datagrid: [
                             {
                                 field: 'variable',
-                                headerName: 'Variable',
+                                headerName: 'Переменная',
                                 type: 'freeSolo',
                                 editable: true,
                                 loadMethod: ['getPreviousMessages', 'loadStateKeys'],
                                 valueOptions: [
                                     {
-                                        label: 'Agent Output (string)',
+                                        label: 'Вывод агента (строка)',
                                         value: '$flow.output.content'
                                     },
                                     {
-                                        label: `Agent's JSON Key Output (string)`,
-                                        value: '$flow.output.<replace-with-key>'
+                                        label: `JSON ключ вывода агента (строка)`,
+                                        value: '$flow.output.<заменить-на-ключ>'
                                     },
                                     {
-                                        label: 'Total Messages (number)',
+                                        label: 'Общее количество сообщений (число)',
                                         value: '$flow.state.messages.length'
                                     },
                                     {
-                                        label: 'First Message Content (string)',
+                                        label: 'Содержимое первого сообщения (строка)',
                                         value: '$flow.state.messages[0].content'
                                     },
                                     {
-                                        label: 'Last Message Content (string)',
+                                        label: 'Содержимое последнего сообщения (строка)',
                                         value: '$flow.state.messages[-1].content'
                                     },
                                     {
-                                        label: `Global variable (string)`,
-                                        value: '$vars.<variable-name>'
+                                        label: `Глобальная переменная (строка)`,
+                                        value: '$vars.<имя-переменной>'
                                     }
                                 ],
                                 flex: 0.5,
@@ -315,7 +316,7 @@ class ConditionAgent_SeqAgents implements INode {
                             },
                             {
                                 field: 'operation',
-                                headerName: 'Operation',
+                                headerName: 'Операция',
                                 type: 'singleSelect',
                                 valueOptions: [
                                     'Contains',
@@ -339,13 +340,13 @@ class ConditionAgent_SeqAgents implements INode {
                             },
                             {
                                 field: 'value',
-                                headerName: 'Value',
+                                headerName: 'Значение',
                                 flex: 1,
                                 editable: true
                             },
                             {
                                 field: 'output',
-                                headerName: 'Output Name',
+                                headerName: 'Название выхода',
                                 editable: true,
                                 flex: 0.3,
                                 minWidth: 150
@@ -353,12 +354,12 @@ class ConditionAgent_SeqAgents implements INode {
                         ]
                     },
                     {
-                        label: 'Condition (Code)',
+                        label: 'Условие (Код)',
                         name: 'conditionFunction',
                         type: 'code',
-                        description: 'Function to evaluate the condition',
+                        description: 'Функция для оценки условия',
                         hint: {
-                            label: 'How to use',
+                            label: 'Как использовать',
                             value: howToUseCode
                         },
                         hideCodeExecute: true,
@@ -370,13 +371,13 @@ class ConditionAgent_SeqAgents implements INode {
         ]
         this.outputs = [
             {
-                label: 'Next',
+                label: 'Следующий',
                 name: 'next',
                 baseClasses: ['Condition'],
                 isAnchor: true
             },
             {
-                label: 'End',
+                label: 'Конец',
                 name: 'end',
                 baseClasses: ['Condition'],
                 isAnchor: true

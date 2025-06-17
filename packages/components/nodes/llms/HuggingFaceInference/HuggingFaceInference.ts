@@ -22,7 +22,7 @@ class HuggingFaceInference_LLMs implements INode {
         this.type = 'HuggingFaceInference'
         this.icon = 'HuggingFace.svg'
         this.category = 'LLMs'
-        this.description = 'Wrapper around HuggingFace large language models'
+        this.description = 'Обертка вокруг больших языковых моделей HuggingFace'
         this.baseClasses = [this.type, ...getBaseClasses(HuggingFaceInference)]
         this.credential = {
             label: 'Подключите учетные данные',
@@ -32,16 +32,16 @@ class HuggingFaceInference_LLMs implements INode {
         }
         this.inputs = [
             {
-                label: 'Cache',
+                label: 'Кэш',
                 name: 'cache',
                 type: 'BaseCache',
                 optional: true
             },
             {
-                label: 'Model',
+                label: 'Модель',
                 name: 'model',
                 type: 'string',
-                description: 'If using own inference endpoint, leave this blank',
+                description: 'Если используете собственный endpoint для вывода, оставьте это поле пустым',
                 placeholder: 'gpt2',
                 optional: true
             },
@@ -50,51 +50,56 @@ class HuggingFaceInference_LLMs implements INode {
                 name: 'endpoint',
                 type: 'string',
                 placeholder: 'https://xyz.eu-west-1.aws.endpoints.huggingface.cloud/gpt2',
-                description: 'Using your own inference endpoint',
+                description: 'Использование собственного endpoint для вывода',
                 optional: true
             },
             {
-                label: 'Temperature',
+                label: 'Температура',
                 name: 'temperature',
                 type: 'number',
                 step: 0.1,
-                description: 'Temperature parameter may not apply to certain model. Please check available model parameters',
+                description:
+                    'Параметр температуры может не применяться к определенным моделям. Пожалуйста, проверьте доступные параметры модели',
                 optional: true,
                 additionalParams: true
             },
             {
-                label: 'Max Tokens',
+                label: 'Максимальное количество токенов',
                 name: 'maxTokens',
                 type: 'number',
                 step: 1,
-                description: 'Max Tokens parameter may not apply to certain model. Please check available model parameters',
+                description:
+                    'Параметр максимального количества токенов может не применяться к определенным моделям. Пожалуйста, проверьте доступные параметры модели',
                 optional: true,
                 additionalParams: true
             },
             {
-                label: 'Top Probability',
+                label: 'Верхняя вероятность',
                 name: 'topP',
                 type: 'number',
                 step: 0.1,
-                description: 'Top Probability parameter may not apply to certain model. Please check available model parameters',
+                description:
+                    'Параметр верхней вероятности может не применяться к определенным моделям. Пожалуйста, проверьте доступные параметры модели',
                 optional: true,
                 additionalParams: true
             },
             {
-                label: 'Top K',
+                label: 'Верхний K',
                 name: 'hfTopK',
                 type: 'number',
                 step: 0.1,
-                description: 'Top K parameter may not apply to certain model. Please check available model parameters',
+                description:
+                    'Параметр верхнего K может не применяться к определенным моделям. Пожалуйста, проверьте доступные параметры модели',
                 optional: true,
                 additionalParams: true
             },
             {
-                label: 'Frequency Penalty',
+                label: 'Штраф за частоту',
                 name: 'frequencyPenalty',
                 type: 'number',
                 step: 0.1,
-                description: 'Frequency Penalty parameter may not apply to certain model. Please check available model parameters',
+                description:
+                    'Параметр штрафа за частоту может не применяться к определенным моделям. Пожалуйста, проверьте доступные параметры модели',
                 optional: true,
                 additionalParams: true
             }

@@ -22,7 +22,7 @@ class ChatOpenAICustom_ChatModels implements INode {
         this.type = 'ChatOpenAI-Custom'
         this.icon = 'openai.svg'
         this.category = 'Chat Models'
-        this.description = 'Custom/FineTuned model using OpenAI Chat compatible API'
+        this.description = 'Пользовательская/Дообученная модель с использованием OpenAI Chat совместимого API'
         this.baseClasses = [this.type, ...getBaseClasses(ChatOpenAI)]
         this.credential = {
             label: 'Подключите учетные данные',
@@ -33,19 +33,19 @@ class ChatOpenAICustom_ChatModels implements INode {
         }
         this.inputs = [
             {
-                label: 'Cache',
+                label: 'Кэш',
                 name: 'cache',
                 type: 'BaseCache',
                 optional: true
             },
             {
-                label: 'Model Name',
+                label: 'Название модели',
                 name: 'modelName',
                 type: 'string',
                 placeholder: 'ft:gpt-3.5-turbo:my-org:custom_suffix:id'
             },
             {
-                label: 'Temperature',
+                label: 'Температура',
                 name: 'temperature',
                 type: 'number',
                 step: 0.1,
@@ -53,7 +53,7 @@ class ChatOpenAICustom_ChatModels implements INode {
                 optional: true
             },
             {
-                label: 'Streaming',
+                label: 'Потоковая передача',
                 name: 'streaming',
                 type: 'boolean',
                 default: true,
@@ -61,7 +61,7 @@ class ChatOpenAICustom_ChatModels implements INode {
                 additionalParams: true
             },
             {
-                label: 'Max Tokens',
+                label: 'Максимум токенов',
                 name: 'maxTokens',
                 type: 'number',
                 step: 1,
@@ -69,7 +69,7 @@ class ChatOpenAICustom_ChatModels implements INode {
                 additionalParams: true
             },
             {
-                label: 'Top Probability',
+                label: 'Вероятность Top P',
                 name: 'topP',
                 type: 'number',
                 step: 0.1,
@@ -77,7 +77,7 @@ class ChatOpenAICustom_ChatModels implements INode {
                 additionalParams: true
             },
             {
-                label: 'Frequency Penalty',
+                label: 'Штраф за частоту',
                 name: 'frequencyPenalty',
                 type: 'number',
                 step: 0.1,
@@ -85,7 +85,7 @@ class ChatOpenAICustom_ChatModels implements INode {
                 additionalParams: true
             },
             {
-                label: 'Presence Penalty',
+                label: 'Штраф за присутствие',
                 name: 'presencePenalty',
                 type: 'number',
                 step: 0.1,
@@ -93,7 +93,7 @@ class ChatOpenAICustom_ChatModels implements INode {
                 additionalParams: true
             },
             {
-                label: 'Timeout',
+                label: 'Таймаут',
                 name: 'timeout',
                 type: 'number',
                 step: 1,
@@ -101,14 +101,14 @@ class ChatOpenAICustom_ChatModels implements INode {
                 additionalParams: true
             },
             {
-                label: 'BasePath',
+                label: 'Базовый путь',
                 name: 'basepath',
                 type: 'string',
                 optional: true,
                 additionalParams: true
             },
             {
-                label: 'BaseOptions',
+                label: 'Базовые опции',
                 name: 'baseOptions',
                 type: 'json',
                 optional: true,

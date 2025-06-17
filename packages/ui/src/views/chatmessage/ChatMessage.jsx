@@ -290,7 +290,7 @@ const ChatMessage = ({ open, chatflowid, isAgentCanvas, isDialog, previews, setP
             }
         }
         if (!acceptFile) {
-            alert(`Cannot upload file. Kindly check the allowed file types and maximum allowed size.`)
+            alert(`Невозможно загрузить файл. Пожалуйста, проверьте разрешенные типы файлов и максимально допустимый размер.`)
         }
         return acceptFile
     }
@@ -890,7 +890,7 @@ const ChatMessage = ({ open, chatflowid, isAgentCanvas, isDialog, previews, setP
         try {
             uploads = await handleFileUploads(uploads)
         } catch (error) {
-            handleError('Unable to upload documents')
+            handleError('Невозможно загрузить документы')
             return
         }
 
@@ -1734,10 +1734,10 @@ const ChatMessage = ({ open, chatflowid, isAgentCanvas, isDialog, previews, setP
                         }}
                     >
                         <Typography variant='h4' sx={{ mb: 1, textAlign: 'center' }}>
-                            {formTitle || 'Please Fill Out The Form'}
+                            {formTitle || 'Пожалуйста, заполните форму'}
                         </Typography>
                         <Typography variant='body1' sx={{ mb: 3, textAlign: 'center', color: theme.palette.text.secondary }}>
-                            {formDescription || 'Complete all fields below to continue'}
+                            {formDescription || 'Заполните все поля ниже для продолжения'}
                         </Typography>
 
                         {/* Form inputs */}
@@ -1774,7 +1774,7 @@ const ChatMessage = ({ open, chatflowid, isAgentCanvas, isDialog, previews, setP
                                 background: 'linear-gradient(45deg, #673ab7 30%, #1e88e5 90%)'
                             }}
                         >
-                            {loading ? 'Submitting...' : 'Submit'}
+                            {loading ? 'Отправка...' : 'Отправить'}
                         </Button>
                     </Box>
                 </Box>
@@ -1796,7 +1796,7 @@ const ChatMessage = ({ open, chatflowid, isAgentCanvas, isDialog, previews, setP
             {isDragActive &&
                 (getAllowChatFlowUploads.data?.isImageUploadAllowed || getAllowChatFlowUploads.data?.isRAGFileUploadAllowed) && (
                     <Box className='drop-overlay'>
-                        <Typography variant='h2'>Drop here to upload</Typography>
+                        <Typography variant='h2'>Перетащите сюда для загрузки</Typography>
                         {[
                             ...getAllowChatFlowUploads.data.imgUploadSizeAndTypes,
                             ...getAllowChatFlowUploads.data.fileUploadSizeAndTypes
@@ -1805,7 +1805,7 @@ const ChatMessage = ({ open, chatflowid, isAgentCanvas, isDialog, previews, setP
                                 <>
                                     <Typography variant='subtitle1'>{allowed.fileTypes?.join(', ')}</Typography>
                                     {allowed.maxUploadSize && (
-                                        <Typography variant='subtitle1'>Max Allowed Size: {allowed.maxUploadSize} MB</Typography>
+                                        <Typography variant='subtitle1'>Максимальный размер: {allowed.maxUploadSize} МБ</Typography>
                                     )}
                                 </>
                             )
@@ -1958,7 +1958,7 @@ const ChatMessage = ({ open, chatflowid, isAgentCanvas, isDialog, previews, setP
                                                     }}
                                                 >
                                                     <Typography sx={{ lineHeight: '1.5rem', whiteSpace: 'pre-line' }}>
-                                                        {leadsConfig.title || 'Let us know where we can reach you:'}
+                                                        {leadsConfig.title || 'Сообщите нам, где мы можем с вами связаться:'}
                                                     </Typography>
                                                     <form
                                                         style={{
@@ -1974,7 +1974,7 @@ const ChatMessage = ({ open, chatflowid, isAgentCanvas, isDialog, previews, setP
                                                                 id='leadName'
                                                                 type='text'
                                                                 fullWidth
-                                                                placeholder='Name'
+                                                                placeholder='Имя'
                                                                 name='leadName'
                                                                 value={leadName}
                                                                 // eslint-disable-next-line
@@ -1987,7 +1987,7 @@ const ChatMessage = ({ open, chatflowid, isAgentCanvas, isDialog, previews, setP
                                                                 id='leadEmail'
                                                                 type='email'
                                                                 fullWidth
-                                                                placeholder='Email Address'
+                                                                placeholder='Email адрес'
                                                                 name='leadEmail'
                                                                 value={leadEmail}
                                                                 onChange={(e) => setLeadEmail(e.target.value)}
@@ -1998,7 +1998,7 @@ const ChatMessage = ({ open, chatflowid, isAgentCanvas, isDialog, previews, setP
                                                                 id='leadPhone'
                                                                 type='number'
                                                                 fullWidth
-                                                                placeholder='Phone Number'
+                                                                placeholder='Номер телефона'
                                                                 name='leadPhone'
                                                                 value={leadPhone}
                                                                 onChange={(e) => setLeadPhone(e.target.value)}
@@ -2016,7 +2016,7 @@ const ChatMessage = ({ open, chatflowid, isAgentCanvas, isDialog, previews, setP
                                                                 type='submit'
                                                                 sx={{ borderRadius: '20px' }}
                                                             >
-                                                                {isLeadSaving ? 'Saving...' : 'Save'}
+                                                                {isLeadSaving ? 'Сохранение...' : 'Сохранить'}
                                                             </Button>
                                                         </Box>
                                                     </form>
@@ -2206,7 +2206,7 @@ const ChatMessage = ({ open, chatflowid, isAgentCanvas, isDialog, previews, setP
                         <Stack sx={{ flexDirection: 'row', alignItems: 'center', px: 1.5, gap: 0.5 }}>
                             <IconSparkles size={12} />
                             <Typography sx={{ fontSize: '0.75rem' }} variant='body2'>
-                                Try these prompts
+                                Попробуйте эти подсказки
                             </Typography>
                         </Stack>
                         <FollowUpPromptsCard
@@ -2235,7 +2235,8 @@ const ChatMessage = ({ open, chatflowid, isAgentCanvas, isDialog, previews, setP
                             <div className='overlay'>
                                 <div className='browser-not-supporting-audio-recording-box'>
                                     <Typography variant='body1'>
-                                        To record audio, use modern browsers like Chrome or Firefox that support audio recording.
+                                        Для записи аудио используйте современные браузеры, такие как Chrome или Firefox, которые
+                                        поддерживают запись аудио.
                                     </Typography>
                                     <Button
                                         variant='contained'
@@ -2244,7 +2245,7 @@ const ChatMessage = ({ open, chatflowid, isAgentCanvas, isDialog, previews, setP
                                         type='button'
                                         onClick={() => onRecordingCancelled()}
                                     >
-                                        Okay
+                                        Хорошо
                                     </Button>
                                 </div>
                             </div>
@@ -2268,7 +2269,7 @@ const ChatMessage = ({ open, chatflowid, isAgentCanvas, isDialog, previews, setP
                                         <IconCircleDot />
                                     </span>
                                     <Typography id='elapsed-time'>00:00</Typography>
-                                    {isLoadingRecording && <Typography ml={1.5}>Sending...</Typography>}
+                                    {isLoadingRecording && <Typography ml={1.5}>Отправка...</Typography>}
                                 </div>
                                 <div className='recording-control-buttons-container'>
                                     <IconButton onClick={onRecordingCancelled} size='small'>
@@ -2296,7 +2297,7 @@ const ChatMessage = ({ open, chatflowid, isAgentCanvas, isDialog, previews, setP
                             onKeyDown={handleEnter}
                             id='userInput'
                             name='userInput'
-                            placeholder={loading ? 'Waiting for response...' : 'Type your question...'}
+                            placeholder={loading ? 'Ожидание ответа...' : 'Введите ваш вопрос...'}
                             value={userInput}
                             onChange={onChange}
                             multiline={true}
@@ -2415,7 +2416,7 @@ const ChatMessage = ({ open, chatflowid, isAgentCanvas, isDialog, previews, setP
                                                 <InputAdornment position='end' sx={{ padding: '15px', mr: 1 }}>
                                                     <IconButton
                                                         edge='end'
-                                                        title={isMessageStopping ? 'Stopping...' : 'Stop'}
+                                                        title={isMessageStopping ? 'Остановка...' : 'Остановить'}
                                                         style={{ border: !isMessageStopping ? '2px solid red' : 'none' }}
                                                         onClick={() => handleAbort()}
                                                         disabled={isMessageStopping}

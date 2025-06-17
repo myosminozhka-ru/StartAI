@@ -22,7 +22,7 @@ class GoogleVertexAIEmbedding_Embeddings implements INode {
         this.type = 'GoogleVertexAIEmbeddings'
         this.icon = 'GoogleVertex.svg'
         this.category = 'Embeddings'
-        this.description = 'Google vertexAI API to generate embeddings for a given text'
+        this.description = 'Google vertexAI API для генерации эмбеддингов для заданного текста'
         this.baseClasses = [this.type, ...getBaseClasses(VertexAIEmbeddings)]
         this.credential = {
             label: 'Подключите учетные данные',
@@ -31,11 +31,11 @@ class GoogleVertexAIEmbedding_Embeddings implements INode {
             credentialNames: ['googleVertexAuth'],
             optional: true,
             description:
-                'Google Vertex AI credential. If you are using a GCP service like Cloud Run, or if you have installed default credentials on your local machine, you do not need to set this credential.'
+                'Google Vertex AI учетные данные. Если вы используете GCP сервис, такой как Cloud Run, или если у вас установлены учетные данные по умолчанию на локальной машине, вам не нужно устанавливать эти учетные данные.'
         }
         this.inputs = [
             {
-                label: 'Model Name',
+                label: 'Название модели',
                 name: 'modelName',
                 type: 'asyncOptions',
                 loadMethod: 'listModels',

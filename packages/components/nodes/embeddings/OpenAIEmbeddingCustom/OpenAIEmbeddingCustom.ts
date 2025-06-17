@@ -21,7 +21,7 @@ class OpenAIEmbeddingCustom_Embeddings implements INode {
         this.type = 'OpenAIEmbeddingsCustom'
         this.icon = 'openai.svg'
         this.category = 'Embeddings'
-        this.description = 'OpenAI API to generate embeddings for a given text'
+        this.description = 'OpenAI API для генерации эмбеддингов для заданного текста'
         this.baseClasses = [this.type, ...getBaseClasses(OpenAIEmbeddings)]
         this.credential = {
             label: 'Подключите учетные данные',
@@ -31,48 +31,48 @@ class OpenAIEmbeddingCustom_Embeddings implements INode {
         }
         this.inputs = [
             {
-                label: 'Strip New Lines',
+                label: 'Удалить переносы строк',
                 name: 'stripNewLines',
                 type: 'boolean',
                 optional: true,
                 additionalParams: true
             },
             {
-                label: 'Batch Size',
+                label: 'Размер пакета',
                 name: 'batchSize',
                 type: 'number',
                 optional: true,
                 additionalParams: true
             },
             {
-                label: 'Timeout',
+                label: 'Таймаут',
                 name: 'timeout',
                 type: 'number',
                 optional: true,
                 additionalParams: true
             },
             {
-                label: 'BasePath',
+                label: 'Базовый путь',
                 name: 'basepath',
                 type: 'string',
                 optional: true,
                 additionalParams: true
             },
             {
-                label: 'BaseOptions',
+                label: 'Базовые опции',
                 name: 'baseOptions',
                 type: 'json',
                 optional: true,
                 additionalParams: true
             },
             {
-                label: 'Model Name',
+                label: 'Название модели',
                 name: 'modelName',
                 type: 'string',
                 optional: true
             },
             {
-                label: 'Dimensions',
+                label: 'Размерности',
                 name: 'dimensions',
                 type: 'number',
                 optional: true,

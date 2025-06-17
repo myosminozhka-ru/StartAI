@@ -23,60 +23,60 @@ class ExtractMetadataRetriever_Retrievers implements INode {
     outputs: INodeOutputsValue[]
 
     constructor() {
-        this.label = 'Extract Metadata Retriever'
+        this.label = 'Ретривер с извлечением метаданных'
         this.name = 'extractMetadataRetriever'
         this.version = 1.0
         this.type = 'ExtractMetadataRetriever'
         this.icon = 'dynamicMetadataRetriever.svg'
         this.category = 'Retrievers'
-        this.description = 'Extract keywords/metadata from the query and use it to filter documents'
+        this.description = 'Извлечь ключевые слова/метаданные из запроса и использовать их для фильтрации документов'
         this.baseClasses = [this.type, 'BaseRetriever']
         this.badge = 'BETA'
         this.inputs = [
             {
-                label: 'Vector Store',
+                label: 'Векторное хранилище',
                 name: 'vectorStore',
                 type: 'VectorStore'
             },
             {
-                label: 'Chat Model',
+                label: 'Чат модель',
                 name: 'model',
                 type: 'BaseChatModel'
             },
             {
-                label: 'Query',
+                label: 'Запрос',
                 name: 'query',
                 type: 'string',
-                description: 'Query to retrieve documents from retriever. If not specified, user question will be used',
+                description: 'Запрос для извлечения документов из ретривера. Если не указан, будет использован вопрос пользователя',
                 optional: true,
                 acceptVariable: true
             },
             {
-                label: 'Prompt',
+                label: 'Промпт',
                 name: 'dynamicMetadataFilterRetrieverPrompt',
                 type: 'string',
-                description: 'Prompt to extract metadata from query',
+                description: 'Промпт для извлечения метаданных из запроса',
                 rows: 4,
                 additionalParams: true,
                 default: defaultPrompt
             },
             {
-                label: 'JSON Structured Output',
+                label: 'Структурированный JSON вывод',
                 name: 'dynamicMetadataFilterRetrieverStructuredOutput',
                 type: 'datagrid',
                 description:
-                    'Instruct the model to give output in a JSON structured schema. This output will be used as the metadata filter for connected vector store',
+                    'Инструктировать модель давать вывод в структурированной JSON схеме. Этот вывод будет использован как фильтр метаданных для подключенного векторного хранилища',
                 datagrid: [
-                    { field: 'key', headerName: 'Key', editable: true },
+                    { field: 'key', headerName: 'Ключ', editable: true },
                     {
                         field: 'type',
-                        headerName: 'Type',
+                        headerName: 'Тип',
                         type: 'singleSelect',
                         valueOptions: ['String', 'String Array', 'Number', 'Boolean', 'Enum'],
                         editable: true
                     },
-                    { field: 'enumValues', headerName: 'Enum Values', editable: true },
-                    { field: 'description', headerName: 'Description', flex: 1, editable: true }
+                    { field: 'enumValues', headerName: 'Значения Enum', editable: true },
+                    { field: 'description', headerName: 'Описание', flex: 1, editable: true }
                 ],
                 optional: true,
                 additionalParams: true
@@ -84,7 +84,7 @@ class ExtractMetadataRetriever_Retrievers implements INode {
             {
                 label: 'Top K',
                 name: 'topK',
-                description: 'Number of top results to fetch. Default to vector store topK',
+                description: 'Количество лучших результатов для получения. По умолчанию равно topK векторного хранилища',
                 placeholder: '4',
                 type: 'number',
                 additionalParams: true,
@@ -93,20 +93,20 @@ class ExtractMetadataRetriever_Retrievers implements INode {
         ]
         this.outputs = [
             {
-                label: 'Extract Metadata Retriever',
+                label: 'Ретривер с извлечением метаданных',
                 name: 'retriever',
                 baseClasses: this.baseClasses
             },
             {
-                label: 'Document',
+                label: 'Документ',
                 name: 'document',
-                description: 'Array of document objects containing metadata and pageContent',
+                description: 'Массив объектов документов, содержащих метаданные и pageContent',
                 baseClasses: ['Document', 'json']
             },
             {
-                label: 'Text',
+                label: 'Текст',
                 name: 'text',
-                description: 'Concatenated string from pageContent of documents',
+                description: 'Объединенная строка из pageContent документов',
                 baseClasses: ['string', 'json']
             }
         ]

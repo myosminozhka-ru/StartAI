@@ -29,7 +29,7 @@ class AzureOpenAIEmbedding_LlamaIndex_Embeddings implements INode {
         this.type = 'AzureOpenAIEmbeddings'
         this.icon = 'Azure.svg'
         this.category = 'Embeddings'
-        this.description = 'Azure OpenAI API embeddings specific for LlamaIndex'
+        this.description = 'Эмбеддинги Azure OpenAI API специально для LlamaIndex'
         this.baseClasses = [this.type, 'BaseEmbedding_LlamaIndex', ...getBaseClasses(OpenAIEmbedding)]
         this.tags = ['LlamaIndex']
         this.credential = {
@@ -40,7 +40,7 @@ class AzureOpenAIEmbedding_LlamaIndex_Embeddings implements INode {
         }
         this.inputs = [
             {
-                label: 'Timeout',
+                label: 'Таймаут',
                 name: 'timeout',
                 type: 'number',
                 optional: true,

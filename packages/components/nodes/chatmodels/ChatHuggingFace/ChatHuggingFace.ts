@@ -32,16 +32,16 @@ class ChatHuggingFace_ChatModels implements INode {
         }
         this.inputs = [
             {
-                label: 'Cache',
+                label: 'Кэш',
                 name: 'cache',
                 type: 'BaseCache',
                 optional: true
             },
             {
-                label: 'Model',
+                label: 'Модель',
                 name: 'model',
                 type: 'string',
-                description: 'If using own inference endpoint, leave this blank',
+                description: 'Если используете собственный endpoint для инференса, оставьте это поле пустым',
                 placeholder: 'gpt2'
             },
             {
@@ -49,33 +49,36 @@ class ChatHuggingFace_ChatModels implements INode {
                 name: 'endpoint',
                 type: 'string',
                 placeholder: 'https://xyz.eu-west-1.aws.endpoints.huggingface.cloud/gpt2',
-                description: 'Using your own inference endpoint',
+                description: 'Использование собственного endpoint для инференса',
                 optional: true
             },
             {
-                label: 'Temperature',
+                label: 'Температура',
                 name: 'temperature',
                 type: 'number',
                 step: 0.1,
-                description: 'Temperature parameter may not apply to certain model. Please check available model parameters',
+                description:
+                    'Параметр температуры может не применяться к определенным моделям. Пожалуйста, проверьте доступные параметры модели',
                 optional: true,
                 additionalParams: true
             },
             {
-                label: 'Max Tokens',
+                label: 'Максимум токенов',
                 name: 'maxTokens',
                 type: 'number',
                 step: 1,
-                description: 'Max Tokens parameter may not apply to certain model. Please check available model parameters',
+                description:
+                    'Параметр максимального количества токенов может не применяться к определенным моделям. Пожалуйста, проверьте доступные параметры модели',
                 optional: true,
                 additionalParams: true
             },
             {
-                label: 'Top Probability',
+                label: 'Вероятность Top P',
                 name: 'topP',
                 type: 'number',
                 step: 0.1,
-                description: 'Top Probability parameter may not apply to certain model. Please check available model parameters',
+                description:
+                    'Параметр Top Probability может не применяться к определенным моделям. Пожалуйста, проверьте доступные параметры модели',
                 optional: true,
                 additionalParams: true
             },
@@ -84,26 +87,28 @@ class ChatHuggingFace_ChatModels implements INode {
                 name: 'hfTopK',
                 type: 'number',
                 step: 0.1,
-                description: 'Top K parameter may not apply to certain model. Please check available model parameters',
+                description: 'Параметр Top K может не применяться к определенным моделям. Пожалуйста, проверьте доступные параметры модели',
                 optional: true,
                 additionalParams: true
             },
             {
-                label: 'Frequency Penalty',
+                label: 'Штраф частоты',
                 name: 'frequencyPenalty',
                 type: 'number',
                 step: 0.1,
-                description: 'Frequency Penalty parameter may not apply to certain model. Please check available model parameters',
+                description:
+                    'Параметр штрафа частоты может не применяться к определенным моделям. Пожалуйста, проверьте доступные параметры модели',
                 optional: true,
                 additionalParams: true
             },
             {
-                label: 'Stop Sequence',
+                label: 'Стоп-последовательность',
                 name: 'stop',
                 type: 'string',
                 rows: 4,
                 placeholder: 'AI assistant:',
-                description: 'Sets the stop sequences to use. Use comma to seperate different sequences.',
+                description:
+                    'Устанавливает стоп-последовательности для использования. Используйте запятую для разделения различных последовательностей.',
                 optional: true,
                 additionalParams: true
             }

@@ -19,51 +19,51 @@ class LLMFilterCompressionRetriever_Retrievers implements INode {
     badge: string
 
     constructor() {
-        this.label = 'LLM Filter Retriever'
+        this.label = 'LLM Фильтр ретривер'
         this.name = 'llmFilterRetriever'
         this.version = 1.0
         this.type = 'LLMFilterRetriever'
         this.icon = 'llmFilterRetriever.svg'
         this.category = 'Retrievers'
         this.description =
-            'Iterate over the initially returned documents and extract, from each, only the content that is relevant to the query'
+            'Итерация по изначально возвращенным документам и извлечение из каждого только того контента, который релевантен запросу'
         this.baseClasses = [this.type, 'BaseRetriever']
         this.inputs = [
             {
-                label: 'Vector Store Retriever',
+                label: 'Ретривер векторного хранилища',
                 name: 'baseRetriever',
                 type: 'VectorStoreRetriever'
             },
             {
-                label: 'Language Model',
+                label: 'Языковая модель',
                 name: 'model',
                 type: 'BaseLanguageModel'
             },
             {
-                label: 'Query',
+                label: 'Запрос',
                 name: 'query',
                 type: 'string',
-                description: 'Query to retrieve documents from retriever. If not specified, user question will be used',
+                description: 'Запрос для извлечения документов из ретривера. Если не указан, будет использован вопрос пользователя',
                 optional: true,
                 acceptVariable: true
             }
         ]
         this.outputs = [
             {
-                label: 'LLM Filter Retriever',
+                label: 'LLM Фильтр ретривер',
                 name: 'retriever',
                 baseClasses: this.baseClasses
             },
             {
-                label: 'Document',
+                label: 'Документ',
                 name: 'document',
-                description: 'Array of document objects containing metadata and pageContent',
+                description: 'Массив объектов документов, содержащих метаданные и pageContent',
                 baseClasses: ['Document', 'json']
             },
             {
-                label: 'Text',
+                label: 'Текст',
                 name: 'text',
-                description: 'Concatenated string from pageContent of documents',
+                description: 'Объединенная строка из pageContent документов',
                 baseClasses: ['string', 'json']
             }
         ]

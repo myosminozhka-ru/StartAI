@@ -17,13 +17,13 @@ class SQLiteRecordManager_RecordManager implements INode {
     inputs: INodeParams[]
 
     constructor() {
-        this.label = 'SQLite Record Manager'
+        this.label = 'SQLite Менеджер записей'
         this.name = 'SQLiteRecordManager'
         this.version = 1.1
         this.type = 'SQLite RecordManager'
         this.icon = 'sqlite.png'
         this.category = 'Record Manager'
-        this.description = 'Use SQLite to keep track of document writes into the vector databases'
+        this.description = 'Использовать SQLite для отслеживания записи документов в векторные базы данных'
         this.baseClasses = [this.type, 'RecordManager', ...getBaseClasses(SQLiteRecordManager)]
         this.inputs = [
             /*{
@@ -33,14 +33,14 @@ class SQLiteRecordManager_RecordManager implements INode {
                 placeholder: 'C:\\Users\\User\\.flowise\\database.sqlite'
             },*/
             {
-                label: 'Additional Connection Configuration',
+                label: 'Дополнительная конфигурация подключения',
                 name: 'additionalConfig',
                 type: 'json',
                 additionalParams: true,
                 optional: true
             },
             {
-                label: 'Table Name',
+                label: 'Название таблицы',
                 name: 'tableName',
                 type: 'string',
                 placeholder: 'upsertion_records',
@@ -48,47 +48,47 @@ class SQLiteRecordManager_RecordManager implements INode {
                 optional: true
             },
             {
-                label: 'Namespace',
+                label: 'Пространство имен',
                 name: 'namespace',
                 type: 'string',
-                description: 'If not specified, chatflowid will be used',
+                description: 'Если не указано, будет использован chatflowid',
                 additionalParams: true,
                 optional: true
             },
             {
-                label: 'Cleanup',
+                label: 'Очистка',
                 name: 'cleanup',
                 type: 'options',
                 description:
-                    'Read more on the difference between different cleanup methods <a target="_blank" href="https://js.langchain.com/docs/modules/data_connection/indexing/#deletion-modes">here</a>',
+                    'Узнайте больше о различиях между различными методами очистки <a target="_blank" href="https://js.langchain.com/docs/modules/data_connection/indexing/#deletion-modes">здесь</a>',
                 options: [
                     {
-                        label: 'None',
+                        label: 'Нет',
                         name: 'none',
-                        description: 'No clean up of old content'
+                        description: 'Без очистки старого контента'
                     },
                     {
-                        label: 'Incremental',
+                        label: 'Инкрементальная',
                         name: 'incremental',
                         description:
-                            'Delete previous versions of the content if content of the source document has changed. Important!! SourceId Key must be specified and document metadata must contains the specified key'
+                            'Удалить предыдущие версии контента, если содержимое исходного документа изменилось. Важно!! Ключ SourceId должен быть указан, и метаданные документа должны содержать указанный ключ'
                     },
                     {
-                        label: 'Full',
+                        label: 'Полная',
                         name: 'full',
                         description:
-                            'Same as incremental, but if the source document has been deleted, it will be deleted from vector store as well, incremental mode will not.'
+                            'То же, что и инкрементальная, но если исходный документ был удален, он также будет удален из векторного хранилища, инкрементальный режим не будет.'
                     }
                 ],
                 additionalParams: true,
                 default: 'none'
             },
             {
-                label: 'SourceId Key',
+                label: 'Ключ SourceId',
                 name: 'sourceIdKey',
                 type: 'string',
                 description:
-                    'Key used to get the true source of document, to be compared against the record. Document metadata must contains SourceId Key',
+                    'Ключ, используемый для получения истинного источника документа, для сравнения с записью. Метаданные документа должны содержать ключ SourceId',
                 default: 'source',
                 placeholder: 'source',
                 additionalParams: true,

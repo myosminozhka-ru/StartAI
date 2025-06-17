@@ -41,19 +41,19 @@ class AzureChatOpenAI_ChatModels implements INode {
         }
         this.inputs = [
             {
-                label: 'Cache',
+                label: 'Кэш',
                 name: 'cache',
                 type: 'BaseCache',
                 optional: true
             },
             {
-                label: 'Model Name',
+                label: 'Название модели',
                 name: 'modelName',
                 type: 'asyncOptions',
                 loadMethod: 'listModels'
             },
             {
-                label: 'Temperature',
+                label: 'Температура',
                 name: 'temperature',
                 type: 'number',
                 step: 0.1,
@@ -61,7 +61,7 @@ class AzureChatOpenAI_ChatModels implements INode {
                 optional: true
             },
             {
-                label: 'Max Tokens',
+                label: 'Максимум токенов',
                 name: 'maxTokens',
                 type: 'number',
                 step: 1,
@@ -69,7 +69,7 @@ class AzureChatOpenAI_ChatModels implements INode {
                 additionalParams: true
             },
             {
-                label: 'Streaming',
+                label: 'Потоковая передача',
                 name: 'streaming',
                 type: 'boolean',
                 default: true,
@@ -77,7 +77,7 @@ class AzureChatOpenAI_ChatModels implements INode {
                 additionalParams: true
             },
             {
-                label: 'Top Probability',
+                label: 'Вероятность Top P',
                 name: 'topP',
                 type: 'number',
                 step: 0.1,
@@ -85,7 +85,7 @@ class AzureChatOpenAI_ChatModels implements INode {
                 additionalParams: true
             },
             {
-                label: 'Frequency Penalty',
+                label: 'Штраф частоты',
                 name: 'frequencyPenalty',
                 type: 'number',
                 step: 0.1,
@@ -93,7 +93,7 @@ class AzureChatOpenAI_ChatModels implements INode {
                 additionalParams: true
             },
             {
-                label: 'Presence Penalty',
+                label: 'Штраф присутствия',
                 name: 'presencePenalty',
                 type: 'number',
                 step: 0.1,
@@ -101,7 +101,7 @@ class AzureChatOpenAI_ChatModels implements INode {
                 additionalParams: true
             },
             {
-                label: 'Timeout',
+                label: 'Таймаут',
                 name: 'timeout',
                 type: 'number',
                 step: 1,
@@ -109,44 +109,44 @@ class AzureChatOpenAI_ChatModels implements INode {
                 additionalParams: true
             },
             {
-                label: 'BasePath',
+                label: 'Базовый путь',
                 name: 'basepath',
                 type: 'string',
                 optional: true,
                 additionalParams: true
             },
             {
-                label: 'BaseOptions',
+                label: 'Базовые опции',
                 name: 'baseOptions',
                 type: 'json',
                 optional: true,
                 additionalParams: true
             },
             {
-                label: 'Allow Image Uploads',
+                label: 'Разрешить загрузку изображений',
                 name: 'allowImageUploads',
                 type: 'boolean',
                 description:
-                    'Allow image input. Refer to the <a href="https://docs.flowiseai.com/using-flowise/uploads#image" target="_blank">docs</a> for more details.',
+                    'Разрешить ввод изображений. См. <a href="https://docs.flowiseai.com/using-flowise/uploads#image" target="_blank">документацию</a> для получения дополнительной информации.',
                 default: false,
                 optional: true
             },
             {
-                label: 'Image Resolution',
-                description: 'This parameter controls the resolution in which the model views the image.',
+                label: 'Разрешение изображения',
+                description: 'Этот параметр контролирует разрешение, в котором модель просматривает изображение.',
                 name: 'imageResolution',
                 type: 'options',
                 options: [
                     {
-                        label: 'Low',
+                        label: 'Низкое',
                         name: 'low'
                     },
                     {
-                        label: 'High',
+                        label: 'Высокое',
                         name: 'high'
                     },
                     {
-                        label: 'Auto',
+                        label: 'Авто',
                         name: 'auto'
                     }
                 ],
@@ -155,21 +155,21 @@ class AzureChatOpenAI_ChatModels implements INode {
                 additionalParams: true
             },
             {
-                label: 'Reasoning Effort',
-                description: 'Constrains effort on reasoning for reasoning models. Only applicable for o1 and o3 models.',
+                label: 'Усилие рассуждения',
+                description: 'Ограничивает усилия на рассуждения для моделей рассуждений. Применимо только для моделей o1 и o3.',
                 name: 'reasoningEffort',
                 type: 'options',
                 options: [
                     {
-                        label: 'Low',
+                        label: 'Низкое',
                         name: 'low'
                     },
                     {
-                        label: 'Medium',
+                        label: 'Среднее',
                         name: 'medium'
                     },
                     {
-                        label: 'High',
+                        label: 'Высокое',
                         name: 'high'
                     }
                 ],

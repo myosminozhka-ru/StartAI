@@ -40,90 +40,90 @@ class Mem0_Memory implements INode {
         this.type = 'Mem0'
         this.icon = 'mem0.svg'
         this.category = 'Memory'
-        this.description = 'Stores and manages chat memory using Mem0 service'
+        this.description = 'Сохраняет и управляет памятью чата с использованием сервиса Mem0'
         this.baseClasses = [this.type, ...getBaseClasses(BaseMem0Memory)]
         this.credential = {
             label: 'Подключите учетные данные',
             name: 'credential',
             type: 'credential',
             optional: false,
-            description: 'Configure API Key for Mem0 service',
+            description: 'Настройте API ключ для сервиса Mem0',
             credentialNames: ['mem0MemoryApi']
         }
         this.inputs = [
             {
-                label: 'User ID',
+                label: 'ID пользователя',
                 name: 'user_id',
                 type: 'string',
-                description: 'Unique identifier for the user. Required only if "Use Flowise Chat ID" is OFF.',
+                description: 'Уникальный идентификатор пользователя. Требуется только если "Использовать Flowise Chat ID" выключен.',
                 default: 'flowise-default-user',
                 optional: true
             },
             // Added toggle to use Flowise chat ID
             {
-                label: 'Use Flowise Chat ID',
+                label: 'Использовать Flowise Chat ID',
                 name: 'useFlowiseChatId',
                 type: 'boolean',
-                description: 'Use the Flowise internal Chat ID as the Mem0 User ID, overriding the "User ID" field above.',
+                description: 'Использовать внутренний Chat ID Flowise как Mem0 User ID, переопределяя поле "ID пользователя" выше.',
                 default: false,
                 optional: true
             },
             {
-                label: 'Search Only',
+                label: 'Только поиск',
                 name: 'searchOnly',
                 type: 'boolean',
-                description: 'Search only mode',
+                description: 'Режим только поиска',
                 default: false,
                 optional: true,
                 additionalParams: true
             },
             {
-                label: 'Run ID',
+                label: 'ID запуска',
                 name: 'run_id',
                 type: 'string',
-                description: 'Unique identifier for the run session',
+                description: 'Уникальный идентификатор для сессии запуска',
                 default: '',
                 optional: true,
                 additionalParams: true
             },
             {
-                label: 'Agent ID',
+                label: 'ID агента',
                 name: 'agent_id',
                 type: 'string',
-                description: 'Identifier for the agent',
+                description: 'Идентификатор агента',
                 default: '',
                 optional: true,
                 additionalParams: true
             },
             {
-                label: 'App ID',
+                label: 'ID приложения',
                 name: 'app_id',
                 type: 'string',
-                description: 'Identifier for the application',
+                description: 'Идентификатор приложения',
                 default: '',
                 optional: true,
                 additionalParams: true
             },
             {
-                label: 'Project ID',
+                label: 'ID проекта',
                 name: 'project_id',
                 type: 'string',
-                description: 'Identifier for the project',
+                description: 'Идентификатор проекта',
                 default: '',
                 optional: true,
                 additionalParams: true
             },
             {
-                label: 'Organization ID',
+                label: 'ID организации',
                 name: 'org_id',
                 type: 'string',
-                description: 'Identifier for the organization',
+                description: 'Идентификатор организации',
                 default: '',
                 optional: true,
                 additionalParams: true
             },
             {
-                label: 'Memory Key',
+                label: 'Ключ памяти',
                 name: 'memoryKey',
                 type: 'string',
                 default: 'history',
@@ -131,7 +131,7 @@ class Mem0_Memory implements INode {
                 additionalParams: true
             },
             {
-                label: 'Input Key',
+                label: 'Ключ ввода',
                 name: 'inputKey',
                 type: 'string',
                 default: 'input',
@@ -139,7 +139,7 @@ class Mem0_Memory implements INode {
                 additionalParams: true
             },
             {
-                label: 'Output Key',
+                label: 'Ключ вывода',
                 name: 'outputKey',
                 type: 'string',
                 default: 'text',

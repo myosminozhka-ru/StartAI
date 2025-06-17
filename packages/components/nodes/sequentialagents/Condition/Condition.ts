@@ -94,66 +94,66 @@ class Condition_SeqAgents implements INode {
     outputs: INodeOutputsValue[]
 
     constructor() {
-        this.label = 'Condition'
+        this.label = 'Условие'
         this.name = 'seqCondition'
         this.version = 2.1
         this.type = 'Condition'
         this.icon = 'condition.svg'
         this.category = 'Sequential Agents'
-        this.description = 'Conditional function to determine which route to take next'
+        this.description = 'Условная функция для определения, какой маршрут выбрать дальше'
         this.baseClasses = [this.type]
         this.documentation = 'https://docs.flowiseai.com/using-flowise/agentflows/sequential-agents#id-7.-conditional-node'
         this.inputs = [
             {
-                label: 'Condition Name',
+                label: 'Название условия',
                 name: 'conditionName',
                 type: 'string',
                 optional: true,
                 placeholder: 'If X, then Y'
             },
             {
-                label: 'Sequential Node',
+                label: 'Последовательный узел',
                 name: 'sequentialNode',
                 type: 'Start | Agent | LLMNode | ToolNode | CustomFunction | ExecuteFlow',
                 description:
-                    'Can be connected to one of the following nodes: Start, Agent, LLM Node, Tool Node, Custom Function, Execute Flow',
+                    'Может быть подключен к одному из следующих узлов: Start, Agent, LLM Node, Tool Node, Custom Function, Execute Flow',
                 list: true
             },
             {
-                label: 'Condition',
+                label: 'Условие',
                 name: 'condition',
                 type: 'conditionFunction', // This is a custom type to show as button on the UI and render anchor points when saved
                 tabIdentifier: TAB_IDENTIFIER,
                 tabs: [
                     {
-                        label: 'Condition (Table)',
+                        label: 'Условие (Таблица)',
                         name: 'conditionUI',
                         type: 'datagrid',
-                        description: 'If a condition is met, the node connected to the respective output will be executed',
+                        description: 'Если условие выполнено, будет выполнен узел, подключенный к соответствующему выходу',
                         optional: true,
                         datagrid: [
                             {
                                 field: 'variable',
-                                headerName: 'Variable',
+                                headerName: 'Переменная',
                                 type: 'freeSolo',
                                 editable: true,
                                 loadMethod: ['getPreviousMessages', 'loadStateKeys'],
                                 valueOptions: [
                                     {
-                                        label: 'Total Messages (number)',
+                                        label: 'Общее количество сообщений (число)',
                                         value: '$flow.state.messages.length'
                                     },
                                     {
-                                        label: 'First Message Content (string)',
+                                        label: 'Содержимое первого сообщения (строка)',
                                         value: '$flow.state.messages[0].content'
                                     },
                                     {
-                                        label: 'Last Message Content (string)',
+                                        label: 'Содержимое последнего сообщения (строка)',
                                         value: '$flow.state.messages[-1].content'
                                     },
                                     {
-                                        label: `Global variable (string)`,
-                                        value: '$vars.<variable-name>'
+                                        label: `Глобальная переменная (строка)`,
+                                        value: '$vars.<имя-переменной>'
                                     }
                                 ],
                                 flex: 0.5,
@@ -161,7 +161,7 @@ class Condition_SeqAgents implements INode {
                             },
                             {
                                 field: 'operation',
-                                headerName: 'Operation',
+                                headerName: 'Операция',
                                 type: 'singleSelect',
                                 valueOptions: [
                                     'Contains',
@@ -185,13 +185,13 @@ class Condition_SeqAgents implements INode {
                             },
                             {
                                 field: 'value',
-                                headerName: 'Value',
+                                headerName: 'Значение',
                                 flex: 1,
                                 editable: true
                             },
                             {
                                 field: 'output',
-                                headerName: 'Output Name',
+                                headerName: 'Название выхода',
                                 editable: true,
                                 flex: 0.3,
                                 minWidth: 150
@@ -199,12 +199,12 @@ class Condition_SeqAgents implements INode {
                         ]
                     },
                     {
-                        label: 'Condition (Code)',
+                        label: 'Условие (Код)',
                         name: 'conditionFunction',
                         type: 'code',
-                        description: 'Function to evaluate the condition',
+                        description: 'Функция для оценки условия',
                         hint: {
-                            label: 'How to use',
+                            label: 'Как использовать',
                             value: howToUseCode
                         },
                         hideCodeExecute: true,
@@ -216,13 +216,13 @@ class Condition_SeqAgents implements INode {
         ]
         this.outputs = [
             {
-                label: 'Next',
+                label: 'Следующий',
                 name: 'next',
                 baseClasses: ['Condition'],
                 isAnchor: true
             },
             {
-                label: 'End',
+                label: 'Конец',
                 name: 'end',
                 baseClasses: ['Condition'],
                 isAnchor: true

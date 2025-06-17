@@ -19,41 +19,41 @@ class CustomRetriever_Retrievers implements INode {
     outputs: INodeOutputsValue[]
 
     constructor() {
-        this.label = 'Custom Retriever'
+        this.label = 'Пользовательский ретривер'
         this.name = 'customRetriever'
         this.version = 1.0
         this.type = 'CustomRetriever'
         this.icon = 'customRetriever.svg'
         this.category = 'Retrievers'
-        this.description = 'Return results based on predefined format'
+        this.description = 'Возвращать результаты на основе предопределенного формата'
         this.baseClasses = [this.type, 'BaseRetriever']
         this.inputs = [
             {
-                label: 'Vector Store',
+                label: 'Векторное хранилище',
                 name: 'vectorStore',
                 type: 'VectorStore'
             },
             {
-                label: 'Query',
+                label: 'Запрос',
                 name: 'query',
                 type: 'string',
-                description: 'Query to retrieve documents from retriever. If not specified, user question will be used',
+                description: 'Запрос для извлечения документов из ретривера. Если не указан, будет использован вопрос пользователя',
                 optional: true,
                 acceptVariable: true
             },
             {
-                label: 'Result Format',
+                label: 'Формат результата',
                 name: 'resultFormat',
                 type: 'string',
                 rows: 4,
                 description:
-                    'Format to return the results in. Use {{context}} to insert the pageContent of the document and {{metadata.key}} to insert metadata values.',
+                    'Формат для возврата результатов. Используйте {{context}} для вставки pageContent документа и {{metadata.key}} для вставки значений метаданных.',
                 default: defaultReturnFormat
             },
             {
                 label: 'Top K',
                 name: 'topK',
-                description: 'Number of top results to fetch. Default to vector store topK',
+                description: 'Количество лучших результатов для получения. По умолчанию равно topK векторного хранилища',
                 placeholder: '4',
                 type: 'number',
                 additionalParams: true,
@@ -62,20 +62,20 @@ class CustomRetriever_Retrievers implements INode {
         ]
         this.outputs = [
             {
-                label: 'Custom Retriever',
+                label: 'Пользовательский ретривер',
                 name: 'retriever',
                 baseClasses: this.baseClasses
             },
             {
-                label: 'Document',
+                label: 'Документ',
                 name: 'document',
-                description: 'Array of document objects containing metadata and pageContent',
+                description: 'Массив объектов документов, содержащих метаданные и pageContent',
                 baseClasses: ['Document', 'json']
             },
             {
-                label: 'Text',
+                label: 'Текст',
                 name: 'text',
-                description: 'Concatenated string from pageContent of documents',
+                description: 'Объединенная строка из pageContent документов',
                 baseClasses: ['string', 'json']
             }
         ]

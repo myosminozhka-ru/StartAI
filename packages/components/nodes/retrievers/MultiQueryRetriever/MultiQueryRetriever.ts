@@ -31,30 +31,30 @@ class MultiQueryRetriever_Retrievers implements INode {
     inputs: INodeParams[]
 
     constructor() {
-        this.label = 'Multi Query Retriever'
+        this.label = 'Множественный запрос ретривер'
         this.name = 'multiQueryRetriever'
         this.version = 1.0
         this.type = 'MultiQueryRetriever'
         this.icon = 'multiQueryRetriever.svg'
         this.category = 'Retrievers'
-        this.description = 'Generate multiple queries from different perspectives for a given user input query'
+        this.description = 'Генерировать множественные запросы с разных перспектив для заданного пользовательского входного запроса'
         this.baseClasses = [this.type, 'BaseRetriever']
         this.inputs = [
             {
-                label: 'Vector Store',
+                label: 'Векторное хранилище',
                 name: 'vectorStore',
                 type: 'VectorStore'
             },
             {
-                label: 'Language Model',
+                label: 'Языковая модель',
                 name: 'model',
                 type: 'BaseLanguageModel'
             },
             {
-                label: 'Prompt',
+                label: 'Промпт',
                 name: 'modelPrompt',
                 description:
-                    'Prompt for the language model to generate alternative questions. Use {question} to refer to the original question',
+                    'Промпт для языковой модели для генерации альтернативных вопросов. Используйте {question} для ссылки на оригинальный вопрос',
                 type: 'string',
                 rows: 4,
                 default: defaultPrompt

@@ -27,39 +27,39 @@ class ConversationSummaryBufferMemory_Memory implements INode {
     inputs: INodeParams[]
 
     constructor() {
-        this.label = 'Conversation Summary Buffer Memory'
+        this.label = 'Буферная память с резюме разговора'
         this.name = 'conversationSummaryBufferMemory'
         this.version = 1.0
         this.type = 'ConversationSummaryBufferMemory'
         this.icon = 'memory.svg'
         this.category = 'Memory'
-        this.description = 'Uses token length to decide when to summarize conversations'
+        this.description = 'Использует длину токенов для решения, когда резюмировать разговоры'
         this.baseClasses = [this.type, ...getBaseClasses(ConversationSummaryBufferMemory)]
         this.inputs = [
             {
-                label: 'Chat Model',
+                label: 'Чат-модель',
                 name: 'model',
                 type: 'BaseChatModel'
             },
             {
-                label: 'Max Token Limit',
+                label: 'Максимальный лимит токенов',
                 name: 'maxTokenLimit',
                 type: 'number',
                 default: 2000,
-                description: 'Summarize conversations once token limit is reached. Default to 2000'
+                description: 'Резюмировать разговоры, когда достигнут лимит токенов. По умолчанию 2000'
             },
             {
-                label: 'Session Id',
+                label: 'ID сессии',
                 name: 'sessionId',
                 type: 'string',
                 description:
-                    'If not specified, a random id will be used. Learn <a target="_blank" href="https://docs.flowiseai.com/memory#ui-and-embedded-chat">more</a>',
+                    'Если не указан, будет использован случайный id. Узнайте <a target="_blank" href="https://docs.flowiseai.com/memory#ui-and-embedded-chat">больше</a>',
                 default: '',
                 optional: true,
                 additionalParams: true
             },
             {
-                label: 'Memory Key',
+                label: 'Ключ памяти',
                 name: 'memoryKey',
                 type: 'string',
                 default: 'chat_history',

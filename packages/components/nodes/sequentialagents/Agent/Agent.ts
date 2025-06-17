@@ -203,24 +203,24 @@ class Agent_SeqAgents implements INode {
     outputs: INodeOutputsValue[]
 
     constructor() {
-        this.label = 'Agent'
+        this.label = 'Агент'
         this.name = 'seqAgent'
         this.version = 4.1
         this.type = 'Agent'
         this.icon = 'seqAgent.png'
         this.category = 'Sequential Agents'
-        this.description = 'Agent that can execute tools'
+        this.description = 'Агент, который может выполнять инструменты'
         this.baseClasses = [this.type]
         this.documentation = 'https://docs.flowiseai.com/using-flowise/agentflows/sequential-agents#id-4.-agent-node'
         this.inputs = [
             {
-                label: 'Agent Name',
+                label: 'Название агента',
                 name: 'agentName',
                 type: 'string',
                 placeholder: 'Agent'
             },
             {
-                label: 'System Prompt',
+                label: 'Системный промпт',
                 name: 'systemMessagePrompt',
                 type: 'string',
                 rows: 4,
@@ -228,10 +228,10 @@ class Agent_SeqAgents implements INode {
                 default: examplePrompt
             },
             {
-                label: 'Prepend Messages History',
+                label: 'Предварительная история сообщений',
                 name: 'messageHistory',
                 description:
-                    'Prepend a list of messages between System Prompt and Human Prompt. This is useful when you want to provide few shot examples',
+                    'Предварительно добавить список сообщений между системным промптом и человеческим промптом. Это полезно, когда вы хотите предоставить несколько примеров',
                 type: 'code',
                 hideCodeExecute: true,
                 codeExample: messageHistoryExample,
@@ -239,97 +239,98 @@ class Agent_SeqAgents implements INode {
                 additionalParams: true
             },
             {
-                label: 'Conversation History',
+                label: 'История разговора',
                 name: 'conversationHistorySelection',
                 type: 'options',
                 options: [
                     {
-                        label: 'User Question',
+                        label: 'Вопрос пользователя',
                         name: 'user_question',
-                        description: 'Use the user question from the historical conversation messages as input.'
+                        description: 'Использовать вопрос пользователя из исторических сообщений разговора как входные данные.'
                     },
                     {
-                        label: 'Last Conversation Message',
+                        label: 'Последнее сообщение разговора',
                         name: 'last_message',
-                        description: 'Use the last conversation message from the historical conversation messages as input.'
+                        description: 'Использовать последнее сообщение разговора из исторических сообщений разговора как входные данные.'
                     },
                     {
-                        label: 'All Conversation Messages',
+                        label: 'Все сообщения разговора',
                         name: 'all_messages',
-                        description: 'Use all conversation messages from the historical conversation messages as input.'
+                        description: 'Использовать все сообщения разговора из исторических сообщений разговора как входные данные.'
                     },
                     {
-                        label: 'Empty',
+                        label: 'Пусто',
                         name: 'empty',
                         description:
-                            'Do not use any messages from the conversation history. ' +
-                            'Ensure to use either System Prompt, Human Prompt, or Messages History.'
+                            'Не использовать никакие сообщения из истории разговора. ' +
+                            'Убедитесь, что используете либо системный промпт, либо человеческий промпт, либо историю сообщений.'
                     }
                 ],
                 default: 'all_messages',
                 optional: true,
                 description:
-                    'Select which messages from the conversation history to include in the prompt. ' +
-                    'The selected messages will be inserted between the System Prompt (if defined) and ' +
-                    '[Messages History, Human Prompt].',
+                    'Выберите, какие сообщения из истории разговора включить в промпт. ' +
+                    'Выбранные сообщения будут вставлены между системным промптом (если определен) и ' +
+                    '[Историей сообщений, Человеческим промптом].',
                 additionalParams: true
             },
             {
-                label: 'Human Prompt',
+                label: 'Человеческий промпт',
                 name: 'humanMessagePrompt',
                 type: 'string',
-                description: 'This prompt will be added at the end of the messages as human message',
+                description: 'Этот промпт будет добавлен в конец сообщений как человеческое сообщение',
                 rows: 4,
                 optional: true,
                 additionalParams: true
             },
             {
-                label: 'Tools',
+                label: 'Инструменты',
                 name: 'tools',
                 type: 'Tool',
                 list: true,
                 optional: true
             },
             {
-                label: 'Sequential Node',
+                label: 'Последовательный узел',
                 name: 'sequentialNode',
                 type: 'Start | Agent | Condition | LLMNode | ToolNode | CustomFunction | ExecuteFlow',
                 description:
-                    'Can be connected to one of the following nodes: Start, Agent, Condition, LLM Node, Tool Node, Custom Function, Execute Flow',
+                    'Может быть подключен к одному из следующих узлов: Start, Agent, Condition, LLM Node, Tool Node, Custom Function, Execute Flow',
                 list: true
             },
             {
-                label: 'Chat Model',
+                label: 'Чат модель',
                 name: 'model',
                 type: 'BaseChatModel',
                 optional: true,
-                description: `Overwrite model to be used for this agent`
+                description: `Переопределить модель для использования этим агентом`
             },
             {
-                label: 'Require Approval',
+                label: 'Требовать одобрения',
                 name: 'interrupt',
                 description:
-                    'Pause execution and request user approval before running tools.\n' +
-                    'If enabled, the agent will prompt the user with customizable approve/reject options\n' +
-                    'and will proceed only after approval. This requires a configured agent memory to manage\n' +
-                    'the state and handle approval requests.\n' +
-                    'If no tools are invoked, the agent proceeds without interruption.',
+                    'Приостановить выполнение и запросить одобрение пользователя перед запуском инструментов.\n' +
+                    'Если включено, агент будет запрашивать у пользователя настраиваемые варианты одобрения/отклонения\n' +
+                    'и будет продолжать только после одобрения. Это требует настроенной памяти агента для управления\n' +
+                    'состоянием и обработки запросов на одобрение.\n' +
+                    'Если инструменты не вызываются, агент продолжает без прерывания.',
                 type: 'boolean',
                 optional: true
             },
             {
-                label: 'Format Prompt Values',
+                label: 'Форматировать значения промпта',
                 name: 'promptValues',
-                description: 'Assign values to the prompt variables. You can also use $flow.state.<variable-name> to get the state value',
+                description:
+                    'Назначить значения переменным промпта. Вы также можете использовать $flow.state.<имя-переменной> для получения значения состояния',
                 type: 'json',
                 optional: true,
                 acceptVariable: true,
                 list: true
             },
             {
-                label: 'Approval Prompt',
+                label: 'Промпт одобрения',
                 name: 'approvalPrompt',
-                description: 'Prompt for approval. Only applicable if "Require Approval" is enabled',
+                description: 'Промпт для одобрения. Применимо только если включено "Требовать одобрения"',
                 type: 'string',
                 default: defaultApprovalPrompt,
                 rows: 4,
@@ -337,25 +338,25 @@ class Agent_SeqAgents implements INode {
                 additionalParams: true
             },
             {
-                label: 'Approve Button Text',
+                label: 'Текст кнопки одобрения',
                 name: 'approveButtonText',
-                description: 'Text for approve button. Only applicable if "Require Approval" is enabled',
+                description: 'Текст для кнопки одобрения. Применимо только если включено "Требовать одобрения"',
                 type: 'string',
                 default: 'Yes',
                 optional: true,
                 additionalParams: true
             },
             {
-                label: 'Reject Button Text',
+                label: 'Текст кнопки отклонения',
                 name: 'rejectButtonText',
-                description: 'Text for reject button. Only applicable if "Require Approval" is enabled',
+                description: 'Текст для кнопки отклонения. Применимо только если включено "Требовать одобрения"',
                 type: 'string',
                 default: 'No',
                 optional: true,
                 additionalParams: true
             },
             {
-                label: 'Update State',
+                label: 'Обновить состояние',
                 name: 'updateStateMemory',
                 type: 'tabs',
                 tabIdentifier: TAB_IDENTIFIER,
@@ -363,18 +364,18 @@ class Agent_SeqAgents implements INode {
                 default: 'updateStateMemoryUI',
                 tabs: [
                     {
-                        label: 'Update State (Table)',
+                        label: 'Обновить состояние (Таблица)',
                         name: 'updateStateMemoryUI',
                         type: 'datagrid',
                         hint: {
-                            label: 'How to use',
+                            label: 'Как использовать',
                             value: howToUse
                         },
                         description: customOutputFuncDesc,
                         datagrid: [
                             {
                                 field: 'key',
-                                headerName: 'Key',
+                                headerName: 'Ключ',
                                 type: 'asyncSingleSelect',
                                 loadMethod: 'loadStateKeys',
                                 flex: 0.5,
@@ -382,43 +383,43 @@ class Agent_SeqAgents implements INode {
                             },
                             {
                                 field: 'value',
-                                headerName: 'Value',
+                                headerName: 'Значение',
                                 type: 'freeSolo',
                                 valueOptions: [
                                     {
-                                        label: 'Agent Output (string)',
+                                        label: 'Вывод агента (строка)',
                                         value: '$flow.output.content'
                                     },
                                     {
-                                        label: `Used Tools (array)`,
+                                        label: `Использованные инструменты (массив)`,
                                         value: '$flow.output.usedTools'
                                     },
                                     {
-                                        label: `First Tool Output (string)`,
+                                        label: `Первый вывод инструмента (строка)`,
                                         value: '$flow.output.usedTools[0].toolOutput'
                                     },
                                     {
-                                        label: 'Source Documents (array)',
+                                        label: 'Исходные документы (массив)',
                                         value: '$flow.output.sourceDocuments'
                                     },
                                     {
-                                        label: `Global variable (string)`,
-                                        value: '$vars.<variable-name>'
+                                        label: `Глобальная переменная (строка)`,
+                                        value: '$vars.<имя-переменной>'
                                     },
                                     {
-                                        label: 'Input Question (string)',
+                                        label: 'Входной вопрос (строка)',
                                         value: '$flow.input'
                                     },
                                     {
-                                        label: 'Session Id (string)',
+                                        label: 'ID сессии (строка)',
                                         value: '$flow.sessionId'
                                     },
                                     {
-                                        label: 'Chat Id (string)',
+                                        label: 'ID чата (строка)',
                                         value: '$flow.chatId'
                                     },
                                     {
-                                        label: 'Chatflow Id (string)',
+                                        label: 'ID потока чата (строка)',
                                         value: '$flow.chatflowId'
                                     }
                                 ],
@@ -430,14 +431,14 @@ class Agent_SeqAgents implements INode {
                         additionalParams: true
                     },
                     {
-                        label: 'Update State (Code)',
+                        label: 'Обновить состояние (Код)',
                         name: 'updateStateMemoryCode',
                         type: 'code',
                         hint: {
-                            label: 'How to use',
+                            label: 'Как использовать',
                             value: howToUseCode
                         },
-                        description: `${customOutputFuncDesc}. Must return an object representing the state`,
+                        description: `${customOutputFuncDesc}. Должен возвращать объект, представляющий состояние`,
                         hideCodeExecute: true,
                         codeExample: defaultFunc,
                         optional: true,
@@ -446,7 +447,7 @@ class Agent_SeqAgents implements INode {
                 ]
             },
             {
-                label: 'Max Iterations',
+                label: 'Максимум итераций',
                 name: 'maxIterations',
                 type: 'number',
                 optional: true,

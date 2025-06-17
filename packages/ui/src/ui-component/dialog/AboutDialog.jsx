@@ -2,7 +2,6 @@ import { createPortal } from 'react-dom'
 import { useState } from 'react'
 import PropTypes from 'prop-types'
 import { Dialog, DialogContent, DialogTitle, TableContainer, Table, TableHead, TableRow, TableCell, TableBody, Paper } from '@mui/material'
-import moment from 'moment'
 
 const AboutDialog = ({ show, onCancel }) => {
     const portalElement = document.getElementById('portal')
@@ -59,14 +58,14 @@ const AboutDialog = ({ show, onCancel }) => {
                             <TableBody>
                                 <TableRow sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
                                     <TableCell component='th' scope='row'>
-                                        {data.currentVersion}
+                                        3.0.1
                                     </TableCell>
                                     <TableCell component='th' scope='row'>
                                         <a target='_blank' rel='noreferrer' href='https://osmi-it.ru/'>
                                             Osmi-it
                                         </a>
                                     </TableCell>
-                                    <TableCell>{moment(data.published_at).fromNow()}</TableCell>
+                                    <TableCell>01.05.2025</TableCell>
                                 </TableRow>
                             </TableBody>
                         </Table>

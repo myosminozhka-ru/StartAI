@@ -21,7 +21,7 @@ class TogetherAIEmbedding_Embeddings implements INode {
         this.type = 'TogetherAIEmbedding'
         this.icon = 'togetherai.png'
         this.category = 'Embeddings'
-        this.description = 'TogetherAI Embedding models to generate embeddings for a given text'
+        this.description = 'Модели эмбеддингов TogetherAI для генерации эмбеддингов для заданного текста'
         this.baseClasses = [this.type, ...getBaseClasses(TogetherAIEmbeddings)]
         this.credential = {
             label: 'Подключите учетные данные',
@@ -31,17 +31,17 @@ class TogetherAIEmbedding_Embeddings implements INode {
         }
         this.inputs = [
             {
-                label: 'Cache',
+                label: 'Кэш',
                 name: 'cache',
                 type: 'BaseCache',
                 optional: true
             },
             {
-                label: 'Model Name',
+                label: 'Название модели',
                 name: 'modelName',
                 type: 'string',
                 placeholder: 'sentence-transformers/msmarco-bert-base-dot-v5',
-                description: 'Refer to <a target="_blank" href="https://docs.together.ai/docs/embedding-models">embedding models</a> page'
+                description: 'См. страницу <a target="_blank" href="https://docs.together.ai/docs/embedding-models">моделей эмбеддингов</a>'
             }
         ]
     }

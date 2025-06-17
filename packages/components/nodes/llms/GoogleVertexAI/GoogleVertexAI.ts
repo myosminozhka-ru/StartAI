@@ -23,7 +23,7 @@ class GoogleVertexAI_LLMs implements INode {
         this.type = 'GoogleVertexAI'
         this.icon = 'GoogleVertex.svg'
         this.category = 'LLMs'
-        this.description = 'Wrapper around GoogleVertexAI large language models'
+        this.description = 'Обертка вокруг больших языковых моделей GoogleVertexAI'
         this.baseClasses = [this.type, ...getBaseClasses(VertexAI)]
         this.credential = {
             label: 'Подключите учетные данные',
@@ -32,24 +32,24 @@ class GoogleVertexAI_LLMs implements INode {
             credentialNames: ['googleVertexAuth'],
             optional: true,
             description:
-                'Google Vertex AI credential. If you are using a GCP service like Cloud Run, or if you have installed default credentials on your local machine, you do not need to set this credential.'
+                'Учетные данные Google Vertex AI. Если вы используете сервис GCP, такой как Cloud Run, или если у вас установлены учетные данные по умолчанию на локальной машине, вам не нужно устанавливать эти учетные данные.'
         }
         this.inputs = [
             {
-                label: 'Cache',
+                label: 'Кэш',
                 name: 'cache',
                 type: 'BaseCache',
                 optional: true
             },
             {
-                label: 'Model Name',
+                label: 'Название модели',
                 name: 'modelName',
                 type: 'asyncOptions',
                 loadMethod: 'listModels',
                 default: 'text-bison'
             },
             {
-                label: 'Temperature',
+                label: 'Температура',
                 name: 'temperature',
                 type: 'number',
                 step: 0.1,
@@ -57,7 +57,7 @@ class GoogleVertexAI_LLMs implements INode {
                 optional: true
             },
             {
-                label: 'max Output Tokens',
+                label: 'Максимальное количество выходных токенов',
                 name: 'maxOutputTokens',
                 type: 'number',
                 step: 1,
@@ -65,7 +65,7 @@ class GoogleVertexAI_LLMs implements INode {
                 additionalParams: true
             },
             {
-                label: 'Top Probability',
+                label: 'Верхняя вероятность',
                 name: 'topP',
                 type: 'number',
                 step: 0.1,

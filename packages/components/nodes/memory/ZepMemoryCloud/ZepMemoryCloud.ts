@@ -24,71 +24,71 @@ class ZepMemoryCloud_Memory implements INode {
     inputs: INodeParams[]
 
     constructor() {
-        this.label = 'Zep Memory - Cloud'
+        this.label = 'Zep Память - Облако'
         this.name = 'ZepMemoryCloud'
         this.version = 2.0
         this.type = 'ZepMemory'
         this.icon = 'zep.svg'
         this.category = 'Memory'
-        this.description = 'Summarizes the conversation and stores the memory in zep server'
+        this.description = 'Резюмирует разговор и сохраняет память в zep сервере'
         this.baseClasses = [this.type, ...getBaseClasses(ZepMemory)]
         this.credential = {
             label: 'Подключите учетные данные',
             name: 'credential',
             type: 'credential',
             optional: true,
-            description: 'Configure JWT authentication on your Zep instance (Optional)',
+            description: 'Настройте JWT аутентификацию на вашем экземпляре Zep (Необязательно)',
             credentialNames: ['zepMemoryApi']
         }
         this.inputs = [
             {
-                label: 'Session Id',
+                label: 'ID сессии',
                 name: 'sessionId',
                 type: 'string',
                 description:
-                    'If not specified, a random id will be used. Learn <a target="_blank" href="https://docs.flowiseai.com/memory/long-term-memory#ui-and-embedded-chat">more</a>',
+                    'Если не указан, будет использован случайный id. Узнайте <a target="_blank" href="https://docs.flowiseai.com/memory/long-term-memory#ui-and-embedded-chat">больше</a>',
                 default: '',
                 additionalParams: true,
                 optional: true
             },
             {
-                label: 'Memory Type',
+                label: 'Тип памяти',
                 name: 'memoryType',
                 type: 'string',
                 default: 'perpetual',
-                description: 'Zep Memory Type, can be perpetual or message_window',
+                description: 'Тип памяти Zep, может быть perpetual или message_window',
                 additionalParams: true
             },
             {
-                label: 'AI Prefix',
+                label: 'AI префикс',
                 name: 'aiPrefix',
                 type: 'string',
                 default: 'ai',
                 additionalParams: true
             },
             {
-                label: 'Human Prefix',
+                label: 'Человеческий префикс',
                 name: 'humanPrefix',
                 type: 'string',
                 default: 'human',
                 additionalParams: true
             },
             {
-                label: 'Memory Key',
+                label: 'Ключ памяти',
                 name: 'memoryKey',
                 type: 'string',
                 default: 'chat_history',
                 additionalParams: true
             },
             {
-                label: 'Input Key',
+                label: 'Ключ ввода',
                 name: 'inputKey',
                 type: 'string',
                 default: 'input',
                 additionalParams: true
             },
             {
-                label: 'Output Key',
+                label: 'Ключ вывода',
                 name: 'outputKey',
                 type: 'string',
                 default: 'text',

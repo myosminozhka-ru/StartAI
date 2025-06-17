@@ -22,7 +22,7 @@ class CohereEmbedding_Embeddings implements INode {
         this.type = 'CohereEmbeddings'
         this.icon = 'Cohere.svg'
         this.category = 'Embeddings'
-        this.description = 'Cohere API to generate embeddings for a given text'
+        this.description = 'Cohere API для генерации эмбеддингов для заданного текста'
         this.baseClasses = [this.type, ...getBaseClasses(CohereEmbeddings)]
         this.credential = {
             label: 'Подключите учетные данные',
@@ -32,38 +32,39 @@ class CohereEmbedding_Embeddings implements INode {
         }
         this.inputs = [
             {
-                label: 'Model Name',
+                label: 'Название модели',
                 name: 'modelName',
                 type: 'asyncOptions',
                 loadMethod: 'listModels',
                 default: 'embed-english-v2.0'
             },
             {
-                label: 'Type',
+                label: 'Тип',
                 name: 'inputType',
                 type: 'options',
                 description:
-                    'Specifies the type of input passed to the model. Required for embedding models v3 and higher. <a target="_blank" href="https://docs.cohere.com/reference/embed">Official Docs</a>',
+                    'Указывает тип ввода, передаваемого в модель. Требуется для моделей эмбеддингов v3 и выше. <a target="_blank" href="https://docs.cohere.com/reference/embed">Официальная документация</a>',
                 options: [
                     {
                         label: 'search_document',
                         name: 'search_document',
-                        description: 'Use this to encode documents for embeddings that you store in a vector database for search use-cases'
+                        description:
+                            'Используйте это для кодирования документов для эмбеддингов, которые вы храните в векторной базе данных для случаев поиска'
                     },
                     {
                         label: 'search_query',
                         name: 'search_query',
-                        description: 'Use this when you query your vector DB to find relevant documents.'
+                        description: 'Используйте это, когда вы запрашиваете вашу векторную БД для поиска соответствующих документов.'
                     },
                     {
                         label: 'classification',
                         name: 'classification',
-                        description: 'Use this when you use the embeddings as an input to a text classifier'
+                        description: 'Используйте это, когда вы используете эмбеддинги как вход для текстового классификатора'
                     },
                     {
                         label: 'clustering',
                         name: 'clustering',
-                        description: 'Use this when you want to cluster the embeddings.'
+                        description: 'Используйте это, когда вы хотите кластеризовать эмбеддинги.'
                     }
                 ],
                 default: 'search_query',

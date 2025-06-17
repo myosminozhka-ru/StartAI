@@ -23,7 +23,7 @@ class IBMWatsonx_LLMs implements INode {
         this.type = 'IBMWatsonx'
         this.icon = 'ibm.png'
         this.category = 'LLMs'
-        this.description = 'Wrapper around IBM watsonx.ai foundation models'
+        this.description = 'Обертка вокруг базовых моделей IBM watsonx.ai'
         this.baseClasses = [this.type, ...getBaseClasses(WatsonxLLM)]
         this.credential = {
             label: 'Подключите учетные данные',
@@ -33,20 +33,20 @@ class IBMWatsonx_LLMs implements INode {
         }
         this.inputs = [
             {
-                label: 'Cache',
+                label: 'Кэш',
                 name: 'cache',
                 type: 'BaseCache',
                 optional: true
             },
             {
-                label: 'Model',
+                label: 'Модель',
                 name: 'modelId',
                 type: 'string',
                 default: 'ibm/granite-13b-instruct-v2',
-                description: 'The name of the model to query.'
+                description: 'Название модели для запроса.'
             },
             {
-                label: 'Decoding Method',
+                label: 'Метод декодирования',
                 name: 'decodingMethod',
                 type: 'options',
                 options: [
@@ -55,108 +55,108 @@ class IBMWatsonx_LLMs implements INode {
                 ],
                 default: 'greedy',
                 description:
-                    'Set decoding to Greedy to always select words with the highest probability. Set decoding to Sampling to customize the variability of word selection.',
+                    'Установите декодирование в Greedy, чтобы всегда выбирать слова с наивысшей вероятностью. Установите декодирование в Sampling для настройки вариативности выбора слов.',
                 optional: true,
                 additionalParams: true
             },
             {
-                label: 'Top K',
+                label: 'Верхний K',
                 name: 'topK',
                 type: 'number',
                 description:
-                    'The topK parameter is used to limit the number of choices for the next predicted word or token. It specifies the maximum number of tokens to consider at each step, based on their probability of occurrence. This technique helps to speed up the generation process and can improve the quality of the generated text by focusing on the most likely options.',
+                    'Параметр topK используется для ограничения количества вариантов для следующего предсказанного слова или токена. Он указывает максимальное количество токенов для рассмотрения на каждом шаге на основе их вероятности появления. Эта техника помогает ускорить процесс генерации и может улучшить качество сгенерированного текста, фокусируясь на наиболее вероятных вариантах.',
                 step: 1,
                 default: 50,
                 optional: true,
                 additionalParams: true
             },
             {
-                label: 'Top P',
+                label: 'Верхний P',
                 name: 'topP',
                 type: 'number',
                 description:
-                    'The topP (nucleus) parameter is used to dynamically adjust the number of choices for each predicted token based on the cumulative probabilities. It specifies a probability threshold, below which all less likely tokens are filtered out. This technique helps to maintain diversity and generate more fluent and natural-sounding text.',
+                    'Параметр topP (ядро) используется для динамической настройки количества вариантов для каждого предсказанного токена на основе кумулятивных вероятностей. Он указывает порог вероятности, ниже которого все менее вероятные токены отфильтровываются. Эта техника помогает поддерживать разнообразие и генерировать более беглый и естественно звучащий текст.',
                 step: 0.1,
                 default: 0.7,
                 optional: true,
                 additionalParams: true
             },
             {
-                label: 'Temperature',
+                label: 'Температура',
                 name: 'temperature',
                 type: 'number',
                 description:
-                    'A decimal number that determines the degree of randomness in the response. A value of 1 will always yield the same output. A temperature less than 1 favors more correctness and is appropriate for question answering or summarization. A value greater than 1 introduces more randomness in the output.',
+                    'Десятичное число, которое определяет степень случайности в ответе. Значение 1 всегда даст одинаковый результат. Температура меньше 1 предпочитает более правильность и подходит для ответов на вопросы или резюмирования. Значение больше 1 вносит больше случайности в результат.',
                 step: 0.1,
                 default: 0.7,
                 optional: true,
                 additionalParams: true
             },
             {
-                label: 'Repeat Penalty',
+                label: 'Штраф за повторение',
                 name: 'repetitionPenalty',
                 type: 'number',
                 description:
-                    'A number that controls the diversity of generated text by reducing the likelihood of repeated sequences. Higher values decrease repetition.',
+                    'Число, которое контролирует разнообразие сгенерированного текста, уменьшая вероятность повторяющихся последовательностей. Более высокие значения уменьшают повторение.',
                 step: 0.1,
                 default: 1,
                 optional: true,
                 additionalParams: true
             },
             {
-                label: 'Streaming',
+                label: 'Потоковая передача',
                 name: 'streaming',
                 type: 'boolean',
                 default: false,
-                description: 'Whether or not to stream tokens as they are generated.'
+                description: 'Потоковая передача токенов по мере их генерации.'
             },
             {
-                label: 'Max New Tokens',
+                label: 'Максимальное количество новых токенов',
                 name: 'maxNewTokens',
                 type: 'number',
                 step: 1,
                 default: 100,
                 description:
-                    'The maximum number of new tokens to be generated. The maximum supported value for this field depends on the model being used.',
+                    'Максимальное количество новых токенов для генерации. Максимальное поддерживаемое значение для этого поля зависит от используемой модели.',
                 optional: true,
                 additionalParams: true
             },
             {
-                label: 'Min New Tokens',
+                label: 'Минимальное количество новых токенов',
                 name: 'minNewTokens',
                 type: 'number',
                 step: 1,
                 default: 1,
-                description: 'If stop sequences are given, they are ignored until minimum tokens are generated.',
+                description: 'Если даны стоп-последовательности, они игнорируются до генерации минимального количества токенов.',
                 optional: true,
                 additionalParams: true
             },
             {
-                label: 'Stop Sequence',
+                label: 'Стоп-последовательность',
                 name: 'stopSequence',
                 type: 'string',
                 rows: 4,
                 placeholder: 'AI assistant:',
-                description: 'A list of tokens at which the generation should stop.',
+                description: 'Список токенов, на которых должна остановиться генерация.',
                 optional: true,
                 additionalParams: true
             },
             {
-                label: 'Include Stop Sequence',
+                label: 'Включить стоп-последовательность',
                 name: 'includeStopSequence',
                 type: 'boolean',
                 default: false,
                 description:
-                    'Pass false to omit matched stop sequences from the end of the output text. The default is true, meaning that the output will end with the stop sequence text when matched.',
+                    'Передайте false, чтобы исключить совпадающие стоп-последовательности из конца выходного текста. По умолчанию true, что означает, что вывод будет заканчиваться текстом стоп-последовательности при совпадении.',
                 optional: true,
                 additionalParams: true
             },
             {
-                label: 'Random Seed',
+                label: 'Случайное зерно',
                 name: 'randomSeed',
                 type: 'number',
                 placeholder: '62345',
-                description: 'Random number generator seed to use in sampling mode for experimental repeatability.',
+                description: 'Зерно генератора случайных чисел для использования в режиме выборки для экспериментальной повторяемости.',
                 optional: true,
                 additionalParams: true
             }

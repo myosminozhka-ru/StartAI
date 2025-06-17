@@ -22,7 +22,7 @@ class VoyageAIEmbedding_Embeddings implements INode {
         this.type = 'VoyageAIEmbeddings'
         this.icon = 'voyageai.png'
         this.category = 'Embeddings'
-        this.description = 'Voyage AI API to generate embeddings for a given text'
+        this.description = 'Voyage AI API для генерации эмбеддингов для заданного текста'
         this.baseClasses = [this.type, ...getBaseClasses(VoyageEmbeddings)]
         this.credential = {
             label: 'Подключите учетные данные',
@@ -32,7 +32,7 @@ class VoyageAIEmbedding_Embeddings implements INode {
         }
         this.inputs = [
             {
-                label: 'Model Name',
+                label: 'Название модели',
                 name: 'modelName',
                 type: 'asyncOptions',
                 loadMethod: 'listModels',

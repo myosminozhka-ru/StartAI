@@ -15,19 +15,19 @@ class CompactRefine_LlamaIndex implements INode {
     outputs: INodeOutputsValue[]
 
     constructor() {
-        this.label = 'Compact and Refine'
+        this.label = 'Компактная обработка и уточнение'
         this.name = 'compactrefineLlamaIndex'
         this.version = 1.0
         this.type = 'CompactRefine'
         this.icon = 'compactrefine.svg'
         this.category = 'Response Synthesizer'
         this.description =
-            'CompactRefine is a slight variation of Refine that first compacts the text chunks into the smallest possible number of chunks.'
+            'CompactRefine - это небольшая вариация Refine, которая сначала уплотняет текстовые фрагменты в наименьшее возможное количество фрагментов.'
         this.baseClasses = [this.type, 'ResponseSynthesizer']
         this.tags = ['LlamaIndex']
         this.inputs = [
             {
-                label: 'Refine Prompt',
+                label: 'Промпт уточнения',
                 name: 'refinePrompt',
                 type: 'string',
                 rows: 4,
@@ -39,11 +39,11 @@ We have the opportunity to refine the existing answer (only if needed) with some
 ------------
 Given the new context, refine the original answer to better answer the query. If the context isn't useful, return the original answer.
 Refined Answer:`,
-                warning: `Prompt can contains no variables, or up to 3 variables. Variables must be {existingAnswer}, {context} and {query}`,
+                warning: `Промпт может содержать от 0 до 3 переменных. Переменные должны быть {existingAnswer}, {context} и {query}`,
                 optional: true
             },
             {
-                label: 'Text QA Prompt',
+                label: 'Промпт текстового вопроса-ответа',
                 name: 'textQAPrompt',
                 type: 'string',
                 rows: 4,
@@ -54,7 +54,7 @@ Refined Answer:`,
 Given the context information and not prior knowledge, answer the query.
 Query: {query}
 Answer:`,
-                warning: `Prompt can contains no variables, or up to 2 variables. Variables must be {context} and {query}`,
+                warning: `Промпт может содержать от 0 до 2 переменных. Переменные должны быть {context} и {query}`,
                 optional: true
             }
         ]

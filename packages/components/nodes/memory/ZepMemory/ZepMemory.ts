@@ -23,77 +23,77 @@ class ZepMemory_Memory implements INode {
     inputs: INodeParams[]
 
     constructor() {
-        this.label = 'Zep Memory - Open Source'
+        this.label = 'Zep Память - Открытый исходный код'
         this.name = 'ZepMemory'
         this.version = 2.0
         this.type = 'ZepMemory'
         this.icon = 'zep.svg'
         this.category = 'Memory'
-        this.description = 'Summarizes the conversation and stores the memory in zep server'
+        this.description = 'Резюмирует разговор и сохраняет память в zep сервере'
         this.baseClasses = [this.type, ...getBaseClasses(ZepMemory)]
         this.credential = {
             label: 'Подключите учетные данные',
             name: 'credential',
             type: 'credential',
             optional: true,
-            description: 'Configure JWT authentication on your Zep instance (Optional)',
+            description: 'Настройте JWT аутентификацию на вашем экземпляре Zep (Необязательно)',
             credentialNames: ['zepMemoryApi']
         }
         this.inputs = [
             {
-                label: 'Base URL',
+                label: 'Базовый URL',
                 name: 'baseURL',
                 type: 'string',
                 default: 'http://127.0.0.1:8000'
             },
             {
-                label: 'Session Id',
+                label: 'ID сессии',
                 name: 'sessionId',
                 type: 'string',
                 description:
-                    'If not specified, a random id will be used. Learn <a target="_blank" href="https://docs.flowiseai.com/memory/long-term-memory#ui-and-embedded-chat">more</a>',
+                    'Если не указан, будет использован случайный id. Узнайте <a target="_blank" href="https://docs.flowiseai.com/memory/long-term-memory#ui-and-embedded-chat">больше</a>',
                 default: '',
                 additionalParams: true,
                 optional: true
             },
             {
-                label: 'Size',
+                label: 'Размер',
                 name: 'k',
                 type: 'number',
                 default: '10',
-                description: 'Window of size k to surface the last k back-and-forth to use as memory.',
+                description: 'Окно размера k для отображения последних k обменов сообщениями для использования в качестве памяти.',
                 additionalParams: true
             },
             {
-                label: 'AI Prefix',
+                label: 'AI префикс',
                 name: 'aiPrefix',
                 type: 'string',
                 default: 'ai',
                 additionalParams: true
             },
             {
-                label: 'Human Prefix',
+                label: 'Человеческий префикс',
                 name: 'humanPrefix',
                 type: 'string',
                 default: 'human',
                 additionalParams: true
             },
             {
-                label: 'Memory Key',
+                label: 'Ключ памяти',
                 name: 'memoryKey',
                 type: 'string',
                 default: 'chat_history',
                 additionalParams: true
             },
             {
-                label: 'Input Key',
+                label: 'Ключ ввода',
                 name: 'inputKey',
                 type: 'string',
                 default: 'input',
                 additionalParams: true
             },
             {
-                label: 'Output Key',
+                label: 'Ключ вывода',
                 name: 'outputKey',
                 type: 'string',
                 default: 'text',

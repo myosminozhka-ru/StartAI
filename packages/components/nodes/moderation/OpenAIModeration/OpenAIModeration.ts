@@ -16,13 +16,13 @@ class OpenAIModeration implements INode {
     inputs: INodeParams[]
 
     constructor() {
-        this.label = 'OpenAI Moderation'
+        this.label = 'OpenAI Модерация'
         this.name = 'inputModerationOpenAI'
         this.version = 1.0
         this.type = 'Moderation'
         this.icon = 'openai.svg'
         this.category = 'Moderation'
-        this.description = 'Check whether content complies with OpenAI usage policies.'
+        this.description = 'Проверьте, соответствует ли контент политикам использования OpenAI.'
         this.baseClasses = [this.type, ...getBaseClasses(Moderation)]
         this.credential = {
             label: 'Подключите учетные данные',
@@ -32,11 +32,11 @@ class OpenAIModeration implements INode {
         }
         this.inputs = [
             {
-                label: 'Error Message',
+                label: 'Сообщение об ошибке',
                 name: 'moderationErrorMessage',
                 type: 'string',
                 rows: 2,
-                default: "Cannot Process! Input violates OpenAI's content moderation policies.",
+                default: 'Невозможно обработать! Ввод нарушает политики модерации контента OpenAI.',
                 optional: true
             }
         ]

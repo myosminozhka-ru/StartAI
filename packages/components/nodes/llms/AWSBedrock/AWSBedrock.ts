@@ -28,10 +28,10 @@ class AWSBedrock_LLMs implements INode {
         this.type = 'AWSBedrock'
         this.icon = 'aws.svg'
         this.category = 'LLMs'
-        this.description = 'Wrapper around AWS Bedrock large language models'
+        this.description = 'Обертка вокруг больших языковых моделей AWS Bedrock'
         this.baseClasses = [this.type, ...getBaseClasses(Bedrock)]
         this.credential = {
-            label: 'AWS Credential',
+            label: 'Учетные данные AWS',
             name: 'credential',
             type: 'credential',
             credentialNames: ['awsApi'],
@@ -39,7 +39,7 @@ class AWSBedrock_LLMs implements INode {
         }
         this.inputs = [
             {
-                label: 'Cache',
+                label: 'Кэш',
                 name: 'cache',
                 type: 'BaseCache',
                 optional: true
@@ -52,34 +52,36 @@ class AWSBedrock_LLMs implements INode {
                 default: 'us-east-1'
             },
             {
-                label: 'Model Name',
+                label: 'Название модели',
                 name: 'model',
                 type: 'asyncOptions',
                 loadMethod: 'listModels'
             },
             {
-                label: 'Custom Model Name',
+                label: 'Пользовательское название модели',
                 name: 'customModel',
-                description: 'If provided, will override model selected from Model Name option',
+                description: 'Если указано, переопределит модель, выбранную из опции "Название модели"',
                 type: 'string',
                 optional: true
             },
             {
-                label: 'Temperature',
+                label: 'Температура',
                 name: 'temperature',
                 type: 'number',
                 step: 0.1,
-                description: 'Temperature parameter may not apply to certain model. Please check available model parameters',
+                description:
+                    'Параметр температуры может не применяться к определенным моделям. Пожалуйста, проверьте доступные параметры модели',
                 optional: true,
                 additionalParams: true,
                 default: 0.7
             },
             {
-                label: 'Max Tokens to Sample',
+                label: 'Максимальное количество токенов для выборки',
                 name: 'max_tokens_to_sample',
                 type: 'number',
                 step: 10,
-                description: 'Max Tokens parameter may not apply to certain model. Please check available model parameters',
+                description:
+                    'Параметр максимального количества токенов может не применяться к определенным моделям. Пожалуйста, проверьте доступные параметры модели',
                 optional: true,
                 additionalParams: true,
                 default: 200

@@ -25,27 +25,27 @@ class BufferMemory_Memory implements INode {
     inputs: INodeParams[]
 
     constructor() {
-        this.label = 'Buffer Memory'
+        this.label = 'Буферная память'
         this.name = 'bufferMemory'
         this.version = 2.0
         this.type = 'BufferMemory'
         this.icon = 'memory.svg'
         this.category = 'Memory'
-        this.description = 'Retrieve chat messages stored in database'
+        this.description = 'Получение сообщений чата, хранящихся в базе данных'
         this.baseClasses = [this.type, ...getBaseClasses(BufferMemory)]
         this.inputs = [
             {
-                label: 'Session Id',
+                label: 'ID сессии',
                 name: 'sessionId',
                 type: 'string',
                 description:
-                    'If not specified, a random id will be used. Learn <a target="_blank" href="https://docs.flowiseai.com/memory#ui-and-embedded-chat">more</a>',
+                    'Если не указан, будет использован случайный id. Узнайте <a target="_blank" href="https://docs.flowiseai.com/memory#ui-and-embedded-chat">больше</a>',
                 default: '',
                 additionalParams: true,
                 optional: true
             },
             {
-                label: 'Memory Key',
+                label: 'Ключ памяти',
                 name: 'memoryKey',
                 type: 'string',
                 default: 'chat_history',

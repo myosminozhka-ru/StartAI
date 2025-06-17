@@ -21,7 +21,7 @@ class Fireworks_LLMs implements INode {
         this.type = 'Fireworks'
         this.icon = 'fireworks.png'
         this.category = 'LLMs'
-        this.description = 'Wrapper around Fireworks API for large language models'
+        this.description = 'Обертка вокруг API Fireworks для больших языковых моделей'
         this.baseClasses = [this.type, ...getBaseClasses(Fireworks)]
         this.credential = {
             label: 'Подключите учетные данные',
@@ -31,17 +31,17 @@ class Fireworks_LLMs implements INode {
         }
         this.inputs = [
             {
-                label: 'Cache',
+                label: 'Кэш',
                 name: 'cache',
                 type: 'BaseCache',
                 optional: true
             },
             {
-                label: 'Model Name',
+                label: 'Название модели',
                 name: 'modelName',
                 type: 'string',
                 default: 'accounts/fireworks/models/llama-v3-70b-instruct-hf',
-                description: 'For more details see https://fireworks.ai/models',
+                description: 'Для получения дополнительной информации см. https://fireworks.ai/models',
                 optional: true
             }
         ]

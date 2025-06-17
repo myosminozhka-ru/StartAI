@@ -23,7 +23,7 @@ class Cohere_LLMs implements INode {
         this.type = 'Cohere'
         this.icon = 'Cohere.svg'
         this.category = 'LLMs'
-        this.description = 'Wrapper around Cohere large language models'
+        this.description = 'Обертка вокруг больших языковых моделей Cohere'
         this.baseClasses = [this.type, ...getBaseClasses(Cohere)]
         this.credential = {
             label: 'Подключите учетные данные',
@@ -33,20 +33,20 @@ class Cohere_LLMs implements INode {
         }
         this.inputs = [
             {
-                label: 'Cache',
+                label: 'Кэш',
                 name: 'cache',
                 type: 'BaseCache',
                 optional: true
             },
             {
-                label: 'Model Name',
+                label: 'Название модели',
                 name: 'modelName',
                 type: 'asyncOptions',
                 loadMethod: 'listModels',
                 default: 'command'
             },
             {
-                label: 'Temperature',
+                label: 'Температура',
                 name: 'temperature',
                 type: 'number',
                 step: 0.1,
@@ -54,7 +54,7 @@ class Cohere_LLMs implements INode {
                 optional: true
             },
             {
-                label: 'Max Tokens',
+                label: 'Максимальное количество токенов',
                 name: 'maxTokens',
                 type: 'number',
                 step: 1,

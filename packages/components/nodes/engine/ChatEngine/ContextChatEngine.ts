@@ -27,45 +27,45 @@ class ContextChatEngine_LlamaIndex implements INode {
     sessionId?: string
 
     constructor(fields?: { sessionId?: string }) {
-        this.label = 'Context Chat Engine'
+        this.label = 'Движок контекстного чата'
         this.name = 'contextChatEngine'
         this.version = 1.0
         this.type = 'ContextChatEngine'
         this.icon = 'context-chat-engine.png'
         this.category = 'Engine'
-        this.description = 'Answer question based on retrieved documents (context) with built-in memory to remember conversation'
+        this.description = 'Отвечает на вопросы на основе полученных документов (контекста) со встроенной памятью для запоминания разговора'
         this.baseClasses = [this.type]
         this.tags = ['LlamaIndex']
         this.inputs = [
             {
-                label: 'Chat Model',
+                label: 'Чат-модель',
                 name: 'model',
                 type: 'BaseChatModel_LlamaIndex'
             },
             {
-                label: 'Vector Store Retriever',
+                label: 'Векторный хранилище ретривер',
                 name: 'vectorStoreRetriever',
                 type: 'VectorIndexRetriever'
             },
             {
-                label: 'Memory',
+                label: 'Память',
                 name: 'memory',
                 type: 'BaseChatMemory'
             },
             {
-                label: 'Return Source Documents',
+                label: 'Возвращать исходные документы',
                 name: 'returnSourceDocuments',
                 type: 'boolean',
                 optional: true
             },
             {
-                label: 'System Message',
+                label: 'Системное сообщение',
                 name: 'systemMessagePrompt',
                 type: 'string',
                 rows: 4,
                 optional: true,
                 placeholder:
-                    'I want you to act as a document that I am having a conversation with. Your name is "AI Assistant". You will provide me with answers from the given info. If the answer is not included, say exactly "Hmm, I am not sure." and stop after that. Refuse to answer any question not about the info. Never break character.'
+                    'Я хочу, чтобы ты действовал как документ, с которым я веду разговор. Твое имя "ИИ-ассистент". Ты будешь предоставлять мне ответы из данной информации. Если ответ не включен, скажи точно "Хм, я не уверен." и остановись после этого. Откажись отвечать на любой вопрос не об информации. Никогда не выходи из роли.'
             }
         ]
         this.sessionId = fields?.sessionId

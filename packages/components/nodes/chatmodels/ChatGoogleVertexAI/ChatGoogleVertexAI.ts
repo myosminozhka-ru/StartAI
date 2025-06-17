@@ -78,32 +78,32 @@ class GoogleVertexAI_ChatModels implements INode {
             credentialNames: ['googleVertexAuth'],
             optional: true,
             description:
-                'Google Vertex AI credential. If you are using a GCP service like Cloud Run, or if you have installed default credentials on your local machine, you do not need to set this credential.'
+                'Учетные данные Google Vertex AI. Если вы используете сервис GCP, такой как Cloud Run, или если у вас установлены учетные данные по умолчанию на локальной машине, вам не нужно устанавливать эти учетные данные.'
         }
         this.inputs = [
             {
-                label: 'Cache',
+                label: 'Кэш',
                 name: 'cache',
                 type: 'BaseCache',
                 optional: true
             },
             {
-                label: 'Model Name',
+                label: 'Название модели',
                 name: 'modelName',
                 type: 'asyncOptions',
                 loadMethod: 'listModels'
             },
             {
-                label: 'Custom Model Name',
+                label: 'Пользовательское название модели',
                 name: 'customModelName',
                 type: 'string',
                 placeholder: 'gemini-1.5-pro-exp-0801',
-                description: 'Custom model name to use. If provided, it will override the model selected',
+                description: 'Пользовательское название модели для использования. Если указано, переопределит выбранную модель',
                 additionalParams: true,
                 optional: true
             },
             {
-                label: 'Temperature',
+                label: 'Температура',
                 name: 'temperature',
                 type: 'number',
                 step: 0.1,
@@ -111,16 +111,16 @@ class GoogleVertexAI_ChatModels implements INode {
                 optional: true
             },
             {
-                label: 'Allow Image Uploads',
+                label: 'Разрешить загрузку изображений',
                 name: 'allowImageUploads',
                 type: 'boolean',
                 description:
-                    'Allow image input. Refer to the <a href="https://docs.flowiseai.com/using-flowise/uploads#image" target="_blank">docs</a> for more details.',
+                    'Разрешить ввод изображений. См. <a href="https://docs.flowiseai.com/using-flowise/uploads#image" target="_blank">документацию</a> для получения дополнительной информации.',
                 default: false,
                 optional: true
             },
             {
-                label: 'Streaming',
+                label: 'Потоковая передача',
                 name: 'streaming',
                 type: 'boolean',
                 default: true,
@@ -128,7 +128,7 @@ class GoogleVertexAI_ChatModels implements INode {
                 additionalParams: true
             },
             {
-                label: 'Max Output Tokens',
+                label: 'Максимум выходных токенов',
                 name: 'maxOutputTokens',
                 type: 'number',
                 step: 1,
@@ -136,7 +136,7 @@ class GoogleVertexAI_ChatModels implements INode {
                 additionalParams: true
             },
             {
-                label: 'Top Probability',
+                label: 'Вероятность Top P',
                 name: 'topP',
                 type: 'number',
                 step: 0.1,
@@ -144,10 +144,10 @@ class GoogleVertexAI_ChatModels implements INode {
                 additionalParams: true
             },
             {
-                label: 'Top Next Highest Probability Tokens',
+                label: 'Top K токенов с наивысшей вероятностью',
                 name: 'topK',
                 type: 'number',
-                description: `Decode using top-k sampling: consider the set of top_k most probable tokens. Must be positive`,
+                description: `Декодирование с использованием top-k сэмплинга: рассмотрите набор из top_k наиболее вероятных токенов. Должно быть положительным`,
                 step: 1,
                 optional: true,
                 additionalParams: true

@@ -32,43 +32,43 @@ class SubQuestionQueryEngine_LlamaIndex implements INode {
     sessionId?: string
 
     constructor(fields?: { sessionId?: string }) {
-        this.label = 'Sub Question Query Engine'
+        this.label = 'Движок подвопросов'
         this.name = 'subQuestionQueryEngine'
         this.version = 2.0
         this.type = 'SubQuestionQueryEngine'
         this.icon = 'subQueryEngine.svg'
         this.category = 'Engine'
         this.description =
-            'Breaks complex query into sub questions for each relevant data source, then gather all the intermediate reponses and synthesizes a final response'
+            'Разбивает сложный запрос на подвопросы для каждого релевантного источника данных, затем собирает все промежуточные ответы и синтезирует финальный ответ'
         this.baseClasses = [this.type, 'BaseQueryEngine']
         this.tags = ['LlamaIndex']
         this.inputs = [
             {
-                label: 'QueryEngine Tools',
+                label: 'Инструменты движка запросов',
                 name: 'queryEngineTools',
                 type: 'QueryEngineTool',
                 list: true
             },
             {
-                label: 'Chat Model',
+                label: 'Чат-модель',
                 name: 'model',
                 type: 'BaseChatModel_LlamaIndex'
             },
             {
-                label: 'Embeddings',
+                label: 'Эмбеддинги',
                 name: 'embeddings',
                 type: 'BaseEmbedding_LlamaIndex'
             },
             {
-                label: 'Response Synthesizer',
+                label: 'Синтезатор ответов',
                 name: 'responseSynthesizer',
                 type: 'ResponseSynthesizer',
                 description:
-                    'ResponseSynthesizer is responsible for sending the query, nodes, and prompt templates to the LLM to generate a response. See <a target="_blank" href="https://ts.llamaindex.ai/modules/response_synthesizer">more</a>',
+                    'ResponseSynthesizer отвечает за отправку запроса, узлов и шаблонов промптов в LLM для генерации ответа. См. <a target="_blank" href="https://ts.llamaindex.ai/modules/response_synthesizer">подробнее</a>',
                 optional: true
             },
             {
-                label: 'Return Source Documents',
+                label: 'Возвращать исходные документы',
                 name: 'returnSourceDocuments',
                 type: 'boolean',
                 optional: true

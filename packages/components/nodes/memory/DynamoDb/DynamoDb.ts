@@ -34,13 +34,13 @@ class DynamoDb_Memory implements INode {
     inputs: INodeParams[]
 
     constructor() {
-        this.label = 'DynamoDB Chat Memory'
+        this.label = 'DynamoDB Память чата'
         this.name = 'DynamoDBChatMemory'
         this.version = 1.0
         this.type = 'DynamoDBChatMemory'
         this.icon = 'dynamodb.svg'
         this.category = 'Memory'
-        this.description = 'Stores the conversation in dynamo db table'
+        this.description = 'Сохраняет разговор в таблице dynamo db'
         this.baseClasses = [this.type, ...getBaseClasses(BufferMemory)]
         this.credential = {
             label: 'Подключите учетные данные',
@@ -51,12 +51,12 @@ class DynamoDb_Memory implements INode {
         }
         this.inputs = [
             {
-                label: 'Table Name',
+                label: 'Название таблицы',
                 name: 'tableName',
                 type: 'string'
             },
             {
-                label: 'Partition Key',
+                label: 'Ключ раздела',
                 name: 'partitionKey',
                 type: 'string'
             },
@@ -64,21 +64,21 @@ class DynamoDb_Memory implements INode {
                 label: 'Регион',
                 name: 'region',
                 type: 'string',
-                description: 'The aws region in which table is located',
+                description: 'AWS регион, в котором находится таблица',
                 placeholder: 'us-east-1'
             },
             {
-                label: 'Session ID',
+                label: 'ID сессии',
                 name: 'sessionId',
                 type: 'string',
                 description:
-                    'If not specified, a random id will be used. Learn <a target="_blank" href="https://docs.flowiseai.com/memory/long-term-memory#ui-and-embedded-chat">more</a>',
+                    'Если не указан, будет использован случайный id. Узнайте <a target="_blank" href="https://docs.flowiseai.com/memory/long-term-memory#ui-and-embedded-chat">больше</a>',
                 default: '',
                 additionalParams: true,
                 optional: true
             },
             {
-                label: 'Memory Key',
+                label: 'Ключ памяти',
                 name: 'memoryKey',
                 type: 'string',
                 default: 'chat_history',

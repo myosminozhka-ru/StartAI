@@ -33,26 +33,26 @@ class ChatNvdiaNIM_ChatModels implements INode {
         }
         this.inputs = [
             {
-                label: 'Cache',
+                label: 'Кэш',
                 name: 'cache',
                 type: 'BaseCache',
                 optional: true
             },
             {
-                label: 'Model Name',
+                label: 'Название модели',
                 name: 'modelName',
                 type: 'string',
                 placeholder: 'microsoft/phi-3-mini-4k-instruct'
             },
             {
-                label: 'Base Path',
+                label: 'Базовый путь',
                 name: 'basePath',
                 type: 'string',
-                description: 'Specify the URL of the deployed NIM Inference API',
+                description: 'Укажите URL развернутого NIM Inference API',
                 placeholder: 'https://integrate.api.nvidia.com/v1'
             },
             {
-                label: 'Temperature',
+                label: 'Температура',
                 name: 'temperature',
                 type: 'number',
                 step: 0.1,
@@ -60,7 +60,7 @@ class ChatNvdiaNIM_ChatModels implements INode {
                 optional: true
             },
             {
-                label: 'Streaming',
+                label: 'Потоковая передача',
                 name: 'streaming',
                 type: 'boolean',
                 default: true,
@@ -68,7 +68,7 @@ class ChatNvdiaNIM_ChatModels implements INode {
                 additionalParams: true
             },
             {
-                label: 'Max Tokens',
+                label: 'Максимум токенов',
                 name: 'maxTokens',
                 type: 'number',
                 step: 1,
@@ -76,7 +76,7 @@ class ChatNvdiaNIM_ChatModels implements INode {
                 additionalParams: true
             },
             {
-                label: 'Top Probability',
+                label: 'Вероятность Top P',
                 name: 'topP',
                 type: 'number',
                 step: 0.1,
@@ -84,7 +84,7 @@ class ChatNvdiaNIM_ChatModels implements INode {
                 additionalParams: true
             },
             {
-                label: 'Frequency Penalty',
+                label: 'Штраф частоты',
                 name: 'frequencyPenalty',
                 type: 'number',
                 step: 0.1,
@@ -92,7 +92,7 @@ class ChatNvdiaNIM_ChatModels implements INode {
                 additionalParams: true
             },
             {
-                label: 'Presence Penalty',
+                label: 'Штраф присутствия',
                 name: 'presencePenalty',
                 type: 'number',
                 step: 0.1,
@@ -100,7 +100,7 @@ class ChatNvdiaNIM_ChatModels implements INode {
                 additionalParams: true
             },
             {
-                label: 'Timeout',
+                label: 'Таймаут',
                 name: 'timeout',
                 type: 'number',
                 step: 1,
@@ -108,7 +108,7 @@ class ChatNvdiaNIM_ChatModels implements INode {
                 additionalParams: true
             },
             {
-                label: 'Base Options',
+                label: 'Базовые опции',
                 name: 'baseOptions',
                 type: 'json',
                 optional: true,

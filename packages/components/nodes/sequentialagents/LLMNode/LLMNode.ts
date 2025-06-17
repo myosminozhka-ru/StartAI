@@ -180,24 +180,24 @@ class LLMNode_SeqAgents implements INode {
     outputs: INodeOutputsValue[]
 
     constructor() {
-        this.label = 'LLM Node'
+        this.label = 'LLM узел'
         this.name = 'seqLLMNode'
         this.version = 4.1
         this.type = 'LLMNode'
         this.icon = 'llmNode.svg'
         this.category = 'Sequential Agents'
-        this.description = 'Run Chat Model and return the output'
+        this.description = 'Запустить чат модель и вернуть результат'
         this.baseClasses = [this.type]
         this.documentation = 'https://docs.flowiseai.com/using-flowise/agentflows/sequential-agents#id-5.-llm-node'
         this.inputs = [
             {
-                label: 'Name',
+                label: 'Название',
                 name: 'llmNodeName',
                 type: 'string',
                 placeholder: 'LLM'
             },
             {
-                label: 'System Prompt',
+                label: 'Системный промпт',
                 name: 'systemMessagePrompt',
                 type: 'string',
                 rows: 4,
@@ -205,10 +205,10 @@ class LLMNode_SeqAgents implements INode {
                 additionalParams: true
             },
             {
-                label: 'Prepend Messages History',
+                label: 'Предварительная история сообщений',
                 name: 'messageHistory',
                 description:
-                    'Prepend a list of messages between System Prompt and Human Prompt. This is useful when you want to provide few shot examples',
+                    'Предварительно добавить список сообщений между системным промптом и человеческим промптом. Это полезно, когда вы хотите предоставить несколько примеров',
                 type: 'code',
                 hideCodeExecute: true,
                 codeExample: messageHistoryExample,
@@ -216,69 +216,70 @@ class LLMNode_SeqAgents implements INode {
                 additionalParams: true
             },
             {
-                label: 'Conversation History',
+                label: 'История разговора',
                 name: 'conversationHistorySelection',
                 type: 'options',
                 options: [
                     {
-                        label: 'User Question',
+                        label: 'Вопрос пользователя',
                         name: 'user_question',
-                        description: 'Use the user question from the historical conversation messages as input.'
+                        description: 'Использовать вопрос пользователя из исторических сообщений разговора как входные данные.'
                     },
                     {
-                        label: 'Last Conversation Message',
+                        label: 'Последнее сообщение разговора',
                         name: 'last_message',
-                        description: 'Use the last conversation message from the historical conversation messages as input.'
+                        description: 'Использовать последнее сообщение разговора из исторических сообщений разговора как входные данные.'
                     },
                     {
-                        label: 'All Conversation Messages',
+                        label: 'Все сообщения разговора',
                         name: 'all_messages',
-                        description: 'Use all conversation messages from the historical conversation messages as input.'
+                        description: 'Использовать все сообщения разговора из исторических сообщений разговора как входные данные.'
                     },
                     {
-                        label: 'Empty',
+                        label: 'Пусто',
                         name: 'empty',
                         description:
-                            'Do not use any messages from the conversation history. ' +
-                            'Ensure to use either System Prompt, Human Prompt, or Messages History.'
+                            'Не использовать никакие сообщения из истории разговора. ' +
+                            'Убедитесь, что используете либо системный промпт, либо человеческий промпт, либо историю сообщений.'
                     }
                 ],
                 default: 'all_messages',
                 optional: true,
                 description:
-                    'Select which messages from the conversation history to include in the prompt. ' +
-                    'The selected messages will be inserted between the System Prompt (if defined) and ' +
-                    '[Messages History, Human Prompt].',
+                    'Выберите, какие сообщения из истории разговора включить в промпт. ' +
+                    'Выбранные сообщения будут вставлены между системным промптом (если определен) и ' +
+                    '[Историей сообщений, Человеческим промптом].',
                 additionalParams: true
             },
             {
-                label: 'Human Prompt',
+                label: 'Человеческий промпт',
                 name: 'humanMessagePrompt',
                 type: 'string',
-                description: 'This prompt will be added at the end of the messages as human message',
+                description: 'Этот промпт будет добавлен в конец сообщений как человеческое сообщение',
                 rows: 4,
                 optional: true,
                 additionalParams: true
             },
             {
-                label: 'Sequential Node',
+                label: 'Последовательный узел',
                 name: 'sequentialNode',
                 type: 'Start | Agent | Condition | LLMNode | ToolNode | CustomFunction | ExecuteFlow',
                 description:
-                    'Can be connected to one of the following nodes: Start, Agent, Condition, LLM, Tool Node, Custom Function, Execute Flow',
+                    'Может быть подключен к одному из следующих узлов: Start, Agent, Condition, LLM, Tool Node, Custom Function, Execute Flow',
                 list: true
             },
             {
-                label: 'Chat Model',
+                label: 'Чат модель',
                 name: 'model',
                 type: 'BaseChatModel',
                 optional: true,
-                description: `Overwrite model to be used for this node`
+                description: `Переопределить модель для использования в этом узле`
             },
             {
-                label: 'Format Prompt Values',
+                label: 'Форматировать значения промпта',
                 name: 'promptValues',
-                description: 'Assign values to the prompt variables. You can also use $flow.state.<variable-name> to get the state value',
+                description:
+                    'Назначить значения переменным промпта. Вы также можете использовать $flow.state.<имя-переменной> для получения значения состояния',
                 type: 'json',
                 optional: true,
                 acceptVariable: true,

@@ -17,16 +17,16 @@ class AWSBedrockKBRetriever_Retrievers implements INode {
     inputs: INodeParams[]
 
     constructor() {
-        this.label = 'AWS Bedrock Knowledge Base Retriever'
+        this.label = 'AWS Bedrock Ретривер базы знаний'
         this.name = 'awsBedrockKBRetriever'
         this.version = 1.0
         this.type = 'AWSBedrockKBRetriever'
         this.icon = 'AWSBedrockKBRetriever.svg'
         this.category = 'Retrievers'
-        this.description = 'Connect to AWS Bedrock Knowledge Base API and retrieve relevant chunks'
+        this.description = 'Подключиться к AWS Bedrock Knowledge Base API и извлечь соответствующие фрагменты'
         this.baseClasses = [this.type, 'BaseRetriever']
         this.credential = {
-            label: 'AWS Credential',
+            label: 'AWS Учетные данные',
             name: 'credential',
             type: 'credential',
             credentialNames: ['awsApi'],
@@ -41,15 +41,15 @@ class AWSBedrockKBRetriever_Retrievers implements INode {
                 default: 'us-east-1'
             },
             {
-                label: 'Knowledge Base ID',
+                label: 'ID базы знаний',
                 name: 'knoledgeBaseID',
                 type: 'string'
             },
             {
-                label: 'Query',
+                label: 'Запрос',
                 name: 'query',
                 type: 'string',
-                description: 'Query to retrieve documents from retriever. If not specified, user question will be used',
+                description: 'Запрос для извлечения документов из ретривера. Если не указан, будет использован вопрос пользователя',
                 optional: true,
                 acceptVariable: true
             },
@@ -57,27 +57,27 @@ class AWSBedrockKBRetriever_Retrievers implements INode {
                 label: 'TopK',
                 name: 'topK',
                 type: 'number',
-                description: 'Number of chunks to retrieve',
+                description: 'Количество фрагментов для извлечения',
                 optional: true,
                 additionalParams: true,
                 default: 5
             },
             {
-                label: 'SearchType',
+                label: 'Тип поиска',
                 name: 'searchType',
                 type: 'options',
                 description:
-                    'Knowledge Base search type. Possible values are HYBRID and SEMANTIC. If not specified, default will be used. Consult AWS documentation for more',
+                    'Тип поиска базы знаний. Возможные значения: HYBRID и SEMANTIC. Если не указан, будет использован по умолчанию. Обратитесь к документации AWS для получения дополнительной информации',
                 options: [
                     {
                         label: 'HYBRID',
                         name: 'HYBRID',
-                        description: 'Hybrid seach type'
+                        description: 'Гибридный тип поиска'
                     },
                     {
                         label: 'SEMANTIC',
                         name: 'SEMANTIC',
-                        description: 'Semantic seach type'
+                        description: 'Семантический тип поиска'
                     }
                 ],
                 optional: true,
@@ -85,10 +85,10 @@ class AWSBedrockKBRetriever_Retrievers implements INode {
                 default: undefined
             },
             {
-                label: 'Filter',
+                label: 'Фильтр',
                 name: 'filter',
                 type: 'string',
-                description: 'Knowledge Base retrieval filter. Read documentation for filter syntax',
+                description: 'Фильтр извлечения базы знаний. Прочитайте документацию для синтаксиса фильтра',
                 optional: true,
                 additionalParams: true
             }

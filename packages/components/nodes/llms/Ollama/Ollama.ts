@@ -23,53 +23,53 @@ class Ollama_LLMs implements INode {
         this.type = 'Ollama'
         this.icon = 'Ollama.svg'
         this.category = 'LLMs'
-        this.description = 'Wrapper around open source large language models on Ollama'
+        this.description = 'Обертка вокруг открытых больших языковых моделей на Ollama'
         this.baseClasses = [this.type, ...getBaseClasses(Ollama)]
         this.inputs = [
             {
-                label: 'Cache',
+                label: 'Кэш',
                 name: 'cache',
                 type: 'BaseCache',
                 optional: true
             },
             {
-                label: 'Base URL',
+                label: 'Базовый URL',
                 name: 'baseUrl',
                 type: 'string',
                 default: 'http://localhost:11434'
             },
             {
-                label: 'Model Name',
+                label: 'Название модели',
                 name: 'modelName',
                 type: 'string',
                 placeholder: 'llama2'
             },
             {
-                label: 'Temperature',
+                label: 'Температура',
                 name: 'temperature',
                 type: 'number',
                 description:
-                    'The temperature of the model. Increasing the temperature will make the model answer more creatively. (Default: 0.8). Refer to <a target="_blank" href="https://github.com/jmorganca/ollama/blob/main/docs/modelfile.md#valid-parameters-and-values">docs</a> for more details',
+                    'Температура модели. Увеличение температуры заставит модель отвечать более творчески. (По умолчанию: 0.8). См. <a target="_blank" href="https://github.com/jmorganca/ollama/blob/main/docs/modelfile.md#valid-parameters-and-values">документацию</a> для получения дополнительной информации',
                 step: 0.1,
                 default: 0.9,
                 optional: true
             },
             {
-                label: 'Top P',
+                label: 'Верхний P',
                 name: 'topP',
                 type: 'number',
                 description:
-                    'Works together with top-k. A higher value (e.g., 0.95) will lead to more diverse text, while a lower value (e.g., 0.5) will generate more focused and conservative text. (Default: 0.9). Refer to <a target="_blank" href="https://github.com/jmorganca/ollama/blob/main/docs/modelfile.md#valid-parameters-and-values">docs</a> for more details',
+                    'Работает вместе с top-k. Более высокое значение (например, 0.95) приведет к более разнообразному тексту, а более низкое значение (например, 0.5) будет генерировать более сфокусированный и консервативный текст. (По умолчанию: 0.9). См. <a target="_blank" href="https://github.com/jmorganca/ollama/blob/main/docs/modelfile.md#valid-parameters-and-values">документацию</a> для получения дополнительной информации',
                 step: 0.1,
                 optional: true,
                 additionalParams: true
             },
             {
-                label: 'Top K',
+                label: 'Верхний K',
                 name: 'topK',
                 type: 'number',
                 description:
-                    'Reduces the probability of generating nonsense. A higher value (e.g. 100) will give more diverse answers, while a lower value (e.g. 10) will be more conservative. (Default: 40). Refer to <a target="_blank" href="https://github.com/jmorganca/ollama/blob/main/docs/modelfile.md#valid-parameters-and-values">docs</a> for more details',
+                    'Уменьшает вероятность генерации бессмыслицы. Более высокое значение (например, 100) даст более разнообразные ответы, а более низкое значение (например, 10) будет более консервативным. (По умолчанию: 40). См. <a target="_blank" href="https://github.com/jmorganca/ollama/blob/main/docs/modelfile.md#valid-parameters-and-values">документацию</a> для получения дополнительной информации',
                 step: 1,
                 optional: true,
                 additionalParams: true
@@ -79,7 +79,7 @@ class Ollama_LLMs implements INode {
                 name: 'mirostat',
                 type: 'number',
                 description:
-                    'Enable Mirostat sampling for controlling perplexity. (default: 0, 0 = disabled, 1 = Mirostat, 2 = Mirostat 2.0). Refer to <a target="_blank" href="https://github.com/jmorganca/ollama/blob/main/docs/modelfile.md#valid-parameters-and-values">docs</a> for more details',
+                    'Включить выборку Mirostat для контроля перплексии. (по умолчанию: 0, 0 = отключено, 1 = Mirostat, 2 = Mirostat 2.0). См. <a target="_blank" href="https://github.com/jmorganca/ollama/blob/main/docs/modelfile.md#valid-parameters-and-values">документацию</a> для получения дополнительной информации',
                 step: 1,
                 optional: true,
                 additionalParams: true
@@ -89,7 +89,7 @@ class Ollama_LLMs implements INode {
                 name: 'mirostatEta',
                 type: 'number',
                 description:
-                    'Influences how quickly the algorithm responds to feedback from the generated text. A lower learning rate will result in slower adjustments, while a higher learning rate will make the algorithm more responsive. (Default: 0.1) Refer to <a target="_blank" href="https://github.com/jmorganca/ollama/blob/main/docs/modelfile.md#valid-parameters-and-values">docs</a> for more details',
+                    'Влияет на то, как быстро алгоритм реагирует на обратную связь от сгенерированного текста. Более низкая скорость обучения приведет к более медленным корректировкам, а более высокая скорость обучения сделает алгоритм более отзывчивым. (По умолчанию: 0.1) См. <a target="_blank" href="https://github.com/jmorganca/ollama/blob/main/docs/modelfile.md#valid-parameters-and-values">документацию</a> для получения дополнительной информации',
                 step: 0.1,
                 optional: true,
                 additionalParams: true
@@ -99,88 +99,88 @@ class Ollama_LLMs implements INode {
                 name: 'mirostatTau',
                 type: 'number',
                 description:
-                    'Controls the balance between coherence and diversity of the output. A lower value will result in more focused and coherent text. (Default: 5.0) Refer to <a target="_blank" href="https://github.com/jmorganca/ollama/blob/main/docs/modelfile.md#valid-parameters-and-values">docs</a> for more details',
+                    'Контролирует баланс между связностью и разнообразием вывода. Более низкое значение приведет к более сфокусированному и связному тексту. (По умолчанию: 5.0) См. <a target="_blank" href="https://github.com/jmorganca/ollama/blob/main/docs/modelfile.md#valid-parameters-and-values">документацию</a> для получения дополнительной информации',
                 step: 0.1,
                 optional: true,
                 additionalParams: true
             },
             {
-                label: 'Context Window Size',
+                label: 'Размер окна контекста',
                 name: 'numCtx',
                 type: 'number',
                 description:
-                    'Sets the size of the context window used to generate the next token. (Default: 2048) Refer to <a target="_blank" href="https://github.com/jmorganca/ollama/blob/main/docs/modelfile.md#valid-parameters-and-values">docs</a> for more details',
+                    'Устанавливает размер окна контекста, используемого для генерации следующего токена. (По умолчанию: 2048) См. <a target="_blank" href="https://github.com/jmorganca/ollama/blob/main/docs/modelfile.md#valid-parameters-and-values">документацию</a> для получения дополнительной информации',
                 step: 1,
                 optional: true,
                 additionalParams: true
             },
             {
-                label: 'Number of GQA groups',
+                label: 'Количество групп GQA',
                 name: 'numGqa',
                 type: 'number',
                 description:
-                    'The number of GQA groups in the transformer layer. Required for some models, for example it is 8 for llama2:70b. Refer to <a target="_blank" href="https://github.com/jmorganca/ollama/blob/main/docs/modelfile.md#valid-parameters-and-values">docs</a> for more details',
+                    'Количество групп GQA в слое трансформера. Требуется для некоторых моделей, например, это 8 для llama2:70b. См. <a target="_blank" href="https://github.com/jmorganca/ollama/blob/main/docs/modelfile.md#valid-parameters-and-values">документацию</a> для получения дополнительной информации',
                 step: 1,
                 optional: true,
                 additionalParams: true
             },
             {
-                label: 'Number of GPU',
+                label: 'Количество GPU',
                 name: 'numGpu',
                 type: 'number',
                 description:
-                    'The number of layers to send to the GPU(s). On macOS it defaults to 1 to enable metal support, 0 to disable. Refer to <a target="_blank" href="https://github.com/jmorganca/ollama/blob/main/docs/modelfile.md#valid-parameters-and-values">docs</a> for more details',
+                    'Количество слоев для отправки на GPU. В macOS по умолчанию 1 для включения поддержки Metal, 0 для отключения. См. <a target="_blank" href="https://github.com/jmorganca/ollama/blob/main/docs/modelfile.md#valid-parameters-and-values">документацию</a> для получения дополнительной информации',
                 step: 1,
                 optional: true,
                 additionalParams: true
             },
             {
-                label: 'Number of Thread',
+                label: 'Количество потоков',
                 name: 'numThread',
                 type: 'number',
                 description:
-                    'Sets the number of threads to use during computation. By default, Ollama will detect this for optimal performance. It is recommended to set this value to the number of physical CPU cores your system has (as opposed to the logical number of cores). Refer to <a target="_blank" href="https://github.com/jmorganca/ollama/blob/main/docs/modelfile.md#valid-parameters-and-values">docs</a> for more details',
+                    'Устанавливает количество потоков для использования во время вычислений. По умолчанию Ollama автоматически определит это для оптимальной производительности. Рекомендуется установить это значение равным количеству физических ядер CPU в вашей системе (в отличие от логического количества ядер). См. <a target="_blank" href="https://github.com/jmorganca/ollama/blob/main/docs/modelfile.md#valid-parameters-and-values">документацию</a> для получения дополнительной информации',
                 step: 1,
                 optional: true,
                 additionalParams: true
             },
             {
-                label: 'Repeat Last N',
+                label: 'Повторить последние N',
                 name: 'repeatLastN',
                 type: 'number',
                 description:
-                    'Sets how far back for the model to look back to prevent repetition. (Default: 64, 0 = disabled, -1 = num_ctx). Refer to <a target="_blank" href="https://github.com/jmorganca/ollama/blob/main/docs/modelfile.md#valid-parameters-and-values">docs</a> for more details',
+                    'Устанавливает, как далеко назад модель должна смотреть, чтобы предотвратить повторение. (По умолчанию: 64, 0 = отключено, -1 = num_ctx). См. <a target="_blank" href="https://github.com/jmorganca/ollama/blob/main/docs/modelfile.md#valid-parameters-and-values">документацию</a> для получения дополнительной информации',
                 step: 1,
                 optional: true,
                 additionalParams: true
             },
             {
-                label: 'Repeat Penalty',
+                label: 'Штраф за повторение',
                 name: 'repeatPenalty',
                 type: 'number',
                 description:
-                    'Sets how strongly to penalize repetitions. A higher value (e.g., 1.5) will penalize repetitions more strongly, while a lower value (e.g., 0.9) will be more lenient. (Default: 1.1). Refer to <a target="_blank" href="https://github.com/jmorganca/ollama/blob/main/docs/modelfile.md#valid-parameters-and-values">docs</a> for more details',
+                    'Устанавливает, насколько сильно штрафовать повторения. Более высокое значение (например, 1.5) будет более строго штрафовать повторения, а более низкое значение (например, 0.9) будет более снисходительным. (По умолчанию: 1.1). См. <a target="_blank" href="https://github.com/jmorganca/ollama/blob/main/docs/modelfile.md#valid-parameters-and-values">документацию</a> для получения дополнительной информации',
                 step: 0.1,
                 optional: true,
                 additionalParams: true
             },
             {
-                label: 'Stop Sequence',
+                label: 'Стоп-последовательность',
                 name: 'stop',
                 type: 'string',
                 rows: 4,
                 placeholder: 'AI assistant:',
                 description:
-                    'Sets the stop sequences to use. Use comma to seperate different sequences. Refer to <a target="_blank" href="https://github.com/jmorganca/ollama/blob/main/docs/modelfile.md#valid-parameters-and-values">docs</a> for more details',
+                    'Устанавливает стоп-последовательности для использования. Используйте запятую для разделения различных последовательностей. См. <a target="_blank" href="https://github.com/jmorganca/ollama/blob/main/docs/modelfile.md#valid-parameters-and-values">документацию</a> для получения дополнительной информации',
                 optional: true,
                 additionalParams: true
             },
             {
-                label: 'Tail Free Sampling',
+                label: 'Выборка с обрезанием хвоста',
                 name: 'tfsZ',
                 type: 'number',
                 description:
-                    'Tail free sampling is used to reduce the impact of less probable tokens from the output. A higher value (e.g., 2.0) will reduce the impact more, while a value of 1.0 disables this setting. (Default: 1). Refer to <a target="_blank" href="https://github.com/jmorganca/ollama/blob/main/docs/modelfile.md#valid-parameters-and-values">docs</a> for more details',
+                    'Выборка с обрезанием хвоста используется для уменьшения влияния менее вероятных токенов из вывода. Более высокое значение (например, 2.0) уменьшит влияние больше, а значение 1.0 отключит эту настройку. (По умолчанию: 1). См. <a target="_blank" href="https://github.com/jmorganca/ollama/blob/main/docs/modelfile.md#valid-parameters-and-values">документацию</a> для получения дополнительной информации',
                 step: 0.1,
                 optional: true,
                 additionalParams: true

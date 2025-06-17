@@ -20,13 +20,13 @@ class VoyageAIRerankRetriever_Retrievers implements INode {
     outputs: INodeOutputsValue[]
 
     constructor() {
-        this.label = 'Voyage AI Rerank Retriever'
+        this.label = 'Voyage AI Ранжирующий ретривер'
         this.name = 'voyageAIRerankRetriever'
         this.version = 1.0
         this.type = 'VoyageAIRerankRetriever'
         this.icon = 'voyageai.png'
         this.category = 'Retrievers'
-        this.description = 'Voyage AI Rerank indexes the documents from most to least semantically relevant to the query.'
+        this.description = 'Voyage AI Rerank индексирует документы от наиболее до наименее семантически релевантных запросу.'
         this.baseClasses = [this.type, 'BaseRetriever']
         this.credential = {
             label: 'Подключите учетные данные',
@@ -36,12 +36,12 @@ class VoyageAIRerankRetriever_Retrievers implements INode {
         }
         this.inputs = [
             {
-                label: 'Vector Store Retriever',
+                label: 'Ретривер векторного хранилища',
                 name: 'baseRetriever',
                 type: 'VectorStoreRetriever'
             },
             {
-                label: 'Model Name',
+                label: 'Название модели',
                 name: 'model',
                 type: 'options',
                 options: [
@@ -66,17 +66,17 @@ class VoyageAIRerankRetriever_Retrievers implements INode {
                 optional: true
             },
             {
-                label: 'Query',
+                label: 'Запрос',
                 name: 'query',
                 type: 'string',
-                description: 'Query to retrieve documents from retriever. If not specified, user question will be used',
+                description: 'Запрос для извлечения документов из ретривера. Если не указан, будет использован вопрос пользователя',
                 optional: true,
                 acceptVariable: true
             },
             {
                 label: 'Top K',
                 name: 'topK',
-                description: 'Number of top results to fetch. Default to the TopK of the Base Retriever',
+                description: 'Количество лучших результатов для получения. По умолчанию равно TopK базового ретривера',
                 placeholder: '4',
                 type: 'number',
                 additionalParams: true,
@@ -85,20 +85,20 @@ class VoyageAIRerankRetriever_Retrievers implements INode {
         ]
         this.outputs = [
             {
-                label: 'Voyage AI Rerank Retriever',
+                label: 'Voyage AI Ранжирующий ретривер',
                 name: 'retriever',
                 baseClasses: this.baseClasses
             },
             {
-                label: 'Document',
+                label: 'Документ',
                 name: 'document',
-                description: 'Array of document objects containing metadata and pageContent',
+                description: 'Массив объектов документов, содержащих метаданные и pageContent',
                 baseClasses: ['Document', 'json']
             },
             {
-                label: 'Text',
+                label: 'Текст',
                 name: 'text',
-                description: 'Concatenated string from pageContent of documents',
+                description: 'Объединенная строка из pageContent документов',
                 baseClasses: ['string', 'json']
             }
         ]

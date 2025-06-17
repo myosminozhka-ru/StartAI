@@ -41,32 +41,32 @@ class ChatPromptTemplate_Prompts implements INode {
     inputs: INodeParams[]
 
     constructor() {
-        this.label = 'Chat Prompt Template'
+        this.label = 'Шаблон чат-промпта'
         this.name = 'chatPromptTemplate'
         this.version = 2.0
         this.type = 'ChatPromptTemplate'
         this.icon = 'prompt.svg'
         this.category = 'Prompts'
-        this.description = 'Schema to represent a chat prompt'
+        this.description = 'Схема для представления чат-промпта'
         this.baseClasses = [this.type, ...getBaseClasses(ChatPromptTemplate)]
         this.inputs = [
             {
-                label: 'System Message',
+                label: 'Системное сообщение',
                 name: 'systemMessagePrompt',
                 type: 'string',
                 rows: 4,
                 placeholder: `You are a helpful assistant that translates {input_language} to {output_language}.`
             },
             {
-                label: 'Human Message',
+                label: 'Человеческое сообщение',
                 name: 'humanMessagePrompt',
-                description: 'This prompt will be added at the end of the messages as human message',
+                description: 'Этот промпт будет добавлен в конец сообщений как человеческое сообщение',
                 type: 'string',
                 rows: 4,
                 placeholder: `{text}`
             },
             {
-                label: 'Format Prompt Values',
+                label: 'Форматировать значения промпта',
                 name: 'promptValues',
                 type: 'json',
                 optional: true,
@@ -74,9 +74,9 @@ class ChatPromptTemplate_Prompts implements INode {
                 list: true
             },
             {
-                label: 'Messages History',
+                label: 'История сообщений',
                 name: 'messageHistory',
-                description: 'Add messages after System Message. This is useful when you want to provide few shot examples',
+                description: 'Добавить сообщения после системного сообщения. Полезно, когда вы хотите предоставить несколько примеров',
                 type: 'tabs',
                 tabIdentifier: TAB_IDENTIFIER,
                 additionalParams: true,
@@ -84,7 +84,7 @@ class ChatPromptTemplate_Prompts implements INode {
                 tabs: [
                     //TODO: add UI for messageHistory
                     {
-                        label: 'Add Messages (Code)',
+                        label: 'Добавить сообщения (Код)',
                         name: 'messageHistoryCode',
                         type: 'code',
                         hideCodeExecute: true,

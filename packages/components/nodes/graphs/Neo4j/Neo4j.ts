@@ -21,7 +21,7 @@ class Neo4j_Graphs implements INode {
         this.type = 'Neo4j'
         this.icon = 'neo4j.svg'
         this.category = 'Graph'
-        this.description = 'Connect with Neo4j graph database'
+        this.description = 'Подключение к графовой базе данных Neo4j'
         this.baseClasses = [this.type, ...getBaseClasses(Neo4jGraph)]
         this.credential = {
             label: 'Подключите учетные данные',
@@ -31,21 +31,21 @@ class Neo4j_Graphs implements INode {
         }
         this.inputs = [
             {
-                label: 'Database',
+                label: 'База данных',
                 name: 'database',
                 type: 'string',
                 placeholder: 'neo4j',
                 optional: true
             },
             {
-                label: 'Timeout (ms)',
+                label: 'Таймаут (мс)',
                 name: 'timeoutMs',
                 type: 'number',
                 default: 5000,
                 optional: true
             },
             {
-                label: 'Enhanced Schema',
+                label: 'Расширенная схема',
                 name: 'enhancedSchema',
                 type: 'boolean',
                 default: false,

@@ -33,19 +33,19 @@ class ChatAlibabaTongyi_ChatModels implements INode {
         }
         this.inputs = [
             {
-                label: 'Cache',
+                label: 'Кэш',
                 name: 'cache',
                 type: 'BaseCache',
                 optional: true
             },
             {
-                label: 'Model',
+                label: 'Модель',
                 name: 'modelName',
                 type: 'string',
                 placeholder: 'qwen-plus'
             },
             {
-                label: 'Temperature',
+                label: 'Температура',
                 name: 'temperature',
                 type: 'number',
                 step: 0.1,
@@ -53,7 +53,7 @@ class ChatAlibabaTongyi_ChatModels implements INode {
                 optional: true
             },
             {
-                label: 'Streaming',
+                label: 'Потоковая передача',
                 name: 'streaming',
                 type: 'boolean',
                 default: true,

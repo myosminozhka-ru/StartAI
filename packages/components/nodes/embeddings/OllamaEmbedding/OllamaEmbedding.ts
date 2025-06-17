@@ -22,43 +22,43 @@ class OllamaEmbedding_Embeddings implements INode {
         this.type = 'OllamaEmbeddings'
         this.icon = 'Ollama.svg'
         this.category = 'Embeddings'
-        this.description = 'Generate embeddings for a given text using open source model on Ollama'
+        this.description = 'Генерация эмбеддингов для заданного текста с использованием открытой модели на Ollama'
         this.baseClasses = [this.type, ...getBaseClasses(OllamaEmbeddings)]
         this.inputs = [
             {
-                label: 'Base URL',
+                label: 'Базовый URL',
                 name: 'baseUrl',
                 type: 'string',
                 default: 'http://localhost:11434'
             },
             {
-                label: 'Model Name',
+                label: 'Название модели',
                 name: 'modelName',
                 type: 'string',
                 placeholder: 'llama2'
             },
             {
-                label: 'Number of GPU',
+                label: 'Количество GPU',
                 name: 'numGpu',
                 type: 'number',
                 description:
-                    'The number of layers to send to the GPU(s). On macOS it defaults to 1 to enable metal support, 0 to disable. Refer to <a target="_blank" href="https://github.com/jmorganca/ollama/blob/main/docs/modelfile.md#valid-parameters-and-values">docs</a> for more details',
+                    'Количество слоев для отправки на GPU. В macOS по умолчанию 1 для включения поддержки metal, 0 для отключения. См. <a target="_blank" href="https://github.com/jmorganca/ollama/blob/main/docs/modelfile.md#valid-parameters-and-values">документацию</a> для подробностей',
                 step: 1,
                 optional: true,
                 additionalParams: true
             },
             {
-                label: 'Number of Thread',
+                label: 'Количество потоков',
                 name: 'numThread',
                 type: 'number',
                 description:
-                    'Sets the number of threads to use during computation. By default, Ollama will detect this for optimal performance. It is recommended to set this value to the number of physical CPU cores your system has (as opposed to the logical number of cores). Refer to <a target="_blank" href="https://github.com/jmorganca/ollama/blob/main/docs/modelfile.md#valid-parameters-and-values">docs</a> for more details',
+                    'Устанавливает количество потоков для использования во время вычислений. По умолчанию Ollama определит это для оптимальной производительности. Рекомендуется установить это значение равным количеству физических ядер CPU в вашей системе (в отличие от логического количества ядер). См. <a target="_blank" href="https://github.com/jmorganca/ollama/blob/main/docs/modelfile.md#valid-parameters-and-values">документацию</a> для подробностей',
                 step: 1,
                 optional: true,
                 additionalParams: true
             },
             {
-                label: 'Use MMap',
+                label: 'Использовать MMap',
                 name: 'useMMap',
                 type: 'boolean',
                 default: true,

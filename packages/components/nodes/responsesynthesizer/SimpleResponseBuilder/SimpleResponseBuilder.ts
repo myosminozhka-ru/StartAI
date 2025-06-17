@@ -15,13 +15,13 @@ class SimpleResponseBuilder_LlamaIndex implements INode {
     outputs: INodeOutputsValue[]
 
     constructor() {
-        this.label = 'Simple Response Builder'
+        this.label = 'Простой построитель ответов'
         this.name = 'simpleResponseBuilderLlamaIndex'
         this.version = 1.0
         this.type = 'SimpleResponseBuilder'
         this.icon = 'simplerb.svg'
         this.category = 'Response Synthesizer'
-        this.description = `Apply a query to a collection of text chunks, gathering the responses in an array, and return a combined string of all responses. Useful for individual queries on each text chunk.`
+        this.description = `Применить запрос к коллекции текстовых фрагментов, собрать ответы в массив и вернуть объединенную строку всех ответов. Полезно для отдельных запросов на каждый текстовый фрагмент.`
         this.baseClasses = [this.type, 'ResponseSynthesizer']
         this.tags = ['LlamaIndex']
         this.inputs = []

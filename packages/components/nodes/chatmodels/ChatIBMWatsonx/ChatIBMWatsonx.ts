@@ -41,19 +41,19 @@ class ChatIBMWatsonx_ChatModels implements INode {
         }
         this.inputs = [
             {
-                label: 'Cache',
+                label: 'Кэш',
                 name: 'cache',
                 type: 'BaseCache',
                 optional: true
             },
             {
-                label: 'Model',
+                label: 'Модель',
                 name: 'modelName',
                 type: 'string',
                 placeholder: 'mistralai/mistral-large'
             },
             {
-                label: 'Temperature',
+                label: 'Температура',
                 name: 'temperature',
                 type: 'number',
                 step: 0.1,
@@ -61,7 +61,7 @@ class ChatIBMWatsonx_ChatModels implements INode {
                 optional: true
             },
             {
-                label: 'Streaming',
+                label: 'Потоковая передача',
                 name: 'streaming',
                 type: 'boolean',
                 default: true,
@@ -69,7 +69,7 @@ class ChatIBMWatsonx_ChatModels implements INode {
                 additionalParams: true
             },
             {
-                label: 'Max Tokens',
+                label: 'Максимум токенов',
                 name: 'maxTokens',
                 type: 'number',
                 step: 1,
@@ -77,24 +77,24 @@ class ChatIBMWatsonx_ChatModels implements INode {
                 additionalParams: true
             },
             {
-                label: 'Frequency Penalty',
+                label: 'Штраф частоты',
                 name: 'frequencyPenalty',
                 type: 'number',
                 step: 1,
                 optional: true,
                 additionalParams: true,
                 description:
-                    "Positive values penalize new tokens based on their existing frequency in the text so far, decreasing the model's likelihood to repeat the same line verbatim."
+                    'Положительные значения штрафуют новые токены на основе их существующей частоты в тексте, уменьшая вероятность того, что модель повторит ту же строку дословно.'
             },
             {
-                label: 'Log Probs',
+                label: 'Логарифм вероятностей',
                 name: 'logprobs',
                 type: 'boolean',
                 default: false,
                 optional: true,
                 additionalParams: true,
                 description:
-                    'Whether to return log probabilities of the output tokens or not. If true, returns the log probabilities of each output token returned in the content of message.'
+                    'Возвращать ли логарифмы вероятностей выходных токенов или нет. Если true, возвращает логарифмы вероятностей каждого выходного токена, возвращенного в содержимом сообщения.'
             },
             {
                 label: 'N',
@@ -105,10 +105,10 @@ class ChatIBMWatsonx_ChatModels implements INode {
                 optional: true,
                 additionalParams: true,
                 description:
-                    'How many chat completion choices to generate for each input message. Note that you will be charged based on the number of generated tokens across all of the choices. Keep n as 1 to minimize costs.'
+                    'Сколько вариантов завершения чата генерировать для каждого входного сообщения. Обратите внимание, что вы будете платить на основе количества сгенерированных токенов по всем вариантам. Держите n равным 1, чтобы минимизировать затраты.'
             },
             {
-                label: 'Presence Penalty',
+                label: 'Штраф присутствия',
                 name: 'presencePenalty',
                 type: 'number',
                 step: 1,
@@ -116,7 +116,7 @@ class ChatIBMWatsonx_ChatModels implements INode {
                 optional: true,
                 additionalParams: true,
                 description:
-                    "Positive values penalize new tokens based on whether they appear in the text so far, increasing the model's likelihood to talk about new topics."
+                    'Положительные значения штрафуют новые токены на основе того, появляются ли они в тексте, увеличивая вероятность того, что модель будет говорить о новых темах.'
             },
             {
                 label: 'Top P',
@@ -127,7 +127,7 @@ class ChatIBMWatsonx_ChatModels implements INode {
                 optional: true,
                 additionalParams: true,
                 description:
-                    'An alternative to sampling with temperature, called nucleus sampling, where the model considers the results of the tokens with top_p probability mass. So 0.1 means only the tokens comprising the top 10% probability mass are considered.'
+                    'Альтернатива сэмплингу с температурой, называемая ядерным сэмплингом, где модель рассматривает результаты токенов с вероятностной массой top_p. Так что 0.1 означает, что рассматриваются только токены, составляющие верхние 10% вероятностной массы.'
             }
         ]
     }

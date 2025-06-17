@@ -33,30 +33,30 @@ class ChatMistral_ChatModels implements INode {
         }
         this.inputs = [
             {
-                label: 'Cache',
+                label: 'Кэш',
                 name: 'cache',
                 type: 'BaseCache',
                 optional: true
             },
             {
-                label: 'Model Name',
+                label: 'Название модели',
                 name: 'modelName',
                 type: 'asyncOptions',
                 loadMethod: 'listModels',
                 default: 'mistral-tiny'
             },
             {
-                label: 'Temperature',
+                label: 'Температура',
                 name: 'temperature',
                 type: 'number',
                 description:
-                    'What sampling temperature to use, between 0.0 and 1.0. Higher values like 0.8 will make the output more random, while lower values like 0.2 will make it more focused and deterministic.',
+                    'Какую температуру сэмплинга использовать, от 0.0 до 1.0. Более высокие значения, такие как 0.8, сделают вывод более случайным, а более низкие значения, такие как 0.2, сделают его более сфокусированным и детерминированным.',
                 step: 0.1,
                 default: 0.9,
                 optional: true
             },
             {
-                label: 'Streaming',
+                label: 'Потоковая передача',
                 name: 'streaming',
                 type: 'boolean',
                 default: true,
@@ -64,43 +64,44 @@ class ChatMistral_ChatModels implements INode {
                 additionalParams: true
             },
             {
-                label: 'Max Output Tokens',
+                label: 'Максимум выходных токенов',
                 name: 'maxOutputTokens',
                 type: 'number',
-                description: 'The maximum number of tokens to generate in the completion.',
+                description: 'Максимальное количество токенов для генерации в завершении.',
                 step: 1,
                 optional: true,
                 additionalParams: true
             },
             {
-                label: 'Top Probability',
+                label: 'Вероятность Top P',
                 name: 'topP',
                 type: 'number',
                 description:
-                    'Nucleus sampling, where the model considers the results of the tokens with top_p probability mass. So 0.1 means only the tokens comprising the top 10% probability mass are considered.',
+                    'Ядерный сэмплинг, где модель рассматривает результаты токенов с вероятностной массой top_p. Так что 0.1 означает, что рассматриваются только токены, составляющие верхние 10% вероятностной массы.',
                 step: 0.1,
                 optional: true,
                 additionalParams: true
             },
             {
-                label: 'Random Seed',
+                label: 'Случайное зерно',
                 name: 'randomSeed',
                 type: 'number',
-                description: 'The seed to use for random sampling. If set, different calls will generate deterministic results.',
+                description:
+                    'Зерно для использования при случайном сэмплинге. Если установлено, разные вызовы будут генерировать детерминированные результаты.',
                 step: 1,
                 optional: true,
                 additionalParams: true
             },
             {
-                label: 'Safe Mode',
+                label: 'Безопасный режим',
                 name: 'safeMode',
                 type: 'boolean',
-                description: 'Whether to inject a safety prompt before all conversations.',
+                description: 'Вводить ли безопасный промпт перед всеми разговорами.',
                 optional: true,
                 additionalParams: true
             },
             {
-                label: 'Override Endpoint',
+                label: 'Переопределить endpoint',
                 name: 'overrideEndpoint',
                 type: 'string',
                 optional: true,

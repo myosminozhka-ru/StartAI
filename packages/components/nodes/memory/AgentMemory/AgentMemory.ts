@@ -21,13 +21,13 @@ class AgentMemory_Memory implements INode {
     credential: INodeParams
 
     constructor() {
-        this.label = 'Agent Memory'
+        this.label = 'Память агента'
         this.name = 'agentMemory'
         this.version = 2.0
         this.type = 'AgentMemory'
         this.icon = 'agentmemory.svg'
         this.category = 'Memory'
-        this.description = 'Memory for agentflow to remember the state of the conversation'
+        this.description = 'Память для agentflow для запоминания состояния разговора'
         this.baseClasses = [this.type, ...getBaseClasses(SqliteSaver)]
         this.badge = 'DEPRECATING'
         this.credential = {
@@ -39,7 +39,7 @@ class AgentMemory_Memory implements INode {
         }
         this.inputs = [
             {
-                label: 'Database',
+                label: 'База данных',
                 name: 'databaseType',
                 type: 'options',
                 options: [
@@ -59,41 +59,41 @@ class AgentMemory_Memory implements INode {
                 default: 'sqlite'
             },
             {
-                label: 'Database File Path',
+                label: 'Путь к файлу базы данных',
                 name: 'databaseFilePath',
                 type: 'string',
                 placeholder: 'C:\\Users\\User\\.flowise\\database.sqlite',
                 description:
-                    'If SQLite is selected, provide the path to the SQLite database file. Leave empty to use default application database',
+                    'Если выбран SQLite, укажите путь к файлу базы данных SQLite. Оставьте пустым для использования базы данных приложения по умолчанию',
                 additionalParams: true,
                 optional: true
             },
             {
-                label: 'Host',
+                label: 'Хост',
                 name: 'host',
                 type: 'string',
-                description: 'If PostgresQL/MySQL is selected, provide the host of the database',
+                description: 'Если выбран PostgresQL/MySQL, укажите хост базы данных',
                 additionalParams: true,
                 optional: true
             },
             {
-                label: 'Database',
+                label: 'База данных',
                 name: 'database',
                 type: 'string',
-                description: 'If PostgresQL/MySQL is selected, provide the name of the database',
+                description: 'Если выбран PostgresQL/MySQL, укажите название базы данных',
                 additionalParams: true,
                 optional: true
             },
             {
-                label: 'Port',
+                label: 'Порт',
                 name: 'port',
                 type: 'number',
-                description: 'If PostgresQL/MySQL is selected, provide the port of the database',
+                description: 'Если выбран PostgresQL/MySQL, укажите порт базы данных',
                 additionalParams: true,
                 optional: true
             },
             {
-                label: 'Additional Connection Configuration',
+                label: 'Дополнительная конфигурация подключения',
                 name: 'additionalConfig',
                 type: 'json',
                 additionalParams: true,

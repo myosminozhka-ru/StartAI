@@ -25,34 +25,34 @@ class BufferWindowMemory_Memory implements INode {
     inputs: INodeParams[]
 
     constructor() {
-        this.label = 'Buffer Window Memory'
+        this.label = 'Буферная память с окном'
         this.name = 'bufferWindowMemory'
         this.version = 2.0
         this.type = 'BufferWindowMemory'
         this.icon = 'memory.svg'
         this.category = 'Memory'
-        this.description = 'Uses a window of size k to surface the last k back-and-forth to use as memory'
+        this.description = 'Использует окно размера k для отображения последних k обменов сообщениями для использования в качестве памяти'
         this.baseClasses = [this.type, ...getBaseClasses(BufferWindowMemory)]
         this.inputs = [
             {
-                label: 'Size',
+                label: 'Размер',
                 name: 'k',
                 type: 'number',
                 default: '4',
-                description: 'Window of size k to surface the last k back-and-forth to use as memory.'
+                description: 'Окно размера k для отображения последних k обменов сообщениями для использования в качестве памяти.'
             },
             {
-                label: 'Session Id',
+                label: 'ID сессии',
                 name: 'sessionId',
                 type: 'string',
                 description:
-                    'If not specified, a random id will be used. Learn <a target="_blank" href="https://docs.flowiseai.com/memory#ui-and-embedded-chat">more</a>',
+                    'Если не указан, будет использован случайный id. Узнайте <a target="_blank" href="https://docs.flowiseai.com/memory#ui-and-embedded-chat">больше</a>',
                 default: '',
                 optional: true,
                 additionalParams: true
             },
             {
-                label: 'Memory Key',
+                label: 'Ключ памяти',
                 name: 'memoryKey',
                 type: 'string',
                 default: 'chat_history',

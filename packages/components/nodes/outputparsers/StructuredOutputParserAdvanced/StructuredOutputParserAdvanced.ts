@@ -18,27 +18,27 @@ class AdvancedStructuredOutputParser implements INode {
     credential: INodeParams
 
     constructor() {
-        this.label = 'Advanced Structured Output Parser'
+        this.label = 'Продвинутый структурированный парсер вывода'
         this.name = 'advancedStructuredOutputParser'
         this.version = 1.0
         this.type = 'AdvancedStructuredOutputParser'
-        this.description = 'Parse the output of an LLM call into a given structure by providing a Zod schema.'
+        this.description = 'Парсить вывод вызова LLM в заданную структуру, предоставляя схему Zod.'
         this.icon = 'structure.svg'
         this.category = CATEGORY
         this.baseClasses = [this.type, ...getBaseClasses(BaseOutputParser)]
         this.inputs = [
             {
-                label: 'Autofix',
+                label: 'Автоисправление',
                 name: 'autofixParser',
                 type: 'boolean',
                 optional: true,
-                description: 'In the event that the first call fails, will make another call to the model to fix any errors.'
+                description: 'В случае неудачи первого вызова, сделает еще один вызов к модели для исправления любых ошибок.'
             },
             {
-                label: 'Example JSON',
+                label: 'Пример JSON',
                 name: 'exampleJson',
                 type: 'string',
-                description: 'Zod schema for the output of the model',
+                description: 'Схема Zod для вывода модели',
                 rows: 10,
                 default: `z.object({
     title: z.string(), // Title of the movie as a string

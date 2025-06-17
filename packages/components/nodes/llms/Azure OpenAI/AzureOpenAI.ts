@@ -30,7 +30,7 @@ class AzureOpenAI_LLMs implements INode {
         this.type = 'AzureOpenAI'
         this.icon = 'Azure.svg'
         this.category = 'LLMs'
-        this.description = 'Wrapper around Azure OpenAI large language models'
+        this.description = 'Обертка вокруг больших языковых моделей Azure OpenAI'
         this.baseClasses = [this.type, ...getBaseClasses(AzureOpenAI)]
         this.credential = {
             label: 'Подключите учетные данные',
@@ -41,20 +41,20 @@ class AzureOpenAI_LLMs implements INode {
         }
         this.inputs = [
             {
-                label: 'Cache',
+                label: 'Кэш',
                 name: 'cache',
                 type: 'BaseCache',
                 optional: true
             },
             {
-                label: 'Model Name',
+                label: 'Название модели',
                 name: 'modelName',
                 type: 'asyncOptions',
                 loadMethod: 'listModels',
                 default: 'text-davinci-003'
             },
             {
-                label: 'Temperature',
+                label: 'Температура',
                 name: 'temperature',
                 type: 'number',
                 step: 0.1,
@@ -62,7 +62,7 @@ class AzureOpenAI_LLMs implements INode {
                 optional: true
             },
             {
-                label: 'Max Tokens',
+                label: 'Максимальное количество токенов',
                 name: 'maxTokens',
                 type: 'number',
                 step: 1,
@@ -70,7 +70,7 @@ class AzureOpenAI_LLMs implements INode {
                 additionalParams: true
             },
             {
-                label: 'Top Probability',
+                label: 'Верхняя вероятность',
                 name: 'topP',
                 type: 'number',
                 step: 0.1,
@@ -78,7 +78,7 @@ class AzureOpenAI_LLMs implements INode {
                 additionalParams: true
             },
             {
-                label: 'Best Of',
+                label: 'Лучший из',
                 name: 'bestOf',
                 type: 'number',
                 step: 1,
@@ -86,7 +86,7 @@ class AzureOpenAI_LLMs implements INode {
                 additionalParams: true
             },
             {
-                label: 'Frequency Penalty',
+                label: 'Штраф за частоту',
                 name: 'frequencyPenalty',
                 type: 'number',
                 step: 0.1,
@@ -94,7 +94,7 @@ class AzureOpenAI_LLMs implements INode {
                 additionalParams: true
             },
             {
-                label: 'Presence Penalty',
+                label: 'Штраф за присутствие',
                 name: 'presencePenalty',
                 type: 'number',
                 step: 0.1,
@@ -102,7 +102,7 @@ class AzureOpenAI_LLMs implements INode {
                 additionalParams: true
             },
             {
-                label: 'Timeout',
+                label: 'Таймаут',
                 name: 'timeout',
                 type: 'number',
                 step: 1,
@@ -110,7 +110,7 @@ class AzureOpenAI_LLMs implements INode {
                 additionalParams: true
             },
             {
-                label: 'BasePath',
+                label: 'Базовый путь',
                 name: 'basepath',
                 type: 'string',
                 optional: true,
