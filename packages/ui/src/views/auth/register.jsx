@@ -67,35 +67,35 @@ const RegisterPage = () => {
     const { isEnterpriseLicensed, isCloud, isOpenSource } = useConfig()
 
     const usernameInput = {
-        label: 'Username',
+        label: 'Имя пользователя',
         name: 'username',
         type: 'text',
         placeholder: 'John Doe'
     }
 
     const passwordInput = {
-        label: 'Password',
+        label: 'Пароль',
         name: 'password',
         type: 'password',
         placeholder: '********'
     }
 
     const confirmPasswordInput = {
-        label: 'Confirm Password',
+        label: 'Подтвердите пароль',
         name: 'confirmPassword',
         type: 'password',
         placeholder: '********'
     }
 
     const emailInput = {
-        label: 'EMail',
+        label: 'Email',
         name: 'email',
         type: 'email',
         placeholder: 'user@company.com'
     }
 
     const inviteCodeInput = {
-        label: 'Invite Code',
+        label: 'Код приглашения',
         name: 'inviteCode',
         type: 'text'
     }
@@ -181,10 +181,10 @@ const RegisterPage = () => {
         if (registerApi.error) {
             if (isEnterpriseLicensed) {
                 setAuthError(
-                    `Error in registering user. Please contact your administrator. (${registerApi.error?.response?.data?.message})`
+                    `Ошибка при регистрации пользователя. Пожалуйста, обратитесь к администратору. (${registerApi.error?.response?.data?.message})`
                 )
             } else if (isCloud) {
-                setAuthError(`Error in registering user. Please try again.`)
+                setAuthError(`Ошибка при регистрации пользователя. Пожалуйста, попробуйте снова.`)
             }
             setLoading(false)
         }
@@ -236,9 +236,11 @@ const RegisterPage = () => {
             setUsername('')
             setEmail('')
             if (isEnterpriseLicensed) {
-                setSuccessMsg('Registration Successful. You will be redirected to the sign in page shortly.')
+                setSuccessMsg('Регистрация успешна. Вы будете перенаправлены на страницу входа в ближайшее время.')
             } else if (isCloud) {
-                setSuccessMsg('To complete your registration, please click on the verification link we sent to your email address')
+                setSuccessMsg(
+                    'Для завершения регистрации, пожалуйста, перейдите по ссылке подтверждения, которую мы отправили на ваш email адрес'
+                )
             }
             setTimeout(() => {
                 navigate('/signin')
@@ -280,11 +282,11 @@ const RegisterPage = () => {
                         </Alert>
                     )}
                     <Stack sx={{ gap: 1 }}>
-                        <Typography variant='h1'>Sign Up</Typography>
+                        <Typography variant='h1'>Регистрация</Typography>
                         <Typography variant='body2' sx={{ color: theme.palette.grey[600] }}>
-                            Already have an account?{' '}
+                            Уже есть аккаунт?{' '}
                             <Link style={{ color: theme.palette.primary.main }} to='/signin'>
-                                Sign In
+                                Войти
                             </Link>
                             .
                         </Typography>
@@ -294,19 +296,19 @@ const RegisterPage = () => {
                             <Box>
                                 <div style={{ display: 'flex', flexDirection: 'row' }}>
                                     <Typography>
-                                        Full Name<span style={{ color: 'red' }}>&nbsp;*</span>
+                                        Полное имя<span style={{ color: 'red' }}>&nbsp;*</span>
                                     </Typography>
                                     <div style={{ flexGrow: 1 }}></div>
                                 </div>
                                 <Input
                                     inputParam={usernameInput}
-                                    placeholder='Display Name'
+                                    placeholder='Отображаемое имя'
                                     onChange={(newValue) => setUsername(newValue)}
                                     value={username}
                                     showDialog={false}
                                 />
                                 <Typography variant='caption'>
-                                    <i>Is used for display purposes only.</i>
+                                    <i>Используется только для отображения.</i>
                                 </Typography>
                             </Box>
                             <Box>
@@ -323,50 +325,50 @@ const RegisterPage = () => {
                                     showDialog={false}
                                 />
                                 <Typography variant='caption'>
-                                    <i>Kindly use a valid email address. Will be used as login id.</i>
+                                    <i>Пожалуйста, используйте действительный email адрес. Будет использоваться как логин.</i>
                                 </Typography>
                             </Box>
                             {isEnterpriseLicensed && (
                                 <Box>
                                     <div style={{ display: 'flex', flexDirection: 'row' }}>
                                         <Typography>
-                                            Invite Code<span style={{ color: 'red' }}>&nbsp;*</span>
+                                            Код приглашения<span style={{ color: 'red' }}>&nbsp;*</span>
                                         </Typography>
                                         <div style={{ flexGrow: 1 }}></div>
                                     </div>
                                     <OutlinedInput
                                         fullWidth
                                         type='string'
-                                        placeholder='Paste in the invite code.'
+                                        placeholder='Вставьте код приглашения.'
                                         multiline={false}
                                         inputParam={inviteCodeInput}
                                         onChange={(e) => setToken(e.target.value)}
                                         value={token}
                                     />
                                     <Typography variant='caption'>
-                                        <i>Please copy the token you would have received in your email.</i>
+                                        <i>Пожалуйста, скопируйте токен, который вы получили в письме.</i>
                                     </Typography>
                                 </Box>
                             )}
                             <Box>
                                 <div style={{ display: 'flex', flexDirection: 'row' }}>
                                     <Typography>
-                                        Password<span style={{ color: 'red' }}>&nbsp;*</span>
+                                        Пароль<span style={{ color: 'red' }}>&nbsp;*</span>
                                     </Typography>
                                     <div style={{ flexGrow: 1 }}></div>
                                 </div>
                                 <Input inputParam={passwordInput} onChange={(newValue) => setPassword(newValue)} value={password} />
                                 <Typography variant='caption'>
                                     <i>
-                                        Password must be at least 8 characters long and contain at least one lowercase letter, one uppercase
-                                        letter, one digit, and one special character.
+                                        Пароль должен содержать не менее 8 символов и включать хотя бы одну строчную букву, одну заглавную
+                                        букву, одну цифру и один специальный символ.
                                     </i>
                                 </Typography>
                             </Box>
                             <Box>
                                 <div style={{ display: 'flex', flexDirection: 'row' }}>
                                     <Typography>
-                                        Confirm Password<span style={{ color: 'red' }}>&nbsp;*</span>
+                                        Подтвердите пароль<span style={{ color: 'red' }}>&nbsp;*</span>
                                     </Typography>
                                     <div style={{ flexGrow: 1 }}></div>
                                 </div>
@@ -376,13 +378,13 @@ const RegisterPage = () => {
                                     value={confirmPassword}
                                 />
                                 <Typography variant='caption'>
-                                    <i>Confirm your password. Must match the password typed above.</i>
+                                    <i>Подтвердите ваш пароль. Должен совпадать с паролем, введенным выше.</i>
                                 </Typography>
                             </Box>
                             <StyledButton variant='contained' style={{ borderRadius: 12, height: 40, marginRight: 5 }} type='submit'>
-                                Create Account
+                                Создать аккаунт
                             </StyledButton>
-                            {configuredSsoProviders.length > 0 && <Divider sx={{ width: '100%' }}>OR</Divider>}
+                            {configuredSsoProviders.length > 0 && <Divider sx={{ width: '100%' }}>ИЛИ</Divider>}
                             {configuredSsoProviders &&
                                 configuredSsoProviders.map(
                                     (ssoProvider) =>
@@ -399,7 +401,7 @@ const RegisterPage = () => {
                                                     </Icon>
                                                 }
                                             >
-                                                Sign In With Microsoft
+                                                Войти через Microsoft
                                             </Button>
                                         )
                                 )}
@@ -418,7 +420,7 @@ const RegisterPage = () => {
                                                     </Icon>
                                                 }
                                             >
-                                                Sign In With Google
+                                                Войти через Google
                                             </Button>
                                         )
                                 )}
@@ -437,7 +439,7 @@ const RegisterPage = () => {
                                                     </Icon>
                                                 }
                                             >
-                                                Sign In With Auth0 by Okta
+                                                Войти через Auth0 от Okta
                                             </Button>
                                         )
                                 )}
@@ -456,7 +458,7 @@ const RegisterPage = () => {
                                                     </Icon>
                                                 }
                                             >
-                                                Sign In With Github
+                                                Войти через Github
                                             </Button>
                                         )
                                 )}

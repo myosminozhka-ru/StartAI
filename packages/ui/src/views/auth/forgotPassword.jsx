@@ -30,7 +30,7 @@ const ForgotPasswordPage = () => {
     useNotifier()
 
     const usernameInput = {
-        label: 'Username',
+        label: 'Email',
         name: 'username',
         type: 'email',
         placeholder: 'user@company.com'
@@ -62,7 +62,7 @@ const ForgotPasswordPage = () => {
                     : forgotPasswordApi.error.response.data
             setResponseMsg({
                 type: 'error',
-                msg: errMessage ?? 'Failed to send instructions, please contact your administrator.'
+                msg: errMessage ?? 'Не удалось отправить инструкции, пожалуйста, обратитесь к администратору.'
             })
             setLoading(false)
         }
@@ -73,7 +73,7 @@ const ForgotPasswordPage = () => {
         if (forgotPasswordApi.data) {
             setResponseMsg({
                 type: 'success',
-                msg: 'Password reset instructions sent to the email.'
+                msg: 'Инструкции по сбросу пароля отправлены на email.'
             })
             setLoading(false)
         }
@@ -95,11 +95,11 @@ const ForgotPasswordPage = () => {
                         </Alert>
                     )}
                     <Stack sx={{ gap: 1 }}>
-                        <Typography variant='h1'>Forgot Password?</Typography>
+                        <Typography variant='h1'>Забыли пароль?</Typography>
                         <Typography variant='body2' sx={{ color: theme.palette.grey[600] }}>
-                            Have a reset password code?{' '}
+                            Есть код для сброса пароля?{' '}
                             <Link style={{ color: theme.palette.primary.main }} to='/reset-password'>
-                                Change your password here
+                                Измените пароль здесь
                             </Link>
                             .
                         </Typography>
@@ -122,7 +122,10 @@ const ForgotPasswordPage = () => {
                                 />
                                 {isEnterpriseLicensed && (
                                     <Typography variant='caption'>
-                                        <i>If you forgot the email you used for signing up, please contact your administrator.</i>
+                                        <i>
+                                            Если вы забыли email, который использовали при регистрации, пожалуйста, обратитесь к
+                                            администратору.
+                                        </i>
                                     </Typography>
                                 )}
                             </Box>
@@ -132,7 +135,7 @@ const ForgotPasswordPage = () => {
                                 disabled={!usernameVal}
                                 type='submit'
                             >
-                                Send Reset Password Instructions
+                                Отправить инструкции по сбросу пароля
                             </StyledButton>
                         </Stack>
                     </form>

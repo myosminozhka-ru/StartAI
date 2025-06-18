@@ -53,9 +53,7 @@ const UpsertHistorySideDrawer = ({ show, dialogProps, onClickFunction, onSelectH
                         {upsertHistory &&
                             upsertHistory.map((history, index) => (
                                 <TimelineItem key={index}>
-                                    <TimelineOppositeContent>
-                                        {moment(history.date).format('DD-MMM-YYYY, hh:mm:ss A')}
-                                    </TimelineOppositeContent>
+                                    <TimelineOppositeContent>{moment(history.date).format('DD.MM.YYYY HH:mm')}</TimelineOppositeContent>
                                     <TimelineSeparator style={{ marginTop: 5 }}>
                                         <TimelineDot />
                                         {index !== upsertHistory.length - 1 && <TimelineConnector />}

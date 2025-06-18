@@ -177,17 +177,17 @@ const EvalEvaluationRows = () => {
 
     const runAgain = async () => {
         const confirmPayload = {
-            title: `Run Again`,
-            description: `Initiate Rerun for Evaluation ${evaluation.name}?`,
-            confirmButtonName: 'Yes',
-            cancelButtonName: 'No'
+            title: `Повторить оценку`,
+            description: `Инициировать повторный запуск для оценки ${evaluation.name}?`,
+            confirmButtonName: 'Да',
+            cancelButtonName: 'Нет'
         }
         const isConfirmed = await confirm(confirmPayload)
 
         if (isConfirmed) {
             runAgainApi.request(evaluation?.id)
             enqueueSnackbar({
-                message: "Evaluation '" + evaluation.name + "' is running. Redirecting to evaluations page.",
+                message: "Оценка '" + evaluation.name + "' запущена. Перенаправление на страницу оценок.",
                 options: {
                     key: new Date().getTime() + Math.random(),
                     variant: 'success',
@@ -326,14 +326,14 @@ const EvalEvaluationRows = () => {
                             isEditButton={false}
                             onBack={goBack}
                             search={false}
-                            title={'Evaluation: ' + selectedEvaluationName}
-                            description={evaluation?.runDate ? moment(evaluation?.runDate).format('DD-MMM-YYYY, hh:mm:ss A') : ''}
+                            title={'Оценка: ' + selectedEvaluationName}
+                            description={evaluation?.runDate ? moment(evaluation?.runDate).format('DD.MM.YYYY HH:mm') : ''}
                         >
                             {evaluation?.versionCount > 1 && (
                                 <Chip
                                     variant='outlined'
                                     size='small'
-                                    label={'Version: ' + evaluation.versionNo + '/' + evaluation.versionCount}
+                                    label={'Версия: ' + evaluation.versionNo + '/' + evaluation.versionCount}
                                 />
                             )}
                             {evaluation?.versionCount > 1 && (
@@ -344,7 +344,7 @@ const EvalEvaluationRows = () => {
                                     color='primary'
                                     onClick={openVersionsDrawer}
                                 >
-                                    Version history
+                                    История версий
                                 </Button>
                             )}
                             <PermissionButton
@@ -356,7 +356,7 @@ const EvalEvaluationRows = () => {
                                 disabled={outdated?.errors?.length > 0}
                                 onClick={runAgain}
                             >
-                                Re-run Evaluation
+                                Повторить оценку
                             </PermissionButton>
                         </ViewHeader>
 
@@ -382,16 +382,16 @@ const EvalEvaluationRows = () => {
                                 <Stack flexDirection='column'>
                                     <span style={{ color: 'rgb(116,66,16)' }}>
                                         {outdated?.errors?.length > 0 && (
-                                            <b>This evaluation cannot be re-run, due to the following errors</b>
+                                            <b>Эта оценка не может быть повторно запущена из-за следующих ошибок</b>
                                         )}
                                         {outdated?.errors?.length === 0 && (
-                                            <b>The following items are outdated, re-run the evaluation for the latest results.</b>
+                                            <b>Следующие элементы устарели, повторите оценку для получения последних результатов.</b>
                                         )}
                                     </span>
                                     {outdated.dataset && outdated?.errors?.length === 0 && (
                                         <>
                                             <br />
-                                            <b style={{ color: 'rgb(116,66,16)' }}>Dataset:</b>
+                                            <b style={{ color: 'rgb(116,66,16)' }}>Набор данных:</b>
                                             <Chip
                                                 clickable
                                                 sx={{
@@ -412,7 +412,7 @@ const EvalEvaluationRows = () => {
                                     {outdated.chatflows && outdated?.errors?.length === 0 && outdated.chatflows.length > 0 && (
                                         <>
                                             <br />
-                                            <b style={{ color: 'rgb(116,66,16)' }}>Chatflows:</b>
+                                            <b style={{ color: 'rgb(116,66,16)' }}>Чатфлоу:</b>
                                             <Stack sx={{ mt: 1, alignItems: 'center', flexWrap: 'wrap' }} flexDirection='row' gap={1}>
                                                 {outdated.chatflows.map((chatflow, index) => (
                                                     <Chip
@@ -452,50 +452,50 @@ const EvalEvaluationRows = () => {
                             <Button
                                 variant='outlined'
                                 value={showCharts}
-                                title='Show Charts'
+                                title='Показать графики'
                                 onClick={handleShowChartsChange}
                                 startIcon={showCharts ? <IconEyeOff /> : <IconEye />}
                             >
-                                {'Charts'}
+                                {'Графики'}
                             </Button>
                             {customEvalsDefined && (
                                 <Button
                                     variant='outlined'
                                     value={showCustomEvals}
                                     disabled={!customEvalsDefined}
-                                    title='Show Custom Evaluator'
+                                    title='Показать пользовательский оценщик'
                                     onClick={handleCustomEvalsChange}
                                     startIcon={showCustomEvals ? <IconEyeOff /> : <IconEye />}
                                 >
-                                    {'Custom Evaluator'}
+                                    {'Пользовательский оценщик'}
                                 </Button>
                             )}
                             <Button
                                 variant='outlined'
                                 value={showCostMetrics}
-                                title='Show Cost Metrics'
+                                title='Показать метрики стоимости'
                                 onClick={handleDisplayCostChange}
                                 startIcon={showCostMetrics ? <IconEyeOff /> : <IconEye />}
                             >
-                                {'Cost Metrics'}
+                                {'Метрики стоимости'}
                             </Button>
                             <Button
                                 variant='outlined'
                                 value={showTokenMetrics}
-                                title='Show Metrics'
+                                title='Показать метрики токенов'
                                 onClick={handleShowTokenChange}
                                 startIcon={showTokenMetrics ? <IconEyeOff /> : <IconEye />}
                             >
-                                {'Token Metrics'}
+                                {'Метрики токенов'}
                             </Button>
                             <Button
                                 variant='outlined'
                                 value={showCustomEvals}
-                                title='Show Latency Metrics'
+                                title='Показать метрики задержки'
                                 onClick={handleLatencyMetricsChange}
                                 startIcon={showLatencyMetrics ? <IconEyeOff /> : <IconEye />}
                             >
-                                {'Latency Metrics'}
+                                {'Метрики задержки'}
                             </Button>
                         </ButtonGroup>
                         {showCharts && (
@@ -504,7 +504,7 @@ const EvalEvaluationRows = () => {
                                     <Grid item={true} xs={12} sm={6} md={4} lg={4}>
                                         <MetricsItemCard
                                             data={{
-                                                header: 'PASS RATE',
+                                                header: 'ПРОЦЕНТ УСПЕХА',
                                                 value: (evaluation.average_metrics?.passPcnt ?? '0') + '%',
                                                 icon: <IconPercentage />
                                             }}
@@ -516,7 +516,7 @@ const EvalEvaluationRows = () => {
                                     <Grid item={true} xs={12} sm={12} md={4} lg={4}>
                                         <MetricsItemCard
                                             data={{
-                                                header: 'TOKENS USED',
+                                                header: 'ИСПОЛЬЗОВАННЫЕ ТОКЕНЫ',
                                                 value: avgTokensUsed,
                                                 icon: <TokensIcon />
                                             }}
@@ -534,8 +534,8 @@ const EvalEvaluationRows = () => {
                                     <Grid item={true} xs={12} sm={12} md={4} lg={4}>
                                         <MetricsItemCard
                                             data={{
-                                                header: 'LATENCY (ms)',
-                                                value: (evaluation.average_metrics?.averageLatency ?? '0') + ' ms',
+                                                header: 'ЗАДЕРЖКА (мс)',
+                                                value: (evaluation.average_metrics?.averageLatency ?? '0') + ' мс',
                                                 icon: <AlarmIcon />
                                             }}
                                             component={
@@ -566,7 +566,7 @@ const EvalEvaluationRows = () => {
                                     }}
                                 >
                                     <IconVectorBezier2 style={{ marginRight: 5 }} size={17} />
-                                    Chatflows Used:
+                                    Использованные чатфлоу:
                                 </div>
                                 {(evaluation.chatflowName || []).map((chatflowUsed, index) => (
                                     <Chip
@@ -590,7 +590,7 @@ const EvalEvaluationRows = () => {
                                 startIcon={<IconMaximize />}
                                 onClick={() => openTableDialog()}
                             >
-                                Expand
+                                Развернуть
                             </Button>
                         </Stack>
                         <TableContainer sx={{ border: 1, borderColor: theme.palette.grey[900] + 25, borderRadius: 2 }} component={Paper}>
@@ -602,8 +602,8 @@ const EvalEvaluationRows = () => {
                                 >
                                     <TableRow>
                                         <TableCell rowSpan='2'>&nbsp;</TableCell>
-                                        <TableCell rowSpan='2'>Input</TableCell>
-                                        <TableCell rowSpan='2'>Expected Output</TableCell>
+                                        <TableCell rowSpan='2'>Входные данные</TableCell>
+                                        <TableCell rowSpan='2'>Ожидаемый результат</TableCell>
                                         {evaluation.chatflowId?.map((chatflowId, index) => (
                                             <React.Fragment key={index}>
                                                 <TableCell
@@ -639,10 +639,10 @@ const EvalEvaluationRows = () => {
                                                 <TableCell
                                                     style={{ borderLeftStyle: 'dashed', borderLeftColor: 'lightgrey', borderLeftWidth: 1 }}
                                                 >
-                                                    Actual Output
+                                                    Фактический результат
                                                 </TableCell>
-                                                {customEvalsDefined && showCustomEvals && <TableCell>Evaluator</TableCell>}
-                                                {evaluation?.evaluationType === 'llm' && <TableCell>LLM Evaluation</TableCell>}
+                                                {customEvalsDefined && showCustomEvals && <TableCell>Оценщик</TableCell>}
+                                                {evaluation?.evaluationType === 'llm' && <TableCell>LLM оценка</TableCell>}
                                             </React.Fragment>
                                         ))}
                                     </TableRow>
@@ -711,9 +711,9 @@ const EvalEvaluationRows = () => {
                                                                                     size='small'
                                                                                     label={
                                                                                         item.metrics[index]?.totalCost
-                                                                                            ? 'Total Cost: ' +
+                                                                                            ? 'Общая стоимость: ' +
                                                                                               item.metrics[index]?.totalCost
-                                                                                            : 'Total Cost: N/A'
+                                                                                            : 'Общая стоимость: Н/Д'
                                                                                     }
                                                                                     sx={{ mr: 1, mb: 1 }}
                                                                                 />
@@ -723,9 +723,9 @@ const EvalEvaluationRows = () => {
                                                                                     icon={<TokensIcon />}
                                                                                     label={
                                                                                         item.metrics[index]?.totalTokens
-                                                                                            ? 'Total Tokens: ' +
+                                                                                            ? 'Всего токенов: ' +
                                                                                               item.metrics[index]?.totalTokens
-                                                                                            : 'Total Tokens: N/A'
+                                                                                            : 'Всего токенов: Н/Д'
                                                                                     }
                                                                                     sx={{ mr: 1, mb: 1 }}
                                                                                 />
@@ -737,9 +737,9 @@ const EvalEvaluationRows = () => {
                                                                                             icon={<TokensIcon />}
                                                                                             label={
                                                                                                 item.metrics[index]?.promptTokens
-                                                                                                    ? 'Prompt Tokens: ' +
+                                                                                                    ? 'Токены запроса: ' +
                                                                                                       item.metrics[index]?.promptTokens
-                                                                                                    : 'Prompt Tokens: N/A'
+                                                                                                    : 'Токены запроса: Н/Д'
                                                                                             }
                                                                                             sx={{ mr: 1, mb: 1 }}
                                                                                         />{' '}
@@ -749,9 +749,9 @@ const EvalEvaluationRows = () => {
                                                                                             icon={<TokensIcon />}
                                                                                             label={
                                                                                                 item.metrics[index]?.completionTokens
-                                                                                                    ? 'Completion Tokens: ' +
+                                                                                                    ? 'Токены ответа: ' +
                                                                                                       item.metrics[index]?.completionTokens
-                                                                                                    : 'Completion Tokens: N/A'
+                                                                                                    : 'Токены ответа: Н/Д'
                                                                                             }
                                                                                             sx={{ mr: 1, mb: 1 }}
                                                                                         />{' '}
@@ -765,9 +765,9 @@ const EvalEvaluationRows = () => {
                                                                                             icon={<PaidIcon />}
                                                                                             label={
                                                                                                 item.metrics[index]?.promptCost
-                                                                                                    ? 'Prompt Cost: ' +
+                                                                                                    ? 'Стоимость запроса: ' +
                                                                                                       item.metrics[index]?.promptCost
-                                                                                                    : 'Prompt Cost: N/A'
+                                                                                                    : 'Стоимость запроса: Н/Д'
                                                                                             }
                                                                                             sx={{ mr: 1, mb: 1 }}
                                                                                         />{' '}
@@ -777,9 +777,9 @@ const EvalEvaluationRows = () => {
                                                                                             icon={<PaidIcon />}
                                                                                             label={
                                                                                                 item.metrics[index]?.completionCost
-                                                                                                    ? 'Completion Cost: ' +
+                                                                                                    ? 'Стоимость ответа: ' +
                                                                                                       item.metrics[index]?.completionCost
-                                                                                                    : 'Completion Cost: N/A'
+                                                                                                    : 'Стоимость ответа: Н/Д'
                                                                                             }
                                                                                             sx={{ mr: 1, mb: 1 }}
                                                                                         />{' '}
@@ -791,9 +791,9 @@ const EvalEvaluationRows = () => {
                                                                                     icon={<AlarmIcon />}
                                                                                     label={
                                                                                         item.metrics[index]?.apiLatency
-                                                                                            ? 'API Latency: ' +
+                                                                                            ? 'API задержка: ' +
                                                                                               item.metrics[index]?.apiLatency
-                                                                                            : 'API Latency: N/A'
+                                                                                            : 'API задержка: Н/Д'
                                                                                     }
                                                                                     sx={{ mr: 1, mb: 1 }}
                                                                                 />{' '}
@@ -806,9 +806,9 @@ const EvalEvaluationRows = () => {
                                                                                                 icon={<AlarmIcon />}
                                                                                                 label={
                                                                                                     item.metrics[index]?.chain
-                                                                                                        ? 'Chain Latency: ' +
+                                                                                                        ? 'Задержка цепочки: ' +
                                                                                                           item.metrics[index]?.chain
-                                                                                                        : 'Chain Latency: N/A'
+                                                                                                        : 'Задержка цепочки: Н/Д'
                                                                                                 }
                                                                                                 sx={{ mr: 1, mb: 1 }}
                                                                                             />
@@ -820,7 +820,7 @@ const EvalEvaluationRows = () => {
                                                                                                 size='small'
                                                                                                 sx={{ mr: 1, mb: 1 }}
                                                                                                 label={
-                                                                                                    'Retriever Latency: ' +
+                                                                                                    'Задержка поиска: ' +
                                                                                                     item.metrics[index]?.retriever
                                                                                                 }
                                                                                             />
@@ -832,7 +832,7 @@ const EvalEvaluationRows = () => {
                                                                                                 size='small'
                                                                                                 sx={{ mr: 1, mb: 1 }}
                                                                                                 label={
-                                                                                                    'Tool Latency: ' +
+                                                                                                    'Задержка инструмента: ' +
                                                                                                     item.metrics[index]?.tool
                                                                                                 }
                                                                                             />
@@ -843,9 +843,9 @@ const EvalEvaluationRows = () => {
                                                                                             size='small'
                                                                                             label={
                                                                                                 item.metrics[index]?.llm
-                                                                                                    ? 'LLM Latency: ' +
+                                                                                                    ? 'LLM задержка: ' +
                                                                                                       item.metrics[index]?.llm
-                                                                                                    : 'LLM Latency: N/A'
+                                                                                                    : 'LLM задержка: Н/Д'
                                                                                             }
                                                                                             sx={{ mr: 1, mb: 1 }}
                                                                                         />{' '}

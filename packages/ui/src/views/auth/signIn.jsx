@@ -43,13 +43,13 @@ const SignInPage = () => {
     const { isEnterpriseLicensed, isCloud, isOpenSource } = useConfig()
 
     const usernameInput = {
-        label: 'Username',
+        label: 'Email',
         name: 'username',
         type: 'email',
         placeholder: 'user@company.com'
     }
     const passwordInput = {
-        label: 'Password',
+        label: 'Пароль',
         name: 'password',
         type: 'password',
         placeholder: '********'
@@ -163,10 +163,10 @@ const SignInPage = () => {
         try {
             await resendVerificationApi.request({ email: usernameVal })
             setAuthError(undefined)
-            setSuccessMessage('Verification email has been sent successfully.')
+            setSuccessMessage('Письмо с подтверждением было успешно отправлено.')
             setShowResendButton(false)
         } catch (error) {
-            setAuthError(error.response?.data?.message || 'Failed to send verification email.')
+            setAuthError(error.response?.data?.message || 'Не удалось отправить письмо с подтверждением.')
         }
     }
 
@@ -187,26 +187,26 @@ const SignInPage = () => {
                     {showResendButton && (
                         <Stack sx={{ gap: 1 }}>
                             <Button variant='text' onClick={handleResendVerification}>
-                                Resend Verification Email
+                                Отправить письмо с подтверждением повторно
                             </Button>
                         </Stack>
                     )}
                     <Stack sx={{ gap: 1 }}>
-                        <Typography variant='h1'>Sign In</Typography>
+                        <Typography variant='h1'>Вход в систему</Typography>
                         {isCloud && (
                             <Typography variant='body2' sx={{ color: theme.palette.grey[600] }}>
-                                Don&apos;t have an account?{' '}
+                                Нет аккаунта?{' '}
                                 <Link style={{ color: `${theme.palette.primary.main}` }} to='/register'>
-                                    Sign up for free
+                                    Зарегистрируйтесь бесплатно
                                 </Link>
                                 .
                             </Typography>
                         )}
                         {isEnterpriseLicensed && (
                             <Typography variant='body2' sx={{ color: theme.palette.grey[600] }}>
-                                Have an invite code?{' '}
+                                Есть код приглашения?{' '}
                                 <Link style={{ color: `${theme.palette.primary.main}` }} to='/register'>
-                                    Sign up for an account
+                                    Зарегистрируйтесь для получения аккаунта
                                 </Link>
                                 .
                             </Typography>
@@ -231,14 +231,14 @@ const SignInPage = () => {
                             <Box sx={{ p: 0 }}>
                                 <div style={{ display: 'flex', flexDirection: 'row' }}>
                                     <Typography>
-                                        Password<span style={{ color: 'red' }}>&nbsp;*</span>
+                                        Пароль<span style={{ color: 'red' }}>&nbsp;*</span>
                                     </Typography>
                                     <div style={{ flexGrow: 1 }}></div>
                                 </div>
                                 <Input inputParam={passwordInput} onChange={(newValue) => setPasswordVal(newValue)} value={passwordVal} />
                                 <Typography variant='body2' sx={{ color: theme.palette.grey[600], mt: 1, textAlign: 'right' }}>
                                     <Link style={{ color: theme.palette.primary.main }} to='/forgot-password'>
-                                        Forgot password?
+                                        Забыли пароль?
                                     </Link>
                                 </Typography>
                                 {isCloud && (
@@ -249,7 +249,7 @@ const SignInPage = () => {
                                             rel='noopener noreferrer'
                                             style={{ color: theme.palette.primary.main }}
                                         >
-                                            Migrate from existing account?
+                                            Мигрировать с существующего аккаунта?
                                         </a>
                                     </Typography>
                                 )}
@@ -260,9 +260,9 @@ const SignInPage = () => {
                                 style={{ borderRadius: 12, height: 40, marginRight: 5 }}
                                 type='submit'
                             >
-                                Login
+                                Войти
                             </LoadingButton>
-                            {configuredSsoProviders && configuredSsoProviders.length > 0 && <Divider sx={{ width: '100%' }}>OR</Divider>}
+                            {configuredSsoProviders && configuredSsoProviders.length > 0 && <Divider sx={{ width: '100%' }}>ИЛИ</Divider>}
                             {configuredSsoProviders &&
                                 configuredSsoProviders.map(
                                     (ssoProvider) =>
@@ -279,7 +279,7 @@ const SignInPage = () => {
                                                     </Icon>
                                                 }
                                             >
-                                                Sign In With Microsoft
+                                                Войти через Microsoft
                                             </Button>
                                         )
                                 )}
@@ -298,7 +298,7 @@ const SignInPage = () => {
                                                     </Icon>
                                                 }
                                             >
-                                                Sign In With Google
+                                                Войти через Google
                                             </Button>
                                         )
                                 )}
@@ -317,7 +317,7 @@ const SignInPage = () => {
                                                     </Icon>
                                                 }
                                             >
-                                                Sign In With Auth0 by Okta
+                                                Войти через Auth0 от Okta
                                             </Button>
                                         )
                                 )}
@@ -336,7 +336,7 @@ const SignInPage = () => {
                                                     </Icon>
                                                 }
                                             >
-                                                Sign In With Github
+                                                Войти через Github
                                             </Button>
                                         )
                                 )}

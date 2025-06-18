@@ -314,9 +314,7 @@ export const FlowListTable = ({
                                                 </Box>
                                             )}
                                         </StyledTableCell>
-                                        <StyledTableCell key='3'>
-                                            {moment(row.updatedDate).format('MMMM Do, YYYY HH:mm:ss')}
-                                        </StyledTableCell>
+                                        <StyledTableCell key='3'>{moment(row.updatedDate).format('DD.MM.YYYY HH:mm')}</StyledTableCell>
                                         {isActionsAvailable && (
                                             <StyledTableCell key='4'>
                                                 <Stack

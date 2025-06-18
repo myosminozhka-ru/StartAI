@@ -357,10 +357,10 @@ const Variables = () => {
                                                             />
                                                         </StyledTableCell>
                                                         <StyledTableCell>
-                                                            {moment(variable.updatedDate).format('MMMM Do, YYYY HH:mm:ss')}
+                                                            {moment(variable.updatedDate).format('DD.MM.YYYY HH:mm')}
                                                         </StyledTableCell>
                                                         <StyledTableCell>
-                                                            {moment(variable.createdDate).format('MMMM Do, YYYY HH:mm:ss')}
+                                                            {moment(variable.createdDate).format('DD.MM.YYYY HH:mm')}
                                                         </StyledTableCell>
                                                         <Available permission={'variables:create,variables:update'}>
                                                             <StyledTableCell>

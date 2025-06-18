@@ -159,7 +159,7 @@ const VectorStoreConfigure = () => {
 
     const onSelectHistoryDetails = (history) => {
         const props = {
-            title: moment(history.date).format('DD-MMM-YYYY, hh:mm:ss A'),
+            title: moment(history.date).format('DD.MM.YYYY HH:mm'),
             numAdded: history.result.numAdded,
             numUpdated: history.result.numUpdated,
             numSkipped: history.result.numSkipped,

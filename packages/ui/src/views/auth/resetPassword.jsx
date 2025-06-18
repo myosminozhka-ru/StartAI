@@ -40,21 +40,21 @@ const ResetPasswordPage = () => {
     }
 
     const passwordInput = {
-        label: 'Password',
+        label: 'Пароль',
         name: 'password',
         type: 'password',
         placeholder: '********'
     }
 
     const confirmPasswordInput = {
-        label: 'Confirm Password',
+        label: 'Подтвердите пароль',
         name: 'confirmPassword',
         type: 'password',
         placeholder: '********'
     }
 
     const resetPasswordInput = {
-        label: 'Reset Token',
+        label: 'Токен сброса',
         name: 'resetToken',
         type: 'text'
     }
@@ -79,10 +79,10 @@ const ResetPasswordPage = () => {
         const validationErrors = []
         setAuthErrors([])
         if (!tokenVal) {
-            validationErrors.push('Token cannot be left blank!')
+            validationErrors.push('Токен не может быть пустым!')
         }
         if (newPasswordVal !== confirmPasswordVal) {
-            validationErrors.push('New Password and Confirm Password do not match.')
+            validationErrors.push('Новый пароль и подтверждение пароля не совпадают.')
         }
         const passwordErrors = validatePassword(newPasswordVal)
         if (passwordErrors.length > 0) {
@@ -106,7 +106,7 @@ const ResetPasswordPage = () => {
             setLoading(false)
             if (updateResponse.data) {
                 enqueueSnackbar({
-                    message: 'Password reset successful',
+                    message: 'Пароль успешно сброшен',
                     options: {
                         key: new Date().getTime() + Math.random(),
                         variant: 'success',
@@ -127,7 +127,7 @@ const ResetPasswordPage = () => {
             setLoading(false)
             setAuthErrors([typeof error.response.data === 'object' ? error.response.data.message : error.response.data])
             enqueueSnackbar({
-                message: `Failed to reset password!`,
+                message: `Не удалось сбросить пароль!`,
                 options: {
                     key: new Date().getTime() + Math.random(),
                     variant: 'error',
@@ -156,10 +156,10 @@ const ResetPasswordPage = () => {
                         </Alert>
                     )}
                     <Stack sx={{ gap: 1 }}>
-                        <Typography variant='h1'>Reset Password</Typography>
+                        <Typography variant='h1'>Сброс пароля</Typography>
                         <Typography variant='body2' sx={{ color: theme.palette.grey[600] }}>
                             <Link style={{ color: theme.palette.primary.main }} to='/signin'>
-                                Back to Login
+                                Вернуться к входу
                             </Link>
                             .
                         </Typography>
@@ -184,14 +184,14 @@ const ResetPasswordPage = () => {
                             <Box>
                                 <div style={{ display: 'flex', flexDirection: 'row' }}>
                                     <Typography>
-                                        Reset Token<span style={{ color: 'red' }}>&nbsp;*</span>
+                                        Токен сброса<span style={{ color: 'red' }}>&nbsp;*</span>
                                     </Typography>
                                     <div style={{ flexGrow: 1 }}></div>
                                 </div>
                                 <OutlinedInput
                                     fullWidth
                                     type='string'
-                                    placeholder='Paste in the reset token.'
+                                    placeholder='Вставьте токен сброса.'
                                     multiline={true}
                                     rows={3}
                                     inputParam={resetPasswordInput}
@@ -200,13 +200,13 @@ const ResetPasswordPage = () => {
                                     sx={{ mt: '8px' }}
                                 />
                                 <Typography variant='caption'>
-                                    <i>Please copy the token you received in your email.</i>
+                                    <i>Пожалуйста, скопируйте токен, который вы получили в email.</i>
                                 </Typography>
                             </Box>
                             <Box>
                                 <div style={{ display: 'flex', flexDirection: 'row' }}>
                                     <Typography>
-                                        New Password<span style={{ color: 'red' }}>&nbsp;*</span>
+                                        Новый пароль<span style={{ color: 'red' }}>&nbsp;*</span>
                                     </Typography>
                                     <Typography align='left'></Typography>
                                     <div style={{ flexGrow: 1 }}></div>
@@ -219,15 +219,15 @@ const ResetPasswordPage = () => {
                                 />
                                 <Typography variant='caption'>
                                     <i>
-                                        Password must be at least 8 characters long and contain at least one lowercase letter, one uppercase
-                                        letter, one digit, and one special character.
+                                        Пароль должен содержать не менее 8 символов и включать хотя бы одну строчную букву, одну заглавную
+                                        букву, одну цифру и один специальный символ.
                                     </i>
                                 </Typography>
                             </Box>
                             <Box>
                                 <div style={{ display: 'flex', flexDirection: 'row' }}>
                                     <Typography>
-                                        Confirm Password<span style={{ color: 'red' }}>&nbsp;*</span>
+                                        Подтвердите пароль<span style={{ color: 'red' }}>&nbsp;*</span>
                                     </Typography>
                                     <div style={{ flexGrow: 1 }}></div>
                                 </div>
@@ -238,12 +238,12 @@ const ResetPasswordPage = () => {
                                     showDialog={false}
                                 />
                                 <Typography variant='caption'>
-                                    <i>Confirm your new password. Must match the password typed above.</i>
+                                    <i>Подтвердите новый пароль. Должен совпадать с паролем, введенным выше.</i>
                                 </Typography>
                             </Box>
 
                             <StyledButton variant='contained' style={{ borderRadius: 12, height: 40, marginRight: 5 }} type='submit'>
-                                Update Password
+                                Обновить пароль
                             </StyledButton>
                         </Stack>
                     </form>
