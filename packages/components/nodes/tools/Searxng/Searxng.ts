@@ -3,7 +3,7 @@ import { INode, INodeData, INodeParams } from '../../../src/Interface'
 import { getBaseClasses } from '../../../src/utils'
 
 const defaultDesc =
-    'A meta search engine. Useful for when you need to answer questions about current events. Input should be a search query. Output is a JSON array of the query results'
+    'Метапоисковая система. Полезна, когда нужно отвечать на вопросы о текущих событиях. Входные данные должны быть поисковым запросом. Результат - JSON массив результатов запроса'
 const defaultName = 'searxng-search'
 
 interface SearxngResults {
@@ -73,10 +73,10 @@ class Searxng_Tools implements INode {
         this.type = 'SearXNG'
         this.icon = 'SearXNG.svg'
         this.category = 'Tools'
-        this.description = 'Wrapper around SearXNG - a free internet metasearch engine'
+        this.description = 'Обертка вокруг SearXNG - бесплатной метапоисковой системы интернета'
         this.inputs = [
             {
-                label: 'Base URL',
+                label: 'Базовый URL',
                 name: 'apiBase',
                 type: 'string',
                 default: 'http://localhost:8080'
@@ -88,22 +88,22 @@ class Searxng_Tools implements INode {
                 default: defaultName
             },
             {
-                label: 'Tool Description',
+                label: 'Описание инструмента',
                 name: 'toolDescription',
                 type: 'string',
                 rows: 4,
                 default: defaultDesc
             },
             {
-                label: 'Headers',
+                label: 'Заголовки',
                 name: 'headers',
                 type: 'json',
-                description: 'Custom headers for the request',
+                description: 'Пользовательские заголовки для запроса',
                 optional: true,
                 additionalParams: true
             },
             {
-                label: 'Format',
+                label: 'Формат',
                 name: 'format',
                 type: 'options',
                 options: [
@@ -118,57 +118,57 @@ class Searxng_Tools implements INode {
                 ],
                 default: 'json',
                 description:
-                    'Format of the response. You need to enable search formats in settings.yml. Refer to <a target="_blank" href="https://docs.flowiseai.com/integrations/langchain/tools/searxng">SearXNG Setup Guide</a> for more details.',
+                    'Формат ответа. Вам нужно включить форматы поиска в settings.yml. См. <a target="_blank" href="https://docs.flowiseai.com/integrations/langchain/tools/searxng">Руководство по настройке SearXNG</a> для получения дополнительной информации.',
                 additionalParams: true
             },
             {
-                label: 'Categories',
+                label: 'Категории',
                 name: 'categories',
                 description:
-                    'Comma separated list, specifies the active search categories. (see <a target="_blank" href="https://docs.searxng.org/user/configured_engines.html#configured-engines">Configured Engines</a>)',
+                    'Разделенный запятыми список, указывающий активные категории поиска. (см. <a target="_blank" href="https://docs.searxng.org/user/configured_engines.html#configured-engines">Настроенные движки</a>)',
                 optional: true,
                 additionalParams: true,
                 type: 'string'
             },
             {
-                label: 'Engines',
+                label: 'Движки',
                 name: 'engines',
                 description:
-                    'Comma separated list, specifies the active search engines. (see <a target="_blank" href="https://docs.searxng.org/user/configured_engines.html#configured-engines">Configured Engines</a>)',
+                    'Разделенный запятыми список, указывающий активные поисковые движки. (см. <a target="_blank" href="https://docs.searxng.org/user/configured_engines.html#configured-engines">Настроенные движки</a>)',
                 optional: true,
                 additionalParams: true,
                 type: 'string'
             },
             {
-                label: 'Language',
+                label: 'Язык',
                 name: 'language',
-                description: 'Code of the language.',
+                description: 'Код языка.',
                 optional: true,
                 additionalParams: true,
                 type: 'string'
             },
             {
-                label: 'Page No.',
+                label: 'Номер страницы',
                 name: 'pageno',
-                description: 'Search page number.',
+                description: 'Номер страницы поиска.',
                 optional: true,
                 additionalParams: true,
                 type: 'number'
             },
             {
-                label: 'Time Range',
+                label: 'Временной диапазон',
                 name: 'time_range',
                 description:
-                    'Time range of search for engines which support it. See if an engine supports time range search in the preferences page of an instance.',
+                    'Временной диапазон поиска для движков, которые его поддерживают. Проверьте, поддерживает ли движок поиск по временному диапазону на странице настроек экземпляра.',
                 optional: true,
                 additionalParams: true,
                 type: 'string'
             },
             {
-                label: 'Safe Search',
+                label: 'Безопасный поиск',
                 name: 'safesearch',
                 description:
-                    'Filter search results of engines which support safe search. See if an engine supports safe search in the preferences page of an instance.',
+                    'Фильтрация результатов поиска движков, которые поддерживают безопасный поиск. Проверьте, поддерживает ли движок безопасный поиск на странице настроек экземпляра.',
                 optional: true,
                 additionalParams: true,
                 type: 'number'

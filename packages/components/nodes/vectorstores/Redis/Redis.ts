@@ -26,7 +26,7 @@ class Redis_VectorStores implements INode {
         this.name = 'redis'
         this.version = 1.0
         this.description =
-            'Upsert embedded data and perform similarity search upon query using Redis, an open source, in-memory data structure store'
+            'Загружайте встроенные данные и выполняйте поиск по сходству при запросе с помощью Redis, открытого хранилища структур данных в памяти'
         this.type = 'Redis'
         this.icon = 'redis.svg'
         this.category = 'Vector Stores'
@@ -39,61 +39,61 @@ class Redis_VectorStores implements INode {
         }
         this.inputs = [
             {
-                label: 'Document',
+                label: 'Документ',
                 name: 'document',
                 type: 'Document',
                 list: true,
                 optional: true
             },
             {
-                label: 'Embeddings',
+                label: 'Встраивания',
                 name: 'embeddings',
                 type: 'Embeddings'
             },
             {
-                label: 'Index Name',
+                label: 'Имя индекса',
                 name: 'indexName',
                 placeholder: '<VECTOR_INDEX_NAME>',
                 type: 'string'
             },
             {
-                label: 'Replace Index on Upsert',
+                label: 'Заменить индекс при загрузке',
                 name: 'replaceIndex',
-                description: 'Selecting this option will delete the existing index and recreate a new one when upserting',
+                description: 'Выбор этой опции удалит существующий индекс и создаст новый при загрузке',
                 default: false,
                 type: 'boolean'
             },
             {
-                label: 'Content Field',
+                label: 'Поле содержимого',
                 name: 'contentKey',
-                description: 'Name of the field (column) that contains the actual content',
+                description: 'Имя поля (столбца), которое содержит фактическое содержимое',
                 type: 'string',
                 default: 'content',
                 additionalParams: true,
                 optional: true
             },
             {
-                label: 'Metadata Field',
+                label: 'Поле метаданных',
                 name: 'metadataKey',
-                description: 'Name of the field (column) that contains the metadata of the document',
+                description: 'Имя поля (столбца), которое содержит метаданные документа',
                 type: 'string',
                 default: 'metadata',
                 additionalParams: true,
                 optional: true
             },
             {
-                label: 'Vector Field',
+                label: 'Поле вектора',
                 name: 'vectorKey',
-                description: 'Name of the field (column) that contains the vector',
+                description: 'Имя поля (столбца), которое содержит вектор',
                 type: 'string',
                 default: 'content_vector',
                 additionalParams: true,
                 optional: true
             },
             {
-                label: 'Top K',
+                label: 'Топ K',
                 name: 'topK',
-                description: 'Number of top results to fetch. Default to 4',
+                description: 'Количество лучших результатов для получения. По умолчанию 4',
                 placeholder: '4',
                 type: 'number',
                 additionalParams: true,
@@ -102,12 +102,12 @@ class Redis_VectorStores implements INode {
         ]
         this.outputs = [
             {
-                label: 'Redis Retriever',
+                label: 'Redis Извлекатель',
                 name: 'retriever',
                 baseClasses: this.baseClasses
             },
             {
-                label: 'Redis Vector Store',
+                label: 'Redis Векторное хранилище',
                 name: 'vectorStore',
                 baseClasses: [this.type, ...getBaseClasses(RedisVectorStore)]
             }

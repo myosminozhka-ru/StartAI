@@ -23,7 +23,7 @@ class BraveSearch_MCP implements INode {
         this.type = 'BraveSearch MCP Tool'
         this.icon = 'brave.svg'
         this.category = 'Tools (MCP)'
-        this.description = 'MCP server that integrates the Brave Search API - a real-time API to access web search capabilities'
+        this.description = 'MCP сервер, который интегрирует Brave Search API - API в реальном времени для доступа к возможностям веб-поиска'
         this.documentation = 'https://github.com/modelcontextprotocol/servers/tree/main/src/brave-search'
         this.credential = {
             label: 'Подключите учетные данные',
@@ -33,7 +33,7 @@ class BraveSearch_MCP implements INode {
         }
         this.inputs = [
             {
-                label: 'Available Actions',
+                label: 'Доступные действия',
                 name: 'mcpActions',
                 type: 'asyncMultiOptions',
                 loadMethod: 'listActions',

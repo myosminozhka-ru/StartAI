@@ -21,7 +21,7 @@ class BraveSearchAPI_Tools implements INode {
         this.type = 'BraveSearchAPI'
         this.icon = 'brave.svg'
         this.category = 'Tools'
-        this.description = 'Wrapper around BraveSearch API - a real-time API to access Brave search results'
+        this.description = 'Обертка вокруг BraveSearch API - API в реальном времени для доступа к результатам поиска Brave'
         this.inputs = []
         this.credential = {
             label: 'Подключите учетные данные',

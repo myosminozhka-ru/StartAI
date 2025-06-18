@@ -25,11 +25,11 @@ import useNotifier from '@/utils/useNotifier'
 
 // const
 import { HIDE_CANVAS_DIALOG, SHOW_CANVAS_DIALOG } from '@/store/actions'
-const CSVFORMAT = `Only the first 2 columns will be considered:
+const CSVFORMAT = `Только первые 2 столбца будут учтены:
 ----------------------------
-| Input      | Output      |
+| Входные данные | Результат    |
 ----------------------------
-| test input | test output |
+| тестовый ввод  | тестовый вывод |
 ----------------------------
 `
 
@@ -81,7 +81,7 @@ const UploadCSVFileDialog = ({ show, dialogProps, onCancel, onConfirm }) => {
             const createResp = await datasetApi.createDatasetRow(obj)
             if (createResp.data) {
                 enqueueSnackbar({
-                    message: 'New Row added for the given Dataset',
+                    message: 'Новая строка добавлена в указанный набор данных',
                     options: {
                         key: new Date().getTime() + Math.random(),
                         variant: 'success',
@@ -96,7 +96,7 @@ const UploadCSVFileDialog = ({ show, dialogProps, onCancel, onConfirm }) => {
             }
         } catch (error) {
             enqueueSnackbar({
-                message: `Failed to add new row in the Dataset: ${
+                message: `Не удалось добавить новую строку в набор данных: ${
                     typeof error.response.data === 'object' ? error.response.data.message : error.response.data
                 }`,
                 options: {
@@ -144,14 +144,14 @@ const UploadCSVFileDialog = ({ show, dialogProps, onCancel, onConfirm }) => {
                             }}
                         />
                     </div>
-                    {'Upload Items to [' + datasetName + '] Dataset'}
+                    {'Загрузить элементы в набор данных [' + datasetName + ']'}
                 </div>
             </DialogTitle>
             <DialogContent>
                 <Box sx={{ p: 2 }}>
                     <div style={{ display: 'flex', flexDirection: 'row' }}>
                         <Typography>
-                            Upload CSV
+                            Загрузить CSV
                             <TooltipWithParser style={{ mb: 1, mt: 2 }} title={`<pre>${CSVFORMAT}</pre>`} />
                         </Typography>
                         <div style={{ flexGrow: 1 }}></div>
@@ -160,12 +160,12 @@ const UploadCSVFileDialog = ({ show, dialogProps, onCancel, onConfirm }) => {
                         disabled={false}
                         fileType='.csv'
                         onChange={(newValue) => setSelectedFile(newValue)}
-                        value={selectedFile ?? 'Choose a file to upload'}
+                        value={selectedFile ?? 'Выберите файл для загрузки'}
                     />
                     <SwitchInput
                         value={firstRowHeaders}
                         onChange={setFirstRowHeaders}
-                        label={'Treat First Row as headers in the upload file?'}
+                        label={'Считать первую строку заголовками в загружаемом файле?'}
                     />
                 </Box>
             </DialogContent>

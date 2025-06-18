@@ -27,41 +27,41 @@ class SingleStore_VectorStores implements INode {
         this.icon = 'singlestore.svg'
         this.category = 'Vector Stores'
         this.description =
-            'Upsert embedded data and perform similarity search upon query using SingleStore, a fast and distributed cloud relational database'
+            'Загружайте встроенные данные и выполняйте поиск по сходству при запросе с помощью SingleStore, быстрой и распределенной облачной реляционной базы данных'
         this.baseClasses = [this.type, 'VectorStoreRetriever', 'BaseRetriever']
         this.credential = {
             label: 'Подключите учетные данные',
             name: 'credential',
             type: 'credential',
-            description: 'Needed when using SingleStore cloud hosted',
+            description: 'Требуется при использовании облачного размещения SingleStore',
             optional: true,
             credentialNames: ['singleStoreApi']
         }
         this.inputs = [
             {
-                label: 'Document',
+                label: 'Документ',
                 name: 'document',
                 type: 'Document',
                 list: true,
                 optional: true
             },
             {
-                label: 'Embeddings',
+                label: 'Встраивания',
                 name: 'embeddings',
                 type: 'Embeddings'
             },
             {
-                label: 'Host',
+                label: 'Хост',
                 name: 'host',
                 type: 'string'
             },
             {
-                label: 'Database',
+                label: 'База данных',
                 name: 'database',
                 type: 'string'
             },
             {
-                label: 'Table Name',
+                label: 'Имя таблицы',
                 name: 'tableName',
                 type: 'string',
                 placeholder: 'embeddings',
@@ -69,7 +69,7 @@ class SingleStore_VectorStores implements INode {
                 optional: true
             },
             {
-                label: 'Content Column Name',
+                label: 'Имя столбца содержимого',
                 name: 'contentColumnName',
                 type: 'string',
                 placeholder: 'content',
@@ -77,7 +77,7 @@ class SingleStore_VectorStores implements INode {
                 optional: true
             },
             {
-                label: 'Vector Column Name',
+                label: 'Имя столбца вектора',
                 name: 'vectorColumnName',
                 type: 'string',
                 placeholder: 'vector',
@@ -85,7 +85,7 @@ class SingleStore_VectorStores implements INode {
                 optional: true
             },
             {
-                label: 'Metadata Column Name',
+                label: 'Имя столбца метаданных',
                 name: 'metadataColumnName',
                 type: 'string',
                 placeholder: 'metadata',
@@ -93,7 +93,7 @@ class SingleStore_VectorStores implements INode {
                 optional: true
             },
             {
-                label: 'Top K',
+                label: 'Топ K',
                 name: 'topK',
                 placeholder: '4',
                 type: 'number',
@@ -103,12 +103,12 @@ class SingleStore_VectorStores implements INode {
         ]
         this.outputs = [
             {
-                label: 'SingleStore Retriever',
+                label: 'SingleStore Извлекатель',
                 name: 'retriever',
                 baseClasses: this.baseClasses
             },
             {
-                label: 'SingleStore Vector Store',
+                label: 'SingleStore Векторное хранилище',
                 name: 'vectorStore',
                 baseClasses: [this.type, ...getBaseClasses(SingleStoreVectorStore)]
             }

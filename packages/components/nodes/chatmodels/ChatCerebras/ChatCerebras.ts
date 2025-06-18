@@ -22,7 +22,7 @@ class ChatCerebras_ChatModels implements INode {
         this.type = 'ChatCerebras'
         this.icon = 'cerebras.png'
         this.category = 'Chat Models'
-        this.description = 'Wrapper around Cerebras Inference API'
+        this.description = 'Обертка вокруг Cerebras Inference API'
         this.baseClasses = [this.type, ...getBaseClasses(ChatOpenAI)]
         this.credential = {
             label: 'Подключите учетные данные',

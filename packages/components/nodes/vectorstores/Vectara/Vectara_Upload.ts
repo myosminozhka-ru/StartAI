@@ -24,61 +24,61 @@ class VectaraUpload_VectorStores implements INode {
         this.type = 'Vectara'
         this.icon = 'vectara.png'
         this.category = 'Vector Stores'
-        this.description = 'Upload files to Vectara'
+        this.description = 'Загружайте файлы в Vectara'
         this.baseClasses = [this.type, 'VectorStoreRetriever', 'BaseRetriever']
         this.badge = 'DEPRECATING'
         this.credential = {
-            label: 'Connect Credential',
+            label: 'Подключите учетные данные',
             name: 'credential',
             type: 'credential',
             credentialNames: ['vectaraApi']
         }
         this.inputs = [
             {
-                label: 'File',
+                label: 'Файл',
                 name: 'file',
                 description:
-                    'File to upload to Vectara. Supported file types: https://docs.vectara.com/docs/api-reference/indexing-apis/file-upload/file-upload-filetypes',
+                    'Файл для загрузки в Vectara. Поддерживаемые типы файлов: https://docs.vectara.com/docs/api-reference/indexing-apis/file-upload/file-upload-filetypes',
                 type: 'file'
             },
             {
-                label: 'Metadata Filter',
+                label: 'Фильтр метаданных',
                 name: 'filter',
                 description:
-                    'Filter to apply to Vectara metadata. Refer to the <a target="_blank" href="https://docs.flowiseai.com/vector-stores/vectara">documentation</a> on how to use Vectara filters with Flowise.',
+                    'Фильтр для применения к метаданным Vectara. См. <a target="_blank" href="https://docs.flowiseai.com/vector-stores/vectara">документацию</a> о том, как использовать фильтры Vectara с Flowise.',
                 type: 'string',
                 additionalParams: true,
                 optional: true
             },
             {
-                label: 'Sentences Before',
+                label: 'Предложения до',
                 name: 'sentencesBefore',
-                description: 'Number of sentences to fetch before the matched sentence. Defaults to 2.',
+                description: 'Количество предложений для получения перед совпадающим предложением. По умолчанию 2.',
                 type: 'number',
                 additionalParams: true,
                 optional: true
             },
             {
-                label: 'Sentences After',
+                label: 'Предложения после',
                 name: 'sentencesAfter',
-                description: 'Number of sentences to fetch after the matched sentence. Defaults to 2.',
+                description: 'Количество предложений для получения после совпадающего предложения. По умолчанию 2.',
                 type: 'number',
                 additionalParams: true,
                 optional: true
             },
             {
-                label: 'Lambda',
+                label: 'Лямбда',
                 name: 'lambda',
                 description:
-                    'Improves retrieval accuracy by adjusting the balance (from 0 to 1) between neural search and keyword-based search factors.',
+                    'Улучшает точность извлечения, регулируя баланс (от 0 до 1) между нейронным поиском и факторами поиска на основе ключевых слов.',
                 type: 'number',
                 additionalParams: true,
                 optional: true
             },
             {
-                label: 'Top K',
+                label: 'Топ K',
                 name: 'topK',
-                description: 'Number of top results to fetch. Defaults to 4',
+                description: 'Количество лучших результатов для получения. По умолчанию 4',
                 placeholder: '4',
                 type: 'number',
                 additionalParams: true,
@@ -87,12 +87,12 @@ class VectaraUpload_VectorStores implements INode {
         ]
         this.outputs = [
             {
-                label: 'Vectara Retriever',
+                label: 'Vectara Извлекатель',
                 name: 'retriever',
                 baseClasses: this.baseClasses
             },
             {
-                label: 'Vectara Vector Store',
+                label: 'Vectara Векторное хранилище',
                 name: 'vectorStore',
                 baseClasses: [this.type, ...getBaseClasses(VectaraStore)]
             }

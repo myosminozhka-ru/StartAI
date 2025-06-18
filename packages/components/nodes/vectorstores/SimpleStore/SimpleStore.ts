@@ -25,39 +25,39 @@ class SimpleStoreUpsert_LlamaIndex_VectorStores implements INode {
         this.type = 'SimpleVectorStore'
         this.icon = 'simplevs.svg'
         this.category = 'Vector Stores'
-        this.description = 'Upsert embedded data to local path and perform similarity search'
+        this.description = 'Загружайте встроенные данные в локальный путь и выполняйте поиск по сходству'
         this.baseClasses = [this.type, 'VectorIndexRetriever']
         this.tags = ['LlamaIndex']
         this.inputs = [
             {
-                label: 'Document',
+                label: 'Документ',
                 name: 'document',
                 type: 'Document',
                 list: true,
                 optional: true
             },
             {
-                label: 'Chat Model',
+                label: 'Чат модель',
                 name: 'model',
                 type: 'BaseChatModel_LlamaIndex'
             },
             {
-                label: 'Embeddings',
+                label: 'Встраивания',
                 name: 'embeddings',
                 type: 'BaseEmbedding_LlamaIndex'
             },
             {
-                label: 'Base Path to store',
+                label: 'Базовый путь для хранения',
                 name: 'basePath',
                 description:
-                    'Path to store persist embeddings indexes with persistence. If not specified, default to same path where database is stored',
+                    'Путь для хранения постоянных индексов встраиваний. Если не указан, по умолчанию используется тот же путь, где хранится база данных',
                 type: 'string',
                 optional: true
             },
             {
-                label: 'Top K',
+                label: 'Топ K',
                 name: 'topK',
-                description: 'Number of top results to fetch. Default to 4',
+                description: 'Количество лучших результатов для получения. По умолчанию 4',
                 placeholder: '4',
                 type: 'number',
                 optional: true
@@ -65,12 +65,12 @@ class SimpleStoreUpsert_LlamaIndex_VectorStores implements INode {
         ]
         this.outputs = [
             {
-                label: 'SimpleStore Retriever',
+                label: 'SimpleStore Извлекатель',
                 name: 'retriever',
                 baseClasses: this.baseClasses
             },
             {
-                label: 'SimpleStore Vector Store Index',
+                label: 'SimpleStore Индекс векторного хранилища',
                 name: 'vectorStore',
                 baseClasses: [this.type, 'VectorStoreIndex']
             }

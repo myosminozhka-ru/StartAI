@@ -27,7 +27,7 @@ class Astra_VectorStores implements INode {
         this.type = 'Astra'
         this.icon = 'astra.svg'
         this.category = 'Vector Stores'
-        this.description = `Upsert embedded data and perform similarity or mmr search upon query using DataStax Astra DB, a serverless vector database that’s perfect for managing mission-critical AI workloads`
+        this.description = `Вставить встроенные данные и выполнить поиск по сходству или mmr по запросу, используя DataStax Astra DB, бессерверную векторную базу данных, которая идеально подходит для управления критически важными рабочими нагрузками ИИ`
         this.baseClasses = [this.type, 'VectorStoreRetriever', 'BaseRetriever']
         this.credential = {
             label: 'Подключите учетные данные',
@@ -37,37 +37,37 @@ class Astra_VectorStores implements INode {
         }
         this.inputs = [
             {
-                label: 'Document',
+                label: 'Документ',
                 name: 'document',
                 type: 'Document',
                 list: true,
                 optional: true
             },
             {
-                label: 'Embeddings',
+                label: 'Вложения',
                 name: 'embeddings',
                 type: 'Embeddings'
             },
             {
-                label: 'Namespace',
+                label: 'Пространство имен',
                 name: 'astraNamespace',
                 type: 'string'
             },
             {
-                label: 'Collection',
+                label: 'Коллекция',
                 name: 'astraCollection',
                 type: 'string'
             },
             {
-                label: 'Vector Dimension',
+                label: 'Размерность вектора',
                 name: 'vectorDimension',
                 type: 'number',
                 placeholder: '1536',
                 optional: true,
-                description: 'Dimension used for storing vector embedding'
+                description: 'Размерность, используемая для хранения векторного вложения'
             },
             {
-                label: 'Similarity Metric',
+                label: 'Метрика сходства',
                 name: 'similarityMetric',
                 type: 'string',
                 placeholder: 'cosine',
@@ -75,9 +75,9 @@ class Astra_VectorStores implements INode {
                 description: 'cosine | euclidean | dot_product'
             },
             {
-                label: 'Top K',
+                label: 'Топ K',
                 name: 'topK',
-                description: 'Number of top results to fetch. Default to 4',
+                description: 'Количество лучших результатов для получения. По умолчанию 4',
                 placeholder: '4',
                 type: 'number',
                 additionalParams: true,

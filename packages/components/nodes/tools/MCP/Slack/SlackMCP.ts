@@ -23,7 +23,7 @@ class Slack_MCP implements INode {
         this.type = 'Slack MCP Tool'
         this.icon = 'slack.svg'
         this.category = 'Tools (MCP)'
-        this.description = 'MCP Server for the Slack API'
+        this.description = 'MCP сервер для Slack API'
         this.documentation = 'https://github.com/modelcontextprotocol/servers/tree/main/src/slack'
         this.credential = {
             label: 'Подключите учетные данные',
@@ -33,7 +33,7 @@ class Slack_MCP implements INode {
         }
         this.inputs = [
             {
-                label: 'Available Actions',
+                label: 'Доступные действия',
                 name: 'mcpActions',
                 type: 'asyncMultiOptions',
                 loadMethod: 'listActions',

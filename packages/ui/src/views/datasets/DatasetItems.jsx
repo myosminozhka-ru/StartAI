@@ -140,8 +140,8 @@ const EvalDatasetRows = () => {
     const addNew = () => {
         const dialogProp = {
             type: 'ADD',
-            cancelButtonName: 'Cancel',
-            confirmButtonName: 'Add',
+            cancelButtonName: 'Отмена',
+            confirmButtonName: 'Добавить',
             data: {
                 datasetId: datasetId,
                 datasetName: dataset.name
@@ -154,8 +154,8 @@ const EvalDatasetRows = () => {
     const uploadCSV = () => {
         const dialogProp = {
             type: 'ADD',
-            cancelButtonName: 'Cancel',
-            confirmButtonName: 'Upload',
+            cancelButtonName: 'Отмена',
+            confirmButtonName: 'Загрузить',
             data: {
                 datasetId: datasetId,
                 datasetName: dataset.name
@@ -168,8 +168,8 @@ const EvalDatasetRows = () => {
     const editDs = () => {
         const dialogProp = {
             type: 'EDIT',
-            cancelButtonName: 'Cancel',
-            confirmButtonName: 'Save',
+            cancelButtonName: 'Отмена',
+            confirmButtonName: 'Сохранить',
             data: dataset
         }
         setDatasetDialogProps(dialogProp)
@@ -179,8 +179,8 @@ const EvalDatasetRows = () => {
     const edit = (item) => {
         const dialogProp = {
             type: 'EDIT',
-            cancelButtonName: 'Cancel',
-            confirmButtonName: 'Save',
+            cancelButtonName: 'Отмена',
+            confirmButtonName: 'Сохранить',
             data: {
                 datasetName: dataset.name,
                 ...item
@@ -192,10 +192,10 @@ const EvalDatasetRows = () => {
 
     const deleteDatasetItems = async () => {
         const confirmPayload = {
-            title: `Delete`,
-            description: `Delete ${selected.length} dataset items?`,
-            confirmButtonName: 'Delete',
-            cancelButtonName: 'Cancel'
+            title: `Удалить`,
+            description: `Удалить ${selected.length} элементов набора данных?`,
+            confirmButtonName: 'Удалить',
+            cancelButtonName: 'Отмена'
         }
         const isConfirmed = await confirm(confirmPayload)
 
@@ -204,7 +204,7 @@ const EvalDatasetRows = () => {
                 const deleteResp = await datasetsApi.deleteDatasetItems(selected)
                 if (deleteResp.data) {
                     enqueueSnackbar({
-                        message: 'Dataset Items deleted',
+                        message: 'Элементы набора данных удалены',
                         options: {
                             key: new Date().getTime() + Math.random(),
                             variant: 'success',
@@ -219,7 +219,7 @@ const EvalDatasetRows = () => {
                 }
             } catch (error) {
                 enqueueSnackbar({
-                    message: `Failed to delete dataset items: ${
+                    message: `Не удалось удалить элементы набора данных: ${
                         typeof error.response.data === 'object' ? error.response.data.message : error.response.data
                     }`,
                     options: {
@@ -275,7 +275,7 @@ const EvalDatasetRows = () => {
                             onEdit={editDs}
                             onBack={() => window.history.back()}
                             search={false}
-                            title={`Dataset : ${dataset?.name || ''}`}
+                            title={`Набор данных : ${dataset?.name || ''}`}
                             description={dataset?.description}
                         >
                             <StyledPermissionButton
@@ -286,7 +286,7 @@ const EvalDatasetRows = () => {
                                 onClick={uploadCSV}
                                 startIcon={<IconUpload />}
                             >
-                                Upload CSV
+                                Загрузить CSV
                             </StyledPermissionButton>
                             <StyledPermissionButton
                                 permissionId={'datasets:create,datasets:update'}
@@ -295,7 +295,7 @@ const EvalDatasetRows = () => {
                                 onClick={addNew}
                                 startIcon={<IconPlus />}
                             >
-                                New Item
+                                Новый элемент
                             </StyledPermissionButton>
                         </ViewHeader>
                         {selected.length > 0 && (
@@ -307,7 +307,8 @@ const EvalDatasetRows = () => {
                                 color='error'
                                 startIcon={<IconTrash />}
                             >
-                                Delete {selected.length} {selected.length === 1 ? 'item' : 'items'}
+                                Удалить {selected.length}{' '}
+                                {selected.length === 1 ? 'элемент' : selected.length < 5 ? 'элемента' : 'элементов'}
                             </PermissionButton>
                         )}
                         {!isLoading && dataset?.rows?.length <= 0 ? (
@@ -319,7 +320,7 @@ const EvalDatasetRows = () => {
                                         alt='empty_datasetSVG'
                                     />
                                 </Box>
-                                <div>No Dataset Items Yet</div>
+                                <div>Пока нет элементов набора данных</div>
                                 <StyledPermissionButton
                                     permissionId={'datasets:create,datasets:update'}
                                     variant='contained'
@@ -327,7 +328,7 @@ const EvalDatasetRows = () => {
                                     startIcon={<IconPlus />}
                                     onClick={addNew}
                                 >
-                                    New Item
+                                    Новый элемент
                                 </StyledPermissionButton>
                             </Stack>
                         ) : (
@@ -356,8 +357,8 @@ const EvalDatasetRows = () => {
                                                         }}
                                                     />
                                                 </StyledTableCell>
-                                                <StyledTableCell>Input</StyledTableCell>
-                                                <StyledTableCell>Expected Output</StyledTableCell>
+                                                <StyledTableCell>Входные данные</StyledTableCell>
+                                                <StyledTableCell>Ожидаемый результат</StyledTableCell>
                                                 <StyledTableCell style={{ width: '1%' }}>
                                                     <IconArrowsDownUp />
                                                 </StyledTableCell>
@@ -450,7 +451,7 @@ const EvalDatasetRows = () => {
                                     </Table>
                                 </TableContainer>
                                 <Typography sx={{ color: theme.palette.grey[600] }} variant='subtitle2'>
-                                    <i>Use the drag icon at (extreme right) to reorder the dataset items</i>
+                                    <i>Используйте значок перетаскивания (справа) для изменения порядка элементов набора данных</i>
                                 </Typography>
                             </React.Fragment>
                         )}

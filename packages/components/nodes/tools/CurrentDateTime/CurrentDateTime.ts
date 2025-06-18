@@ -53,7 +53,7 @@ class CurrentDateTime_Tools implements INode {
         this.type = 'CurrentDateTime'
         this.icon = 'currentDateTime.svg'
         this.category = 'Tools'
-        this.description = 'Get todays day, date and time.'
+        this.description = 'Получить сегодняшний день, дату и время.'
         this.baseClasses = [this.type, 'Tool']
     }
 

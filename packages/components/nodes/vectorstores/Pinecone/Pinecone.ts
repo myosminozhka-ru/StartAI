@@ -30,7 +30,7 @@ class Pinecone_VectorStores implements INode {
         this.type = 'Pinecone'
         this.icon = 'pinecone.svg'
         this.category = 'Vector Stores'
-        this.description = `Upsert embedded data and perform similarity or mmr search using Pinecone, a leading fully managed hosted vector database`
+        this.description = `Загружайте встроенные данные и выполняйте поиск по сходству или mmr с помощью Pinecone, ведущей полностью управляемой размещенной векторной базы данных`
         this.baseClasses = [this.type, 'VectorStoreRetriever', 'BaseRetriever']
         this.credential = {
             label: 'Подключите учетные данные',
@@ -40,31 +40,31 @@ class Pinecone_VectorStores implements INode {
         }
         this.inputs = [
             {
-                label: 'Document',
+                label: 'Документ',
                 name: 'document',
                 type: 'Document',
                 list: true,
                 optional: true
             },
             {
-                label: 'Embeddings',
+                label: 'Встраивания',
                 name: 'embeddings',
                 type: 'Embeddings'
             },
             {
-                label: 'Record Manager',
+                label: 'Менеджер записей',
                 name: 'recordManager',
                 type: 'RecordManager',
-                description: 'Keep track of the record to prevent duplication',
+                description: 'Отслеживайте запись для предотвращения дублирования',
                 optional: true
             },
             {
-                label: 'Pinecone Index',
+                label: 'Pinecone Индекс',
                 name: 'pineconeIndex',
                 type: 'string'
             },
             {
-                label: 'Pinecone Namespace',
+                label: 'Pinecone Пространство имен',
                 name: 'pineconeNamespace',
                 type: 'string',
                 placeholder: 'my-first-namespace',
@@ -72,11 +72,11 @@ class Pinecone_VectorStores implements INode {
                 optional: true
             },
             {
-                label: 'File Upload',
+                label: 'Загрузка файлов',
                 name: 'fileUpload',
-                description: 'Allow file upload on the chat',
+                description: 'Разрешить загрузку файлов в чате',
                 hint: {
-                    label: 'How to use',
+                    label: 'Как использовать',
                     value: howToUseFileUpload
                 },
                 type: 'boolean',
@@ -84,25 +84,25 @@ class Pinecone_VectorStores implements INode {
                 optional: true
             },
             {
-                label: 'Pinecone Text Key',
+                label: 'Pinecone Ключ текста',
                 name: 'pineconeTextKey',
-                description: 'The key in the metadata for storing text. Default to `text`',
+                description: 'Ключ в метаданных для хранения текста. По умолчанию `text`',
                 type: 'string',
                 placeholder: 'text',
                 additionalParams: true,
                 optional: true
             },
             {
-                label: 'Pinecone Metadata Filter',
+                label: 'Pinecone Фильтр метаданных',
                 name: 'pineconeMetadataFilter',
                 type: 'json',
                 optional: true,
                 additionalParams: true
             },
             {
-                label: 'Top K',
+                label: 'Топ K',
                 name: 'topK',
-                description: 'Number of top results to fetch. Default to 4',
+                description: 'Количество лучших результатов для получения. По умолчанию 4',
                 placeholder: '4',
                 type: 'number',
                 additionalParams: true,
@@ -112,12 +112,12 @@ class Pinecone_VectorStores implements INode {
         addMMRInputParams(this.inputs)
         this.outputs = [
             {
-                label: 'Pinecone Retriever',
+                label: 'Pinecone Извлекатель',
                 name: 'retriever',
                 baseClasses: this.baseClasses
             },
             {
-                label: 'Pinecone Vector Store',
+                label: 'Pinecone Векторное хранилище',
                 name: 'vectorStore',
                 baseClasses: [this.type, ...getBaseClasses(PineconeStore)]
             }

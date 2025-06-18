@@ -13,21 +13,21 @@ class StickyNote implements INode {
     inputs: INodeParams[]
 
     constructor() {
-        this.label = 'Sticky Note'
+        this.label = 'Стикер'
         this.name = 'stickyNote'
         this.version = 2.0
         this.type = 'StickyNote'
         this.icon = 'stickyNote.svg'
         this.category = 'Utilities'
         this.tags = ['Utilities']
-        this.description = 'Add a sticky note'
+        this.description = 'Добавить стикер'
         this.inputs = [
             {
                 label: '',
                 name: 'note',
                 type: 'string',
                 rows: 1,
-                placeholder: 'Type something here',
+                placeholder: 'Введите что-то здесь',
                 optional: true
             }
         ]

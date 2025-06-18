@@ -28,7 +28,7 @@ class MeilisearchRetriever_node implements INode {
         this.type = 'Meilisearch'
         this.icon = 'Meilisearch.png'
         this.category = 'Vector Stores'
-        this.description = `Upsert embedded data and perform similarity search upon query using Meilisearch hybrid search functionality`
+        this.description = `Вставить встроенные данные и выполнить поиск по сходству по запросу, используя гибридную функциональность поиска Meilisearch`
         this.baseClasses = ['BaseRetriever']
         this.credential = {
             label: 'Подключите учетные данные',
@@ -38,56 +38,56 @@ class MeilisearchRetriever_node implements INode {
         }
         this.inputs = [
             {
-                label: 'Document',
+                label: 'Документ',
                 name: 'document',
                 type: 'Document',
                 list: true,
                 optional: true
             },
             {
-                label: 'Embeddings',
+                label: 'Вложения',
                 name: 'embeddings',
                 type: 'Embeddings'
             },
             {
-                label: 'Host',
+                label: 'Хост',
                 name: 'host',
                 type: 'string',
-                description: "This is the URL for the desired Meilisearch instance, the URL must not end with a '/'"
+                description: "Это URL для желаемого экземпляра Meilisearch, URL не должен заканчиваться на '/'"
             },
             {
-                label: 'Index Uid',
+                label: 'UID индекса',
                 name: 'indexUid',
                 type: 'string',
-                description: 'UID for the index to answer from'
+                description: 'UID для индекса, из которого отвечать'
             },
             {
-                label: 'Delete Index if exists',
+                label: 'Удалить индекс если существует',
                 name: 'deleteIndex',
                 type: 'boolean',
                 optional: true
             },
             {
-                label: 'Top K',
+                label: 'Топ K',
                 name: 'K',
                 type: 'number',
-                description: 'number of top searches to return as context, default is 4',
+                description: 'количество лучших поисков для возврата в качестве контекста, по умолчанию 4',
                 additionalParams: true,
                 optional: true
             },
             {
-                label: 'Semantic Ratio',
+                label: 'Семантическое соотношение',
                 name: 'semanticRatio',
                 type: 'number',
-                description: 'percentage of sematic reasoning in meilisearch hybrid search, default is 0.75',
+                description: 'процент семантического рассуждения в гибридном поиске meilisearch, по умолчанию 0.75',
                 additionalParams: true,
                 optional: true
             },
             {
-                label: 'Search Filter',
+                label: 'Фильтр поиска',
                 name: 'searchFilter',
                 type: 'string',
-                description: 'search filter to apply on searchable attributes',
+                description: 'фильтр поиска для применения к поисковым атрибутам',
                 additionalParams: true,
                 optional: true
             }
@@ -96,7 +96,7 @@ class MeilisearchRetriever_node implements INode {
             {
                 label: 'Meilisearch Retriever',
                 name: 'MeilisearchRetriever',
-                description: 'retrieve answers',
+                description: 'извлекать ответы',
                 baseClasses: this.baseClasses
             }
         ]

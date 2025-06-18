@@ -22,7 +22,7 @@ class ChatNvdiaNIM_ChatModels implements INode {
         this.type = 'Chat NVIDIA NIM'
         this.icon = 'nvdia.svg'
         this.category = 'Chat Models'
-        this.description = 'Wrapper around NVIDIA NIM Inference API'
+        this.description = 'Обертка вокруг NVIDIA NIM Inference API'
         this.baseClasses = [this.type, ...getBaseClasses(ChatOpenAI)]
         this.credential = {
             label: 'Подключите учетные данные',

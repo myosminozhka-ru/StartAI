@@ -22,17 +22,17 @@ class WriteFile_Tools implements INode {
     inputs: INodeParams[]
 
     constructor() {
-        this.label = 'Write File'
+        this.label = 'Записать файл'
         this.name = 'writeFile'
         this.version = 1.0
         this.type = 'WriteFile'
         this.icon = 'writefile.svg'
         this.category = 'Tools'
-        this.description = 'Write file to disk'
+        this.description = 'Записать файл на диск'
         this.baseClasses = [this.type, 'Tool', ...getBaseClasses(WriteFileTool)]
         this.inputs = [
             {
-                label: 'Base Path',
+                label: 'Базовый путь',
                 name: 'basePath',
                 placeholder: `C:\\Users\\User\\Desktop`,
                 type: 'string',
@@ -53,8 +53,7 @@ interface WriteFileParams extends ToolParams {
 }
 
 /**
- * Class for writing data to files on the disk. Extends the StructuredTool
- * class.
+ * Класс для записи данных в файлы на диске. Расширяет класс StructuredTool
  */
 export class WriteFileTool extends StructuredTool {
     static lc_name() {
@@ -62,13 +61,13 @@ export class WriteFileTool extends StructuredTool {
     }
 
     schema = z.object({
-        file_path: z.string().describe('name of file'),
-        text: z.string().describe('text to write to file')
+        file_path: z.string().describe('имя файла'),
+        text: z.string().describe('текст для записи в файл')
     }) as any
 
     name = 'write_file'
 
-    description = 'Write file from disk'
+    description = 'Записать файл на диск'
 
     store: BaseFileStore
 
@@ -80,7 +79,7 @@ export class WriteFileTool extends StructuredTool {
 
     async _call({ file_path, text }: z.infer<typeof this.schema>) {
         await this.store.writeFile(file_path, text)
-        return 'File written to successfully.'
+        return 'Файл успешно записан.'
     }
 }
 

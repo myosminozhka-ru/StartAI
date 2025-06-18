@@ -14,18 +14,18 @@ class GetVariable_Utilities implements INode {
     outputs: INodeOutputsValue[]
 
     constructor() {
-        this.label = 'Get Variable'
+        this.label = 'Получить переменную'
         this.name = 'getVariable'
         this.version = 2.0
         this.type = 'GetVariable'
         this.icon = 'getvar.svg'
         this.category = 'Utilities'
-        this.description = `Get variable that was saved using Set Variable node`
+        this.description = `Получить переменную, которая была сохранена с помощью узла Set Variable`
         this.baseClasses = [this.type, 'Utilities']
         this.tags = ['Utilities']
         this.inputs = [
             {
-                label: 'Variable Name',
+                label: 'Имя переменной',
                 name: 'variableName',
                 type: 'string',
                 placeholder: 'var1'
@@ -33,7 +33,7 @@ class GetVariable_Utilities implements INode {
         ]
         this.outputs = [
             {
-                label: 'Output',
+                label: 'Вывод',
                 name: 'output',
                 baseClasses: ['string', 'number', 'boolean', 'json', 'array']
             }

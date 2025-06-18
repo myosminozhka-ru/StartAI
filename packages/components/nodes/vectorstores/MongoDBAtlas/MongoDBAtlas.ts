@@ -25,7 +25,7 @@ class MongoDBAtlas_VectorStores implements INode {
         this.label = 'MongoDB Atlas'
         this.name = 'mongoDBAtlas'
         this.version = 1.0
-        this.description = `Upsert embedded data and perform similarity or mmr search upon query using MongoDB Atlas, a managed cloud mongodb database`
+        this.description = `Вставить встроенные данные и выполнить поиск по сходству или mmr по запросу, используя MongoDB Atlas, управляемую облачную mongodb базу данных`
         this.type = 'MongoDB Atlas'
         this.icon = 'mongodb.svg'
         this.category = 'Vector Stores'
@@ -38,48 +38,48 @@ class MongoDBAtlas_VectorStores implements INode {
         }
         this.inputs = [
             {
-                label: 'Document',
+                label: 'Документ',
                 name: 'document',
                 type: 'Document',
                 list: true,
                 optional: true
             },
             {
-                label: 'Embeddings',
+                label: 'Вложения',
                 name: 'embeddings',
                 type: 'Embeddings'
             },
             {
-                label: 'Database',
+                label: 'База данных',
                 name: 'databaseName',
                 placeholder: '<DB_NAME>',
                 type: 'string'
             },
             {
-                label: 'Collection Name',
+                label: 'Имя коллекции',
                 name: 'collectionName',
                 placeholder: '<COLLECTION_NAME>',
                 type: 'string'
             },
             {
-                label: 'Index Name',
+                label: 'Имя индекса',
                 name: 'indexName',
                 placeholder: '<VECTOR_INDEX_NAME>',
                 type: 'string'
             },
             {
-                label: 'Content Field',
+                label: 'Поле контента',
                 name: 'textKey',
-                description: 'Name of the field (column) that contains the actual content',
+                description: 'Имя поля (столбца), которое содержит фактический контент',
                 type: 'string',
                 default: 'text',
                 additionalParams: true,
                 optional: true
             },
             {
-                label: 'Embedded Field',
+                label: 'Поле вложения',
                 name: 'embeddingKey',
-                description: 'Name of the field (column) that contains the Embedding',
+                description: 'Имя поля (столбца), которое содержит вложение',
                 type: 'string',
                 default: 'embedding',
                 additionalParams: true,
@@ -93,9 +93,9 @@ class MongoDBAtlas_VectorStores implements INode {
                 additionalParams: true
             },
             {
-                label: 'Top K',
+                label: 'Топ K',
                 name: 'topK',
-                description: 'Number of top results to fetch. Default to 4',
+                description: 'Количество лучших результатов для получения. По умолчанию 4',
                 placeholder: '4',
                 type: 'number',
                 additionalParams: true,

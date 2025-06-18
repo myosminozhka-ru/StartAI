@@ -22,24 +22,24 @@ class StripeTool_Tools implements INode {
         this.type = 'stripeAgentTool'
         this.icon = 'stripe.png'
         this.category = 'Tools'
-        this.description = 'Use Stripe Agent function calling for financial transactions'
+        this.description = 'Используйте функцию вызова Stripe Agent для финансовых транзакций'
         this.badge = 'BETA'
         this.inputs = [
             {
-                label: 'Payment Links',
+                label: 'Платежные ссылки',
                 name: 'paymentLinks',
                 type: 'multiOptions',
                 options: [
                     {
-                        label: 'Create',
+                        label: 'Создать',
                         name: 'create'
                     },
                     {
-                        label: 'Update',
+                        label: 'Обновить',
                         name: 'update'
                     },
                     {
-                        label: 'Read',
+                        label: 'Читать',
                         name: 'read'
                     }
                 ],
@@ -47,20 +47,20 @@ class StripeTool_Tools implements INode {
                 additionalParams: true
             },
             {
-                label: 'Products',
+                label: 'Продукты',
                 name: 'products',
                 type: 'multiOptions',
                 options: [
                     {
-                        label: 'Create',
+                        label: 'Создать',
                         name: 'create'
                     },
                     {
-                        label: 'Update',
+                        label: 'Обновить',
                         name: 'update'
                     },
                     {
-                        label: 'Read',
+                        label: 'Читать',
                         name: 'read'
                     }
                 ],
@@ -68,20 +68,20 @@ class StripeTool_Tools implements INode {
                 additionalParams: true
             },
             {
-                label: 'Prices',
+                label: 'Цены',
                 name: 'prices',
                 type: 'multiOptions',
                 options: [
                     {
-                        label: 'Create',
+                        label: 'Создать',
                         name: 'create'
                     },
                     {
-                        label: 'Update',
+                        label: 'Обновить',
                         name: 'update'
                     },
                     {
-                        label: 'Read',
+                        label: 'Читать',
                         name: 'read'
                     }
                 ],
@@ -89,20 +89,20 @@ class StripeTool_Tools implements INode {
                 additionalParams: true
             },
             {
-                label: 'Balance',
+                label: 'Баланс',
                 name: 'balance',
                 type: 'multiOptions',
                 options: [
                     {
-                        label: 'Create',
+                        label: 'Создать',
                         name: 'create'
                     },
                     {
-                        label: 'Update',
+                        label: 'Обновить',
                         name: 'update'
                     },
                     {
-                        label: 'Read',
+                        label: 'Читать',
                         name: 'read'
                     }
                 ],
@@ -110,20 +110,20 @@ class StripeTool_Tools implements INode {
                 additionalParams: true
             },
             {
-                label: 'Invoice Items',
+                label: 'Элементы счета',
                 name: 'invoiceItems',
                 type: 'multiOptions',
                 options: [
                     {
-                        label: 'Create',
+                        label: 'Создать',
                         name: 'create'
                     },
                     {
-                        label: 'Update',
+                        label: 'Обновить',
                         name: 'update'
                     },
                     {
-                        label: 'Read',
+                        label: 'Читать',
                         name: 'read'
                     }
                 ],
@@ -131,20 +131,20 @@ class StripeTool_Tools implements INode {
                 additionalParams: true
             },
             {
-                label: 'Invoices',
+                label: 'Счета',
                 name: 'invoices',
                 type: 'multiOptions',
                 options: [
                     {
-                        label: 'Create',
+                        label: 'Создать',
                         name: 'create'
                     },
                     {
-                        label: 'Update',
+                        label: 'Обновить',
                         name: 'update'
                     },
                     {
-                        label: 'Read',
+                        label: 'Читать',
                         name: 'read'
                     }
                 ],
@@ -152,20 +152,20 @@ class StripeTool_Tools implements INode {
                 additionalParams: true
             },
             {
-                label: 'Customers',
+                label: 'Клиенты',
                 name: 'customers',
                 type: 'multiOptions',
                 options: [
                     {
-                        label: 'Create',
+                        label: 'Создать',
                         name: 'create'
                     },
                     {
-                        label: 'Update',
+                        label: 'Обновить',
                         name: 'update'
                     },
                     {
-                        label: 'Read',
+                        label: 'Читать',
                         name: 'read'
                     }
                 ],

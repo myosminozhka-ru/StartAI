@@ -21,17 +21,17 @@ class ChainTool_Tools implements INode {
         this.type = 'ChainTool'
         this.icon = 'chaintool.svg'
         this.category = 'Tools'
-        this.description = 'Use a chain as allowed tool for agent'
+        this.description = 'Использовать цепочку как разрешенный инструмент для агента'
         this.baseClasses = [this.type, ...getBaseClasses(ChainTool)]
         this.inputs = [
             {
-                label: 'Chain Name',
+                label: 'Название цепочки',
                 name: 'name',
                 type: 'string',
                 placeholder: 'state-of-union-qa'
             },
             {
-                label: 'Chain Description',
+                label: 'Описание цепочки',
                 name: 'description',
                 type: 'string',
                 rows: 3,
@@ -39,13 +39,13 @@ class ChainTool_Tools implements INode {
                     'State of the Union QA - useful for when you need to ask questions about the most recent state of the union address.'
             },
             {
-                label: 'Return Direct',
+                label: 'Возврат напрямую',
                 name: 'returnDirect',
                 type: 'boolean',
                 optional: true
             },
             {
-                label: 'Base Chain',
+                label: 'Базовая цепочка',
                 name: 'baseChain',
                 type: 'BaseChain'
             }

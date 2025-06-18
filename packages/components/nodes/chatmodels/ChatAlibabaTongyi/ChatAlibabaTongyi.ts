@@ -23,7 +23,7 @@ class ChatAlibabaTongyi_ChatModels implements INode {
         this.type = 'ChatAlibabaTongyi'
         this.icon = 'alibaba-svgrepo-com.svg'
         this.category = 'Chat Models'
-        this.description = 'Wrapper around Alibaba Tongyi Chat Endpoints'
+        this.description = 'Обертка вокруг Alibaba Tongyi Chat Endpoints'
         this.baseClasses = [this.type, ...getBaseClasses(ChatAlibabaTongyi)]
         this.credential = {
             label: 'Подключите учетные данные',

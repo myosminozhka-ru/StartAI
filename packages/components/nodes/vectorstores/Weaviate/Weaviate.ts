@@ -31,38 +31,38 @@ class Weaviate_VectorStores implements INode {
         this.icon = 'weaviate.png'
         this.category = 'Vector Stores'
         this.description =
-            'Upsert embedded data and perform similarity or mmr search using Weaviate, a scalable open-source vector database'
+            'Загружайте встроенные данные и выполняйте поиск по сходству или mmr с помощью Weaviate, масштабируемой открытой векторной базы данных'
         this.baseClasses = [this.type, 'VectorStoreRetriever', 'BaseRetriever']
         this.credential = {
             label: 'Подключите учетные данные',
             name: 'credential',
             type: 'credential',
-            description: 'Only needed when using Weaviate cloud hosted',
+            description: 'Требуется только при использовании облачного размещения Weaviate',
             optional: true,
             credentialNames: ['weaviateApi']
         }
         this.inputs = [
             {
-                label: 'Document',
+                label: 'Документ',
                 name: 'document',
                 type: 'Document',
                 list: true,
                 optional: true
             },
             {
-                label: 'Embeddings',
+                label: 'Встраивания',
                 name: 'embeddings',
                 type: 'Embeddings'
             },
             {
-                label: 'Record Manager',
+                label: 'Менеджер записей',
                 name: 'recordManager',
                 type: 'RecordManager',
-                description: 'Keep track of the record to prevent duplication',
+                description: 'Отслеживайте запись для предотвращения дублирования',
                 optional: true
             },
             {
-                label: 'Weaviate Scheme',
+                label: 'Схема Weaviate',
                 name: 'weaviateScheme',
                 type: 'options',
                 default: 'https',
@@ -78,19 +78,19 @@ class Weaviate_VectorStores implements INode {
                 ]
             },
             {
-                label: 'Weaviate Host',
+                label: 'Хост Weaviate',
                 name: 'weaviateHost',
                 type: 'string',
                 placeholder: 'localhost:8080'
             },
             {
-                label: 'Weaviate Index',
+                label: 'Индекс Weaviate',
                 name: 'weaviateIndex',
                 type: 'string',
                 placeholder: 'Test'
             },
             {
-                label: 'Weaviate Text Key',
+                label: 'Weaviate Ключ текста',
                 name: 'weaviateTextKey',
                 type: 'string',
                 placeholder: 'text',
@@ -98,7 +98,7 @@ class Weaviate_VectorStores implements INode {
                 additionalParams: true
             },
             {
-                label: 'Weaviate Metadata Keys',
+                label: 'Weaviate Ключи метаданных',
                 name: 'weaviateMetadataKeys',
                 type: 'string',
                 rows: 4,
@@ -107,16 +107,16 @@ class Weaviate_VectorStores implements INode {
                 additionalParams: true
             },
             {
-                label: 'Top K',
+                label: 'Топ K',
                 name: 'topK',
-                description: 'Number of top results to fetch. Default to 4',
+                description: 'Количество лучших результатов для получения. По умолчанию 4',
                 placeholder: '4',
                 type: 'number',
                 additionalParams: true,
                 optional: true
             },
             {
-                label: 'Weaviate Search Filter',
+                label: 'Фильтр поиска Weaviate',
                 name: 'weaviateFilter',
                 type: 'json',
                 additionalParams: true,
@@ -125,10 +125,10 @@ class Weaviate_VectorStores implements INode {
         ]
         addMMRInputParams(this.inputs)
         this.inputs.push({
-            label: 'Alpha (for Hybrid Search)',
+            label: 'Альфа (для гибридного поиска)',
             name: 'alpha',
             description:
-                'Number between 0 and 1 that determines the weighting of keyword (BM25) portion of the hybrid search. A value of 1 is a pure vector search, while 0 is a pure keyword search.',
+                'Число от 0 до 1, которое определяет вес ключевой (BM25) части гибридного поиска. Значение 1 - это чистый векторный поиск, а 0 - чистый поиск по ключевым словам.',
             placeholder: '1',
             type: 'number',
             additionalParams: true,
@@ -136,12 +136,12 @@ class Weaviate_VectorStores implements INode {
         })
         this.outputs = [
             {
-                label: 'Weaviate Retriever',
+                label: 'Weaviate Извлекатель',
                 name: 'retriever',
                 baseClasses: this.baseClasses
             },
             {
-                label: 'Weaviate Vector Store',
+                label: 'Weaviate Векторное хранилище',
                 name: 'vectorStore',
                 baseClasses: [this.type, ...getBaseClasses(WeaviateStore)]
             }

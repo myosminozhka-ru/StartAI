@@ -27,7 +27,7 @@ class ChatflowTool_Tools implements INode {
         this.type = 'ChatflowTool'
         this.icon = 'chatflowTool.svg'
         this.category = 'Tools'
-        this.description = 'Use as a tool to execute another chatflow'
+        this.description = 'Использовать как инструмент для выполнения другого chatflow'
         this.baseClasses = [this.type, 'Tool']
         this.credential = {
             label: 'Подключите учетные данные',
@@ -38,7 +38,7 @@ class ChatflowTool_Tools implements INode {
         }
         this.inputs = [
             {
-                label: 'Select Chatflow',
+                label: 'Выберите Chatflow',
                 name: 'selectedChatflow',
                 type: 'asyncOptions',
                 loadMethod: 'listChatflows'
@@ -49,62 +49,62 @@ class ChatflowTool_Tools implements INode {
                 type: 'string'
             },
             {
-                label: 'Tool Description',
+                label: 'Описание инструмента',
                 name: 'description',
                 type: 'string',
-                description: 'Description of what the tool does. This is for LLM to determine when to use this tool.',
+                description: 'Описание того, что делает инструмент. Это для LLM, чтобы определить, когда использовать этот инструмент.',
                 rows: 3,
                 placeholder:
                     'State of the Union QA - useful for when you need to ask questions about the most recent state of the union address.'
             },
             {
-                label: 'Return Direct',
+                label: 'Возврат напрямую',
                 name: 'returnDirect',
                 type: 'boolean',
                 optional: true
             },
             {
-                label: 'Override Config',
+                label: 'Переопределить конфигурацию',
                 name: 'overrideConfig',
-                description: 'Override the config passed to the Chatflow.',
+                description: 'Переопределить конфигурацию, передаваемую в Chatflow.',
                 type: 'json',
                 optional: true,
                 additionalParams: true
             },
             {
-                label: 'Base URL',
+                label: 'Базовый URL',
                 name: 'baseURL',
                 type: 'string',
                 description:
-                    'Base URL to Flowise. By default, it is the URL of the incoming request. Useful when you need to execute the Chatflow through an alternative route.',
+                    'Базовый URL для Flowise. По умолчанию это URL входящего запроса. Полезно, когда вам нужно выполнить Chatflow через альтернативный маршрут.',
                 placeholder: 'http://localhost:3000',
                 optional: true,
                 additionalParams: true
             },
             {
-                label: 'Start new session per message',
+                label: 'Начать новую сессию для каждого сообщения',
                 name: 'startNewSession',
                 type: 'boolean',
                 description:
-                    'Whether to continue the session with the Chatflow tool or start a new one with each interaction. Useful for Chatflows with memory if you want to avoid it.',
+                    'Продолжать ли сессию с инструментом Chatflow или начинать новую с каждым взаимодействием. Полезно для Chatflows с памятью, если вы хотите избежать этого.',
                 default: false,
                 optional: true,
                 additionalParams: true
             },
             {
-                label: 'Use Question from Chat',
+                label: 'Использовать вопрос из чата',
                 name: 'useQuestionFromChat',
                 type: 'boolean',
                 description:
-                    'Whether to use the question from the chat as input to the chatflow. If turned on, this will override the custom input.',
+                    'Использовать ли вопрос из чата как ввод для chatflow. Если включено, это переопределит пользовательский ввод.',
                 optional: true,
                 additionalParams: true
             },
             {
-                label: 'Custom Input',
+                label: 'Пользовательский ввод',
                 name: 'customInput',
                 type: 'string',
-                description: 'Custom input to be passed to the chatflow. Leave empty to let LLM decides the input.',
+                description: 'Пользовательский ввод для передачи в chatflow. Оставьте пустым, чтобы LLM сам решил ввод.',
                 optional: true,
                 additionalParams: true
             }

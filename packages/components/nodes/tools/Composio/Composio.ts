@@ -45,7 +45,7 @@ class Composio_Tools implements INode {
         this.type = 'Composio'
         this.icon = 'composio.svg'
         this.category = 'Tools'
-        this.description = 'Toolset with over 250+ Apps for building AI-powered applications'
+        this.description = 'Набор инструментов с более чем 250+ приложениями для создания приложений на базе ИИ'
         this.baseClasses = [this.type, ...getBaseClasses(ComposioTool)]
         this.credential = {
             label: 'Подключите учетные данные',
@@ -55,27 +55,27 @@ class Composio_Tools implements INode {
         }
         this.inputs = [
             {
-                label: 'App Name',
+                label: 'Название приложения',
                 name: 'appName',
                 type: 'asyncOptions',
                 loadMethod: 'listApps',
-                description: 'Select the app to connect with',
+                description: 'Выберите приложение для подключения',
                 refresh: true
             },
             {
-                label: 'Auth Status',
+                label: 'Статус авторизации',
                 name: 'authStatus',
                 type: 'asyncOptions',
                 loadMethod: 'authStatus',
-                placeholder: 'Connection status will appear here',
+                placeholder: 'Статус подключения появится здесь',
                 refresh: true
             },
             {
-                label: 'Actions to Use',
+                label: 'Действия для использования',
                 name: 'actions',
                 type: 'asyncMultiOptions',
                 loadMethod: 'listActions',
-                description: 'Select the actions you want to use',
+                description: 'Выберите действия, которые хотите использовать',
                 refresh: true
             }
         ]

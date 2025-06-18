@@ -21,7 +21,7 @@ class WolframAlpha_Tools implements INode {
         this.type = 'WolframAlpha'
         this.icon = 'wolframalpha.png'
         this.category = 'Tools'
-        this.description = 'Wrapper around WolframAlpha - a powerful computational knowledge engine'
+        this.description = 'Обертка вокруг WolframAlpha - мощный вычислительный движок знаний'
         this.inputs = []
         this.credential = {
             label: 'Подключите учетные данные',

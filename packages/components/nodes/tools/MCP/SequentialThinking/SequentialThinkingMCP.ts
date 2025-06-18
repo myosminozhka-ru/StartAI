@@ -23,11 +23,11 @@ class SequentialThinking_MCP implements INode {
         this.icon = 'sequentialthinking.svg'
         this.category = 'Tools (MCP)'
         this.description =
-            'MCP server that provides a tool for dynamic and reflective problem-solving through a structured thinking process'
+            'MCP сервер, который предоставляет инструмент для динамического и рефлексивного решения проблем через структурированный мыслительный процесс'
         this.documentation = 'https://github.com/modelcontextprotocol/servers/tree/main/src/sequentialthinking'
         this.inputs = [
             {
-                label: 'Available Actions',
+                label: 'Доступные действия',
                 name: 'mcpActions',
                 type: 'asyncMultiOptions',
                 loadMethod: 'listActions',

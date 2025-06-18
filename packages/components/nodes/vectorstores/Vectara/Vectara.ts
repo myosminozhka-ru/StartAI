@@ -34,7 +34,8 @@ class Vectara_VectorStores implements INode {
         this.type = 'Vectara'
         this.icon = 'vectara.png'
         this.category = 'Vector Stores'
-        this.description = 'Upsert embedded data and perform similarity search upon query using Vectara, a LLM-powered search-as-a-service'
+        this.description =
+            'Загружайте встроенные данные и выполняйте поиск по сходству при запросе с помощью Vectara, поисковой службы на базе LLM'
         this.baseClasses = [this.type, 'VectorStoreRetriever', 'BaseRetriever']
         this.credential = {
             label: 'Подключите учетные данные',
@@ -44,62 +45,62 @@ class Vectara_VectorStores implements INode {
         }
         this.inputs = [
             {
-                label: 'Document',
+                label: 'Документ',
                 name: 'document',
                 type: 'Document',
                 list: true,
                 optional: true
             },
             {
-                label: 'File',
+                label: 'Файл',
                 name: 'file',
                 description:
-                    'File to upload to Vectara. Supported file types: https://docs.vectara.com/docs/api-reference/indexing-apis/file-upload/file-upload-filetypes',
+                    'Файл для загрузки в Vectara. Поддерживаемые типы файлов: https://docs.vectara.com/docs/api-reference/indexing-apis/file-upload/file-upload-filetypes',
                 type: 'file',
                 optional: true
             },
             {
-                label: 'Metadata Filter',
+                label: 'Фильтр метаданных',
                 name: 'filter',
                 description:
-                    'Filter to apply to Vectara metadata. Refer to the <a target="_blank" href="https://docs.flowiseai.com/vector-stores/vectara">documentation</a> on how to use Vectara filters with Flowise.',
+                    'Фильтр для применения к метаданным Vectara. См. <a target="_blank" href="https://docs.flowiseai.com/vector-stores/vectara">документацию</a> о том, как использовать фильтры Vectara с Flowise.',
                 type: 'string',
                 additionalParams: true,
                 optional: true
             },
             {
-                label: 'Sentences Before',
+                label: 'Предложения до',
                 name: 'sentencesBefore',
-                description: 'Number of sentences to fetch before the matched sentence. Defaults to 2.',
+                description: 'Количество предложений для получения перед совпадающим предложением. По умолчанию 2.',
                 type: 'number',
                 default: 2,
                 additionalParams: true,
                 optional: true
             },
             {
-                label: 'Sentences After',
+                label: 'Предложения после',
                 name: 'sentencesAfter',
-                description: 'Number of sentences to fetch after the matched sentence. Defaults to 2.',
+                description: 'Количество предложений для получения после совпадающего предложения. По умолчанию 2.',
                 type: 'number',
                 default: 2,
                 additionalParams: true,
                 optional: true
             },
             {
-                label: 'Lambda',
+                label: 'Лямбда',
                 name: 'lambda',
                 description:
-                    'Enable hybrid search to improve retrieval accuracy by adjusting the balance (from 0 to 1) between neural search and keyword-based search factors.' +
-                    'A value of 0.0 means that only neural search is used, while a value of 1.0 means that only keyword-based search is used. Defaults to 0.0 (neural only).',
+                    'Включите гибридный поиск для улучшения точности извлечения, регулируя баланс (от 0 до 1) между нейронным поиском и факторами поиска на основе ключевых слов.' +
+                    'Значение 0.0 означает, что используется только нейронный поиск, а значение 1.0 означает, что используется только поиск на основе ключевых слов. По умолчанию 0.0 (только нейронный).',
                 default: 0.0,
                 type: 'number',
                 additionalParams: true,
                 optional: true
             },
             {
-                label: 'Top K',
+                label: 'Топ K',
                 name: 'topK',
-                description: 'Number of top results to fetch. Defaults to 5',
+                description: 'Количество лучших результатов для получения. По умолчанию 5',
                 placeholder: '5',
                 type: 'number',
                 additionalParams: true,
@@ -108,20 +109,20 @@ class Vectara_VectorStores implements INode {
             {
                 label: 'MMR K',
                 name: 'mmrK',
-                description: 'Number of top results to fetch for MMR. Defaults to 50',
+                description: 'Количество лучших результатов для получения для MMR. По умолчанию 50',
                 placeholder: '50',
                 type: 'number',
                 additionalParams: true,
                 optional: true
             },
             {
-                label: 'MMR diversity bias',
+                label: 'MMR смещение разнообразия',
                 name: 'mmrDiversityBias',
                 step: 0.1,
                 description:
-                    'The diversity bias to use for MMR. This is a value between 0.0 and 1.0' +
-                    'Values closer to 1.0 optimize for the most diverse results.' +
-                    'Defaults to 0 (MMR disabled)',
+                    'Смещение разнообразия для использования в MMR. Это значение от 0.0 до 1.0' +
+                    'Значения ближе к 1.0 оптимизируют для наиболее разнообразных результатов.' +
+                    'По умолчанию 0 (MMR отключен)',
                 placeholder: '0.0',
                 type: 'number',
                 additionalParams: true,
@@ -130,12 +131,12 @@ class Vectara_VectorStores implements INode {
         ]
         this.outputs = [
             {
-                label: 'Vectara Retriever',
+                label: 'Vectara Извлекатель',
                 name: 'retriever',
                 baseClasses: this.baseClasses
             },
             {
-                label: 'Vectara Vector Store',
+                label: 'Vectara Векторное хранилище',
                 name: 'vectorStore',
                 baseClasses: [this.type, ...getBaseClasses(VectaraStore)]
             }

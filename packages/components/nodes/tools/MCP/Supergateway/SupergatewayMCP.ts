@@ -23,20 +23,20 @@ class Supergateway_MCP implements INode {
         this.type = 'Supergateway MCP Tool'
         this.icon = 'supermachine-logo.png'
         this.category = 'Tools (MCP)'
-        this.description = 'Runs MCP stdio-based servers over SSE (Server-Sent Events) or WebSockets (WS)'
+        this.description = 'Запускает MCP stdio-серверы через SSE (Server-Sent Events) или WebSockets (WS)'
         this.documentation = 'https://github.com/supercorp-ai/supergateway'
         this.inputs = [
             {
-                label: 'Arguments',
+                label: 'Аргументы',
                 name: 'arguments',
                 type: 'string',
                 rows: 4,
                 placeholder: '--sse "https://mcp-server-ab71a6b2-cd55-49d0-adba-562bc85956e3.supermachine.app"',
                 description:
-                    'Arguments to pass to the supergateway server. Refer to the <a href="https://github.com/supercorp-ai/supergateway/blob/main/README.md" target="_blank">documentation</a> for more information.'
+                    'Аргументы для передачи в supergateway сервер. См. <a href="https://github.com/supercorp-ai/supergateway/blob/main/README.md" target="_blank">документацию</a> для получения дополнительной информации.'
             },
             {
-                label: 'Available Actions',
+                label: 'Доступные действия',
                 name: 'mcpActions',
                 type: 'asyncMultiOptions',
                 loadMethod: 'listActions',

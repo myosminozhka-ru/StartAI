@@ -14,33 +14,33 @@ class SetVariable_Utilities implements INode {
     outputs: INodeOutputsValue[]
 
     constructor() {
-        this.label = 'Set Variable'
+        this.label = 'Установить переменную'
         this.name = 'setVariable'
         this.version = 2.1
         this.type = 'SetVariable'
         this.icon = 'setvar.svg'
         this.category = 'Utilities'
-        this.description = `Set variable which can be retrieved at a later stage. Variable is only available during runtime.`
+        this.description = `Установить переменную, которую можно получить на более позднем этапе. Переменная доступна только во время выполнения.`
         this.tags = ['Utilities']
         this.baseClasses = [this.type, 'Utilities']
         this.inputs = [
             {
-                label: 'Input',
+                label: 'Входные данные',
                 name: 'input',
                 type: 'string | number | boolean | json | array',
                 optional: true,
                 list: true
             },
             {
-                label: 'Variable Name',
+                label: 'Имя переменной',
                 name: 'variableName',
                 type: 'string',
                 placeholder: 'var1'
             },
             {
-                label: 'Show Output',
+                label: 'Показать вывод',
                 name: 'showOutput',
-                description: 'Show the output result in the Prediction API response',
+                description: 'Показать результат вывода в ответе API Prediction',
                 type: 'boolean',
                 optional: true,
                 additionalParams: true
@@ -48,7 +48,7 @@ class SetVariable_Utilities implements INode {
         ]
         this.outputs = [
             {
-                label: 'Output',
+                label: 'Вывод',
                 name: 'output',
                 baseClasses: ['string', 'number', 'boolean', 'json', 'array']
             }

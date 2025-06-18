@@ -21,11 +21,11 @@ class QueryEngine_Tools implements INode {
         this.icon = 'queryEngineTool.svg'
         this.category = 'Tools'
         this.tags = ['LlamaIndex']
-        this.description = 'Tool used to invoke query engine'
+        this.description = 'Инструмент, используемый для вызова query engine'
         this.baseClasses = [this.type, 'Tool_LlamaIndex']
         this.inputs = [
             {
-                label: 'Base QueryEngine',
+                label: 'Базовый QueryEngine',
                 name: 'baseQueryEngine',
                 type: 'BaseQueryEngine'
             },
@@ -36,7 +36,7 @@ class QueryEngine_Tools implements INode {
                 description: 'Название инструмента должно быть написано строчными буквами с подчеркиванием. Например: my_tool'
             },
             {
-                label: 'Tool Description',
+                label: 'Описание инструмента',
                 name: 'toolDesc',
                 type: 'string',
                 rows: 4

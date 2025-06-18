@@ -24,28 +24,29 @@ class ExaSearch_Tools implements INode {
         this.type = 'ExaSearch'
         this.icon = 'exa.svg'
         this.category = 'Tools'
-        this.description = 'Wrapper around Exa Search API - search engine fully designed for use by LLMs'
+        this.description = 'Обертка вокруг Exa Search API - поисковая система, полностью разработанная для использования LLM'
         this.inputs = [
             {
-                label: 'Tool Description',
+                label: 'Описание инструмента',
                 name: 'description',
                 type: 'string',
-                description: 'Description of what the tool does. This is for LLM to determine when to use this tool.',
+                description: 'Описание того, что делает инструмент. Это для LLM, чтобы определить, когда использовать этот инструмент.',
                 rows: 4,
                 additionalParams: true,
                 default: DESC
             },
             {
-                label: 'Num of Results',
+                label: 'Количество результатов',
                 name: 'numResults',
                 type: 'number',
                 optional: true,
                 step: 1,
                 additionalParams: true,
-                description: 'Number of search results to return. Default 10. Max 10 for basic plans. Up to thousands for custom plans.'
+                description:
+                    'Количество результатов поиска для возврата. По умолчанию 10. Максимум 10 для базовых планов. До тысяч для пользовательских планов.'
             },
             {
-                label: 'Search Type',
+                label: 'Тип поиска',
                 name: 'type',
                 type: 'options',
                 options: [
@@ -67,19 +68,19 @@ class ExaSearch_Tools implements INode {
                 additionalParams: true
             },
             {
-                label: 'Use Auto Prompt',
+                label: 'Использовать авто-промпт',
                 name: 'useAutoprompt',
                 type: 'boolean',
                 optional: true,
                 additionalParams: true,
-                description: 'If true, your query will be converted to a Exa query. Default false.'
+                description: 'Если true, ваш запрос будет преобразован в Exa запрос. По умолчанию false.'
             },
             {
-                label: 'Category (Beta)',
+                label: 'Категория (Бета)',
                 name: 'category',
                 type: 'options',
                 description:
-                    'A data category to focus on, with higher comprehensivity and data cleanliness. Categories right now include company, research paper, news, github, tweet, movie, song, personal site, and pdf',
+                    'Категория данных для фокусировки, с более высокой полнотой и чистотой данных. Категории сейчас включают company, research paper, news, github, tweet, movie, song, personal site, и pdf',
                 options: [
                     {
                         label: 'company',
@@ -130,62 +131,62 @@ class ExaSearch_Tools implements INode {
                 additionalParams: true
             },
             {
-                label: 'Include Domains',
+                label: 'Включить домены',
                 name: 'includeDomains',
                 type: 'string',
                 rows: 4,
                 optional: true,
                 additionalParams: true,
                 description:
-                    'List of domains to include in the search, separated by comma. If specified, results will only come from these domains.'
+                    'Список доменов для включения в поиск, разделенных запятыми. Если указано, результаты будут только с этих доменов.'
             },
             {
-                label: 'Exclude Domains',
+                label: 'Исключить домены',
                 name: 'excludeDomains',
                 type: 'string',
                 rows: 4,
                 optional: true,
                 additionalParams: true,
                 description:
-                    'List of domains to exclude in the search, separated by comma. If specified, results will not include any from these domains.'
+                    'Список доменов для исключения из поиска, разделенных запятыми. Если указано, результаты не будут включать ни одного из этих доменов.'
             },
             {
-                label: 'Start Crawl Date',
+                label: 'Дата начала краулинга',
                 name: 'startCrawlDate',
                 type: 'string',
                 optional: true,
                 additionalParams: true,
                 placeholder: '2023-01-01T00:00:00.000Z',
                 description:
-                    'Crawl date refers to the date that Exa discovered a link. Results will include links that were crawled after this date. Must be specified in ISO 8601 format.'
+                    'Дата краулинга относится к дате, когда Exa обнаружил ссылку. Результаты будут включать ссылки, которые были просканированы после этой даты. Должно быть указано в формате ISO 8601.'
             },
             {
-                label: 'End Crawl Date',
+                label: 'Дата окончания краулинга',
                 name: 'endCrawlDate',
                 type: 'string',
                 optional: true,
                 additionalParams: true,
                 placeholder: '2023-12-31T00:00:00.000Z',
                 description:
-                    'Crawl date refers to the date that Exa discovered a link. Results will include links that were crawled before this date. Must be specified in ISO 8601 format.'
+                    'Дата краулинга относится к дате, когда Exa обнаружил ссылку. Результаты будут включать ссылки, которые были просканированы до этой даты. Должно быть указано в формате ISO 8601.'
             },
             {
-                label: 'Start Published Date',
+                label: 'Дата начала публикации',
                 name: 'startPublishedDate',
                 type: 'string',
                 optional: true,
                 additionalParams: true,
                 placeholder: '2023-01-01T00:00:00.000Z',
-                description: 'Only links with a published date after this will be returned. Must be specified in ISO 8601 format.'
+                description: 'Только ссылки с датой публикации после этой будут возвращены. Должно быть указано в формате ISO 8601.'
             },
             {
-                label: 'End Published Date',
+                label: 'Дата окончания публикации',
                 name: 'endPublishedDate',
                 type: 'string',
                 optional: true,
                 additionalParams: true,
                 placeholder: '2023-12-31T00:00:00.000Z',
-                description: 'Only links with a published date before this will be returned. Must be specified in ISO 8601 format.'
+                description: 'Только ссылки с датой публикации до этой будут возвращены. Должно быть указано в формате ISO 8601.'
             }
         ]
         this.credential = {

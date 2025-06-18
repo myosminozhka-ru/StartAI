@@ -27,7 +27,7 @@ class OpenSearch_VectorStores implements INode {
         this.type = 'OpenSearch'
         this.icon = 'opensearch.svg'
         this.category = 'Vector Stores'
-        this.description = `Upsert embedded data and perform similarity search upon query using OpenSearch, an open-source, all-in-one vector database`
+        this.description = `Загружайте встроенные данные и выполняйте поиск по сходству при запросе с помощью OpenSearch, открытой векторной базы данных "все в одном"`
         this.baseClasses = [this.type, 'VectorStoreRetriever', 'BaseRetriever']
         this.credential = {
             label: 'Подключите учетные данные',
@@ -37,26 +37,26 @@ class OpenSearch_VectorStores implements INode {
         }
         this.inputs = [
             {
-                label: 'Document',
+                label: 'Документ',
                 name: 'document',
                 type: 'Document',
                 list: true,
                 optional: true
             },
             {
-                label: 'Embeddings',
+                label: 'Встраивания',
                 name: 'embeddings',
                 type: 'Embeddings'
             },
             {
-                label: 'Index Name',
+                label: 'Имя индекса',
                 name: 'indexName',
                 type: 'string'
             },
             {
-                label: 'Top K',
+                label: 'Топ K',
                 name: 'topK',
-                description: 'Number of top results to fetch. Default to 4',
+                description: 'Количество лучших результатов для получения. По умолчанию 4',
                 placeholder: '4',
                 type: 'number',
                 additionalParams: true,
@@ -65,12 +65,12 @@ class OpenSearch_VectorStores implements INode {
         ]
         this.outputs = [
             {
-                label: 'OpenSearch Retriever',
+                label: 'OpenSearch Извлекатель',
                 name: 'retriever',
                 baseClasses: this.baseClasses
             },
             {
-                label: 'OpenSearch Vector Store',
+                label: 'OpenSearch Векторное хранилище',
                 name: 'vectorStore',
                 baseClasses: [this.type, ...getBaseClasses(OpenSearchVectorStore)]
             }

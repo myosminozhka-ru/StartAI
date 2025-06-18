@@ -14,17 +14,17 @@ class DocStore_VectorStores implements INode {
     outputs: INodeOutputsValue[]
 
     constructor() {
-        this.label = 'Document Store (Vector)'
+        this.label = 'Хранилище документов (Вектор)'
         this.name = 'documentStoreVS'
         this.version = 1.0
         this.type = 'DocumentStoreVS'
         this.icon = 'dstore.svg'
         this.category = 'Vector Stores'
-        this.description = `Search and retrieve documents from Document Store`
+        this.description = `Искать и извлекать документы из хранилища документов`
         this.baseClasses = [this.type]
         this.inputs = [
             {
-                label: 'Select Store',
+                label: 'Выбрать хранилище',
                 name: 'selectedStore',
                 type: 'asyncOptions',
                 loadMethod: 'listStores'

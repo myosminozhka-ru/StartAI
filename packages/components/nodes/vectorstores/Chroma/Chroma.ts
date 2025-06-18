@@ -28,38 +28,39 @@ class Chroma_VectorStores implements INode {
         this.type = 'Chroma'
         this.icon = 'chroma.svg'
         this.category = 'Vector Stores'
-        this.description = 'Upsert embedded data and perform similarity search upon query using Chroma, an open-source embedding database'
+        this.description =
+            'Вставить встроенные данные и выполнить поиск по сходству по запросу, используя Chroma, открытую базу данных вложений'
         this.baseClasses = [this.type, 'VectorStoreRetriever', 'BaseRetriever']
         this.credential = {
             label: 'Подключите учетные данные',
             name: 'credential',
             type: 'credential',
-            description: 'Only needed if you have chroma on cloud services with X-Api-key',
+            description: 'Нужно только если у вас есть chroma на облачных сервисах с X-Api-key',
             optional: true,
             credentialNames: ['chromaApi']
         }
         this.inputs = [
             {
-                label: 'Document',
+                label: 'Документ',
                 name: 'document',
                 type: 'Document',
                 list: true,
                 optional: true
             },
             {
-                label: 'Embeddings',
+                label: 'Вложения',
                 name: 'embeddings',
                 type: 'Embeddings'
             },
             {
-                label: 'Record Manager',
+                label: 'Менеджер записей',
                 name: 'recordManager',
                 type: 'RecordManager',
-                description: 'Keep track of the record to prevent duplication',
+                description: 'Отслеживать запись для предотвращения дублирования',
                 optional: true
             },
             {
-                label: 'Collection Name',
+                label: 'Имя коллекции',
                 name: 'collectionName',
                 type: 'string'
             },
@@ -77,9 +78,9 @@ class Chroma_VectorStores implements INode {
                 additionalParams: true
             },
             {
-                label: 'Top K',
+                label: 'Топ K',
                 name: 'topK',
-                description: 'Number of top results to fetch. Default to 4',
+                description: 'Количество лучших результатов для получения. По умолчанию 4',
                 placeholder: '4',
                 type: 'number',
                 additionalParams: true,

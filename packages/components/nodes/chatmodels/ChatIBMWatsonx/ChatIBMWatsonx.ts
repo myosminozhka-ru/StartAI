@@ -31,7 +31,7 @@ class ChatIBMWatsonx_ChatModels implements INode {
         this.type = 'ChatIBMWatsonx'
         this.icon = 'ibm.png'
         this.category = 'Chat Models'
-        this.description = 'Wrapper around IBM watsonx.ai foundation models'
+        this.description = 'Обертка вокруг IBM watsonx.ai foundation models'
         this.baseClasses = [this.type, ...getBaseClasses(ChatWatsonx)]
         this.credential = {
             label: 'Подключите учетные данные',

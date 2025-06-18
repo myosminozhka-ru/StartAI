@@ -21,7 +21,7 @@ class GoogleCustomSearchAPI_Tools implements INode {
         this.type = 'GoogleCustomSearchAPI'
         this.icon = 'google.svg'
         this.category = 'Tools'
-        this.description = 'Wrapper around Google Custom Search API - a real-time API to access Google search results'
+        this.description = 'Обертка вокруг Google Custom Search API - API в реальном времени для доступа к результатам поиска Google'
         this.inputs = []
         this.credential = {
             label: 'Подключите учетные данные',

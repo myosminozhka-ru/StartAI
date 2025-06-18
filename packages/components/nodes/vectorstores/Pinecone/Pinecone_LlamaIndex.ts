@@ -39,7 +39,7 @@ class PineconeLlamaIndex_VectorStores implements INode {
         this.type = 'Pinecone'
         this.icon = 'pinecone.svg'
         this.category = 'Vector Stores'
-        this.description = `Upsert embedded data and perform similarity search upon query using Pinecone, a leading fully managed hosted vector database`
+        this.description = `Загружайте встроенные данные и выполняйте поиск по сходству при запросе с помощью Pinecone, ведущей полностью управляемой размещенной векторной базы данных`
         this.baseClasses = [this.type, 'VectorIndexRetriever']
         this.tags = ['LlamaIndex']
         this.credential = {
@@ -50,29 +50,29 @@ class PineconeLlamaIndex_VectorStores implements INode {
         }
         this.inputs = [
             {
-                label: 'Document',
+                label: 'Документ',
                 name: 'document',
                 type: 'Document',
                 list: true,
                 optional: true
             },
             {
-                label: 'Chat Model',
+                label: 'Чат модель',
                 name: 'model',
                 type: 'BaseChatModel_LlamaIndex'
             },
             {
-                label: 'Embeddings',
+                label: 'Встраивания',
                 name: 'embeddings',
                 type: 'BaseEmbedding_LlamaIndex'
             },
             {
-                label: 'Pinecone Index',
+                label: 'Pinecone Индекс',
                 name: 'pineconeIndex',
                 type: 'string'
             },
             {
-                label: 'Pinecone Namespace',
+                label: 'Pinecone Пространство имен',
                 name: 'pineconeNamespace',
                 type: 'string',
                 placeholder: 'my-first-namespace',
@@ -80,16 +80,16 @@ class PineconeLlamaIndex_VectorStores implements INode {
                 optional: true
             },
             {
-                label: 'Pinecone Metadata Filter',
+                label: 'Pinecone Фильтр метаданных',
                 name: 'pineconeMetadataFilter',
                 type: 'json',
                 optional: true,
                 additionalParams: true
             },
             {
-                label: 'Top K',
+                label: 'Топ K',
                 name: 'topK',
-                description: 'Number of top results to fetch. Default to 4',
+                description: 'Количество лучших результатов для получения. По умолчанию 4',
                 placeholder: '4',
                 type: 'number',
                 additionalParams: true,
@@ -98,12 +98,12 @@ class PineconeLlamaIndex_VectorStores implements INode {
         ]
         this.outputs = [
             {
-                label: 'Pinecone Retriever',
+                label: 'Pinecone Извлекатель',
                 name: 'retriever',
                 baseClasses: this.baseClasses
             },
             {
-                label: 'Pinecone Vector Store Index',
+                label: 'Pinecone Индекс векторного хранилища',
                 name: 'vectorStore',
                 baseClasses: [this.type, 'VectorStoreIndex']
             }

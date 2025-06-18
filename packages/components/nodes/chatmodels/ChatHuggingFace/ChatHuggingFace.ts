@@ -22,7 +22,7 @@ class ChatHuggingFace_ChatModels implements INode {
         this.type = 'ChatHuggingFace'
         this.icon = 'HuggingFace.svg'
         this.category = 'Chat Models'
-        this.description = 'Wrapper around HuggingFace large language models'
+        this.description = 'Обертка вокруг HuggingFace больших языковых моделей'
         this.baseClasses = [this.type, 'BaseChatModel', ...getBaseClasses(HuggingFaceInference)]
         this.credential = {
             label: 'Подключите учетные данные',

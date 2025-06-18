@@ -25,38 +25,38 @@ class OpenAPIToolkit_Tools implements INode {
         this.type = 'OpenAPIToolkit'
         this.icon = 'openapi.svg'
         this.category = 'Tools'
-        this.description = 'Load OpenAPI specification, and converts each API endpoint to a tool'
+        this.description = 'Загрузить спецификацию OpenAPI и преобразовать каждый API endpoint в инструмент'
         this.inputs = [
             {
-                label: 'YAML File',
+                label: 'YAML файл',
                 name: 'yamlFile',
                 type: 'file',
                 fileType: '.yaml'
             },
             {
-                label: 'Return Direct',
+                label: 'Возврат напрямую',
                 name: 'returnDirect',
-                description: 'Return the output of the tool directly to the user',
+                description: 'Возвратить результат инструмента напрямую пользователю',
                 type: 'boolean',
                 optional: true
             },
             {
-                label: 'Headers',
+                label: 'Заголовки',
                 name: 'headers',
                 type: 'json',
-                description: 'Request headers to be sent with the API request. For example, {"Authorization": "Bearer token"}',
+                description: 'Заголовки запроса для отправки с API запросом. Например, {"Authorization": "Bearer token"}',
                 additionalParams: true,
                 optional: true
             },
             {
-                label: 'Remove null parameters',
+                label: 'Удалить null параметры',
                 name: 'removeNulls',
                 type: 'boolean',
                 optional: true,
-                description: 'Remove all keys with null values from the parsed arguments'
+                description: 'Удалить все ключи с null значениями из разобранных аргументов'
             },
             {
-                label: 'Custom Code',
+                label: 'Пользовательский код',
                 name: 'customCode',
                 type: 'code',
                 hint: {
@@ -64,7 +64,7 @@ class OpenAPIToolkit_Tools implements INode {
                     value: howToUseCode
                 },
                 codeExample: defaultCode,
-                description: `Custom code to return the output of the tool. The code should be a function that takes in the input and returns a string`,
+                description: `Пользовательский код для возврата результата инструмента. Код должен быть функцией, которая принимает ввод и возвращает строку`,
                 hideCodeExecute: true,
                 default: defaultCode,
                 additionalParams: true

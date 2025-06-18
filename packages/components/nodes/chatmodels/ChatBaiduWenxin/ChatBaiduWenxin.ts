@@ -22,7 +22,7 @@ class ChatBaiduWenxin_ChatModels implements INode {
         this.type = 'ChatBaiduWenxin'
         this.icon = 'baiduwenxin.svg'
         this.category = 'Chat Models'
-        this.description = 'Wrapper around BaiduWenxin Chat Endpoints'
+        this.description = 'Обертка вокруг BaiduWenxin Chat Endpoints'
         this.baseClasses = [this.type, ...getBaseClasses(ChatBaiduQianfan)]
         this.credential = {
             label: 'Подключите учетные данные',

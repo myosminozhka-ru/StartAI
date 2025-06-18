@@ -52,7 +52,7 @@ class AzureChatOpenAI_LlamaIndex_ChatModels implements INode {
         this.type = 'AzureChatOpenAI'
         this.icon = 'Azure.svg'
         this.category = 'Chat Models'
-        this.description = 'Wrapper around Azure OpenAI Chat LLM specific for LlamaIndex'
+        this.description = 'Обертка вокруг Azure OpenAI Chat LLM специально для LlamaIndex'
         this.baseClasses = [this.type, 'BaseChatModel_LlamaIndex', ...getBaseClasses(OpenAI)]
         this.tags = ['LlamaIndex']
         this.credential = {

@@ -22,125 +22,125 @@ class TavilyAPI_Tools implements INode {
         this.type = 'TavilyAPI'
         this.icon = 'tavily.svg'
         this.category = 'Tools'
-        this.description = 'Wrapper around TavilyAPI - A specialized search engine designed for LLMs and AI agents'
+        this.description = 'Обертка вокруг TavilyAPI - Специализированная поисковая система, разработанная для LLM и AI агентов'
         this.inputs = [
             {
-                label: 'Topic',
+                label: 'Тема',
                 name: 'topic',
                 type: 'options',
                 options: [
-                    { label: 'General', name: 'general' },
-                    { label: 'News', name: 'news' }
+                    { label: 'Общий', name: 'general' },
+                    { label: 'Новости', name: 'news' }
                 ],
                 default: 'general',
-                description: 'The category of the search. News for real-time updates, general for broader searches',
+                description: 'Категория поиска. Новости для обновлений в реальном времени, общий для более широких поисков',
                 additionalParams: true,
                 optional: true
             },
             {
-                label: 'Search Depth',
+                label: 'Глубина поиска',
                 name: 'searchDepth',
                 type: 'options',
                 options: [
-                    { label: 'Basic', name: 'basic' },
-                    { label: 'Advanced', name: 'advanced' }
+                    { label: 'Базовый', name: 'basic' },
+                    { label: 'Расширенный', name: 'advanced' }
                 ],
                 default: 'basic',
-                description: 'The depth of the search. Advanced costs 2 API Credits, basic costs 1',
+                description: 'Глубина поиска. Расширенный стоит 2 API кредита, базовый стоит 1',
                 additionalParams: true,
                 optional: true
             },
             {
-                label: 'Chunks Per Source',
+                label: 'Фрагменты на источник',
                 name: 'chunksPerSource',
                 type: 'number',
                 default: 3,
-                description: 'Number of content chunks per source (1-3). Only for advanced search',
+                description: 'Количество фрагментов контента на источник (1-3). Только для расширенного поиска',
                 additionalParams: true,
                 optional: true
             },
             {
-                label: 'Max Results',
+                label: 'Максимум результатов',
                 name: 'maxResults',
                 type: 'number',
                 default: 5,
                 additionalParams: true,
-                description: 'Maximum number of search results (0-20)',
+                description: 'Максимальное количество результатов поиска (0-20)',
                 optional: true
             },
             {
-                label: 'Time Range',
+                label: 'Временной диапазон',
                 name: 'timeRange',
                 type: 'options',
                 options: [
-                    { label: 'Day', name: 'day' },
-                    { label: 'Week', name: 'week' },
-                    { label: 'Month', name: 'month' },
-                    { label: 'Year', name: 'year' }
+                    { label: 'День', name: 'day' },
+                    { label: 'Неделя', name: 'week' },
+                    { label: 'Месяц', name: 'month' },
+                    { label: 'Год', name: 'year' }
                 ],
                 optional: true,
                 additionalParams: true,
-                description: 'Time range to filter results'
+                description: 'Временной диапазон для фильтрации результатов'
             },
             {
-                label: 'Days',
+                label: 'Дни',
                 name: 'days',
                 type: 'number',
                 default: 7,
                 additionalParams: true,
-                description: 'Number of days back from current date (only for news topic)',
+                description: 'Количество дней назад от текущей даты (только для темы новостей)',
                 optional: true
             },
             {
-                label: 'Include Answer',
+                label: 'Включить ответ',
                 name: 'includeAnswer',
                 type: 'boolean',
                 default: false,
-                description: 'Include an LLM-generated answer to the query',
+                description: 'Включить ответ, сгенерированный LLM на запрос',
                 additionalParams: true,
                 optional: true
             },
             {
-                label: 'Include Raw Content',
+                label: 'Включить необработанный контент',
                 name: 'includeRawContent',
                 type: 'boolean',
                 default: false,
-                description: 'Include cleaned and parsed HTML content of each result',
+                description: 'Включить очищенный и разобранный HTML контент каждого результата',
                 additionalParams: true,
                 optional: true
             },
             {
-                label: 'Include Images',
+                label: 'Включить изображения',
                 name: 'includeImages',
                 type: 'boolean',
                 default: false,
-                description: 'Include image search results',
+                description: 'Включить результаты поиска изображений',
                 additionalParams: true,
                 optional: true
             },
             {
-                label: 'Include Image Descriptions',
+                label: 'Включить описания изображений',
                 name: 'includeImageDescriptions',
                 type: 'boolean',
                 default: false,
-                description: 'Include descriptive text for each image',
+                description: 'Включить описательный текст для каждого изображения',
                 additionalParams: true,
                 optional: true
             },
             {
-                label: 'Include Domains',
+                label: 'Включить домены',
                 name: 'includeDomains',
                 type: 'string',
                 optional: true,
-                description: 'Comma-separated list of domains to include in results',
+                description: 'Разделенный запятыми список доменов для включения в результаты',
                 additionalParams: true
             },
             {
-                label: 'Exclude Domains',
+                label: 'Исключить домены',
                 name: 'excludeDomains',
                 type: 'string',
                 optional: true,
-                description: 'Comma-separated list of domains to exclude from results',
+                description: 'Разделенный запятыми список доменов для исключения из результатов',
                 additionalParams: true
             }
         ]

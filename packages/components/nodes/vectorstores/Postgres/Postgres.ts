@@ -53,7 +53,7 @@ class Postgres_VectorStores implements INode {
         this.type = 'Postgres'
         this.icon = 'postgres.svg'
         this.category = 'Vector Stores'
-        this.description = 'Upsert embedded data and perform similarity search upon query using pgvector on Postgres'
+        this.description = 'Загружайте встроенные данные и выполняйте поиск по сходству при запросе с помощью pgvector на Postgres'
         this.baseClasses = [this.type, 'VectorStoreRetriever', 'BaseRetriever']
         this.credential = {
             label: 'Подключите учетные данные',
@@ -64,40 +64,40 @@ class Postgres_VectorStores implements INode {
         }
         this.inputs = [
             {
-                label: 'Document',
+                label: 'Документ',
                 name: 'document',
                 type: 'Document',
                 list: true,
                 optional: true
             },
             {
-                label: 'Embeddings',
+                label: 'Встраивания',
                 name: 'embeddings',
                 type: 'Embeddings'
             },
             {
-                label: 'Record Manager',
+                label: 'Менеджер записей',
                 name: 'recordManager',
                 type: 'RecordManager',
-                description: 'Keep track of the record to prevent duplication',
+                description: 'Отслеживайте запись для предотвращения дублирования',
                 optional: true
             },
             {
-                label: 'Host',
+                label: 'Хост',
                 name: 'host',
                 type: 'string',
                 placeholder: getHost(),
                 optional: !!getHost()
             },
             {
-                label: 'Database',
+                label: 'База данных',
                 name: 'database',
                 type: 'string',
                 placeholder: getDatabase(),
                 optional: !!getDatabase()
             },
             {
-                label: 'Port',
+                label: 'Порт',
                 name: 'port',
                 type: 'number',
                 placeholder: getPort(),
@@ -106,54 +106,35 @@ class Postgres_VectorStores implements INode {
             {
                 label: 'SSL',
                 name: 'ssl',
-                description: 'Use SSL to connect to Postgres',
+                description: 'Использовать SSL для подключения к Postgres',
                 type: 'boolean',
                 additionalParams: true,
                 optional: true
             },
             {
-                label: 'Table Name',
+                label: 'Имя таблицы',
                 name: 'tableName',
                 type: 'string',
                 placeholder: getTableName(),
                 additionalParams: true,
                 optional: true
             },
-            /*{
-                label: 'Driver',
-                name: 'driver',
-                type: 'options',
-                default: 'typeorm',
-                description: 'Different option to connect to Postgres',
-                options: [
-                    {
-                        label: 'TypeORM',
-                        name: 'typeorm'
-                    },
-                    {
-                        label: 'PGVector',
-                        name: 'pgvector'
-                    }
-                ],
-                optional: true,
-                additionalParams: true
-            },*/
             {
-                label: 'Distance Strategy',
+                label: 'Стратегия расстояния',
                 name: 'distanceStrategy',
-                description: 'Strategy for calculating distances between vectors',
+                description: 'Стратегия для вычисления расстояний между векторами',
                 type: 'options',
                 options: [
                     {
-                        label: 'Cosine',
+                        label: 'Косинус',
                         name: 'cosine'
                     },
                     {
-                        label: 'Euclidean',
+                        label: 'Евклидово',
                         name: 'euclidean'
                     },
                     {
-                        label: 'Inner Product',
+                        label: 'Внутреннее произведение',
                         name: 'innerProduct'
                     }
                 ],
@@ -162,11 +143,11 @@ class Postgres_VectorStores implements INode {
                 optional: true
             },
             {
-                label: 'File Upload',
+                label: 'Загрузка файлов',
                 name: 'fileUpload',
-                description: 'Allow file upload on the chat',
+                description: 'Разрешить загрузку файлов в чате',
                 hint: {
-                    label: 'How to use',
+                    label: 'Как использовать',
                     value: howToUseFileUpload
                 },
                 type: 'boolean',
@@ -174,32 +155,33 @@ class Postgres_VectorStores implements INode {
                 optional: true
             },
             {
-                label: 'Additional Configuration',
+                label: 'Дополнительная конфигурация',
                 name: 'additionalConfig',
                 type: 'json',
                 additionalParams: true,
                 optional: true
             },
             {
-                label: 'Top K',
+                label: 'Топ K',
                 name: 'topK',
-                description: 'Number of top results to fetch. Default to 4',
+                description: 'Количество лучших результатов для получения. По умолчанию 4',
                 placeholder: '4',
                 type: 'number',
                 additionalParams: true,
                 optional: true
             },
             {
-                label: 'Postgres Metadata Filter',
+                label: 'Postgres Фильтр метаданных',
                 name: 'pgMetadataFilter',
                 type: 'json',
                 additionalParams: true,
                 optional: true
             },
             {
-                label: 'Content Column Name',
+                label: 'Имя столбца содержимого',
                 name: 'contentColumnName',
-                description: 'Column name to store the text content (PGVector Driver only, others use pageContent)',
+                description:
+                    'Имя столбца для хранения текстового содержимого (только для драйвера PGVector, другие используют pageContent)',
                 type: 'string',
                 placeholder: getContentColumnName(),
                 additionalParams: true,
@@ -208,12 +190,12 @@ class Postgres_VectorStores implements INode {
         ]
         this.outputs = [
             {
-                label: 'Postgres Retriever',
+                label: 'Postgres Извлекатель',
                 name: 'retriever',
                 baseClasses: this.baseClasses
             },
             {
-                label: 'Postgres Vector Store',
+                label: 'Postgres Векторное хранилище',
                 name: 'vectorStore',
                 baseClasses: [
                     this.type,

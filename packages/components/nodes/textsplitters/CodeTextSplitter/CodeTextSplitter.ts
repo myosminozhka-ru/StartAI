@@ -23,11 +23,11 @@ class CodeTextSplitter_TextSplitters implements INode {
         this.type = 'CodeTextSplitter'
         this.icon = 'codeTextSplitter.svg'
         this.category = 'Text Splitters'
-        this.description = `Split documents based on language-specific syntax`
+        this.description = `Разделение документов на основе синтаксиса, специфичного для языка программирования`
         this.baseClasses = [this.type, ...getBaseClasses(RecursiveCharacterTextSplitter)]
         this.inputs = [
             {
-                label: 'Language',
+                label: 'Язык',
                 name: 'language',
                 type: 'options',
                 options: [
@@ -98,18 +98,18 @@ class CodeTextSplitter_TextSplitters implements INode {
                 ]
             },
             {
-                label: 'Chunk Size',
+                label: 'Размер фрагмента',
                 name: 'chunkSize',
                 type: 'number',
-                description: 'Number of characters in each chunk. Default is 1000.',
+                description: 'Количество символов в каждом фрагменте. По умолчанию 1000.',
                 default: 1000,
                 optional: true
             },
             {
-                label: 'Chunk Overlap',
+                label: 'Перекрытие фрагментов',
                 name: 'chunkOverlap',
                 type: 'number',
-                description: 'Number of characters to overlap between chunks. Default is 200.',
+                description: 'Количество символов для перекрытия между фрагментами. По умолчанию 200.',
                 default: 200,
                 optional: true
             }

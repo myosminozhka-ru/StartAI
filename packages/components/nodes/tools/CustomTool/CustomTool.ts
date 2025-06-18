@@ -22,18 +22,18 @@ class CustomTool_Tools implements INode {
         this.type = 'CustomTool'
         this.icon = 'customtool.svg'
         this.category = 'Tools'
-        this.description = `Use custom tool you've created in Flowise within chatflow`
+        this.description = `Использовать пользовательский инструмент, который вы создали в Flowise, в chatflow`
         this.inputs = [
             {
-                label: 'Select Tool',
+                label: 'Выберите инструмент',
                 name: 'selectedTool',
                 type: 'asyncOptions',
                 loadMethod: 'listTools'
             },
             {
-                label: 'Return Direct',
+                label: 'Возврат напрямую',
                 name: 'returnDirect',
-                description: 'Return the output of the tool directly to the user',
+                description: 'Возвратить результат инструмента напрямую пользователю',
                 type: 'boolean',
                 optional: true
             },
@@ -44,19 +44,19 @@ class CustomTool_Tools implements INode {
                 hidden: true
             },
             {
-                label: 'Custom Tool Description',
+                label: 'Пользовательское описание инструмента',
                 name: 'customToolDesc',
                 type: 'string',
                 hidden: true
             },
             {
-                label: 'Custom Tool Schema',
+                label: 'Пользовательская схема инструмента',
                 name: 'customToolSchema',
                 type: 'string',
                 hidden: true
             },
             {
-                label: 'Custom Tool Func',
+                label: 'Пользовательская функция инструмента',
                 name: 'customToolFunc',
                 type: 'string',
                 hidden: true

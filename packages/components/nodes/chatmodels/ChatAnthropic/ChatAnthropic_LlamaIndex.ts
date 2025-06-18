@@ -23,7 +23,7 @@ class ChatAnthropic_LlamaIndex_ChatModels implements INode {
         this.type = 'ChatAnthropic'
         this.icon = 'Anthropic.svg'
         this.category = 'Chat Models'
-        this.description = 'Wrapper around ChatAnthropic LLM specific for LlamaIndex'
+        this.description = 'Обертка вокруг ChatAnthropic LLM специально для LlamaIndex'
         this.baseClasses = [this.type, 'BaseChatModel_LlamaIndex', ...getBaseClasses(Anthropic)]
         this.tags = ['LlamaIndex']
         this.credential = {

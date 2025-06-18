@@ -38,53 +38,53 @@ class Qdrant_VectorStores implements INode {
         this.icon = 'qdrant.png'
         this.category = 'Vector Stores'
         this.description =
-            'Upsert embedded data and perform similarity search upon query using Qdrant, a scalable open source vector database written in Rust'
+            'Загружайте встроенные данные и выполняйте поиск по сходству при запросе с помощью Qdrant, масштабируемой открытой векторной базы данных, написанной на Rust'
         this.baseClasses = [this.type, 'VectorStoreRetriever', 'BaseRetriever']
         this.credential = {
             label: 'Подключите учетные данные',
             name: 'credential',
             type: 'credential',
-            description: 'Only needed when using Qdrant cloud hosted',
+            description: 'Требуется только при использовании облачного размещения Qdrant',
             optional: true,
             credentialNames: ['qdrantApi']
         }
         this.inputs = [
             {
-                label: 'Document',
+                label: 'Документ',
                 name: 'document',
                 type: 'Document',
                 list: true,
                 optional: true
             },
             {
-                label: 'Embeddings',
+                label: 'Встраивания',
                 name: 'embeddings',
                 type: 'Embeddings'
             },
             {
-                label: 'Record Manager',
+                label: 'Менеджер записей',
                 name: 'recordManager',
                 type: 'RecordManager',
-                description: 'Keep track of the record to prevent duplication',
+                description: 'Отслеживайте запись для предотвращения дублирования',
                 optional: true
             },
             {
-                label: 'Qdrant Server URL',
+                label: 'URL сервера Qdrant',
                 name: 'qdrantServerUrl',
                 type: 'string',
                 placeholder: 'http://localhost:6333'
             },
             {
-                label: 'Qdrant Collection Name',
+                label: 'Имя коллекции Qdrant',
                 name: 'qdrantCollection',
                 type: 'string'
             },
             {
-                label: 'File Upload',
+                label: 'Загрузка файлов',
                 name: 'fileUpload',
-                description: 'Allow file upload on the chat',
+                description: 'Разрешить загрузку файлов в чате',
                 hint: {
-                    label: 'How to use',
+                    label: 'Как использовать',
                     value: howToUseFileUpload
                 },
                 type: 'boolean',
@@ -92,83 +92,83 @@ class Qdrant_VectorStores implements INode {
                 optional: true
             },
             {
-                label: 'Vector Dimension',
+                label: 'Размерность вектора',
                 name: 'qdrantVectorDimension',
                 type: 'number',
                 default: 1536,
                 additionalParams: true
             },
             {
-                label: 'Content Key',
+                label: 'Ключ содержимого',
                 name: 'contentPayloadKey',
-                description: 'The key for storing text. Default to `content`',
+                description: 'Ключ для хранения текста. По умолчанию `content`',
                 type: 'string',
                 default: 'content',
                 optional: true,
                 additionalParams: true
             },
             {
-                label: 'Metadata Key',
+                label: 'Ключ метаданных',
                 name: 'metadataPayloadKey',
-                description: 'The key for storing metadata. Default to `metadata`',
+                description: 'Ключ для хранения метаданных. По умолчанию `metadata`',
                 type: 'string',
                 default: 'metadata',
                 optional: true,
                 additionalParams: true
             },
             {
-                label: 'Upsert Batch Size',
+                label: 'Размер пакета загрузки',
                 name: 'batchSize',
                 type: 'number',
                 step: 1,
-                description: 'Upsert in batches of size N',
+                description: 'Загружать пакетами размером N',
                 additionalParams: true,
                 optional: true
             },
             {
-                label: 'Similarity',
+                label: 'Сходство',
                 name: 'qdrantSimilarity',
-                description: 'Similarity measure used in Qdrant.',
+                description: 'Мера сходства, используемая в Qdrant.',
                 type: 'options',
                 default: 'Cosine',
                 options: [
                     {
-                        label: 'Cosine',
+                        label: 'Косинус',
                         name: 'Cosine'
                     },
                     {
-                        label: 'Euclid',
+                        label: 'Евклидово',
                         name: 'Euclid'
                     },
                     {
-                        label: 'Dot',
+                        label: 'Точка',
                         name: 'Dot'
                     }
                 ],
                 additionalParams: true
             },
             {
-                label: 'Additional Collection Cofiguration',
+                label: 'Дополнительная конфигурация коллекции',
                 name: 'qdrantCollectionConfiguration',
                 description:
-                    'Refer to <a target="_blank" href="https://qdrant.tech/documentation/concepts/collections">collection docs</a> for more reference',
+                    'См. <a target="_blank" href="https://qdrant.tech/documentation/concepts/collections">документацию по коллекциям</a> для получения дополнительной информации',
                 type: 'json',
                 optional: true,
                 additionalParams: true
             },
             {
-                label: 'Top K',
+                label: 'Топ K',
                 name: 'topK',
-                description: 'Number of top results to fetch. Default to 4',
+                description: 'Количество лучших результатов для получения. По умолчанию 4',
                 placeholder: '4',
                 type: 'number',
                 additionalParams: true,
                 optional: true
             },
             {
-                label: 'Qdrant Search Filter',
+                label: 'Фильтр поиска Qdrant',
                 name: 'qdrantFilter',
-                description: 'Only return points which satisfy the conditions',
+                description: 'Возвращать только точки, которые удовлетворяют условиям',
                 type: 'json',
                 additionalParams: true,
                 optional: true
@@ -176,12 +176,12 @@ class Qdrant_VectorStores implements INode {
         ]
         this.outputs = [
             {
-                label: 'Qdrant Retriever',
+                label: 'Qdrant Извлекатель',
                 name: 'retriever',
                 baseClasses: this.baseClasses
             },
             {
-                label: 'Qdrant Vector Store',
+                label: 'Qdrant Векторное хранилище',
                 name: 'vectorStore',
                 baseClasses: [this.type, ...getBaseClasses(QdrantVectorStore)]
             }

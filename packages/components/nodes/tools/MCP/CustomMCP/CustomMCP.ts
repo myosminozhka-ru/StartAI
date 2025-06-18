@@ -49,11 +49,11 @@ class Custom_MCP implements INode {
         this.type = 'Custom MCP Tool'
         this.icon = 'customMCP.png'
         this.category = 'Tools (MCP)'
-        this.description = 'Custom MCP Config'
+        this.description = 'Пользовательская конфигурация MCP'
         this.documentation = 'https://github.com/modelcontextprotocol/servers/tree/main/src/brave-search'
         this.inputs = [
             {
-                label: 'MCP Server Config',
+                label: 'Конфигурация MCP сервера',
                 name: 'mcpServerConfig',
                 type: 'code',
                 hideCodeExecute: true,
@@ -64,7 +64,7 @@ class Custom_MCP implements INode {
                 placeholder: mcpServerConfig
             },
             {
-                label: 'Available Actions',
+                label: 'Доступные действия',
                 name: 'mcpActions',
                 type: 'asyncMultiOptions',
                 loadMethod: 'listActions',

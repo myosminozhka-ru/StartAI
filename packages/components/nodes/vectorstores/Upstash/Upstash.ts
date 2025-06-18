@@ -34,41 +34,41 @@ class Upstash_VectorStores implements INode {
         this.icon = 'upstash.svg'
         this.category = 'Vector Stores'
         this.description =
-            'Upsert data as embedding or string and perform similarity search with Upstash, the leading serverless data platform'
+            'Загружайте данные как встраивания или строки и выполняйте поиск по сходству с Upstash, ведущей серверной платформой данных'
         this.baseClasses = [this.type, 'VectorStoreRetriever', 'BaseRetriever']
         this.credential = {
             label: 'Подключите учетные данные',
             name: 'credential',
             type: 'credential',
-            description: 'Necessary credentials for the HTTP connection',
+            description: 'Необходимые учетные данные для HTTP-соединения',
             credentialNames: ['upstashVectorApi']
         }
         this.inputs = [
             {
-                label: 'Document',
+                label: 'Документ',
                 name: 'document',
                 type: 'Document',
                 list: true,
                 optional: true
             },
             {
-                label: 'Embeddings',
+                label: 'Встраивания',
                 name: 'embeddings',
                 type: 'Embeddings'
             },
             {
-                label: 'Record Manager',
+                label: 'Менеджер записей',
                 name: 'recordManager',
                 type: 'RecordManager',
-                description: 'Keep track of the record to prevent duplication',
+                description: 'Отслеживайте запись для предотвращения дублирования',
                 optional: true
             },
             {
-                label: 'File Upload',
+                label: 'Загрузка файлов',
                 name: 'fileUpload',
-                description: 'Allow file upload on the chat',
+                description: 'Разрешить загрузку файлов в чате',
                 hint: {
-                    label: 'How to use',
+                    label: 'Как использовать',
                     value: howToUseFileUpload
                 },
                 type: 'boolean',
@@ -76,16 +76,16 @@ class Upstash_VectorStores implements INode {
                 optional: true
             },
             {
-                label: 'Upstash Metadata Filter',
+                label: 'Upstash Фильтр метаданных',
                 name: 'upstashMetadataFilter',
                 type: 'string',
                 optional: true,
                 additionalParams: true
             },
             {
-                label: 'Top K',
+                label: 'Топ K',
                 name: 'topK',
-                description: 'Number of top results to fetch. Default to 4',
+                description: 'Количество лучших результатов для получения. По умолчанию 4',
                 placeholder: '4',
                 type: 'number',
                 additionalParams: true,
@@ -94,12 +94,12 @@ class Upstash_VectorStores implements INode {
         ]
         this.outputs = [
             {
-                label: 'Upstash Retriever',
+                label: 'Upstash Извлекатель',
                 name: 'retriever',
                 baseClasses: this.baseClasses
             },
             {
-                label: 'Upstash Vector Store',
+                label: 'Upstash Векторное хранилище',
                 name: 'vectorStore',
                 baseClasses: [this.type, ...getBaseClasses(UpstashVectorStore)]
             }

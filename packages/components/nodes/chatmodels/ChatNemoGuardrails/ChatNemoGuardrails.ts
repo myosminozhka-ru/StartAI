@@ -88,7 +88,7 @@ class ChatNemoGuardrailsChatModel implements INode {
         this.type = 'ChatNemoGuardrails'
         this.icon = 'nemo.svg'
         this.category = 'Chat Models'
-        this.description = 'Access models through the Nemo Guardrails API'
+        this.description = 'Доступ к моделям через Nemo Guardrails API'
         this.baseClasses = [this.type, ...getBaseClasses(ChatNemoGuardrailsModel)]
         this.inputs = [
             {

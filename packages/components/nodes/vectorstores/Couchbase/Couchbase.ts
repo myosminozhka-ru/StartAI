@@ -28,7 +28,7 @@ class Couchbase_VectorStores implements INode {
         this.type = 'Couchbase'
         this.icon = 'couchbase.svg'
         this.category = 'Vector Stores'
-        this.description = `Upsert embedded data and load existing index using Couchbase, a award-winning distributed NoSQL database`
+        this.description = `Вставить встроенные данные и загрузить существующий индекс, используя Couchbase, награжденную распределенную NoSQL базу данных`
         this.baseClasses = [this.type, 'VectorStoreRetriever', 'BaseRetriever']
         this.credential = {
             label: 'Подключите учетные данные',
@@ -38,54 +38,54 @@ class Couchbase_VectorStores implements INode {
         }
         this.inputs = [
             {
-                label: 'Document',
+                label: 'Документ',
                 name: 'document',
                 type: 'Document',
                 list: true,
                 optional: true
             },
             {
-                label: 'Embeddings',
+                label: 'Вложения',
                 name: 'embeddings',
                 type: 'Embeddings'
             },
             {
-                label: 'Bucket Name',
+                label: 'Имя бакета',
                 name: 'bucketName',
                 placeholder: '<DB_BUCKET_NAME>',
                 type: 'string'
             },
             {
-                label: 'Scope Name',
+                label: 'Имя области',
                 name: 'scopeName',
                 placeholder: '<SCOPE_NAME>',
                 type: 'string'
             },
             {
-                label: 'Collection Name',
+                label: 'Имя коллекции',
                 name: 'collectionName',
                 placeholder: '<COLLECTION_NAME>',
                 type: 'string'
             },
             {
-                label: 'Index Name',
+                label: 'Имя индекса',
                 name: 'indexName',
                 placeholder: '<VECTOR_INDEX_NAME>',
                 type: 'string'
             },
             {
-                label: 'Content Field',
+                label: 'Поле контента',
                 name: 'textKey',
-                description: 'Name of the field (column) that contains the actual content',
+                description: 'Имя поля (столбца), которое содержит фактический контент',
                 type: 'string',
                 default: 'text',
                 additionalParams: true,
                 optional: true
             },
             {
-                label: 'Embedded Field',
+                label: 'Поле вложения',
                 name: 'embeddingKey',
-                description: 'Name of the field (column) that contains the Embedding',
+                description: 'Имя поля (столбца), которое содержит вложение',
                 type: 'string',
                 default: 'embedding',
                 additionalParams: true,
@@ -99,9 +99,9 @@ class Couchbase_VectorStores implements INode {
                 additionalParams: true
             },
             {
-                label: 'Top K',
+                label: 'Топ K',
                 name: 'topK',
-                description: 'Number of top results to fetch. Default to 4',
+                description: 'Количество лучших результатов для получения. По умолчанию 4',
                 placeholder: '4',
                 type: 'number',
                 additionalParams: true,

@@ -30,7 +30,8 @@ class Supabase_VectorStores implements INode {
         this.type = 'Supabase'
         this.icon = 'supabase.svg'
         this.category = 'Vector Stores'
-        this.description = 'Upsert embedded data and perform similarity or mmr search upon query using Supabase via pgvector extension'
+        this.description =
+            'Загружайте встроенные данные и выполняйте поиск по сходству или mmr при запросе с помощью Supabase через расширение pgvector'
         this.baseClasses = [this.type, 'VectorStoreRetriever', 'BaseRetriever']
         this.credential = {
             label: 'Подключите учетные данные',
@@ -40,48 +41,48 @@ class Supabase_VectorStores implements INode {
         }
         this.inputs = [
             {
-                label: 'Document',
+                label: 'Документ',
                 name: 'document',
                 type: 'Document',
                 list: true,
                 optional: true
             },
             {
-                label: 'Embeddings',
+                label: 'Встраивания',
                 name: 'embeddings',
                 type: 'Embeddings'
             },
             {
-                label: 'Record Manager',
+                label: 'Менеджер записей',
                 name: 'recordManager',
                 type: 'RecordManager',
-                description: 'Keep track of the record to prevent duplication',
+                description: 'Отслеживайте запись для предотвращения дублирования',
                 optional: true
             },
             {
-                label: 'Supabase Project URL',
+                label: 'URL проекта Supabase',
                 name: 'supabaseProjUrl',
                 type: 'string'
             },
             {
-                label: 'Table Name',
+                label: 'Имя таблицы',
                 name: 'tableName',
                 type: 'string'
             },
             {
-                label: 'Query Name',
+                label: 'Имя запроса',
                 name: 'queryName',
                 type: 'string'
             },
             {
-                label: 'Supabase Metadata Filter',
+                label: 'Supabase Фильтр метаданных',
                 name: 'supabaseMetadataFilter',
                 type: 'json',
                 optional: true,
                 additionalParams: true
             },
             {
-                label: 'Supabase RPC Filter',
+                label: 'Supabase RPC Фильтр',
                 name: 'supabaseRPCFilter',
                 type: 'string',
                 rows: 4,
@@ -89,14 +90,14 @@ class Supabase_VectorStores implements INode {
 .filter("metadata->c::int", "gt", 7)
 .filter("metadata->>stuff", "eq", "right");`,
                 description:
-                    'Query builder-style filtering. If this is set, will override the metadata filter. Refer <a href="https://js.langchain.com/v0.1/docs/integrations/vectorstores/supabase/#metadata-query-builder-filtering" target="_blank">here</a> for more information',
+                    'Фильтрация в стиле построителя запросов. Если это установлено, переопределит фильтр метаданных. См. <a href="https://js.langchain.com/v0.1/docs/integrations/vectorstores/supabase/#metadata-query-builder-filtering" target="_blank">здесь</a> для получения дополнительной информации',
                 optional: true,
                 additionalParams: true
             },
             {
-                label: 'Top K',
+                label: 'Топ K',
                 name: 'topK',
-                description: 'Number of top results to fetch. Default to 4',
+                description: 'Количество лучших результатов для получения. По умолчанию 4',
                 placeholder: '4',
                 type: 'number',
                 additionalParams: true,
@@ -106,12 +107,12 @@ class Supabase_VectorStores implements INode {
         addMMRInputParams(this.inputs)
         this.outputs = [
             {
-                label: 'Supabase Retriever',
+                label: 'Supabase Извлекатель',
                 name: 'retriever',
                 baseClasses: this.baseClasses
             },
             {
-                label: 'Supabase Vector Store',
+                label: 'Supabase Векторное хранилище',
                 name: 'vectorStore',
                 baseClasses: [this.type, ...getBaseClasses(SupabaseVectorStore)]
             }

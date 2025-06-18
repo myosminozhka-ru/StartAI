@@ -16,7 +16,7 @@ interface ScrapedPageData {
 
 class WebScraperRecursiveTool extends Tool {
     name = 'web_scraper_tool'
-    description = `Scrapes web pages recursively or via default sitemap. Extracts title, description, and paragraph text. Input should be a single URL string. Returns a JSON string array of scraped page data objects.`
+    description = `Рекурсивно скрапит веб-страницы или через стандартную карту сайта. Извлекает заголовок, описание и текст абзацев. Входные данные должны быть одной строкой URL. Возвращает JSON строковый массив объектов данных скрапленных страниц.`
 
     private maxDepth: number
     private maxPages: number | null
@@ -37,24 +37,24 @@ class WebScraperRecursiveTool extends Tool {
 
         let desc = ''
         if (this.useSitemap) {
-            desc = `Scrapes URLs listed in the detected default sitemap (/sitemap.xml)`
+            desc = `Скрапит URL, перечисленные в обнаруженной стандартной карте сайта (/sitemap.xml)`
             if (this.maxPages !== null) {
-                desc += ` up to ${this.maxPages} pages`
+                desc += ` до ${this.maxPages} страниц`
             }
-            desc += `, with a ${
+            desc += `, с таймаутом ${
                 this.timeoutMs / 1000
-            }-second timeout per page. Falls back to Recursive Link Following if sitemap is not found or empty.`
+            } секунд на страницу. Возвращается к рекурсивному следованию ссылок, если карта сайта не найдена или пуста.`
         } else {
-            desc = `Recursively scrapes web pages starting from a given URL`
+            desc = `Рекурсивно скрапит веб-страницы, начиная с заданного URL`
             if (this.maxDepth > 0) {
-                desc += ` up to ${this.maxDepth} level(s) deep`
+                desc += ` до ${this.maxDepth} уровня(ей) в глубину`
             }
             if (this.maxPages !== null) {
-                desc += ` or until ${this.maxPages} pages are scraped`
+                desc += ` или пока не будет скраплено ${this.maxPages} страниц`
             }
-            desc += `, with a ${this.timeoutMs / 1000}-second timeout per page, whichever comes first.`
+            desc += `, с таймаутом ${this.timeoutMs / 1000} секунд на страницу, в зависимости от того, что наступит раньше.`
         }
-        desc += ` Extracts title, description, and paragraph text. Input should be a single URL string. Returns a JSON string array of scraped page data.`
+        desc += ` Извлекает заголовок, описание и текст абзацев. Входные данные должны быть одной строкой URL. Возвращает JSON строковый массив данных скрапленных страниц.`
         this.description = desc
     }
 
@@ -316,70 +316,71 @@ class WebScraperRecursive_Tools implements INode {
     inputs: INodeParams[]
 
     constructor() {
-        this.label = 'Web Scraper Tool'
+        this.label = 'Инструмент веб-скрапера'
         this.name = 'webScraperTool'
         this.version = 1.1
         this.type = 'Tool'
         this.icon = 'webScraperTool.svg'
         this.category = 'Tools'
-        this.description = 'Scrapes web pages recursively by following links OR by fetching URLs from the default sitemap.'
+        this.description = 'Скрапит веб-страницы рекурсивно, следуя ссылкам ИЛИ получая URL из стандартной карты сайта.'
         this.baseClasses = [this.type, ...getBaseClasses(WebScraperRecursiveTool)]
         this.inputs = [
             {
-                label: 'Scraping Mode',
+                label: 'Режим скрапинга',
                 name: 'scrapeMode',
                 type: 'options',
                 options: [
-                    { label: 'Recursive Link Following', name: 'recursive' },
-                    { label: 'Sitemap', name: 'sitemap' }
+                    { label: 'Рекурсивное следование ссылкам', name: 'recursive' },
+                    { label: 'Карта сайта', name: 'sitemap' }
                 ],
                 default: 'recursive',
                 description:
-                    "Select discovery method: 'Recursive' follows links found on pages (uses Max Depth). 'Sitemap' tries sitemap.xml first, but falls back to 'Recursive' if the sitemap is not found or empty.",
+                    "Выберите метод обнаружения: 'Рекурсивный' следует ссылкам, найденным на страницах (использует Максимальную глубину). 'Карта сайта' сначала пытается sitemap.xml, но возвращается к 'Рекурсивному', если карта сайта не найдена или пуста.",
                 additionalParams: true
             },
             {
-                label: 'Max Depth',
+                label: 'Максимальная глубина',
                 name: 'maxDepth',
                 type: 'number',
                 description:
-                    'Maximum levels of links to follow (e.g., 1 = only the initial URL, 2 = initial URL + links found on it). Default 1.',
+                    'Максимальное количество уровней ссылок для следования (например, 1 = только начальный URL, 2 = начальный URL + ссылки, найденные на нем). По умолчанию 1.',
                 placeholder: '1',
                 default: 1,
                 optional: true,
                 additionalParams: true
             },
             {
-                label: 'Max Pages',
+                label: 'Максимум страниц',
                 name: 'maxPages',
                 type: 'number',
                 description:
-                    'Maximum total number of pages to scrape, regardless of mode or depth. Stops when this limit is reached. Leave empty for no page limit. Default: 10.',
+                    'Максимальное общее количество страниц для скрапинга, независимо от режима или глубины. Останавливается, когда достигается этот лимит. Оставьте пустым для отсутствия лимита страниц. По умолчанию: 10.',
                 placeholder: '10',
                 default: 10,
                 optional: true,
                 additionalParams: true
             },
             {
-                label: 'Timeout (s)',
+                label: 'Таймаут (с)',
                 name: 'timeoutS',
                 type: 'number',
-                description: 'Maximum time in seconds to wait for each page request to complete. Accepts decimals (e.g., 0.5). Default 60.',
+                description:
+                    'Максимальное время в секундах для ожидания завершения каждого запроса страницы. Принимает десятичные дроби (например, 0.5). По умолчанию 60.',
                 placeholder: '60',
                 default: 60,
                 optional: true,
                 additionalParams: true
             },
             {
-                label: 'Tool Description',
+                label: 'Описание инструмента',
                 name: 'description',
                 type: 'string',
                 description:
-                    'Custom description of what the tool does. This is for LLM to determine when to use this tool. Overrides the default description.',
+                    'Пользовательское описание того, что делает инструмент. Это для LLM, чтобы определить, когда использовать этот инструмент. Переопределяет стандартное описание.',
                 rows: 4,
                 additionalParams: true,
                 optional: true,
-                placeholder: `Scrapes web pages recursively or via default sitemap. Extracts title, description, and paragraph text. Input should be a single URL string. Returns a JSON string array of scraped page data objects.`
+                placeholder: `Рекурсивно скрапит веб-страницы или через стандартную карту сайта. Извлекает заголовок, описание и текст абзацев. Входные данные должны быть одной строкой URL. Возвращает JSON строковый массив объектов данных скрапленных страниц.`
             }
         ]
     }

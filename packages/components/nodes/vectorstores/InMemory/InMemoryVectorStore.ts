@@ -18,31 +18,32 @@ class InMemoryVectorStore_VectorStores implements INode {
     outputs: INodeOutputsValue[]
 
     constructor() {
-        this.label = 'In-Memory Vector Store'
+        this.label = 'В памяти векторное хранилище'
         this.name = 'memoryVectorStore'
         this.version = 1.0
         this.type = 'Memory'
         this.icon = 'memory.svg'
         this.category = 'Vector Stores'
-        this.description = 'In-memory vectorstore that stores embeddings and does an exact, linear search for the most similar embeddings.'
+        this.description =
+            'Векторное хранилище в памяти, которое хранит вложения и выполняет точный, линейный поиск наиболее похожих вложений.'
         this.baseClasses = [this.type, 'VectorStoreRetriever', 'BaseRetriever']
         this.inputs = [
             {
-                label: 'Document',
+                label: 'Документ',
                 name: 'document',
                 type: 'Document',
                 list: true,
                 optional: true
             },
             {
-                label: 'Embeddings',
+                label: 'Вложения',
                 name: 'embeddings',
                 type: 'Embeddings'
             },
             {
-                label: 'Top K',
+                label: 'Топ K',
                 name: 'topK',
-                description: 'Number of top results to fetch. Default to 4',
+                description: 'Количество лучших результатов для получения. По умолчанию 4',
                 placeholder: '4',
                 type: 'number',
                 optional: true

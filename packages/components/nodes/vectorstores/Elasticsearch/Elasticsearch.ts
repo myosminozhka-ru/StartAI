@@ -26,7 +26,7 @@ class Elasticsearch_VectorStores implements INode {
         this.name = 'elasticsearch'
         this.version = 2.0
         this.description =
-            'Upsert embedded data and perform similarity search upon query using Elasticsearch, a distributed search and analytics engine'
+            'Вставить встроенные данные и выполнить поиск по сходству по запросу, используя Elasticsearch, распределенную поисковую и аналитическую систему'
         this.type = 'Elasticsearch'
         this.icon = 'elasticsearch.png'
         this.category = 'Vector Stores'
@@ -39,43 +39,43 @@ class Elasticsearch_VectorStores implements INode {
         }
         this.inputs = [
             {
-                label: 'Document',
+                label: 'Документ',
                 name: 'document',
                 type: 'Document',
                 list: true,
                 optional: true
             },
             {
-                label: 'Embeddings',
+                label: 'Вложения',
                 name: 'embeddings',
                 type: 'Embeddings'
             },
             {
-                label: 'Record Manager',
+                label: 'Менеджер записей',
                 name: 'recordManager',
                 type: 'RecordManager',
-                description: 'Keep track of the record to prevent duplication',
+                description: 'Отслеживать запись для предотвращения дублирования',
                 optional: true
             },
             {
-                label: 'Index Name',
+                label: 'Имя индекса',
                 name: 'indexName',
                 placeholder: '<INDEX_NAME>',
                 type: 'string'
             },
             {
-                label: 'Top K',
+                label: 'Топ K',
                 name: 'topK',
-                description: 'Number of top results to fetch. Default to 4',
+                description: 'Количество лучших результатов для получения. По умолчанию 4',
                 placeholder: '4',
                 type: 'number',
                 additionalParams: true,
                 optional: true
             },
             {
-                label: 'Similarity',
+                label: 'Сходство',
                 name: 'similarity',
-                description: 'Similarity measure used in Elasticsearch.',
+                description: 'Мера сходства, используемая в Elasticsearch.',
                 type: 'options',
                 default: 'l2_norm',
                 options: [

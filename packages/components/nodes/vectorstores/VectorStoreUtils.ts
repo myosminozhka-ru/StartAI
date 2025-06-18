@@ -53,17 +53,17 @@ export const resolveVectorStoreOrRetriever = (
 export const addMMRInputParams = (inputs: any[]) => {
     const mmrInputParams = [
         {
-            label: 'Search Type',
+            label: 'Тип поиска',
             name: 'searchType',
             type: 'options',
             default: 'similarity',
             options: [
                 {
-                    label: 'Similarity',
+                    label: 'Сходство',
                     name: 'similarity'
                 },
                 {
-                    label: 'Max Marginal Relevance',
+                    label: 'Максимальная маргинальная релевантность',
                     name: 'mmr'
                 }
             ],
@@ -71,19 +71,20 @@ export const addMMRInputParams = (inputs: any[]) => {
             optional: true
         },
         {
-            label: 'Fetch K (for MMR Search)',
+            label: 'Получить K (для MMR поиска)',
             name: 'fetchK',
-            description: 'Number of initial documents to fetch for MMR reranking. Default to 20. Used only when the search type is MMR',
+            description:
+                'Количество начальных документов для получения для MMR переранжирования. По умолчанию 20. Используется только когда тип поиска - MMR',
             placeholder: '20',
             type: 'number',
             additionalParams: true,
             optional: true
         },
         {
-            label: 'Lambda (for MMR Search)',
+            label: 'Лямбда (для MMR поиска)',
             name: 'lambda',
             description:
-                'Number between 0 and 1 that determines the degree of diversity among the results, where 0 corresponds to maximum diversity and 1 to minimum diversity. Used only when the search type is MMR',
+                'Число от 0 до 1, которое определяет степень разнообразия среди результатов, где 0 соответствует максимальному разнообразию, а 1 - минимальному разнообразию. Используется только когда тип поиска - MMR',
             placeholder: '0.5',
             type: 'number',
             additionalParams: true,
@@ -95,17 +96,17 @@ export const addMMRInputParams = (inputs: any[]) => {
 }
 
 export const howToUseFileUpload = `
-**File Upload**
+**Загрузка файлов**
 
-This allows file upload on the chat. Uploaded files will be upserted on the fly to the vector store.
+Это позволяет загружать файлы в чате. Загруженные файлы будут загружены на лету в векторное хранилище.
 
-**Note:**
-- You can only turn on file upload for one vector store at a time.
-- At least one Document Loader node should be connected to the document input.
-- Document Loader should be file types like PDF, DOCX, TXT, etc.
+**Примечание:**
+- Вы можете включить загрузку файлов только для одного векторного хранилища одновременно.
+- По крайней мере один узел Document Loader должен быть подключен к входу документа.
+- Document Loader должен быть типами файлов, такими как PDF, DOCX, TXT и т.д.
 
-**How it works**
-- Uploaded files will have the metadata updated with the chatId.
-- This will allow the file to be associated with the chatId.
-- When querying, metadata will be filtered by chatId to retrieve files associated with the chatId.
+**Как это работает**
+- Загруженные файлы будут иметь обновленные метаданные с chatId.
+- Это позволит связать файл с chatId.
+- При запросе метаданные будут отфильтрованы по chatId для получения файлов, связанных с chatId.
 `

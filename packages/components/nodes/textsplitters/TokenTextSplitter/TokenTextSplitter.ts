@@ -21,11 +21,11 @@ class TokenTextSplitter_TextSplitters implements INode {
         this.type = 'TokenTextSplitter'
         this.icon = 'tiktoken.svg'
         this.category = 'Text Splitters'
-        this.description = `Splits a raw text string by first converting the text into BPE tokens, then split these tokens into chunks and convert the tokens within a single chunk back into text.`
+        this.description = `Разделяет необработанную текстовую строку, сначала преобразуя текст в BPE токены, затем разделяет эти токены на фрагменты и преобразует токены в пределах одного фрагмента обратно в текст.`
         this.baseClasses = [this.type, ...getBaseClasses(TokenTextSplitter)]
         this.inputs = [
             {
-                label: 'Encoding Name',
+                label: 'Название кодировки',
                 name: 'encodingName',
                 type: 'options',
                 options: [
@@ -53,18 +53,18 @@ class TokenTextSplitter_TextSplitters implements INode {
                 default: 'gpt2'
             },
             {
-                label: 'Chunk Size',
+                label: 'Размер фрагмента',
                 name: 'chunkSize',
                 type: 'number',
-                description: 'Number of characters in each chunk. Default is 1000.',
+                description: 'Количество символов в каждом фрагменте. По умолчанию 1000.',
                 default: 1000,
                 optional: true
             },
             {
-                label: 'Chunk Overlap',
+                label: 'Перекрытие фрагментов',
                 name: 'chunkOverlap',
                 type: 'number',
-                description: 'Number of characters to overlap between chunks. Default is 200.',
+                description: 'Количество символов для перекрытия между фрагментами. По умолчанию 200.',
                 default: 200,
                 optional: true
             }

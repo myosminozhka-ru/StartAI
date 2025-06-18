@@ -38,7 +38,7 @@ class Code_Interpreter_Tools implements INode {
         this.type = 'CodeInterpreter'
         this.icon = 'e2b.png'
         this.category = 'Tools'
-        this.description = 'Execute code in a sandbox environment'
+        this.description = 'Выполнение кода в песочнице'
         this.baseClasses = [this.type, 'Tool', ...getBaseClasses(E2BTool)]
         this.credential = {
             label: 'Подключите учетные данные',
@@ -52,15 +52,15 @@ class Code_Interpreter_Tools implements INode {
                 label: 'Название инструмента',
                 name: 'toolName',
                 type: 'string',
-                description: 'Specify the name of the tool',
+                description: 'Укажите название инструмента',
                 default: 'code_interpreter'
             },
             {
-                label: 'Tool Description',
+                label: 'Описание инструмента',
                 name: 'toolDesc',
                 type: 'string',
                 rows: 4,
-                description: 'Specify the description of the tool',
+                description: 'Укажите описание инструмента',
                 default: DESC
             }
         ]

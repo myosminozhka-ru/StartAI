@@ -23,7 +23,7 @@ class Github_MCP implements INode {
         this.type = 'Github MCP Tool'
         this.icon = 'github.svg'
         this.category = 'Tools (MCP)'
-        this.description = 'MCP Server for the GitHub API'
+        this.description = 'MCP сервер для GitHub API'
         this.documentation = 'https://github.com/modelcontextprotocol/servers/tree/main/src/github'
         this.credential = {
             label: 'Подключите учетные данные',
@@ -33,7 +33,7 @@ class Github_MCP implements INode {
         }
         this.inputs = [
             {
-                label: 'Available Actions',
+                label: 'Доступные действия',
                 name: 'mcpActions',
                 type: 'asyncMultiOptions',
                 loadMethod: 'listActions',

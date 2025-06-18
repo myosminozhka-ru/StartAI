@@ -32,7 +32,7 @@ class Milvus_VectorStores implements INode {
         this.type = 'Milvus'
         this.icon = 'milvus.svg'
         this.category = 'Vector Stores'
-        this.description = `Upsert embedded data and perform similarity search upon query using Milvus, world's most advanced open-source vector database`
+        this.description = `Вставить встроенные данные и выполнить поиск по сходству по запросу, используя Milvus, самую передовую открытую векторную базу данных в мире`
         this.baseClasses = [this.type, 'VectorStoreRetriever', 'BaseRetriever']
         this.credential = {
             label: 'Подключите учетные данные',
@@ -43,41 +43,41 @@ class Milvus_VectorStores implements INode {
         }
         this.inputs = [
             {
-                label: 'Document',
+                label: 'Документ',
                 name: 'document',
                 type: 'Document',
                 list: true,
                 optional: true
             },
             {
-                label: 'Embeddings',
+                label: 'Вложения',
                 name: 'embeddings',
                 type: 'Embeddings'
             },
             {
-                label: 'Milvus Server URL',
+                label: 'URL сервера Milvus',
                 name: 'milvusServerUrl',
                 type: 'string',
                 placeholder: 'http://localhost:19530'
             },
             {
-                label: 'Milvus Collection Name',
+                label: 'Имя коллекции Milvus',
                 name: 'milvusCollection',
                 type: 'string'
             },
             {
-                label: 'Milvus Partition Name',
+                label: 'Имя раздела Milvus',
                 name: 'milvusPartition',
                 default: '_default',
                 type: 'string',
                 optional: true
             },
             {
-                label: 'File Upload',
+                label: 'Загрузка файла',
                 name: 'fileUpload',
-                description: 'Allow file upload on the chat',
+                description: 'Разрешить загрузку файла в чате',
                 hint: {
-                    label: 'How to use',
+                    label: 'Как использовать',
                     value: howToUseFileUpload
                 },
                 type: 'boolean',
@@ -85,7 +85,7 @@ class Milvus_VectorStores implements INode {
                 optional: true
             },
             {
-                label: 'Milvus Text Field',
+                label: 'Текстовое поле Milvus',
                 name: 'milvusTextField',
                 type: 'string',
                 placeholder: 'langchain_text',
@@ -93,62 +93,62 @@ class Milvus_VectorStores implements INode {
                 additionalParams: true
             },
             {
-                label: 'Milvus Filter',
+                label: 'Фильтр Milvus',
                 name: 'milvusFilter',
                 type: 'string',
                 optional: true,
                 description:
-                    'Filter data with a simple string query. Refer Milvus <a target="_blank" href="https://milvus.io/blog/2022-08-08-How-to-use-string-data-to-empower-your-similarity-search-applications.md#Hybrid-search">docs</a> for more details.',
+                    'Фильтровать данные с помощью простого строкового запроса. См. документацию Milvus <a target="_blank" href="https://milvus.io/blog/2022-08-08-How-to-use-string-data-to-empower-your-similarity-search-applications.md#Hybrid-search">docs</a> для получения дополнительной информации.',
                 placeholder: 'doc=="a"',
                 additionalParams: true
             },
             {
-                label: 'Top K',
+                label: 'Топ K',
                 name: 'topK',
-                description: 'Number of top results to fetch. Default to 4',
+                description: 'Количество лучших результатов для получения. По умолчанию 4',
                 placeholder: '4',
                 type: 'number',
                 additionalParams: true,
                 optional: true
             },
             {
-                label: 'Secure',
+                label: 'Безопасный',
                 name: 'secure',
                 type: 'boolean',
                 optional: true,
-                description: 'Enable secure connection to Milvus server',
+                description: 'Включить безопасное подключение к серверу Milvus',
                 additionalParams: true
             },
             {
-                label: 'Client PEM Path',
+                label: 'Путь к клиентскому PEM',
                 name: 'clientPemPath',
                 type: 'string',
                 optional: true,
-                description: 'Path to the client PEM file',
+                description: 'Путь к файлу клиентского PEM',
                 additionalParams: true
             },
             {
-                label: 'Client Key Path',
+                label: 'Путь к клиентскому ключу',
                 name: 'clientKeyPath',
                 type: 'string',
                 optional: true,
-                description: 'Path to the client key file',
+                description: 'Путь к файлу клиентского ключа',
                 additionalParams: true
             },
             {
-                label: 'CA PEM Path',
+                label: 'Путь к CA PEM',
                 name: 'caPemPath',
                 type: 'string',
                 optional: true,
-                description: 'Path to the root PEM file',
+                description: 'Путь к корневому PEM файлу',
                 additionalParams: true
             },
             {
-                label: 'Server Name',
+                label: 'Имя сервера',
                 name: 'serverName',
                 type: 'string',
                 optional: true,
-                description: 'Server name for the secure connection',
+                description: 'Имя сервера для безопасного подключения',
                 additionalParams: true
             }
         ]
