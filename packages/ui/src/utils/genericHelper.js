@@ -869,7 +869,7 @@ export const getConfigExamplesForJS = (configData, bodyType, isMultiple, stopNod
                 ? ``
                 : stopNodeId
                 ? `formData.append("stopNodeId", "${stopNodeId}")\n`
-                : `formData.append("question", "Hey, how are you?")\n`
+                : `formData.append("question", "Привет, как дела?")\n`
     }
     return finalStr
 }
@@ -892,7 +892,7 @@ export const getConfigExamplesForPython = (configData, bodyType, isMultiple, sto
                 ? `\n`
                 : stopNodeId
                 ? `\n    "stopNodeId": "${stopNodeId}"\n`
-                : `\n    "question": "Hey, how are you?"\n`
+                : `\n    "question": "Привет, как дела?"\n`
     }
     return finalStr
 }
@@ -919,7 +919,7 @@ export const getConfigExamplesForCurl = (configData, bodyType, isMultiple, stopN
                     ? ``
                     : stopNodeId
                     ? ` \\\n     -F "stopNodeId=${stopNodeId}"`
-                    : ` \\\n     -F "question=Hey, how are you?"`
+                    : ` \\\n     -F "question=Привет, как дела?"`
         else finalStr += bodyType === 'json' ? `, ` : ` \\`
     }
     return finalStr

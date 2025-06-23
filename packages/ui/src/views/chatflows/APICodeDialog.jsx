@@ -312,7 +312,7 @@ def query(payload):
     return response.json()
     
 output = query({
-    "question": "Hey, how are you?",
+    "question": "Привет, как дела?",
 })
 `
         } else if (codeLang === 'JavaScript') {
@@ -331,14 +331,14 @@ output = query({
     return result;
 }
 
-query({"question": "Hey, how are you?"}).then((response) => {
+query({"question": "Привет, как дела?"}).then((response) => {
     console.log(response);
 });
 `
         } else if (codeLang === 'cURL') {
             return `curl ${baseURL}/api/v1/prediction/${dialogProps.chatflowid} \\
      -X POST \\
-     -d '{"question": "Hey, how are you?"}' \\
+     -d '{"question": "Привет, как дела?"}' \\
      -H "Content-Type: application/json"`
         }
         return ''
@@ -356,7 +356,7 @@ def query(payload):
     return response.json()
     
 output = query({
-    "question": "Hey, how are you?",
+    "question": "Привет, как дела?",
 })
 `
         } else if (codeLang === 'JavaScript') {
@@ -376,14 +376,14 @@ output = query({
     return result;
 }
 
-query({"question": "Hey, how are you?"}).then((response) => {
+query({"question": "Привет, как дела?"}).then((response) => {
     console.log(response);
 });
 `
         } else if (codeLang === 'cURL') {
             return `curl ${baseURL}/api/v1/prediction/${dialogProps.chatflowid} \\
      -X POST \\
-     -d '{"question": "Hey, how are you?"}' \\
+     -d '{"question": "Привет, как дела?"}' \\
      -H "Content-Type: application/json" \\
      -H "Authorization: Bearer ${selectedApiKey?.apiKey}"`
         }
@@ -536,7 +536,7 @@ def query(payload):
     return response.json()
 
 output = query({
-    "question": "Hey, how are you?",
+    "question": "Привет, как дела?",
     "overrideConfig": {${getConfigExamplesForPython(configData, 'json')}
     }
 })
@@ -558,7 +558,7 @@ output = query({
 }
 
 query({
-  "question": "Hey, how are you?",
+  "question": "Привет, как дела?",
   "overrideConfig": {${getConfigExamplesForJS(configData, 'json')}
   }
 }).then((response) => {
@@ -568,7 +568,7 @@ query({
         } else if (codeLang === 'cURL') {
             return `curl ${baseURL}/api/v1/prediction/${dialogProps.chatflowid} \\
      -X POST \\
-     -d '{"question": "Hey, how are you?", "overrideConfig": {${getConfigExamplesForCurl(configData, 'json')}}' \\
+     -d '{"question": "Привет, как дела?", "overrideConfig": {${getConfigExamplesForCurl(configData, 'json')}}' \\
      -H "Content-Type: application/json"`
         }
         return ''
@@ -588,7 +588,7 @@ def query(payload):
     return response.json()
 
 output = query({
-    "question": "Hey, how are you?",
+    "question": "Привет, как дела?",
     "overrideConfig": {${getConfigExamplesForPython(configData, 'json')}
     }
 })
@@ -611,7 +611,7 @@ output = query({
 }
 
 query({
-  "question": "Hey, how are you?",
+  "question": "Привет, как дела?",
   "overrideConfig": {${getConfigExamplesForJS(configData, 'json')}
   }
 }).then((response) => {
@@ -621,7 +621,7 @@ query({
         } else if (codeLang === 'cURL') {
             return `curl ${baseURL}/api/v1/prediction/${dialogProps.chatflowid} \\
      -X POST \\
-     -d '{"question": "Hey, how are you?", "overrideConfig": {${getConfigExamplesForCurl(configData, 'json')}}' \\
+     -d '{"question": "Привет, как дела?", "overrideConfig": {${getConfigExamplesForCurl(configData, 'json')}}' \\
      -H "Content-Type: application/json" \\
      -H "Authorization: Bearer ${selectedApiKey?.apiKey}"`
         }
