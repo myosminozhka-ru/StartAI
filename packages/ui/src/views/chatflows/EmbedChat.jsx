@@ -42,7 +42,7 @@ const codes = ['Всплывающий Html', 'Полноэкранный Html',
 
 const embedPopupHtmlCode = (chatflowid) => {
     return `<script type="module">
-    import Chatbot from "https://cdn.jsdelivr.net/gh/myosminozhka-ru/FlowiseChatEmbed/dist/web.js"
+    import Chatbot from "https://cdn.jsdelivr.net/gh/myosminozhka-ru/FlowiseChatEmbed/dist/web.js?v=2"
     Chatbot.init({
         chatflowid: "${chatflowid}",
         apiHost: "${baseURL}",
@@ -66,7 +66,7 @@ const App = () => {
 const embedFullpageHtmlCode = (chatflowid) => {
     return `<osmi-ai-fullchatbot></osmi-ai-fullchatbot>
 <script type="module">
-    import Chatbot from "https://cdn.jsdelivr.net/gh/myosminozhka-ru/FlowiseChatEmbed/dist/web.js"
+    import Chatbot from "https://cdn.jsdelivr.net/gh/myosminozhka-ru/FlowiseChatEmbed/dist/web.js?v=2"
     Chatbot.initFull({
         chatflowid: "${chatflowid}",
         apiHost: "${baseURL}",
@@ -196,7 +196,7 @@ const customStringify = (obj) => {
 
 const embedPopupHtmlCodeCustomization = (chatflowid) => {
     return `<script type="module">
-    import Chatbot from "https://cdn.jsdelivr.net/gh/myosminozhka-ru/FlowiseChatEmbed/dist/web.js"
+    import Chatbot from "https://cdn.jsdelivr.net/gh/myosminozhka-ru/FlowiseChatEmbed/dist/web.js?v=2"
     Chatbot.init({
         chatflowid: "${chatflowid}",
         apiHost: "${baseURL}",
@@ -249,7 +249,7 @@ const getFullPageThemeConfig = () => {
 const embedFullpageHtmlCodeCustomization = (chatflowid) => {
     return `<osmi-ai-fullchatbot></osmi-ai-fullchatbot>
 <script type="module">
-    import Chatbot from "https://cdn.jsdelivr.net/gh/myosminozhka-ru/FlowiseChatEmbed/dist/web.js"
+    import Chatbot from "https://cdn.jsdelivr.net/gh/myosminozhka-ru/FlowiseChatEmbed/dist/web.js?v=2"
     Chatbot.initFull({
         chatflowid: "${chatflowid}",
         apiHost: "${baseURL}",
