@@ -106,7 +106,7 @@ const ConfirmDeleteMessageDialog = ({ show, dialogProps, onCancel, onConfirm }) 
                 <span style={{ marginTop: '20px', marginBottom: '20px' }}>{dialogProps.description}</span>
                 <FormControlLabel
                     control={<Checkbox checked={hardDelete} onChange={(event) => setHardDelete(event.target.checked)} />}
-                    label='Remove messages from 3rd party Memory Node'
+                    label='Удалить сообщения из памяти 3-го уровня'
                 />
             </DialogContent>
             <DialogActions>
@@ -269,7 +269,7 @@ const ViewMessagesDialog = ({ show, dialogProps, onCancel }) => {
 
             await chatmessageApi.deleteChatmessage(chatflowid, obj)
             enqueueSnackbar({
-                message: 'Succesfully deleted messages',
+                message: 'Сообщения успешно удалены',
                 options: {
                     key: new Date().getTime() + Math.random(),
                     variant: 'success',
@@ -394,13 +394,13 @@ const ViewMessagesDialog = ({ show, dialogProps, onCancel }) => {
     const clearChat = async (chatmsg) => {
         const description =
             chatmsg.sessionId && chatmsg.memoryType
-                ? `Are you sure you want to clear session id: ${chatmsg.sessionId} from ${chatmsg.memoryType}?`
-                : `Are you sure you want to clear messages?`
+                ? `Вы уверены, что хотите очистить сессию с id: ${chatmsg.sessionId} из ${chatmsg.memoryType}?`
+                : `Вы уверены, что хотите очистить сообщения?`
         const confirmPayload = {
-            title: `Clear Session`,
+            title: `Очистить сессию`,
             description,
-            confirmButtonName: 'Clear',
-            cancelButtonName: 'Cancel'
+            confirmButtonName: 'Очистить',
+            cancelButtonName: 'Отмена'
         }
         const isConfirmed = await confirm(confirmPayload)
 
@@ -416,8 +416,8 @@ const ViewMessagesDialog = ({ show, dialogProps, onCancel }) => {
                 await chatmessageApi.deleteChatmessage(chatflowid, obj)
                 const description =
                     chatmsg.sessionId && chatmsg.memoryType
-                        ? `Succesfully cleared session id: ${chatmsg.sessionId} from ${chatmsg.memoryType}`
-                        : `Succesfully cleared messages`
+                        ? `Сессия с id: ${chatmsg.sessionId} из ${chatmsg.memoryType} успешно очищена`
+                        : `Сообщения успешно очищены`
                 enqueueSnackbar({
                     message: description,
                     options: {
@@ -836,7 +836,7 @@ const ViewMessagesDialog = ({ show, dialogProps, onCancel }) => {
                         }}
                     >
                         <div style={{ marginRight: 10 }}>
-                            <b style={{ marginRight: 10 }}>From Date</b>
+                            <b style={{ marginRight: 10 }}>С даты</b>
                             <DatePicker
                                 selected={startDate}
                                 onChange={(date) => onStartDateSelected(date)}
@@ -847,7 +847,7 @@ const ViewMessagesDialog = ({ show, dialogProps, onCancel }) => {
                             />
                         </div>
                         <div style={{ marginRight: 10 }}>
-                            <b style={{ marginRight: 10 }}>To Date</b>
+                            <b style={{ marginRight: 10 }}>По дату</b>
                             <DatePicker
                                 selected={endDate}
                                 onChange={(date) => onEndDateSelected(date)}
@@ -896,7 +896,7 @@ const ViewMessagesDialog = ({ show, dialogProps, onCancel }) => {
                                 marginRight: 10
                             }}
                         >
-                            <b style={{ marginRight: 10 }}>Feedback</b>
+                            <b style={{ marginRight: 10 }}>Обратная связь</b>
                             <MultiDropdown
                                 key={JSON.stringify(feedbackTypeFilter)}
                                 name='chatType'
@@ -932,10 +932,10 @@ const ViewMessagesDialog = ({ show, dialogProps, onCancel }) => {
                             marginRight: 8
                         }}
                     >
-                        <StatsCard title='Total Messages' stat={`${stats.totalMessages}`} />
-                        <StatsCard title='Total Feedback Received' stat={`${stats.totalFeedback}`} />
+                        <StatsCard title='Всего сообщений' stat={`${stats.totalMessages}`} />
+                        <StatsCard title='Всего отзывов' stat={`${stats.totalFeedback}`} />
                         <StatsCard
-                            title='Positive Feedback'
+                            title='Положительных отзывов'
                             stat={`${((stats.positiveFeedback / stats.totalFeedback) * 100 || 0).toFixed(2)}%`}
                         />
                     </div>
@@ -949,7 +949,7 @@ const ViewMessagesDialog = ({ show, dialogProps, onCancel }) => {
                                         alt='msgEmptySVG'
                                     />
                                 </Box>
-                                <div>No Messages</div>
+                                <div>Нет сообщений</div>
                             </Stack>
                         )}
                         {chatlogs && chatlogs.length > 0 && (
@@ -1011,7 +1011,7 @@ const ViewMessagesDialog = ({ show, dialogProps, onCancel }) => {
                                         <div style={{ flex: 1, marginLeft: '20px', marginBottom: '15px', marginTop: '10px' }}>
                                             {chatMessages[1].sessionId && (
                                                 <div>
-                                                    Session Id:&nbsp;<b>{chatMessages[1].sessionId}</b>
+                                                    Сессия Id:&nbsp;<b>{chatMessages[1].sessionId}</b>
                                                 </div>
                                             )}
                                             {chatMessages[1].chatType && (
@@ -1021,7 +1021,7 @@ const ViewMessagesDialog = ({ show, dialogProps, onCancel }) => {
                                             )}
                                             {chatMessages[1].memoryType && (
                                                 <div>
-                                                    Memory:&nbsp;<b>{chatMessages[1].memoryType}</b>
+                                                    Память:&nbsp;<b>{chatMessages[1].memoryType}</b>
                                                 </div>
                                             )}
                                             {leadEmail && (
@@ -1042,7 +1042,7 @@ const ViewMessagesDialog = ({ show, dialogProps, onCancel }) => {
                                                 sx={{ height: 'max-content', width: 'max-content' }}
                                                 variant='outlined'
                                                 color='error'
-                                                title='Clear Message'
+                                                title='Очистить сообщение'
                                                 onClick={() => clearChat(chatMessages[1])}
                                                 startIcon={<IconEraser />}
                                             >
@@ -1051,12 +1051,12 @@ const ViewMessagesDialog = ({ show, dialogProps, onCancel }) => {
                                             {chatMessages[1].sessionId && (
                                                 <Tooltip
                                                     title={
-                                                        'At your left 👈 you will see the Memory node that was used in this conversation. You need to have the matching Memory node with same parameters in the canvas, in order to delete the session conversations stored on the Memory node'
+                                                        'Слева 👈 вы увидите Memory node, который использовался в этом разговоре. Для удаления сессии из Memory node, необходимо чтобы на канвасе был добавлен соответствующий Memory node с такими же параметрами.'
                                                     }
                                                     placement='bottom'
                                                 >
                                                     <h5 style={{ cursor: 'pointer', color: theme.palette.primary.main }}>
-                                                        Why my session is not deleted?
+                                                        Почему моя сессия не удаляется?
                                                     </h5>
                                                 </Tooltip>
                                             )}

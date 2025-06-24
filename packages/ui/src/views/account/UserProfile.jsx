@@ -190,7 +190,7 @@ const UserProfile = () => {
                         <SettingsSection
                             action={
                                 <StyledButton variant='contained' style={{ borderRadius: 2, height: 40 }} onClick={validateAndSubmit}>
-                                    Save
+                                    Сохранить
                                 </StyledButton>
                             }
                             title='Профиль'
