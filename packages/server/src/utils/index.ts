@@ -1390,6 +1390,7 @@ export const isFlowValidForStream = (reactFlowNodes: IReactFlowNode[], endingNod
             'awsChatBedrock',
             'chatMistralAI',
             'chatMistral_LlamaIndex',
+            'chatYandexGPT',
             'chatAlibabaTongyi',
             'groqChat',
             'chatGroq_LlamaIndex',
