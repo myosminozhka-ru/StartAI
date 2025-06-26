@@ -7,24 +7,24 @@ const swaggerUiOptions = {
     definition: {
         openapi: '3.0.3',
         info: {
-            title: 'Flowise APIs',
+            title: 'OsmiAI APIs',
             summary: 'Interactive swagger-ui auto-generated API docs from express, based on a swagger.yml file',
             version: '1.0.0',
             description:
-                'This module serves auto-generated swagger-ui generated API docs from Flowise express backend, based on a swagger.yml file. Swagger is available on: http://localhost:6655/api-docs',
+                'This module serves auto-generated swagger-ui generated API docs from OsmiAI express backend, based on a swagger.yml file. Swagger is available on: http://localhost:6655/api-docs',
             license: {
                 name: 'Apache 2.0',
-                url: 'https://github.com/FlowiseAI/Flowise/blob/main/LICENSE.md'
+                url: 'https://github.com'
             },
             contact: {
-                name: 'FlowiseAI',
+                name: 'OsmiAI',
                 email: 'info@myosminozhka.ru'
             }
         },
         servers: [
             {
                 url: 'http://localhost:3000/api/v1',
-                description: 'Flowise Server'
+                description: 'OsmiAI Server'
             }
         ]
     },

@@ -69,7 +69,7 @@ class ExecuteFlow_Agentflow implements INode {
                 name: 'executeFlowBaseURL',
                 type: 'string',
                 description:
-                    'Базовый URL для Flowise. По умолчанию используется URL входящего запроса. Полезно, когда нужно выполнить поток через альтернативный маршрут.',
+                    'Базовый URL для OsmiAI. По умолчанию используется URL входящего запроса. Полезно, когда нужно выполнить поток через альтернативный маршрут.',
                 placeholder: 'http://localhost:3000',
                 optional: true
             },
