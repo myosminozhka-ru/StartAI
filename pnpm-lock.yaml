@@ -232,6 +232,9 @@ importers:
       '@langchain/xai':
         specifier: ^0.0.1
         version: 0.0.1(@langchain/core@0.3.37(openai@4.96.0(encoding@0.1.13)(ws@8.18.0(bufferutil@4.0.8)(utf-8-validate@6.0.4))(zod@3.22.4)))(encoding@0.1.13)(ws@8.18.0(bufferutil@4.0.8)(utf-8-validate@6.0.4))
+      '@langchain/yandex':
+        specifier: ^0.0.3
+        version: 0.0.3(openai@4.96.0(encoding@0.1.13)(ws@8.18.0(bufferutil@4.0.8)(utf-8-validate@6.0.4))(zod@3.22.4))
       '@mem0/community':
         specifier: ^0.0.1
         version: 0.0.1(2f62007952b23d93ef561cb4bb92f170)
@@ -4489,6 +4492,10 @@ packages:
     engines: {node: '>=18'}
     peerDependencies:
       '@langchain/core': 0.3.37
+
+  '@langchain/yandex@0.0.3':
+    resolution: {integrity: sha512-yGawvpI4WUPGjg614OxMOIY156LNGVfSJsoGnL1vDqGrtw8OpKjVIX5LWry6zi6Z8nfpoZhGuuuA60u8VYtJKw==}
+    engines: {node: '>=18'}
 
   '@leichtgewicht/ip-codec@2.0.4':
     resolution: {integrity: sha512-Hcv+nVC0kZnQ3tD9GVu5xSMR4VVYOteQIr/hwFPVEvPdlXqgGEuRjiheChHgdM+JyqdgNcmzZOX/tnl0JOiI7A==}
@@ -23339,6 +23346,12 @@ snapshots:
     transitivePeerDependencies:
       - encoding
       - ws
+
+  '@langchain/yandex@0.0.3(openai@4.96.0(encoding@0.1.13)(ws@8.18.0(bufferutil@4.0.8)(utf-8-validate@6.0.4))(zod@3.22.4))':
+    dependencies:
+      '@langchain/core': 0.3.37(openai@4.96.0(encoding@0.1.13)(ws@8.18.0(bufferutil@4.0.8)(utf-8-validate@6.0.4))(zod@3.22.4))
+    transitivePeerDependencies:
+      - openai
 
   '@leichtgewicht/ip-codec@2.0.4': {}
 
