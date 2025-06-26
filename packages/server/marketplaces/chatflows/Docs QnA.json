@@ -1,5 +1,5 @@
 {
-    "description": "Вопросно-ответная система для документации Flowise с использованием Retrieval Augmented Generation (RAG)",
+    "description": "Вопросно-ответная система с использованием Retrieval Augmented Generation (RAG)",
     "badge": "NEW",
     "usecases": ["Вопросно-ответная система для документов"],
     "framework": ["Langchain"],
@@ -286,7 +286,7 @@
                         "label": "Ссылка на репозиторий",
                         "name": "repoLink",
                         "type": "string",
-                        "placeholder": "https://github.com/FlowiseAI/Flowise",
+                        "placeholder": "https://osmi-it.ru/",
                         "id": "github_0-input-repoLink-string"
                     },
                     {
@@ -351,7 +351,7 @@
                     }
                 ],
                 "inputs": {
-                    "repoLink": "https://github.com/FlowiseAI/FlowiseDocs",
+                    "repoLink": "https://osmi-it.ru/",
                     "branch": "main",
                     "recursive": true,
                     "textSplitter": "{{markdownTextSplitter_0.data.instance}}",
