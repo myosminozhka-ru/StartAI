@@ -115,7 +115,6 @@ class ChatYandexGPT_ChatModels implements INode {
             params.maxTokens = parseInt(maxOutputTokens, 10);
         }
 
-        console.log('YandexGPT params:', params)
         const model = new ChatYandexGPT(params);
         (model as any).bindTools = (tools: any[]) => {
             (model as any).tools = tools;
@@ -127,12 +126,10 @@ class ChatYandexGPT_ChatModels implements INode {
     //@ts-ignore
     loadMethods = {
         async listModels(): Promise<INodeOptionsValue[]> {
-            console.log('[ChatYandexGPT] Вызван listModels');
             const models = await getModels(MODEL_TYPE.CHAT, 'chatYandexGPT')
-            console.log('[ChatYandexGPT] Модели, полученные из getModels:', models);
             return models
         }
     }
-}   
+}
 
 module.exports = { nodeClass: ChatYandexGPT_ChatModels }
