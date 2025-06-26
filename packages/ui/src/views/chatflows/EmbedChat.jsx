@@ -173,8 +173,8 @@ export const defaultThemeConfig = {
         footer: {
             textColor: '#303235',
             text: 'Работает на',
-            company: 'Flowise',
-            companyLink: 'https://flowiseai.com'
+            company: 'Osmi-it',
+            companyLink: 'https://app.osmi-it.ru'
         }
     }
 }

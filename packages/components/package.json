@@ -11,7 +11,7 @@
         "nuke": "rimraf dist node_modules .turbo"
     },
     "keywords": [],
-    "homepage": "https://flowiseai.com",
+    "homepage": "https://osmi-it.ru/",
     "author": {
         "name": "Henry Heng",
         "email": "henryheng@flowiseai.com"

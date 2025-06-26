@@ -18,7 +18,7 @@ const swaggerUiOptions = {
             },
             contact: {
                 name: 'FlowiseAI',
-                email: 'support@flowiseai.com'
+                email: 'info@myosminozhka.ru'
             }
         },
         servers: [
