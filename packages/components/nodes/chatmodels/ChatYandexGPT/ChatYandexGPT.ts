@@ -61,6 +61,14 @@ class ChatYandexGPT_ChatModels implements INode {
                 step: 1,
                 optional: true,
                 additionalParams: true
+            },
+            {
+                label: 'Streaming',
+                name: 'streaming',
+                type: 'boolean',
+                default: true,
+                optional: true,
+                additionalParams: true
             }
         ]
     }
@@ -90,9 +98,13 @@ class ChatYandexGPT_ChatModels implements INode {
         if (modelURI) obj.modelURI = modelURI
         if (modelVersion) obj.modelVersion = modelVersion
         if (maxOutputTokens) obj.maxOutputTokens = parseInt(maxOutputTokens, 10)
-        const model = new ChatYandexGPT(obj)
-        if (cache) model.cache = cache
-        return model
+        const model = new ChatYandexGPT(obj);
+        (model as any).bindTools = (tools: any[]) => {
+            (model as any).tools = tools;
+            return model;
+        };
+        if (cache) model.cache = cache;
+        return model;
     }
 
     async listModels(): Promise<any[]> {

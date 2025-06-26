@@ -1418,6 +1418,7 @@ export const isFlowValidForStream = (reactFlowNodes: IReactFlowNode[], endingNod
             if (!Object.prototype.hasOwnProperty.call(data.inputs, 'streaming') && !data.inputs?.streaming) {
                 isChatOrLLMsExist = true
                 const validLLMs = streamAvailableLLMs[data.category]
+                if (!validLLMs) return false
                 if (!validLLMs.includes(data.name)) return false
             }
         }
