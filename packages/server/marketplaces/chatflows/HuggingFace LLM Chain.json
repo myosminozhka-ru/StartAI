@@ -1,7 +1,7 @@
 {
     "description": "Простая цепочка LLM с использованием API вывода 'Hugging Face' на модели falcon-7b-instruct",
     "framework": ["Langchain"],
-    "usecases": ["Basic"],
+    "usecases": ["Базовый"],
     "nodes": [
         {
             "width": 300,

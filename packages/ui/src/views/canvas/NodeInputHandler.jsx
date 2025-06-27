@@ -33,6 +33,7 @@ import { AsyncDropdown } from '@/ui-component/dropdown/AsyncDropdown'
 import { Input } from '@/ui-component/input/Input'
 import { RichInput } from '@/ui-component/input/RichInput'
 import { DataGrid } from '@/ui-component/grid/DataGrid'
+import { ruRU } from '@mui/x-data-grid/locales'
 import { File } from '@/ui-component/file/File'
 import { SwitchInput } from '@/ui-component/switch/Switch'
 import { flowContext } from '@/store/context/ReactFlowContext'
@@ -1027,6 +1028,7 @@ const NodeInputHandler = ({
                                 hideFooter={true}
                                 rows={data.inputs[inputParam.name] ?? JSON.stringify(inputParam.default) ?? []}
                                 onChange={(newValue) => (data.inputs[inputParam.name] = newValue)}
+                                localeText={ruRU.components.MuiDataGrid.defaultProps.localeText}
                             />
                         )}
                         {inputParam.type === 'code' && (

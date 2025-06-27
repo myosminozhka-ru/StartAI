@@ -1,7 +1,7 @@
 {
     "description": "Мультиагенты с супервизором и агентами, построенные с использованием последовательных узлов агентов",
     "framework": ["Langchain"],
-    "usecases": ["Reflective Agent"],
+    "usecases": ["Отражающий агент"],
     "nodes": [
         {
             "id": "seqStart_0",

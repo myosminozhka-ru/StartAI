@@ -2,7 +2,7 @@
     "description": "Ответы на вопросы на основе полученных документов (контекста) с сохранением предыдущих разговоров",
     "framework": ["LlamaIndex"],
     "badge": "POPULAR",
-    "usecases": ["Documents QnA"],
+    "usecases": ["Документы QnA"],
     "nodes": [
         {
             "width": 300,

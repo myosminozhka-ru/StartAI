@@ -206,7 +206,7 @@ const Variables = () => {
                             description='Создание и управление глобальными переменными'
                         >
                             <Button variant='outlined' sx={{ borderRadius: 2, height: '100%' }} onClick={() => setShowHowToDialog(true)}>
-                                Как использовать
+                                Использовать
                             </Button>
                             <StyledPermissionButton
                                 permissionId={'variables:create'}
@@ -216,7 +216,7 @@ const Variables = () => {
                                 startIcon={<IconPlus />}
                                 id='btn_createVariable'
                             >
-                                Добавить переменную
+                                Добавить
                             </StyledPermissionButton>
                         </ViewHeader>
                         {!isLoading && variables.length === 0 ? (
@@ -357,10 +357,10 @@ const Variables = () => {
                                                             />
                                                         </StyledTableCell>
                                                         <StyledTableCell>
-                                                            {moment(variable.updatedDate).format('DD.MM.YYYY HH:mm')}
+                                                            {moment(variable.updatedDate).format('MMMM Do, YYYY HH:mm:ss')}
                                                         </StyledTableCell>
                                                         <StyledTableCell>
-                                                            {moment(variable.createdDate).format('DD.MM.YYYY HH:mm')}
+                                                            {moment(variable.createdDate).format('MMMM Do, YYYY HH:mm:ss')}
                                                         </StyledTableCell>
                                                         <Available permission={'variables:create,variables:update'}>
                                                             <StyledTableCell>

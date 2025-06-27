@@ -7,6 +7,7 @@ import DeleteIcon from '@mui/icons-material/Delete'
 import { cloneDeep } from 'lodash'
 import { formatDataGridRows } from '@/utils/genericHelper'
 import { styled } from '@mui/material/styles'
+import { ruRU } from '@mui/x-data-grid/locales'
 
 const StyledDataGrid = styled(MUIDataGrid)(({ theme }) => ({
     border: `1px solid ${theme.palette.mode === 'light' ? '#b4b4b4' : '#303030'}`,
@@ -115,6 +116,7 @@ export const DataGrid = ({ columns, rows, style, disabled = false, hideFooter = 
                         onProcessRowUpdateError={(error) => console.error(error)}
                         rows={rowValues}
                         columns={colValues}
+                        localeText={ruRU.components.MuiDataGrid.defaultProps.localeText}
                     />
                 </div>
             )}

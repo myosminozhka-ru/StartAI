@@ -1,4 +1,4 @@
-import express, { Request, Response, NextFunction, RequestHandler } from 'express'
+import express, { Request, Response } from 'express'
 import path from 'path'
 import cors from 'cors'
 import http from 'http'
@@ -367,7 +367,7 @@ export async function start(): Promise<void> {
     await serverApp.config()
 
     server.listen(port, host, () => {
-        logger.info(`⚡️ [server]: Flowise Server is listening at ${host ? 'http://' + host : ''}:${port}`)
+        logger.info(`⚡️ [server]: OsmiAI Server is listening at ${host ? 'http://' + host : ''}:${port}`)
     })
 }
 

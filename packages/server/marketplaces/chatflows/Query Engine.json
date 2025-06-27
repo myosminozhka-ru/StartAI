@@ -1,6 +1,6 @@
 {
     "description": "Механизм запросов без учета состояния, предназначенный для ответа на вопрос о ваших данных с помощью LlamaIndex",
-    "usecases": ["Documents QnA"],
+    "usecases": ["Документы QnA"],
     "framework": ["LlamaIndex"],
     "nodes": [
         {

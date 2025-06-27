@@ -1,7 +1,7 @@
 {
     "description": "Самосовершенствующийся инструмент, который проверяет соответствие документа заданному пользователем вопросу",
     "framework": ["Langchain"],
-    "usecases": ["Reflective Agent"],
+    "usecases": ["Отражающий агент"],
     "nodes": [
         {
             "id": "seqLLMNode_0",

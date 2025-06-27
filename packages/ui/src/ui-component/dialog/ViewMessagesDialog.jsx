@@ -996,7 +996,7 @@ const ViewMessagesDialog = ({ show, dialogProps, onCancel }) => {
                                                             </div>
                                                         </div>
                                                     }
-                                                    secondary={moment(chatmsg.createdDate).format('DD.MM.YYYY HH:mm')}
+                                                    secondary={moment(chatmsg.createdDate).format('MMMM Do YYYY, h:mm:ss a')}
                                                 />
                                             </ListItem>
                                         </ListItemButton>
@@ -1479,7 +1479,7 @@ const ViewMessagesDialog = ({ show, dialogProps, onCancel }) => {
                                                             key={index}
                                                             style={{ display: 'flex', justifyContent: 'center', alignContent: 'center' }}
                                                         >
-                                                            {moment(message.message).format('DD.MM.YYYY HH:mm')}
+                                                            {moment(message.message).format('MMMM Do YYYY, h:mm:ss a')}
                                                         </Box>
                                                     )
                                                 }

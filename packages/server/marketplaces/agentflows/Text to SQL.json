@@ -1,7 +1,7 @@
 {
     "description": "Обработка текстовых запросов SQL с использованием команды из 3 агентов: SQL Expert, SQL Reviewer и SQL Executor",
     "framework": ["Langchain"],
-    "usecases": ["SQL", "Hierarchical Agent Teams"],
+    "usecases": ["SQL", "Иерархические команды агентов"],
     "nodes": [
         {
             "id": "supervisor_0",

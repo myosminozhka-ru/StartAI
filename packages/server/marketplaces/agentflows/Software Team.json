@@ -1,7 +1,7 @@
 {
     "description": "Команда разработчиков программного обеспечения работает вместе над созданием функции, решением проблемы или выполнением задачи.",
     "framework": ["Langchain"],
-    "usecases": ["Engineering", "Hierarchical Agent Teams"],
+    "usecases": ["Разработка", "Иерархические команды агентов"],
     "nodes": [
         {
             "id": "supervisor_0",

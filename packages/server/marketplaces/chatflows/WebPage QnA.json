@@ -1,6 +1,6 @@
 {
     "description": "Очистите веб-страницы, которые будут использоваться с помощью расширенной генерации поиска (RAG) для получения ответов на вопросы",
-    "usecases": ["Documents QnA"],
+    "usecases": ["Документы QnA"],
     "framework": ["Langchain"],
     "badge": "POPULAR",
     "nodes": [

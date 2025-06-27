@@ -1,7 +1,7 @@
 {
     "description": "Исследуйте потенциальных клиентов и создавайте персонализированные проекты электронных писем для отдела продаж",
     "framework": ["Langchain"],
-    "usecases": ["Leads", "Hierarchical Agent Teams"],
+    "usecases": ["Лид", "Иерархические команды агентов"],
     "nodes": [
         {
             "id": "supervisor_0",

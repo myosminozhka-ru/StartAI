@@ -1,6 +1,6 @@
 {
     "description": "Анализ и обобщение данных в формате CSV",
-    "usecases": ["Working with tables"],
+    "usecases": ["Работа с таблицами"],
     "framework": ["Langchain"],
     "nodes": [
         {

@@ -57,7 +57,7 @@ const EvaluationResultVersionsSideDrawer = ({ show, dialogProps, onClickFunction
                         versions.map((version, index) => (
                             <TimelineItem key={index}>
                                 <TimelineOppositeContent color='textSecondary'>
-                                    {moment(version.runDate).format('DD.MM.YYYY HH:mm')}
+                                    {moment(version.runDate).format('DD-MMM-YYYY, hh:mm:ss A')}
                                 </TimelineOppositeContent>
                                 <TimelineSeparator style={{ marginTop: 5 }}>
                                     <TimelineDot />

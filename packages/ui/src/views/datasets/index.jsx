@@ -298,7 +298,7 @@ const EvalDatasets = () => {
                                                         </TableCell>
                                                         <TableCell onClick={() => goToRows(ds)}>{ds?.rowCount}</TableCell>
                                                         <TableCell onClick={() => goToRows(ds)}>
-                                                            {moment(ds.updatedDate).format('DD.MM.YYYY HH:mm')}
+                                                            {moment(ds.updatedDate).format('MMMM Do YYYY, hh:mm A')}
                                                         </TableCell>
                                                         <Available permission={'datasets:update,datasets:create'}>
                                                             <TableCell>

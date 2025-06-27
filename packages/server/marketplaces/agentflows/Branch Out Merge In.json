@@ -1,7 +1,7 @@
 {
     "description": "Пример разветвления на разные агенты и объединения окончательных ответов обратно в один",
     "framework": ["Langchain"],
-    "usecases": ["Basic"],
+    "usecases": ["Базовый"],
     "nodes": [
         {
             "id": "seqStart_0",

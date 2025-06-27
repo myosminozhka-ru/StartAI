@@ -20,6 +20,7 @@ import { CodeEditor } from '@/ui-component/editor/CodeEditor'
 import ExpandTextDialog from '@/ui-component/dialog/ExpandTextDialog'
 import ManageScrapedLinksDialog from '@/ui-component/dialog/ManageScrapedLinksDialog'
 import CredentialInputHandler from '@/views/canvas/CredentialInputHandler'
+import { ruRU } from '@mui/x-data-grid/locales'
 
 // const
 import { FLOWISE_CREDENTIAL_ID } from '@/store/constant'
@@ -160,6 +161,7 @@ const DocStoreInputHandler = ({ inputParam, data, disabled = false }) => {
                                 hideFooter={true}
                                 rows={data.inputs[inputParam.name] ?? JSON.stringify(inputParam.default) ?? []}
                                 onChange={(newValue) => (data.inputs[inputParam.name] = newValue)}
+                                localeText={ruRU.components.MuiDataGrid.defaultProps.localeText}
                             />
                         )}
                         {inputParam.type === 'code' && (

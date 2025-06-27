@@ -1,6 +1,6 @@
 {
     "description": "Возвращает ответ в виде списка (массива) вместо строки/текста",
-    "usecases": ["Extraction"],
+    "usecases": ["Извлечение"],
     "framework": ["Langchain"],
     "nodes": [
         {

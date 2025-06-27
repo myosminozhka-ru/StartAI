@@ -1,6 +1,6 @@
 {
     "description": "Перевод языков с использованием цепочки LLM с шаблоном чат-промпта и чат-моделью",
-    "usecases": ["Basic"],
+    "usecases": ["Базовый"],
     "framework": ["Langchain"],
     "nodes": [
         {

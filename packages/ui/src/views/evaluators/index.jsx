@@ -494,7 +494,7 @@ const Evaluators = () => {
                                                                 )}
                                                             </TableCell>
                                                             <TableCell onClick={() => edit(ds)}>
-                                                                {moment(ds.updatedDate).format('DD.MM.YYYY HH:mm')}
+                                                                {moment(ds.updatedDate).format('MMMM Do YYYY, hh:mm A')}
                                                             </TableCell>
                                                             <TableCell>
                                                                 <PermissionIconButton

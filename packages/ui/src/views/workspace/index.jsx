@@ -125,7 +125,7 @@ function ShowWorkspaceRow(props) {
                         </IconButton>
                     )}
                 </StyledTableCell>
-                <StyledTableCell>{moment(props.workspace.updatedDate).format('DD.MM.YYYY HH:mm')}</StyledTableCell>
+                <StyledTableCell>{moment(props.workspace.updatedDate).format('MMMM Do YYYY, hh:mm A')}</StyledTableCell>
                 <StyledTableCell>
                     {props.workspace.name !== 'Default Workspace' && (
                         <PermissionIconButton

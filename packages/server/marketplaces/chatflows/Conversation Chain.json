@@ -1,6 +1,6 @@
 {
     "description": "Базовый пример цепочки разговоров со встроенной памятью - работает точно так же, как ChatGPT",
-    "usecases": ["Chatbot"],
+    "usecases": ["Чат-бот"],
     "framework": ["Langchain"],
     "badge": "POPULAR",
     "nodes": [

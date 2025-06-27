@@ -1,5 +1,6 @@
 import PropTypes from 'prop-types'
 import { DataGrid } from '@mui/x-data-grid'
+import { ruRU } from '@mui/x-data-grid/locales'
 
 export const Grid = ({ columns, rows, style, disabled = false, onRowUpdate }) => {
     const handleProcessRowUpdate = (newRow) => {
@@ -19,6 +20,7 @@ export const Grid = ({ columns, rows, style, disabled = false, onRowUpdate }) =>
                         onProcessRowUpdateError={(error) => console.error(error)}
                         rows={rows}
                         columns={columns}
+                        localeText={ruRU.components.MuiDataGrid.defaultProps.localeText}
                     />
                 </div>
             )}

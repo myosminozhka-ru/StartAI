@@ -187,7 +187,7 @@ const ViewLeadsDialog = ({ show, dialogProps, onCancel }) => {
                                         <TableCell>{lead.name}</TableCell>
                                         <TableCell>{lead.email}</TableCell>
                                         <TableCell>{lead.phone}</TableCell>
-                                        <TableCell>{moment(lead.createdDate).format('DD-MM-YYYY')}</TableCell>
+                                        <TableCell>{moment(lead.createdDate).format('MMMM Do, YYYY')}</TableCell>
                                     </TableRow>
                                 ))}
                             </TableBody>

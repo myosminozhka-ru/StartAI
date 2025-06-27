@@ -1,6 +1,6 @@
 {
     "description": "Агентный подход, использующий Agent flow V2 для выполнения самокорректирующихся ответов на вопросы по документам",
-    "usecases": ["Reflective Agent"],
+    "usecases": ["Отражающий агент"],
     "nodes": [
         {
             "id": "startAgentflow_0",

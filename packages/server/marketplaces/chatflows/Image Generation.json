@@ -1,7 +1,7 @@
 {
     "description": "Генерация изображений с использованием модели Replicate Stability для преобразования текста в изображение",
     "framework": ["Langchain"],
-    "usecases": ["Image Generation"],
+    "usecases": ["Создание образа"],
     "nodes": [
         {
             "width": 300,

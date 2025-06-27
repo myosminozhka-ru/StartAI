@@ -156,7 +156,7 @@ function ShowUserRow(props) {
                     {'INACTIVE' === props.row.status.toUpperCase() && <Chip color={'error'} label={props.row.status.toUpperCase()} />}
                 </StyledTableCell>
                 <StyledTableCell>
-                    {!props.row.lastLogin ? 'Никогда' : moment(props.row.lastLogin).format('DD.MM.YYYY HH:mm')}
+                    {!props.row.lastLogin ? 'Никогда' : moment(props.row.lastLogin).format('DD/MM/YYYY HH:mm')}
                 </StyledTableCell>
                 <StyledTableCell>
                     {props.row.status.toUpperCase() === 'INVITED' && (

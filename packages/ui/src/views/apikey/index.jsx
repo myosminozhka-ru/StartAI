@@ -131,7 +131,7 @@ function APIKeyRow(props) {
                         </IconButton>
                     )}
                 </StyledTableCell>
-                <StyledTableCell>{moment(props.apiKey.createdAt).format('DD.MM.YYYY')}</StyledTableCell>
+                <StyledTableCell>{moment(props.apiKey.createdAt).format('DD-MM-YYYY')}</StyledTableCell>
                 <Available permission={'apikeys:update,apikeys:create'}>
                     <StyledTableCell>
                         <IconButton title='Редактировать' color='primary' onClick={props.onEditClick}>

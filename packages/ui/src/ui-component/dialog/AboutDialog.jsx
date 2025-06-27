@@ -61,8 +61,8 @@ const AboutDialog = ({ show, onCancel }) => {
                                         3.0.1
                                     </TableCell>
                                     <TableCell component='th' scope='row'>
-                                        <a target='_blank' rel='noreferrer' href='https://osmi-it.ru/'>
-                                            Osmi-it
+                                        <a target='_blank' rel='noreferrer' href='https://app.osmi-it.ru/'>
+                                            Osmi AI
                                         </a>
                                     </TableCell>
                                     <TableCell>01.05.2025</TableCell>

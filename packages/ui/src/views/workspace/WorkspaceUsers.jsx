@@ -499,7 +499,7 @@ const WorkspaceDetails = () => {
                                                             <StyledTableCell>
                                                                 {!item.lastLogin
                                                                     ? 'Никогда'
-                                                                    : moment(item.lastLogin).format('DD.MM.YYYY HH:mm')}
+                                                                    : moment(item.lastLogin).format('DD/MM/YYYY HH:mm')}
                                                             </StyledTableCell>
                                                             <StyledTableCell>
                                                                 {!item.isOrgOwner && item.status.toUpperCase() === 'INVITED' && (

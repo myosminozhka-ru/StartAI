@@ -1,7 +1,7 @@
 {
     "description": "Вручную утвердите действие перед запуском инструментов",
     "framework": ["Langchain"],
-    "usecases": ["Human In Loop"],
+    "usecases": ["Человек в петле"],
     "nodes": [
         {
             "id": "seqStart_0",

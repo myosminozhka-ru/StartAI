@@ -1,7 +1,7 @@
 {
     "description": "Используйте Anthropic Claude с контекстным окном 200k, чтобы просмотреть весь документ для обобщения",
     "framework": ["Langchain"],
-    "usecases": ["Summarization"],
+    "usecases": ["Подведение итогов"],
     "nodes": [
         {
             "width": 300,

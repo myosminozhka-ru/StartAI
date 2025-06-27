@@ -1,7 +1,7 @@
 {
     "description": "Возвращает ответ в виде указанной структуры JSON вместо строки/текста",
     "framework": ["Langchain"],
-    "usecases": ["Extraction"],
+    "usecases": ["Извлечение"],
     "nodes": [
         {
             "width": 300,

@@ -1,6 +1,6 @@
 {
     "description": "Использование Vectra for Retrieval Augmented Generation (RAG) для ответов на вопросы из документов",
-    "usecases": ["Documents QnA"],
+    "usecases": ["Документы QnA"],
     "framework": ["Langchain"],
     "nodes": [
         {

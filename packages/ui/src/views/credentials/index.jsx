@@ -380,10 +380,10 @@ const Credentials = () => {
                                                             </Box>
                                                         </StyledTableCell>
                                                         <StyledTableCell>
-                                                            {moment(credential.updatedDate).format('DD.MM.YYYY HH:mm')}
+                                                            {moment(credential.updatedDate).format('MMMM Do, YYYY HH:mm:ss')}
                                                         </StyledTableCell>
                                                         <StyledTableCell>
-                                                            {moment(credential.createdDate).format('DD.MM.YYYY HH:mm')}
+                                                            {moment(credential.createdDate).format('MMMM Do, YYYY HH:mm:ss')}
                                                         </StyledTableCell>
                                                         {!credential.shared && (
                                                             <>

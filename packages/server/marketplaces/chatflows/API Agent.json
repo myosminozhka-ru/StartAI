@@ -1,7 +1,7 @@
 {
     "description": "Учитывая APIdocs, агент автоматически решает, какой API вызывать, генерируя URL и основной запрос из диалога",
     "framework": ["Langchain"],
-    "usecases": ["Interacting with API"],
+    "usecases": ["Взаимодействие с API"],
     "nodes": [
         {
             "id": "toolAgent_0",

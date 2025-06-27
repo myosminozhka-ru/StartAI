@@ -177,7 +177,7 @@ const EvalsEvaluation = () => {
                 // Prepare the data for the table
                 for (let i = 0; i < evalRows.length; i++) {
                     const evalRow = evalRows[i]
-                    evalRows[i].runDate = moment(evalRow.runDate).format('DD.MM.YYYY HH:mm')
+                    evalRows[i].runDate = moment(evalRow.runDate).format('DD-MMM-YYYY, hh:mm:ss A')
                     evalRows[i].average_metrics =
                         typeof evalRow.average_metrics === 'object' ? evalRow.average_metrics : JSON.parse(evalRow.average_metrics)
                     evalRows[i].usedFlows =
@@ -195,7 +195,7 @@ const EvalsEvaluation = () => {
             const evalRows = createNewEvaluation.data
             for (let i = 0; i < evalRows.length; i++) {
                 const evalRow = evalRows[i]
-                evalRows[i].runDate = moment(evalRow.runDate).format('DD.MM.YYYY HH:mm')
+                evalRows[i].runDate = moment(evalRow.runDate).format('DD-MMM-YYYY, hh:mm:ss A')
                 evalRows[i].average_metrics =
                     typeof evalRow.average_metrics === 'object' ? evalRow.average_metrics : JSON.parse(evalRow.average_metrics)
                 evalRows[i].usedFlows = typeof evalRow.chatflowName === 'object' ? evalRow.chatflowName : JSON.parse(evalRow.chatflowName)
@@ -611,7 +611,7 @@ function EvaluationRunRow(props) {
                         )}
                     </Stack>
                 </StyledTableCell>
-                <StyledTableCell>{moment(props.item.runDate).format('DD.MM.YYYY HH:mm')}</StyledTableCell>
+                <StyledTableCell>{moment(props.item.runDate).format('DD-MM-YYYY')}</StyledTableCell>
                 <StyledTableCell>
                     <Stack flexDirection='row' sx={{ gap: 2, alignItems: 'center', flexWrap: 'wrap' }}>
                         {props.item?.usedFlows?.map((usedFlow, index) => (
@@ -709,7 +709,7 @@ function EvaluationRunRow(props) {
                                                             </StyledTableCell>
                                                             <StyledTableCell>{childItem.version}</StyledTableCell>
                                                             <StyledTableCell>
-                                                                {moment(childItem.runDate).format('DD.MM.YYYY HH:mm')}
+                                                                {moment(childItem.runDate).format('DD-MMM-YYYY, hh:mm:ss A')}
                                                             </StyledTableCell>
                                                             <StyledTableCell>
                                                                 <Stack

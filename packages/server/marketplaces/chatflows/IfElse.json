@@ -1,7 +1,7 @@
 {
     "description": "Разделение потоков на основе условия if else",
     "framework": ["Langchain"],
-    "usecases": ["Basic"],
+    "usecases": ["Базовый"],
     "nodes": [
         {
             "width": 300,

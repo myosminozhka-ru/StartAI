@@ -1,7 +1,7 @@
 {
     "description": "Инструментальный агент, который может извлекать ответы из нескольких источников с помощью соответствующих средств поиска",
     "badge": "POPULAR",
-    "usecases": ["Documents QnA"],
+    "usecases": ["Документы QnA"],
     "framework": ["Langchain"],
     "nodes": [
         {

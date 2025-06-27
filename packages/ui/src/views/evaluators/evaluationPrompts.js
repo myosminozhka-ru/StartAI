@@ -2,7 +2,7 @@ export const evaluationPrompts = [
     {
         name: 'correctness',
         label: 'Correctness',
-        json: [{ id: 1, property: 'score', description: 'graded score', type: 'number', required: true }],
+        json: [{ id: 1, property: 'score', description: 'оценочный балл', type: 'number', required: true }],
         prompt: `Respond with a numeric score based on how well the following response compare to the ground truth. Grade only based expected response:
 
 Ground Truth: {expectedOutput}

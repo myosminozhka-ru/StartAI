@@ -307,14 +307,16 @@ export const FlowListTable = ({
                                                                     fontWeight: 200
                                                                 }}
                                                             >
-                                                                + {(images[row.id]?.length || 0) + (icons[row.id]?.length || 0) - 5} More
+                                                                + {(images[row.id]?.length || 0) + (icons[row.id]?.length || 0) - 5} Больше
                                                             </Typography>
                                                         </MoreItemsTooltip>
                                                     )}
                                                 </Box>
                                             )}
                                         </StyledTableCell>
-                                        <StyledTableCell key='3'>{moment(row.updatedDate).format('DD.MM.YYYY HH:mm')}</StyledTableCell>
+                                        <StyledTableCell key='3'>
+                                            {moment(row.updatedDate).format('MMMM Do, YYYY HH:mm:ss')}
+                                        </StyledTableCell>
                                         {isActionsAvailable && (
                                             <StyledTableCell key='4'>
                                                 <Stack

@@ -327,7 +327,7 @@ const EvalEvaluationRows = () => {
                             onBack={goBack}
                             search={false}
                             title={'Оценка: ' + selectedEvaluationName}
-                            description={evaluation?.runDate ? moment(evaluation?.runDate).format('DD.MM.YYYY HH:mm') : ''}
+                            description={evaluation?.runDate ? moment(evaluation?.runDate).format('DD-MMM-YYYY, hh:mm:ss A') : ''}
                         >
                             {evaluation?.versionCount > 1 && (
                                 <Chip
