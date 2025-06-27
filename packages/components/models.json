@@ -1254,6 +1254,32 @@
                     "output_cost": 0.003
                 }
             ]
+        },
+        {
+            "name": "chatYandexGPT",
+            "models": [
+                {
+                    "label": "yandexgpt-lite",
+                    "name": "yandexgpt-lite",
+                    "description": "Легкая модель YandexGPT для быстрых ответов",
+                    "input_cost": 0.0001,
+                    "output_cost": 0.0002
+                },
+                {
+                    "label": "yandexgpt",
+                    "name": "yandexgpt",
+                    "description": "Базовая модель YandexGPT",
+                    "input_cost": 0.0002,
+                    "output_cost": 0.0004
+                },
+                {
+                    "label": "yandexgpt-pro",
+                    "name": "yandexgpt-pro",
+                    "description": "Продвинутая модель YandexGPT для сложных задач",
+                    "input_cost": 0.0005,
+                    "output_cost": 0.001
+                }
+            ]
         }
     ],
     "llm": [

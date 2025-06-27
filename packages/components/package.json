@@ -49,6 +49,7 @@
         "@langchain/groq": "0.1.2",
         "@langchain/langgraph": "^0.0.22",
         "@langchain/mistralai": "^0.2.0",
+        "@langchain/yandex": "^0.0.3",
         "@langchain/mongodb": "^0.0.1",
         "@langchain/ollama": "0.2.0",
         "@langchain/openai": "0.5.6",
