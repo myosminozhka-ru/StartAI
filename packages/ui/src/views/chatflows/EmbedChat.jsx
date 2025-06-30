@@ -112,7 +112,7 @@ export const defaultThemeConfig = {
     disclaimer: {
         title: 'Отказ от ответственности',
         message:
-            'Используя этого чат-бота, вы соглашаетесь с <a target="_blank" href="https://flowiseai.com/terms">Условиями использования</a>',
+            'Используя этого чат-бота, вы соглашаетесь с <a target="_blank" href="https://app.osmi-it.ru/terms">Условиями использования</a>',
         textColor: 'black',
         buttonColor: '#3b82f6',
         buttonText: 'Начать общение',

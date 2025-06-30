@@ -33,7 +33,7 @@ const LicenseExpired = () => {
                         <Typography variant='body1' component='div' sx={{ mb: 2 }}>
                             Please contact our support team to renew your license.
                         </Typography>
-                        <a href='mailto:support@flowiseai.com'>
+                        <a href='mailto:support@osmi-it.ru'>
                             <StyledButton sx={{ px: 2, py: 1 }}>Contact Support</StyledButton>
                         </a>
                     </Stack>
