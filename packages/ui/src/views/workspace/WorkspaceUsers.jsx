@@ -341,7 +341,7 @@ const WorkspaceDetails = () => {
                                         onClick={addUser}
                                         startIcon={<IconUserPlus />}
                                     >
-                                        Добавить пользователя
+                                        Добавить
                                     </StyledPermissionButton>
                                 </>
                             )}
@@ -363,7 +363,7 @@ const WorkspaceDetails = () => {
                                     startIcon={<IconUserPlus />}
                                     onClick={addUser}
                                 >
-                                    Добавить пользователя
+                                    Добавить
                                 </StyledPermissionButton>
                             </Stack>
                         ) : (

@@ -29,7 +29,7 @@ const getEmailTemplate = (defaultTemplateName: string, userTemplatePath?: string
             return fs.readFileSync(userTemplatePath, 'utf8')
         }
     } catch (error) {
-        console.warn(`Failed to load custom template from ${userTemplatePath}, falling back to default`)
+        console.warn(`Не удалось загрузить пользовательский шаблон из ${userTemplatePath}, возвращение к дефолту`)
     }
     return fs.readFileSync(path.join(__dirname, '../', 'emails', defaultTemplateName), 'utf8')
 }
@@ -41,12 +41,12 @@ const sendWorkspaceAdd = async (email: string, workspaceName: string, dashboardL
     const template = getEmailTemplate('workspace_add_cloud.hbs', process.env.WORKSPACE_INVITE_TEMPLATE_PATH)
     const compiledWorkspaceInviteTemplateSource = handlebars.compile(template)
     htmlToSend = compiledWorkspaceInviteTemplateSource({ workspaceName, dashboardLink })
-    textContent = `You have been added to ${workspaceName}. Click here to visit your dashboard: ${dashboardLink}` // plain text body
+    textContent = `Вас добавили в рабочее пространство ${workspaceName}. Перейдите по ссылке, чтобы открыть вашу панель управления: ${dashboardLink}` // plain text body
 
     await transporter.sendMail({
-        from: SENDER_EMAIL || '"FlowiseAI Team" <team@mail.flowiseai.com>', // sender address
+        from: SENDER_EMAIL || '"OsmiAI Team" <info@myosminozhka.ru>', // sender address
         to: email,
-        subject: `You have been added to ${workspaceName}`, // Subject line
+        subject: `Вы были добавлены в ${workspaceName}`, // Subject line
         text: textContent, // plain text body
         html: htmlToSend // html body
     })
@@ -74,12 +74,12 @@ const sendWorkspaceInvite = async (
               )
     const compiledWorkspaceInviteTemplateSource = handlebars.compile(template)
     htmlToSend = compiledWorkspaceInviteTemplateSource({ workspaceName, registerLink })
-    textContent = `You have been invited to ${workspaceName}. Click here to register: ${registerLink}` // plain text body
+    textContent = `Вас пригласили в рабочее пространство ${workspaceName}. Перейдите по ссылке, чтобы зарегистрироваться: ${registerLink}` // plain text body
 
     await transporter.sendMail({
-        from: SENDER_EMAIL || '"FlowiseAI Team" <team@mail.flowiseai.com>', // sender address
+        from: SENDER_EMAIL || '"OsmiAI Team" <info@myosminozhka.ru>', // sender address
         to: email,
-        subject: `You have been invited to ${workspaceName}`, // Subject line
+        subject: `Вы были приглашены на ${workspaceName}`, // Subject line
         text: textContent, // plain text body
         html: htmlToSend // html body
     })
@@ -91,10 +91,10 @@ const sendPasswordResetEmail = async (email: string, resetLink: string) => {
 
     const htmlToSend = compiledPasswordResetTemplateSource({ resetLink })
     await transporter.sendMail({
-        from: SENDER_EMAIL || '"FlowiseAI Team" <team@mail.flowiseai.com>', // sender address
+        from: SENDER_EMAIL || '"OsmiAI Team" <info@myosminozhka.ru>', // sender address
         to: email,
-        subject: 'Reset your password', // Subject line
-        text: `You requested a link to reset your password. Click here to reset the password: ${resetLink}`, // plain text body
+        subject: 'Сбросьте свой пароль', // Subject line
+        text: `Вы запросили ссылку для сброса пароля. Перейдите по ссылке, чтобы сбросить пароль: ${resetLink}`, // plain text body
         html: htmlToSend // html body
     })
 }
@@ -106,12 +106,12 @@ const sendVerificationEmailForCloud = async (email: string, verificationLink: st
     const template = getEmailTemplate('verify_email_cloud.hbs')
     const compiledWorkspaceInviteTemplateSource = handlebars.compile(template)
     htmlToSend = compiledWorkspaceInviteTemplateSource({ verificationLink })
-    textContent = `To complete your registration, we need to verify your email address. Click here to verify your email address: ${verificationLink}` // plain text body
+    textContent = `Чтобы завершить регистрацию, необходимо подтвердить ваш адрес электронной почты. Перейдите по ссылке для подтверждения: ${verificationLink}` // plain text body
 
     await transporter.sendMail({
-        from: SENDER_EMAIL || '"FlowiseAI Team" <team@mail.flowiseai.com>', // sender address
+        from: SENDER_EMAIL || '"OsmiAI Team" <info@myosminozhka.ru>', // sender address
         to: email,
-        subject: 'Action Required: Please verify your email', // Subject line
+        subject: 'Необходимые действия: Пожалуйста, подтвердите свой адрес электронной почты', // Subject line
         text: textContent, // plain text body
         html: htmlToSend // html body
     })

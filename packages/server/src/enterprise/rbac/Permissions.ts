@@ -118,7 +118,7 @@ export class Permissions {
         workspaceCategory.addPermission(new Permission('workspace:view', 'Просмотр'))
         workspaceCategory.addPermission(new Permission('workspace:create', 'Создать'))
         workspaceCategory.addPermission(new Permission('workspace:update', 'Обновить'))
-        workspaceCategory.addPermission(new Permission('workspace:add-user', 'Добавить пользователя'))
+        workspaceCategory.addPermission(new Permission('workspace:add-user', 'Добавить'))
         workspaceCategory.addPermission(new Permission('workspace:unlink-user', 'Удалить пользователя'))
         workspaceCategory.addPermission(new Permission('workspace:delete', 'Удалить'))
         workspaceCategory.addPermission(new Permission('workspace:export', 'Экспортировать данные рабочего пространства'))
