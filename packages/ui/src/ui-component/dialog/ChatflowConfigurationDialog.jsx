@@ -15,39 +15,39 @@ import PostProcessing from '@/ui-component/extended/PostProcessing'
 
 const CHATFLOW_CONFIGURATION_TABS = [
     {
-        label: 'Security',
+        label: 'Безопасность',
         id: 'security'
     },
     {
-        label: 'Starter Prompts',
+        label: 'Стартовые подсказки',
         id: 'conversationStarters'
     },
     {
-        label: 'Follow-up Prompts',
+        label: 'Последующие подсказки',
         id: 'followUpPrompts'
     },
     {
-        label: 'Speech to Text',
+        label: 'Речь в текст',
         id: 'speechToText'
     },
     {
-        label: 'Chat Feedback',
+        label: 'Обратная связь по чату',
         id: 'chatFeedback'
     },
     {
-        label: 'Analyse Chatflow',
+        label: 'Анализ чатфлоу',
         id: 'analyseChatflow'
     },
     {
-        label: 'Leads',
+        label: 'Лиды',
         id: 'leads'
     },
     {
-        label: 'File Upload',
+        label: 'Загрузка файлов',
         id: 'fileUpload'
     },
     {
-        label: 'Post Processing',
+        label: 'Постобработка',
         id: 'postProcessing',
         hideInAgentFlow: true
     }
