@@ -201,7 +201,7 @@ const APIKeyDialog = ({ show, dialogProps, onCancel, onConfirm, setError }) => {
 
                 <Box sx={{ p: 2 }}>
                     <Stack sx={{ position: 'relative' }} direction='row'>
-                        <Typography variant='overline'>Key Name</Typography>
+                        <Typography variant='overline'>Имя ключа</Typography>
                     </Stack>
                     <OutlinedInput
                         id='keyName'

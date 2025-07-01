@@ -327,7 +327,7 @@ const UpsertHistoryDialog = ({ show, dialogProps, onCancel }) => {
                 <>
                     <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', width: '100%', marginBottom: 10 }}>
                         <div style={{ marginRight: 10 }}>
-                            <b style={{ marginRight: 10 }}>From Date</b>
+                            <b style={{ marginRight: 10 }}>С даты</b>
                             <DatePicker
                                 selected={startDate}
                                 onChange={(date) => onStartDateSelected(date)}
@@ -338,7 +338,7 @@ const UpsertHistoryDialog = ({ show, dialogProps, onCancel }) => {
                             />
                         </div>
                         <div style={{ marginRight: 10 }}>
-                            <b style={{ marginRight: 10 }}>To Date</b>
+                            <b style={{ marginRight: 10 }}>По дату</b>
                             <DatePicker
                                 selected={endDate}
                                 onChange={(date) => onEndDateSelected(date)}
@@ -359,7 +359,7 @@ const UpsertHistoryDialog = ({ show, dialogProps, onCancel }) => {
                             color='error'
                             startIcon={<IconTrash />}
                         >
-                            Delete {selected.length} {selected.length === 1 ? 'row' : 'rows'}
+                            Удалить {selected.length} {selected.length === 1 ? 'строку' : 'строки'}
                         </Button>
                     )}
                     {chatflowUpsertHistory.length <= 0 && (
@@ -371,7 +371,7 @@ const UpsertHistoryDialog = ({ show, dialogProps, onCancel }) => {
                                     alt='HistoryEmptySVG'
                                 />
                             </Box>
-                            <div>No Upsert History Yet</div>
+                            <div>Нет истории добавлений</div>
                         </Stack>
                     )}
                     {chatflowUpsertHistory.length > 0 && (
@@ -389,42 +389,42 @@ const UpsertHistoryDialog = ({ show, dialogProps, onCancel }) => {
                                                 }}
                                             />
                                         </TableCell>
-                                        <TableCell>Date</TableCell>
+                                        <TableCell>Дата</TableCell>
                                         <TableCell>
-                                            Added{' '}
+                                            Добавлено{' '}
                                             <TooltipWithParser
                                                 style={{ marginBottom: 2, marginLeft: 10 }}
-                                                title={'Number of vector embeddings added to Vector Store'}
+                                                title={'Количество векторных эмбеддингов, добавленных в Vector Store'}
                                             />
                                         </TableCell>
                                         <TableCell>
-                                            Updated{' '}
+                                            Обновлено{' '}
                                             <TooltipWithParser
                                                 style={{ marginBottom: 2, marginLeft: 10 }}
                                                 title={
-                                                    'Updated existing vector embeddings. Only works when a Record Manager is connected to the Vector Store'
+                                                    'Обновлены существующие векторные эмбеддинги. Работает только при подключенном Record Manager к Vector Store'
                                                 }
                                             />
                                         </TableCell>
                                         <TableCell>
-                                            Skipped{' '}
+                                            Пропущено{' '}
                                             <TooltipWithParser
                                                 style={{ marginBottom: 2, marginLeft: 10 }}
                                                 title={
-                                                    'Number of same vector embeddings that exists, and were skipped re-upserting again. Only works when a Record Manager is connected to the Vector Store'
+                                                    'Количество одинаковых векторных эмбеддингов, которые уже существуют и были пропущены при повторном добавлении. Работает только при подключенном Record Manager к Vector Store'
                                                 }
                                             />
                                         </TableCell>
                                         <TableCell>
-                                            Deleted{' '}
+                                            Удалено{' '}
                                             <TooltipWithParser
                                                 style={{ marginBottom: 2, marginLeft: 10 }}
                                                 title={
-                                                    'Deleted vector embeddings. Only works when a Record Manager with a Cleanup method is connected to the Vector Store'
+                                                    'Удалённые векторные эмбеддинги. Работает только при подключенном Record Manager с методом очистки к Vector Store'
                                                 }
                                             />
                                         </TableCell>
-                                        <TableCell>Details</TableCell>
+                                        <TableCell>Детали</TableCell>
                                     </TableRow>
                                 </TableHead>
                                 <TableBody>
@@ -445,7 +445,7 @@ const UpsertHistoryDialog = ({ show, dialogProps, onCancel }) => {
                 </>
             </DialogContent>
             <DialogActions>
-                <Button onClick={onCancel}>Close</Button>
+                <Button onClick={onCancel}>Закрыть</Button>
             </DialogActions>
         </Dialog>
     ) : null

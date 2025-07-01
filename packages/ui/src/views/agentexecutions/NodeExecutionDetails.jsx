@@ -441,7 +441,7 @@ export const NodeExecutionDetails = ({ data, label, status, metadata, isPublic, 
                         </Box>
                     )}
                     <Typography sx={{ mt: 2 }} variant='h5' gutterBottom>
-                        Input
+                        Входные данные
                     </Typography>
                     {data && data.input && data.input.messages && Array.isArray(data.input.messages) && data.input.messages.length > 0 ? (
                         data.input.messages.map((message, index) => (
@@ -842,7 +842,7 @@ export const NodeExecutionDetails = ({ data, label, status, metadata, isPublic, 
                         </Box>
                     )}
                     <Typography sx={{ mt: 2 }} variant='h5' gutterBottom>
-                        Output
+                        Выходные данные
                     </Typography>
                     {data?.output?.form || data?.output?.http ? (
                         <JSONViewer data={data.output.form || data.output.http} />
@@ -875,10 +875,10 @@ export const NodeExecutionDetails = ({ data, label, status, metadata, isPublic, 
                                         )
                                     } catch (e) {
                                         // Not valid JSON, render as markdown
-                                        return <MemoizedReactMarkdown>{data?.output?.content || `*No data*`}</MemoizedReactMarkdown>
+                                        return <MemoizedReactMarkdown>{data?.output?.content || `*Нет данных*`}</MemoizedReactMarkdown>
                                     }
                                 } else {
-                                    return <MemoizedReactMarkdown>{`*No data*`}</MemoizedReactMarkdown>
+                                    return <MemoizedReactMarkdown>{`*Нет данных*`}</MemoizedReactMarkdown>
                                 }
                             })()}
                         </Box>
@@ -886,7 +886,7 @@ export const NodeExecutionDetails = ({ data, label, status, metadata, isPublic, 
                     {data.error && (
                         <>
                             <Typography sx={{ mt: 2 }} variant='h5' gutterBottom color='error'>
-                                Error
+                                Ошибка
                             </Typography>
                             <Box
                                 sx={{
@@ -903,7 +903,7 @@ export const NodeExecutionDetails = ({ data, label, status, metadata, isPublic, 
                                 <MemoizedReactMarkdown>
                                     {typeof data?.error === 'object'
                                         ? JSON.stringify(data.error, null, 2)
-                                        : data?.error || `*No error details*`}
+                                        : data?.error || `*Нет деталей ошибки*`}
                                 </MemoizedReactMarkdown>
                             </Box>
                         </>
@@ -911,7 +911,7 @@ export const NodeExecutionDetails = ({ data, label, status, metadata, isPublic, 
                     {data.state && Object.keys(data.state).length > 0 && (
                         <>
                             <Typography sx={{ mt: 2 }} variant='h5' gutterBottom>
-                                State
+                                Состояние
                             </Typography>
                             <JSONViewer data={data.state} />
                         </>
@@ -957,7 +957,7 @@ export const NodeExecutionDetails = ({ data, label, status, metadata, isPublic, 
                         }}
                     >
                         <Button variant='outlined' color='error' sx={{ borderRadius: '25px' }} onClick={handleReject} disabled={isLoading}>
-                            Reject
+                            Отклонить
                         </Button>
                         <Button
                             variant='contained'
@@ -966,18 +966,18 @@ export const NodeExecutionDetails = ({ data, label, status, metadata, isPublic, 
                             onClick={handleProceed}
                             disabled={isLoading}
                         >
-                            Proceed
+                            Продолжить
                         </Button>
                     </Box>
 
                     <Dialog maxWidth='md' fullWidth open={openFeedbackDialog} onClose={() => !isLoading && setOpenFeedbackDialog(false)}>
-                        <DialogTitle variant='h5'>Provide Feedback</DialogTitle>
+                        <DialogTitle variant='h5'>Оставить отзыв</DialogTitle>
                         <DialogContent>
                             <TextField
                                 //eslint-disable-next-line jsx-a11y/no-autofocus
                                 autoFocus
                                 margin='dense'
-                                label='Feedback'
+                                label='Отзыв'
                                 fullWidth
                                 multiline
                                 rows={4}
@@ -988,10 +988,10 @@ export const NodeExecutionDetails = ({ data, label, status, metadata, isPublic, 
                         </DialogContent>
                         <DialogActions>
                             <Button onClick={() => setOpenFeedbackDialog(false)} disabled={isLoading}>
-                                Cancel
+                                Отмена
                             </Button>
                             <Button onClick={handleSubmitFeedback} variant='contained' disabled={isLoading}>
-                                Submit
+                                Отправить
                             </Button>
                         </DialogActions>
                     </Dialog>

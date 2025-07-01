@@ -52,15 +52,15 @@ const analyticProviders = [
                 credentialNames: ['langsmithApi']
             },
             {
-                label: 'Project Name',
+                label: 'Имя проекта',
                 name: 'projectName',
                 type: 'string',
                 optional: true,
-                description: 'If not provided, default will be used',
-                placeholder: 'default'
+                description: 'Если не указано, будет использовано значение по умолчанию',
+                placeholder: 'по умолчанию'
             },
             {
-                label: 'On/Off',
+                label: 'Вкл/Выкл',
                 name: 'status',
                 type: 'boolean',
                 optional: true
@@ -80,14 +80,14 @@ const analyticProviders = [
                 credentialNames: ['langfuseApi']
             },
             {
-                label: 'Release',
+                label: 'Релиз',
                 name: 'release',
                 type: 'string',
                 optional: true,
-                description: 'The release number/hash of the application to provide analytics grouped by release'
+                description: 'Номер/хеш релиза приложения для группировки аналитики по релизу'
             },
             {
-                label: 'On/Off',
+                label: 'Вкл/Выкл',
                 name: 'status',
                 type: 'boolean',
                 optional: true
@@ -107,7 +107,7 @@ const analyticProviders = [
                 credentialNames: ['lunaryApi']
             },
             {
-                label: 'On/Off',
+                label: 'Вкл/Выкл',
                 name: 'status',
                 type: 'boolean',
                 optional: true
@@ -127,7 +127,7 @@ const analyticProviders = [
                 credentialNames: ['langwatchApi']
             },
             {
-                label: 'On/Off',
+                label: 'Вкл/Выкл',
                 name: 'status',
                 type: 'boolean',
                 optional: true
@@ -147,15 +147,15 @@ const analyticProviders = [
                 credentialNames: ['arizeApi']
             },
             {
-                label: 'Project Name',
+                label: 'Имя проекта',
                 name: 'projectName',
                 type: 'string',
                 optional: true,
-                description: 'If not provided, default will be used.',
-                placeholder: 'default'
+                description: 'Если не указано, будет использовано значение по умолчанию.',
+                placeholder: 'по умолчанию'
             },
             {
-                label: 'On/Off',
+                label: 'Вкл/Выкл',
                 name: 'status',
                 type: 'boolean',
                 optional: true
@@ -175,15 +175,15 @@ const analyticProviders = [
                 credentialNames: ['phoenixApi']
             },
             {
-                label: 'Project Name',
+                label: 'Имя проекта',
                 name: 'projectName',
                 type: 'string',
                 optional: true,
-                description: 'If not provided, default will be used.',
-                placeholder: 'default'
+                description: 'Если не указано, будет использовано значение по умолчанию.',
+                placeholder: 'по умолчанию'
             },
             {
-                label: 'On/Off',
+                label: 'Вкл/Выкл',
                 name: 'status',
                 type: 'boolean',
                 optional: true
@@ -203,14 +203,14 @@ const analyticProviders = [
                 credentialNames: ['opikApi']
             },
             {
-                label: 'Project Name',
+                label: 'Имя проекта',
                 name: 'opikProjectName',
                 type: 'string',
-                description: 'Name of your Opik project',
-                placeholder: 'default'
+                description: 'Название вашего проекта Opik',
+                placeholder: 'по умолчанию'
             },
             {
-                label: 'On/Off',
+                label: 'Вкл/Выкл',
                 name: 'status',
                 type: 'boolean',
                 optional: true

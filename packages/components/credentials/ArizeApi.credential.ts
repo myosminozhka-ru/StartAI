@@ -15,19 +15,19 @@ class ArizeApi implements INodeCredential {
             'Refer to <a target="_blank" href="https://docs.arize.com/arize">official guide</a> on how to get API keys on Arize.'
         this.inputs = [
             {
-                label: 'API Key',
+                label: 'Ключ API',
                 name: 'arizeApiKey',
                 type: 'password',
                 placeholder: '<ARIZE_API_KEY>'
             },
             {
-                label: 'Space ID',
+                label: 'ID пространства',
                 name: 'arizeSpaceId',
                 type: 'string',
                 placeholder: '<ARIZE_SPACE_ID>'
             },
             {
-                label: 'Endpoint',
+                label: 'Конечная точка',
                 name: 'arizeEndpoint',
                 type: 'string',
                 default: 'https://otlp.arize.com'

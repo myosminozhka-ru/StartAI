@@ -40,7 +40,7 @@ const UpsertHistorySideDrawer = ({ show, dialogProps, onClickFunction, onSelectH
         <>
             <SwipeableDrawer anchor='right' open={show} onClose={() => onClickFunction()} onOpen={onOpen}>
                 <Button startIcon={<IconSquareRoundedChevronsRight />} onClick={() => onClickFunction()}>
-                    Close
+                    Закрыть
                 </Button>
                 <Box style={{ width: 350, margin: 10 }} role='presentation' onClick={onClickFunction}>
                     <Timeline
@@ -93,7 +93,7 @@ const UpsertHistorySideDrawer = ({ show, dialogProps, onClickFunction, onSelectH
                                         alt='HistoryEmptySVG'
                                     />
                                 </Box>
-                                <div>No Upsert History Yet</div>
+                                <div>Нет истории добавлений</div>
                             </Stack>
                         )}
                     </Timeline>

@@ -804,7 +804,7 @@ export const ExecutionDetails = ({ open, isPublic, execution, metadata, onClose,
 
                         <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', alignContent: 'center' }}>
                             <Typography sx={{ flex: 1, mt: 1 }} color='text.primary'>
-                                {metadata?.updatedDate ? moment(metadata.updatedDate).format('MMM D, YYYY h:mm A') : 'Н/Д'}
+                                {metadata?.updatedDate ? moment(metadata.updatedDate).format('DD.MM.YYYY HH:mm') : 'Н/Д'}
                             </Typography>
                             <IconButton
                                 onClick={() => onRefresh(localMetadata?.id)}
