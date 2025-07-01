@@ -45,7 +45,7 @@ class VectaraUpload_VectorStores implements INode {
                 label: 'Фильтр метаданных',
                 name: 'filter',
                 description:
-                    'Фильтр для применения к метаданным Vectara. См. <a target="_blank" href="https://docs.flowiseai.com/vector-stores/vectara">документацию</a> о том, как использовать фильтры Vectara с Flowise.',
+                    'Фильтр для применения к метаданным Vectara. См. <a target="_blank" href="https://docs.flowiseai.com/vector-stores/vectara">документацию</a> о том, как использовать фильтры Vectara',
                 type: 'string',
                 additionalParams: true,
                 optional: true

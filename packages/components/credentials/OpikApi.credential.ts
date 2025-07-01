@@ -15,7 +15,7 @@ class OpikApi implements INodeCredential {
             'Refer to <a target="_blank" href="https://www.comet.com/docs/opik/tracing/sdk_configuration">Opik documentation</a> on how to configure Opik credentials'
         this.inputs = [
             {
-                label: 'API Key',
+                label: 'Ключ API',
                 name: 'opikApiKey',
                 type: 'password',
                 placeholder: '<OPIK_API_KEY>'
@@ -27,7 +27,7 @@ class OpikApi implements INodeCredential {
                 placeholder: 'https://www.comet.com/opik/api'
             },
             {
-                label: 'Workspace',
+                label: 'Рабочее место',
                 name: 'opikWorkspace',
                 type: 'string',
                 placeholder: 'default'

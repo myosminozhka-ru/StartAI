@@ -63,8 +63,8 @@ const ShareWithWorkspaceDialog = ({ show, dialogProps, onCancel, setError }) => 
 
     const columns = useMemo(
         () => [
-            { field: 'workspaceName', headerName: 'Workspace', editable: false, flex: 1 },
-            { field: 'shared', headerName: 'Share', type: 'boolean', editable: true, width: 180 }
+            { field: 'workspaceName', headerName: 'Рабочее место', editable: false, flex: 1 },
+            { field: 'shared', headerName: 'Делиться', type: 'boolean', editable: true, width: 180 }
         ],
         []
     )
@@ -197,7 +197,7 @@ const ShareWithWorkspaceDialog = ({ show, dialogProps, onCancel, setError }) => 
             <DialogContent>
                 <Box sx={{ p: 2 }}>
                     <Stack sx={{ position: 'relative' }} direction='row'>
-                        <Typography variant='overline'>Name</Typography>
+                        <Typography variant='overline'>Имя</Typography>
                     </Stack>
                     <OutlinedInput id='name' type='string' disabled={true} fullWidth placeholder={name} value={name} name='name' />
                 </Box>

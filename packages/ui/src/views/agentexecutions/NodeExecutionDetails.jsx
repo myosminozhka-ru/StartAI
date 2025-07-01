@@ -315,7 +315,7 @@ export const NodeExecutionDetails = ({ data, label, status, metadata, isPublic, 
                         value='rendered'
                         title='Rendered'
                     >
-                        Rendered
+                        Отображенный
                     </ToggleButton>
                     <ToggleButton
                         sx={{
@@ -327,7 +327,7 @@ export const NodeExecutionDetails = ({ data, label, status, metadata, isPublic, 
                         value='raw'
                         title='Raw'
                     >
-                        Raw
+                        Необработанный
                     </ToggleButton>
                 </ToggleButtonGroup>
             </Box>

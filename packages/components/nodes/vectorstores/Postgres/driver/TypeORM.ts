@@ -140,7 +140,7 @@ export class TypeORMDriver extends VectorStoreDriver {
         const parameters: any[] = [embeddingString, _filter, k]
 
         // Match chatflow uploaded file and keep filtering on other files:
-        // https://github.com/FlowiseAI/Flowise/pull/3367#discussion_r1804229295
+
         if (chatId) {
             parameters.push({ [FLOWISE_CHATID]: chatId })
             chatflowOr = `OR metadata @> $${parameters.length}`

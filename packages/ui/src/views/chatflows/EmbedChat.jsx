@@ -124,7 +124,7 @@ export const defaultThemeConfig = {
     chatWindow: {
         showTitle: true,
         showAgentMessages: true,
-        title: 'Flowise Бот',
+        title: 'OsmiAI Бот',
         titleAvatarSrc: 'https://raw.githubusercontent.com/walkxcode/dashboard-icons/main/svg/google-messages.svg',
         welcomeMessage: 'Привет! Это пользовательское приветственное сообщение',
         errorMessage: 'Это пользовательское сообщение об ошибке',

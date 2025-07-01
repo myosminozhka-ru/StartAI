@@ -7,12 +7,12 @@ class ChatflowApi implements INodeCredential {
     inputs: INodeParams[]
 
     constructor() {
-        this.label = 'Chatflow API'
+        this.label = 'API потока общения'
         this.name = 'chatflowApi'
         this.version = 1.0
         this.inputs = [
             {
-                label: 'Chatflow Api Key',
+                label: 'API ключ потока общения',
                 name: 'chatflowApiKey',
                 type: 'password'
             }

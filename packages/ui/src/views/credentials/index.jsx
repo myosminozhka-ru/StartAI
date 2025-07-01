@@ -141,12 +141,12 @@ const Credentials = () => {
     const share = (credential) => {
         const dialogProps = {
             type: 'EDIT',
-            cancelButtonName: 'Cancel',
-            confirmButtonName: 'Share',
+            cancelButtonName: 'Отмена',
+            confirmButtonName: 'Поделиться',
             data: {
                 id: credential.id,
                 name: credential.name,
-                title: 'Share Credential',
+                title: 'Поделиться учетной записью',
                 itemType: 'credential'
             }
         }
@@ -380,10 +380,10 @@ const Credentials = () => {
                                                             </Box>
                                                         </StyledTableCell>
                                                         <StyledTableCell>
-                                                            {moment(credential.updatedDate).format('MMMM Do, YYYY HH:mm:ss')}
+                                                            {moment(credential.updatedDate).format('DD.MM.YYYY HH:mm:ss')}
                                                         </StyledTableCell>
                                                         <StyledTableCell>
-                                                            {moment(credential.createdDate).format('MMMM Do, YYYY HH:mm:ss')}
+                                                            {moment(credential.createdDate).format('DD.MM.YYYY HH:mm:ss')}
                                                         </StyledTableCell>
                                                         {!credential.shared && (
                                                             <>
@@ -391,7 +391,7 @@ const Credentials = () => {
                                                                     <PermissionIconButton
                                                                         permissionId={'credentials:share'}
                                                                         display={'feat:workspaces'}
-                                                                        title='Share'
+                                                                        title='Поделиться'
                                                                         color='primary'
                                                                         onClick={() => share(credential)}
                                                                     >
@@ -401,7 +401,7 @@ const Credentials = () => {
                                                                 <StyledTableCell>
                                                                     <PermissionIconButton
                                                                         permissionId={'credentials:create,credentials:update'}
-                                                                        title='Edit'
+                                                                        title='Редактировать'
                                                                         color='primary'
                                                                         onClick={() => edit(credential)}
                                                                     >
@@ -411,7 +411,7 @@ const Credentials = () => {
                                                                 <StyledTableCell>
                                                                     <PermissionIconButton
                                                                         permissionId={'credentials:delete'}
-                                                                        title='Delete'
+                                                                        title='Удалить'
                                                                         color='error'
                                                                         onClick={() => deleteCredential(credential)}
                                                                     >

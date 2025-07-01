@@ -55,16 +55,16 @@ class Mem0_Memory implements INode {
                 label: 'ID пользователя',
                 name: 'user_id',
                 type: 'string',
-                description: 'Уникальный идентификатор пользователя. Требуется только если "Использовать Flowise Chat ID" выключен.',
+                description: 'Уникальный идентификатор пользователя. Требуется только если "Использовать Chat ID" выключен.',
                 default: 'flowise-default-user',
                 optional: true
             },
-            // Added toggle to use Flowise chat ID
+            // Added toggle to use chat ID
             {
-                label: 'Использовать Flowise Chat ID',
+                label: 'Использовать Chat ID',
                 name: 'useFlowiseChatId',
                 type: 'boolean',
-                description: 'Использовать внутренний Chat ID Flowise как Mem0 User ID, переопределяя поле "ID пользователя" выше.',
+                description: 'Использовать внутренний Chat ID как Mem0 User ID, переопределяя поле "ID пользователя" выше.',
                 default: false,
                 optional: true
             },
@@ -160,7 +160,7 @@ const initializeMem0 = async (nodeData: INodeData, input: string, options: IComm
     const orgId = options.orgId as string
 
     if (!useFlowiseChatId && !initialUserId) {
-        throw new Error('User ID field cannot be empty when "Use Flowise Chat ID" is OFF.')
+        throw new Error('User ID field cannot be empty when "Use Chat ID" is OFF.')
     }
 
     const credentialData = await getCredentialData(nodeData.credential ?? '', options)
@@ -246,7 +246,7 @@ class Mem0MemoryExtended extends BaseMem0Memory implements MemoryMethods {
         this.orgId = fields.orgId
     }
 
-    // Selects Mem0 user_id based on toggle state (Flowise chat ID or input field)
+    // Selects Mem0 user_id based on toggle state (chat ID or input field)
     private getEffectiveUserId(overrideUserId?: string): string {
         let effectiveUserId: string | undefined
 
@@ -254,7 +254,7 @@ class Mem0MemoryExtended extends BaseMem0Memory implements MemoryMethods {
             if (overrideUserId) {
                 effectiveUserId = overrideUserId
             } else {
-                throw new Error('Mem0: "Use Flowise Chat ID" is ON, but no runtime chat ID (overrideUserId) was provided.')
+                throw new Error('Mem0: "Use Chat ID" is ON, but no runtime chat ID (overrideUserId) was provided.')
             }
         } else {
             // If toggle is OFF, ALWAYS use the ID from the input field.
@@ -305,7 +305,7 @@ class Mem0MemoryExtended extends BaseMem0Memory implements MemoryMethods {
     ): Promise<IMessage[] | BaseMessage[]> {
         const flowiseSessionId = overrideUserId
         if (!flowiseSessionId) {
-            console.warn('Mem0: getChatMessages called without overrideUserId (Flowise Session ID). Cannot fetch DB messages.')
+            console.warn('Mem0: getChatMessages called without overrideUserId (Session ID). Cannot fetch DB messages.')
             return []
         }
 
@@ -383,7 +383,7 @@ class Mem0MemoryExtended extends BaseMem0Memory implements MemoryMethods {
                 .getRepository(this.databaseEntities['ChatMessage'])
                 .delete({ sessionId: flowiseSessionId, chatflowid: this.chatflowid })
         } else {
-            console.warn('Mem0: clearChatMessages called without overrideUserId (Flowise Session ID). Cannot clear DB messages.')
+            console.warn('Mem0: clearChatMessages called without overrideUserId (Session ID). Cannot clear DB messages.')
         }
     }
 }

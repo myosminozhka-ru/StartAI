@@ -583,7 +583,7 @@ export class FireCrawlLoader extends BaseDocumentLoader {
     }
 }
 
-// Flowise Node Class
+// Node Class
 class FireCrawl_DocumentLoaders implements INode {
     label: string
     name: string

@@ -86,7 +86,7 @@ const GitHubStarButton = ({ starCount, isDark }) => {
     const formattedStarCount = starCount.toLocaleString()
 
     return (
-        <Link href='https://github.com/FlowiseAI/Flowise' target='_blank' underline='none' sx={{ display: 'inline-flex' }}>
+        <Link href='#' target='_blank' underline='none' sx={{ display: 'inline-flex' }}>
             <Box
                 sx={{
                     display: 'flex',

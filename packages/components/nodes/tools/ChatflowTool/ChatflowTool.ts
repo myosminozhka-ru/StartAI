@@ -76,7 +76,7 @@ class ChatflowTool_Tools implements INode {
                 name: 'baseURL',
                 type: 'string',
                 description:
-                    'Базовый URL для Flowise. По умолчанию это URL входящего запроса. Полезно, когда вам нужно выполнить Chatflow через альтернативный маршрут.',
+                    'Базовый URL. По умолчанию это URL входящего запроса. Полезно, когда вам нужно выполнить Chatflow через альтернативный маршрут.',
                 placeholder: 'http://localhost:3000',
                 optional: true,
                 additionalParams: true

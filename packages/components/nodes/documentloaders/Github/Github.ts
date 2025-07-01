@@ -39,7 +39,7 @@ class Github_DocumentLoaders implements INode {
                 label: 'Ссылка на репозиторий',
                 name: 'repoLink',
                 type: 'string',
-                placeholder: 'https://github.com/FlowiseAI/Flowise'
+                placeholder: 'https://github.com'
             },
             {
                 label: 'Ветка',

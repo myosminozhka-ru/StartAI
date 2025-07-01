@@ -612,7 +612,7 @@ const LoginActivity = () => {
                                                             </StyledTableCell>
                                                             <StyledTableCell>{item.username}</StyledTableCell>
                                                             <StyledTableCell>
-                                                                {moment(item.attemptedDateTime).format('MMMM Do, YYYY, HH:mm')}
+                                                                {moment(item.attemptedDateTime).format('DD.MM.YYYY HH:mm')}
                                                             </StyledTableCell>
                                                             <StyledTableCell>
                                                                 {item.loginMode ? item.loginMode : 'Email/Пароль'}

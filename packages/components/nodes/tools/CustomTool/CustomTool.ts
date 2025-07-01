@@ -22,7 +22,7 @@ class CustomTool_Tools implements INode {
         this.type = 'CustomTool'
         this.icon = 'customtool.svg'
         this.category = 'Tools'
-        this.description = `Использовать пользовательский инструмент, который вы создали в Flowise, в chatflow`
+        this.description = `Использовать пользовательский инструмент, который вы создали в chatflow`
         this.inputs = [
             {
                 label: 'Выберите инструмент',
