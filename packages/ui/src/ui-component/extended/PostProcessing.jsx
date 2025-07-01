@@ -125,11 +125,11 @@ const PostProcessing = ({ dialogProps }) => {
     return (
         <>
             <Box sx={{ width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 2 }}>
-                <SwitchInput label='Enable Post Processing' onChange={handleChange} value={postProcessingEnabled} />
+                <SwitchInput label='Включить постобработку' onChange={handleChange} value={postProcessingEnabled} />
             </Box>
             <Box sx={{ width: '100%', display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: 1 }}>
                 <Box sx={{ width: '100%', display: 'flex', alignItems: 'center' }}>
-                    <Typography>JS Function</Typography>
+                    <Typography>JS функция</Typography>
                     <Button
                         sx={{ ml: 2 }}
                         variant='outlined'
@@ -137,7 +137,7 @@ const PostProcessing = ({ dialogProps }) => {
                             setPostProcessingFunction(sampleFunction)
                         }}
                     >
-                        See Example
+                        Смотреть пример
                     </Button>
                     <div style={{ flex: 1 }} />
                     <IconButton
@@ -195,7 +195,7 @@ const PostProcessing = ({ dialogProps }) => {
                 >
                     <IconBulb size={30} color='#2d6a4f' />
                     <span style={{ color: '#2d6a4f', marginLeft: 10, fontWeight: 500 }}>
-                        The following variables are available to use in the custom function:{' '}
+                        Следующие переменные доступны для использования в пользовательской функции:{' '}
                         <pre>$flow.rawOutput, $flow.input, $flow.chatflowId, $flow.sessionId, $flow.chatId</pre>
                     </span>
                 </div>
@@ -206,7 +206,7 @@ const PostProcessing = ({ dialogProps }) => {
                 disabled={!postProcessingFunction || postProcessingFunction?.trim().length === 0}
                 onClick={onSave}
             >
-                Save
+                Сохранить
             </StyledButton>
             <ExpandTextDialog
                 show={showExpandDialog}

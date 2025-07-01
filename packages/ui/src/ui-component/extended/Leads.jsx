@@ -108,7 +108,7 @@ const Leads = ({ dialogProps }) => {
                     mb: 2
                 }}
             >
-                <SwitchInput label='Enable Lead Capture' onChange={(value) => handleChange('status', value)} value={leadsConfig.status} />
+                <SwitchInput label='Включить захват лидов' onChange={(value) => handleChange('status', value)} value={leadsConfig.status} />
                 {leadsConfig && leadsConfig['status'] && (
                     <>
                         <Box sx={{ width: '100%', display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: 1 }}>
@@ -166,7 +166,7 @@ const Leads = ({ dialogProps }) => {
                 variant='contained'
                 onClick={onSave}
             >
-                Save
+                Сохранить
             </StyledButton>
         </>
     )

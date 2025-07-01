@@ -417,7 +417,7 @@ const AnalyseFlow = ({ dialogProps }) => {
                 </Accordion>
             ))}
             <StyledButton style={{ marginBottom: 10, marginTop: 10 }} variant='contained' onClick={onSave}>
-                Save
+                Сохранить
             </StyledButton>
         </>
     )

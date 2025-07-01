@@ -372,7 +372,7 @@ const APIKey = () => {
                             search={true}
                             searchPlaceholder='Поиск API ключей'
                             title='API ключи'
-                            description='Ключи аутентификации Flowise API и SDK'
+                            description='Ключи аутентификации API и SDK'
                         >
                             <PermissionButton
                                 permissionId={'apikeys:import'}

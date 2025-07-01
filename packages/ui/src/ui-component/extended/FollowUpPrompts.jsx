@@ -467,7 +467,7 @@ const FollowUpPrompts = ({ dialogProps }) => {
                 }}
             >
                 <SwitchInput
-                    label='Enable Follow-up Prompts'
+                    label='Включить последующие запросы'
                     onChange={(value) => handleChange('status', value)}
                     value={followUpPromptsConfig.status}
                 />
@@ -608,7 +608,7 @@ const FollowUpPrompts = ({ dialogProps }) => {
                 )}
             </Box>
             <StyledButton disabled={checkDisabled()} variant='contained' onClick={onSave}>
-                Save
+                Сохранить
             </StyledButton>
         </>
     )

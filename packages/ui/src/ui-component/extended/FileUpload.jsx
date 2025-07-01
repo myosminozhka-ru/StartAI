@@ -18,9 +18,9 @@ import useNotifier from '@/utils/useNotifier'
 // API
 import chatflowsApi from '@/api/chatflows'
 
-const message = `Uploaded files will be parsed as strings and sent to the LLM. If file upload is enabled on the Vector Store as well, this will override and take precedence.
+const message = `Загруженные файлы будут преобразованы в строки и отправлены в LLM. Если загрузка файлов также включена в Vector Store, этот параметр будет иметь приоритет.
 <br />
-Refer <a href='https://docs.flowiseai.com/using-flowise/uploads#files' target='_blank'>docs</a> for more details.`
+Смотрите <a href='https://docs.flowiseai.com/using-flowise/uploads#files' target='_blank'>документацию</a> для получения подробностей.`
 
 const availableFileTypes = [
     { name: 'CSS', ext: 'text/css' },
@@ -187,10 +187,10 @@ const FileUpload = ({ dialogProps }) => {
                         <span style={{ color: '#2d6a4f', marginLeft: 10, fontWeight: 500 }}>{parser(message)}</span>
                     </div>
                 </div>
-                <SwitchInput label='Enable Full File Upload' onChange={handleChange} value={fullFileUpload} />
+                <SwitchInput label='Включить полную загрузку файлов' onChange={handleChange} value={fullFileUpload} />
             </Box>
 
-            <Typography sx={{ fontSize: 14, fontWeight: 500, marginBottom: 1 }}>Allow Uploads of Type</Typography>
+            <Typography sx={{ fontSize: 14, fontWeight: 500, marginBottom: 1 }}>Разрешить загрузку типов</Typography>
             <div
                 style={{
                     display: 'grid',
@@ -228,18 +228,18 @@ const FileUpload = ({ dialogProps }) => {
             </div>
 
             <Box sx={{ marginBottom: 3 }}>
-                <Typography sx={{ fontSize: 14, fontWeight: 500, marginBottom: 1 }}>PDF Usage</Typography>
+                <Typography sx={{ fontSize: 14, fontWeight: 500, marginBottom: 1 }}>Использование PDF</Typography>
                 <FormControl disabled={!fullFileUpload}>
                     <RadioGroup name='pdf-usage' value={pdfUsage} onChange={handlePdfUsageChange}>
-                        <FormControlLabel value='perPage' control={<Radio />} label='One document per page' />
-                        <FormControlLabel value='perFile' control={<Radio />} label='One document per file' />
+                        <FormControlLabel value='perPage' control={<Radio />} label='Один документ на страницу' />
+                        <FormControlLabel value='perFile' control={<Radio />} label='Один документ на файл' />
                     </RadioGroup>
                 </FormControl>
             </Box>
 
             <Box sx={{ marginBottom: 3 }}>
                 <SwitchInput
-                    label='Use Legacy Build (for PDF compatibility issues)'
+                    label='Использовать устаревшую сборку (для проблем совместимости с PDF)'
                     onChange={handleLegacyBuildChange}
                     value={pdfLegacyBuild}
                     disabled={!fullFileUpload}
@@ -247,7 +247,7 @@ const FileUpload = ({ dialogProps }) => {
             </Box>
 
             <StyledButton style={{ marginBottom: 10, marginTop: 20 }} variant='contained' onClick={onSave}>
-                Save
+                Сохранить
             </StyledButton>
         </>
     )
