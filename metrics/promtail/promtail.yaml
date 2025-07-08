@@ -1,0 +1,33 @@
+# config/promtail-config.yml
+server:
+  http_listen_port: 9085
+  grpc_listen_port: 0
+
+positions:
+  filename: /tmp/positions/promtail-positions.yaml
+
+clients:
+  - url: http://188.120.236.175:3100/loki/api/v1/push
+scrape_configs:
+  - job_name: system-logs
+    static_configs:
+      - targets:
+          - localhost
+        labels:
+          job: varlogs
+          host: "{{ env \"HOSTNAME\" }}"
+          __path__: /var/log/*.log
+
+  - job_name: docker-logs
+    docker_sd_configs:
+      - host: unix:///var/run/docker.sock
+        refresh_interval: 10s
+    relabel_configs:
+      - source_labels: [__meta_docker_container_name]
+        target_label: container
+      - source_labels: [__meta_docker_container_label_io_kubernetes_pod_name]
+        regex: .+
+        action: drop
+      - source_labels: [__meta_docker_container_id]
+        target_label: __path__
+        replacement: /var/lib/docker/containers/${1}/*-json.log
