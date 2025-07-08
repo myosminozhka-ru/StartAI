@@ -1,14 +1,17 @@
 services:
-  app:
-    container_name: app
+  startai_app:
+    container_name: startai_app
     build:
       context: .
       dockerfile: Dockerfile.dev
-    ports:
-      - 3000:3000
     depends_on:
       - promtail
     restart: unless-stopped
+    environment:
+      - PORT=3020
+    volumes:
+      - /root/.startai_app/:/root/.flowise/
+    network_mode: host
 
   promtail:
     image: grafana/promtail:latest
