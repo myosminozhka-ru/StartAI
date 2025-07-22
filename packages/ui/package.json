@@ -37,7 +37,7 @@
         "axios": "1.7.9",
         "clsx": "^1.1.1",
         "dotenv": "^16.0.0",
-        "flowise-embed": "github:myosminozhka-ru/FlowiseChatEmbed",
+        "flowise-embed": "github:myosminozhka-ru/FlowiseChatEmbed#main",
         "flowise-embed-react": "github:myosminozhka-ru/FlowiseEmbedReact#deploy",
         "flowise-react-json-view": "*",
         "formik": "^2.2.6",
