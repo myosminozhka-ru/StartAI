@@ -10,6 +10,8 @@ services:
     restart: unless-stopped
     environment:
       - PORT=3020
+      - ENABLE_METRICS=true
+      - METRICS_PROVIDER=prometheus
     volumes:
       - /root/.startai_app/:/root/.flowise/
     network_mode: host
@@ -26,4 +28,28 @@ services:
     command: -config.file=/etc/promtail/config.yml
     privileged: true
     restart: unless-stopped
+
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: startai-prometheus
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+      - '--web.console.libraries=/etc/prometheus/console_libraries'
+      - '--web.console.templates=/etc/prometheus/consoles'
+      - '--web.enable-lifecycle'
+      - '--storage.tsdb.retention.time=24h'  # Локальное хранение на сутки
+      - '--web.external-url=http://localhost:9090'
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./metrics/prometheus/prometheus.config.yml:/etc/prometheus/prometheus.yml:ro
+      - prometheus_data:/prometheus
+    restart: unless-stopped
+    depends_on:
+      - startai_app
+
+volumes:
+  prometheus_data:
+    driver: local
 

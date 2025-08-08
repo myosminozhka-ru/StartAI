@@ -1,9 +1,15 @@
 global:
   scrape_interval: 5s
-scrape_configs:
-  - job_name: "FlowiseAI"
-    static_configs:
-      - targets: ["localhost:8080","localhost:3000"]
+  # Настройки для федерации - обязательные external_labels
+  external_labels:
+    cluster: 'startai'
+    instance: 'startai_app'
+    region: 'local'
 
+scrape_configs:
+  - job_name: "startai_app"
+    static_configs:
+      - targets: ["startai_app:3020"]
     metrics_path: /api/v1/metrics/
     scheme: http
+    scrape_interval: 5s
