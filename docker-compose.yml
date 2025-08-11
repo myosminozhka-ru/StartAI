@@ -12,6 +12,9 @@ services:
       - PORT=3020
       - ENABLE_METRICS=true
       - METRICS_PROVIDER=prometheus
+      # Настройки метрик
+      - METRICS_SERVICE_NAME=StartAI
+      - METRICS_INCLUDE_NODE_METRICS=true
     volumes:
       - /root/.startai_app/:/root/.flowise/
     network_mode: host
@@ -25,6 +28,7 @@ services:
       - /var/lib/docker/containers:/var/lib/docker/containers:ro
       - /var/run/docker.sock:/var/run/docker.sock
       - ./metrics/promtail/promtail.yaml:/etc/promtail/config.yml
+      - promtail_positions:/tmp/positions
     command: -config.file=/etc/promtail/config.yml
     privileged: true
     restart: unless-stopped
@@ -51,5 +55,7 @@ services:
 
 volumes:
   prometheus_data:
+    driver: local
+  promtail_positions:
     driver: local
 

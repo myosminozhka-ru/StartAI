@@ -1,15 +1,72 @@
 global:
-  scrape_interval: 5s
+  scrape_interval: 15s  # Общий интервал сбора метрик
+  evaluation_interval: 15s  # Интервал оценки правил
   # Настройки для федерации - обязательные external_labels
   external_labels:
     cluster: 'startai'
     instance: 'startai_app'
     region: 'local'
 
+# Правила группировки и алертинг (опционально)
+rule_files:
+  # - "first_rules.yml"
+  # - "second_rules.yml"
+
 scrape_configs:
+  # Основное приложение StartAI
   - job_name: "startai_app"
     static_configs:
       - targets: ["startai_app:3020"]
     metrics_path: /api/v1/metrics/
     scheme: http
-    scrape_interval: 5s
+    scrape_interval: 5s  # Частый сбор для основных метрик приложения
+    
+    # Фильтрация метрик - собираем только нужные
+    metric_relabel_configs:
+      # Включаем бизнес-метрики StartAI
+      - source_labels: [__name__]
+        regex: '(chatflow_created|agentflow_created|chatflow_prediction_.*|agentflow_prediction_.*|vector_upserted|assistant_created|tool_created)'
+        action: keep
+      
+      # Включаем HTTP метрики
+      - source_labels: [__name__]
+        regex: '(http_requests_total|http_request_duration_ms)'
+        action: keep
+        
+      # Включаем информацию о версии
+      - source_labels: [__name__]
+        regex: 'flowise_version_info'
+        action: keep
+        
+      # Включаем системные метрики Node.js (если нужны)
+      - source_labels: [__name__]
+        regex: 'flowise_(process_cpu_user_seconds_total|process_resident_memory_bytes|nodejs_heap_size_used_bytes|nodejs_heap_size_total_bytes)'
+        action: keep
+        
+      # Исключаем все остальные метрики (если раскомментировать)
+      # - source_labels: [__name__]
+      #   regex: '.*'
+      #   action: drop
+
+  # Системные метрики Node.js (отдельный job с другим интервалом)
+  - job_name: "startai_system_metrics"
+    static_configs:
+      - targets: ["startai_app:3020"]
+    metrics_path: /api/v1/metrics/
+    scheme: http
+    scrape_interval: 30s  # Менее частый сбор для системных метрик
+    
+    # Собираем только системные метрики
+    metric_relabel_configs:
+      - source_labels: [__name__]
+        regex: 'flowise_(process_.*|nodejs_.*|up)'
+        action: keep
+      - source_labels: [__name__]
+        regex: '(chatflow_.*|agentflow_.*|http_.*|vector_.*|assistant_.*|tool_.*)'
+        action: drop
+
+  # Prometheus самомониторинг
+  - job_name: 'prometheus'
+    static_configs:
+      - targets: ['localhost:9090']
+    scrape_interval: 30s
