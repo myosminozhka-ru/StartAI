@@ -1,7 +1,7 @@
 services:
-  startai_app:
-    container_name: startai_app
-    image: startai_app:latest
+  startai-app:
+    container_name: startai-app
+    image: startai-app:latest
     build:
       context: .
       dockerfile: Dockerfile.dev
@@ -51,7 +51,7 @@ services:
       - prometheus_data:/prometheus
     restart: unless-stopped
     depends_on:
-      - startai_app
+      - startai-app
 
 volumes:
   prometheus_data:
