@@ -175,7 +175,8 @@ class Postgres_VectorStores implements INode {
                 name: 'pgMetadataFilter',
                 type: 'json',
                 additionalParams: true,
-                optional: true
+                optional: true,
+                acceptVariable: true
             },
             {
                 label: 'Имя столбца содержимого',

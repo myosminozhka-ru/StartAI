@@ -1,6 +1,6 @@
 {
-    "name": "Osmi-api",
-    "version": "1.0.2",
+    "name": "osmi-api",
+    "version": "1.0.3",
     "description": "OsmiAI API documentation server",
     "scripts": {
         "build": "tsc",

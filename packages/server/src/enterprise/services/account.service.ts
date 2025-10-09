@@ -25,6 +25,7 @@ import { RoleErrorMessage, RoleService } from './role.service'
 import { UserErrorMessage, UserService } from './user.service'
 import { WorkspaceUserErrorMessage, WorkspaceUserService } from './workspace-user.service'
 import { WorkspaceErrorMessage, WorkspaceService } from './workspace.service'
+import { sanitizeUser } from '../../utils/sanitize.util'
 
 type AccountDTO = {
     user: Partial<User>
@@ -104,6 +105,11 @@ export class AccountService {
         }
     }
 
+    private async ensureOneOrganizationOnly(queryRunner: QueryRunner) {
+        const organizations = await this.organizationservice.readOrganization(queryRunner)
+        if (organizations.length > 0) throw new InternalFlowiseError(StatusCodes.BAD_REQUEST, 'You can only have one organization')
+    }
+
     private async createRegisterAccount(data: AccountDTO, queryRunner: QueryRunner) {
         data = this.initializeAccountDTO(data)
 
@@ -111,6 +117,7 @@ export class AccountService {
 
         switch (platform) {
             case Platform.OPEN_SOURCE:
+                await this.ensureOneOrganizationOnly(queryRunner)
                 data.organization.name = OrganizationName.DEFAULT_ORGANIZATION
                 data.organizationUser.role = await this.roleService.readGeneralRoleByName(GeneralRole.OWNER, queryRunner)
                 data.workspace.name = WorkspaceName.DEFAULT_WORKSPACE
@@ -169,7 +176,7 @@ export class AccountService {
                 if (data.user.tempToken) {
                     const user = await this.userService.readUserByToken(data.user.tempToken, queryRunner)
                     if (!user) throw new InternalFlowiseError(StatusCodes.NOT_FOUND, UserErrorMessage.USER_NOT_FOUND)
-                    if (user.email !== data.user.email)
+                    if (user.email.toLowerCase() !== data.user.email?.toLowerCase())
                         throw new InternalFlowiseError(StatusCodes.BAD_REQUEST, UserErrorMessage.INVALID_USER_EMAIL)
                     const name = data.user.name
                     if (data.user.credential) user.credential = this.userService.encryptUserCredential(data.user.credential)
@@ -196,6 +203,7 @@ export class AccountService {
                     data.workspace.name = WorkspaceName.DEFAULT_PERSONAL_WORKSPACE
                     data.workspaceUser.role = await this.roleService.readGeneralRoleByName(GeneralRole.PERSONAL_WORKSPACE, queryRunner)
                 } else {
+                    await this.ensureOneOrganizationOnly(queryRunner)
                     data.organizationUser.role = await this.roleService.readGeneralRoleByName(GeneralRole.OWNER, queryRunner)
                     data.workspace.name = WorkspaceName.DEFAULT_WORKSPACE
                     data.workspaceUser.role = data.organizationUser.role
@@ -533,7 +541,7 @@ export class AccountService {
             await queryRunner.release()
         }
 
-        return data
+        return sanitizeUser(data.user)
     }
 
     public async resetPassword(data: AccountDTO) {
@@ -575,7 +583,7 @@ export class AccountService {
             await queryRunner.release()
         }
 
-        return data
+        return sanitizeUser(data.user)
     }
 
     public async logout(user: LoggedInUser) {

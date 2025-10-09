@@ -171,7 +171,8 @@ class Qdrant_VectorStores implements INode {
                 description: 'Возвращать только точки, которые удовлетворяют условиям',
                 type: 'json',
                 additionalParams: true,
-                optional: true
+                optional: true,
+                acceptVariable: true
             }
         ]
         this.outputs = [

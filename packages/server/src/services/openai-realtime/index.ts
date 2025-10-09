@@ -10,6 +10,7 @@ import {
     getStartingNodes,
     resolveVariables
 } from '../../utils'
+import { checkStorage, updateStorageUsage } from '../../utils/quotaUsage'
 import { getRunningExpressApp } from '../../utils/getRunningExpressApp'
 import { ChatFlow } from '../../database/entities/ChatFlow'
 import { IDepthQueue, IReactFlowNode } from '../../Interface'
@@ -23,6 +24,7 @@ import { Organization } from '../../enterprise/database/entities/organization.en
 
 const SOURCE_DOCUMENTS_PREFIX = '\n\n----FLOWISE_SOURCE_DOCUMENTS----\n\n'
 const ARTIFACTS_PREFIX = '\n\n----FLOWISE_ARTIFACTS----\n\n'
+const TOOL_ARGS_PREFIX = '\n\n----FLOWISE_TOOL_ARGS----\n\n'
 
 const buildAndInitTool = async (chatflowid: string, _chatId?: string, _apiMessageId?: string) => {
     const appServer = getRunningExpressApp()
@@ -109,7 +111,9 @@ const buildAndInitTool = async (chatflowid: string, _chatId?: string, _apiMessag
         variableOverrides,
         orgId,
         workspaceId,
-        subscriptionId
+        subscriptionId,
+        updateStorageUsage,
+        checkStorage
     })
 
     const nodeToExecute =
@@ -142,6 +146,8 @@ const buildAndInitTool = async (chatflowid: string, _chatId?: string, _apiMessag
     const agent = await nodeInstance.init(nodeToExecuteData, '', {
         chatflowid,
         chatId,
+        orgId,
+        workspaceId,
         appDataSource: appServer.AppDataSource,
         databaseEntities,
         analytic: chatflow.analytic
@@ -209,6 +215,11 @@ const executeAgentTool = async (
             } else {
                 artifacts.push(_artifacts)
             }
+        }
+
+        if (typeof toolOutput === 'string' && toolOutput.includes(TOOL_ARGS_PREFIX)) {
+            const _splitted = toolOutput.split(TOOL_ARGS_PREFIX)
+            toolOutput = _splitted[0]
         }
 
         return {

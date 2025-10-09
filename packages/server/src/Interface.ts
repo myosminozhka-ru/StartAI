@@ -64,6 +64,7 @@ export interface IChatFlow {
     apikeyid?: string
     analytic?: string
     speechToText?: string
+    textToSpeech?: string
     chatbotConfig?: string
     followUpPrompts?: string
     apiConfig?: string
@@ -322,7 +323,7 @@ export interface IOverrideConfig {
     label: string
     name: string
     type: string
-    schema?: ICommonObject[]
+    schema?: ICommonObject[] | Record<string, string>
 }
 
 export type ICredentialDataDecrypted = ICommonObject
@@ -370,6 +371,7 @@ export interface ICustomTemplate {
 
 export interface IFlowConfig {
     chatflowid: string
+    chatflowId: string
     chatId: string
     sessionId: string
     chatHistory: IMessage[]
@@ -395,6 +397,7 @@ export interface IExecuteFlowParams extends IPredictionQueueAppServer {
     orgId: string
     workspaceId: string
     subscriptionId: string
+    productId: string
     baseURL: string
     isInternal: boolean
     isEvaluation?: boolean

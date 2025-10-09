@@ -77,11 +77,26 @@ const createDocumentStore = async (newDocumentStore: DocumentStore, orgId: strin
     }
 }
 
-const getAllDocumentStores = async (workspaceId?: string) => {
+const getAllDocumentStores = async (workspaceId?: string, page: number = -1, limit: number = -1) => {
     try {
         const appServer = getRunningExpressApp()
-        const entities = await appServer.AppDataSource.getRepository(DocumentStore).findBy(getWorkspaceSearchOptions(workspaceId))
-        return entities
+        const queryBuilder = appServer.AppDataSource.getRepository(DocumentStore)
+            .createQueryBuilder('doc_store')
+            .orderBy('doc_store.updatedDate', 'DESC')
+
+        if (page > 0 && limit > 0) {
+            queryBuilder.skip((page - 1) * limit)
+            queryBuilder.take(limit)
+        }
+        if (workspaceId) queryBuilder.andWhere('doc_store.workspaceId = :workspaceId', { workspaceId })
+
+        const [data, total] = await queryBuilder.getManyAndCount()
+
+        if (page > 0 && limit > 0) {
+            return { data, total }
+        } else {
+            return data
+        }
     } catch (error) {
         throw new InternalFlowiseError(
             StatusCodes.INTERNAL_SERVER_ERROR,
@@ -558,7 +573,8 @@ const _splitIntoChunks = async (appDataSource: DataSource, componentNodes: IComp
             chatflowid: uuidv4(),
             appDataSource,
             databaseEntities,
-            logger
+            logger,
+            processRaw: true
         }
         const docNodeInstance = new nodeModule.nodeClass()
         let docs: IDocument[] = await docNodeInstance.init(nodeData, '', options)
@@ -1613,8 +1629,12 @@ const upsertDocStore = async (
             throw new InternalFlowiseError(StatusCodes.BAD_REQUEST, `Error: Invalid metadata`)
         }
     }
-    const replaceExisting = data.replaceExisting ?? false
-    const createNewDocStore = data.createNewDocStore ?? false
+    const replaceExisting =
+        typeof data.replaceExisting === 'string' ? (data.replaceExisting as string).toLowerCase() === 'true' : data.replaceExisting ?? false
+    const createNewDocStore =
+        typeof data.createNewDocStore === 'string'
+            ? (data.createNewDocStore as string).toLowerCase() === 'true'
+            : data.createNewDocStore ?? false
     const newLoader = typeof data.loader === 'string' ? JSON.parse(data.loader) : data.loader
     const newSplitter = typeof data.splitter === 'string' ? JSON.parse(data.splitter) : data.splitter
     const newVectorStore = typeof data.vectorStore === 'string' ? JSON.parse(data.vectorStore) : data.vectorStore
@@ -1706,6 +1726,11 @@ const upsertDocStore = async (
     loaderConfig = {
         ...loaderConfig,
         ...newLoader?.config
+    }
+
+    // Override loaderName if it's provided directly in data
+    if (data.loaderName) {
+        loaderName = data.loaderName
     }
 
     splitterName = newSplitter?.name ? getComponentLabelFromName(newSplitter?.name) : splitterName

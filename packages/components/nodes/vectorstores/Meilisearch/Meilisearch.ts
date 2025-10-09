@@ -89,7 +89,8 @@ class MeilisearchRetriever_node implements INode {
                 type: 'string',
                 description: 'фильтр поиска для применения к поисковым атрибутам',
                 additionalParams: true,
-                optional: true
+                optional: true,
+                acceptVariable: true
             }
         ]
         this.outputs = [

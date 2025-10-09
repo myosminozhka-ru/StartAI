@@ -1,5 +1,5 @@
 import { BaseChatModel } from '@langchain/core/language_models/chat_models'
-import { ICommonObject, INode, INodeData, INodeOptionsValue, INodeParams, IServerSideEventStreamer } from '../../../src/Interface'
+import { ICommonObject, IMessage, INode, INodeData, INodeOptionsValue, INodeParams, IServerSideEventStreamer } from '../../../src/Interface'
 import { AIMessageChunk, BaseMessageLike, MessageContentText } from '@langchain/core/messages'
 import { DEFAULT_SUMMARIZER_TEMPLATE } from '../prompt'
 import { z } from 'zod'
@@ -12,7 +12,7 @@ import {
     replaceBase64ImagesWithFileReferences,
     updateFlowState
 } from '../utils'
-import { get } from 'lodash'
+import { processTemplateVariables } from '../../../src/utils'
 
 class LLM_Agentflow implements INode {
     label: string
@@ -262,6 +262,7 @@ class LLM_Agentflow implements INode {
 }`,
                         description: 'Схема JSON для структурированного вывода',
                         optional: true,
+                        hideCodeExecute: true,
                         show: {
                             'llmStructuredOutput[$index].type': 'jsonArray'
                         }
@@ -358,6 +359,7 @@ class LLM_Agentflow implements INode {
             const state = options.agentflowRuntime?.state as ICommonObject
             const pastChatHistory = (options.pastChatHistory as BaseMessageLike[]) ?? []
             const runtimeChatHistory = (options.agentflowRuntime?.chatHistory as BaseMessageLike[]) ?? []
+            const prependedChatHistory = options.prependedChatHistory as IMessage[]
             const chatId = options.chatId as string
 
             // Initialize the LLM model instance
@@ -381,11 +383,27 @@ class LLM_Agentflow implements INode {
             // Use to keep track of past messages with image file references
             let pastImageMessagesWithFileRef: BaseMessageLike[] = []
 
+            // Prepend history ONLY if it is the first node
+            if (prependedChatHistory.length > 0 && !runtimeChatHistory.length) {
+                for (const msg of prependedChatHistory) {
+                    const role: string = msg.role === 'apiMessage' ? 'assistant' : 'user'
+                    const content: string = msg.content ?? ''
+                    messages.push({
+                        role,
+                        content
+                    })
+                }
+            }
+
             for (const msg of llmMessages) {
                 const role = msg.role
                 const content = msg.content
                 if (role && content) {
-                    messages.push({ role, content })
+                    if (role === 'system') {
+                        messages.unshift({ role, content })
+                    } else {
+                        messages.push({ role, content })
+                    }
                 }
             }
 
@@ -460,11 +478,15 @@ class LLM_Agentflow implements INode {
                 // Stream whole response back to UI if this is the last node
                 if (isLastNode && options.sseStreamer) {
                     const sseStreamer: IServerSideEventStreamer = options.sseStreamer as IServerSideEventStreamer
-                    let responseContent = JSON.stringify(response, null, 2)
-                    if (typeof response.content === 'string') {
-                        responseContent = response.content
+                    let finalResponse = ''
+                    if (response.content && Array.isArray(response.content)) {
+                        finalResponse = response.content.map((item: any) => item.text).join('\n')
+                    } else if (response.content && typeof response.content === 'string') {
+                        finalResponse = response.content
+                    } else {
+                        finalResponse = JSON.stringify(response, null, 2)
                     }
-                    sseStreamer.streamTokenEvent(chatId, responseContent)
+                    sseStreamer.streamTokenEvent(chatId, finalResponse)
                 }
             }
 
@@ -486,8 +508,15 @@ class LLM_Agentflow implements INode {
             }
 
             // Prepare final response and output object
-            const finalResponse = (response.content as string) ?? JSON.stringify(response, null, 2)
-            const output = this.prepareOutputObject(response, finalResponse, startTime, endTime, timeDelta)
+            let finalResponse = ''
+            if (response.content && Array.isArray(response.content)) {
+                finalResponse = response.content.map((item: any) => item.text).join('\n')
+            } else if (response.content && typeof response.content === 'string') {
+                finalResponse = response.content
+            } else {
+                finalResponse = JSON.stringify(response, null, 2)
+            }
+            const output = this.prepareOutputObject(response, finalResponse, startTime, endTime, timeDelta, isStructuredOutput)
 
             // End analytics tracking
             if (analyticHandlers && llmIds) {
@@ -500,36 +529,7 @@ class LLM_Agentflow implements INode {
             }
 
             // Process template variables in state
-            if (newState && Object.keys(newState).length > 0) {
-                for (const key in newState) {
-                    const stateValue = newState[key].toString()
-                    if (stateValue.includes('{{ output')) {
-                        // Handle simple output replacement
-                        if (stateValue === '{{ output }}') {
-                            newState[key] = finalResponse
-                            continue
-                        }
-
-                        // Handle JSON path expressions like {{ output.item1 }}
-                        // eslint-disable-next-line
-                        const match = stateValue.match(/{{[\s]*output\.([\w\.]+)[\s]*}}/)
-                        if (match) {
-                            try {
-                                // Parse the response if it's JSON
-                                const jsonResponse = typeof finalResponse === 'string' ? JSON.parse(finalResponse) : finalResponse
-                                // Get the value using lodash get
-                                const path = match[1]
-                                const value = get(jsonResponse, path)
-                                newState[key] = value ?? stateValue // Fall back to original if path not found
-                            } catch (e) {
-                                // If JSON parsing fails, keep original template
-                                console.warn(`Failed to parse JSON or find path in output: ${e}`)
-                                newState[key] = stateValue
-                            }
-                        }
-                    }
-                }
-            }
+            newState = processTemplateVariables(newState, finalResponse)
 
             // Replace the actual messages array with one that includes the file references for images instead of base64 data
             const messagesWithFileReferences = replaceBase64ImagesWithFileReferences(
@@ -853,7 +853,8 @@ class LLM_Agentflow implements INode {
         finalResponse: string,
         startTime: number,
         endTime: number,
-        timeDelta: number
+        timeDelta: number,
+        isStructuredOutput: boolean
     ): any {
         const output: any = {
             content: finalResponse,
@@ -870,6 +871,15 @@ class LLM_Agentflow implements INode {
 
         if (response.usage_metadata) {
             output.usageMetadata = response.usage_metadata
+        }
+
+        if (isStructuredOutput && typeof response === 'object') {
+            const structuredOutput = response as Record<string, any>
+            for (const key in structuredOutput) {
+                if (structuredOutput[key] !== undefined && structuredOutput[key] !== null) {
+                    output[key] = structuredOutput[key]
+                }
+            }
         }
 
         return output

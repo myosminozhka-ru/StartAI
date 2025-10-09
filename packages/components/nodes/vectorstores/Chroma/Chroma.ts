@@ -75,7 +75,8 @@ class Chroma_VectorStores implements INode {
                 name: 'chromaMetadataFilter',
                 type: 'json',
                 optional: true,
-                additionalParams: true
+                additionalParams: true,
+                acceptVariable: true
             },
             {
                 label: 'Топ K',

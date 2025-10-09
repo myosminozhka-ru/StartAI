@@ -28,9 +28,7 @@ router.post('/forgot-password', accountController.forgotPassword)
 
 router.post('/reset-password', accountController.resetPassword)
 
-router.post('/cancel-subscription', accountController.cancelPreviousCloudSubscrption)
-
-router.get('/billing', accountController.createStripeCustomerPortalSession)
+router.post('/billing', accountController.createStripeCustomerPortalSession)
 
 router.get('/basic-auth', accountController.getBasicAuth)
 
