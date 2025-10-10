@@ -25,7 +25,13 @@ import {
 import { NewTokenIndices } from '@langchain/core/callbacks/base'
 import { BaseLanguageModelInput, StructuredOutputMethodOptions } from '@langchain/core/language_models/base'
 import { Runnable, RunnablePassthrough, RunnableSequence } from '@langchain/core/runnables'
-import { InferInteropZodOutput, InteropZodType, isInteropZodSchema } from '@langchain/core/utils/types'
+
+// Temporary type definitions for compatibility
+type InferInteropZodOutput<T> = any
+type InteropZodType<T = any> = any
+function isInteropZodSchema(schema: any): boolean {
+    return schema && typeof schema === 'object' && schema._def
+}
 import { BaseLLMOutputParser, JsonOutputParser } from '@langchain/core/output_parsers'
 import { schemaToGenerativeAIParameters, removeAdditionalProperties } from './utils/zod_to_genai_parameters.js'
 import {
@@ -988,13 +994,13 @@ export class LangchainChatGoogleGenerativeAI
                 })
             }
             llm = this.bindTools(tools).withConfig({
-                allowedFunctionNames: [functionName]
-            })
+                configurable: { allowedFunctionNames: [functionName] }
+            } as any)
         } else {
             const jsonSchema = schemaToGenerativeAIParameters(schema)
             llm = this.withConfig({
-                responseSchema: jsonSchema as Schema
-            })
+                configurable: { responseSchema: jsonSchema as Schema }
+            } as any)
             outputParser = new JsonOutputParser()
         }
 

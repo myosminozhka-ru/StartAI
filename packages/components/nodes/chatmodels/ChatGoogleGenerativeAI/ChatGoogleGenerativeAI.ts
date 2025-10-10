@@ -4,7 +4,7 @@ import { BaseCache } from '@langchain/core/caches'
 import { ICommonObject, IMultiModalOption, INode, INodeData, INodeOptionsValue, INodeParams } from '../../../src/Interface'
 import { convertMultiOptionsToStringArray, getBaseClasses, getCredentialData, getCredentialParam } from '../../../src/utils'
 import { getModels, MODEL_TYPE } from '../../../src/modelLoader'
-import { ChatGoogleGenerativeAI, GoogleGenerativeAIChatInput } from './FlowiseChatGoogleGenerativeAI'
+import { ChatGoogleGenerativeAI } from './FlowiseChatGoogleGenerativeAI'
 import type FlowiseGoogleAICacheManager from '../../cache/GoogleGenerativeAIContextCache/FlowiseGoogleAICacheManager'
 
 class GoogleGenerativeAI_ChatModels implements INode {
@@ -210,10 +210,10 @@ class GoogleGenerativeAI_ChatModels implements INode {
 
         const allowImageUploads = nodeData.inputs?.allowImageUploads as boolean
 
-        const obj: Partial<GoogleGenerativeAIChatInput> = {
-            apiKey: apiKey,
-            modelName: customModelName || modelName,
-            streaming: streaming ?? true
+        const obj: any = {
+            model: customModelName || modelName,
+            streaming: streaming ?? true,
+            baseUrl: baseUrl
         }
 
         // this extra metadata is needed, as langchain does not show the model name in the callbacks.
@@ -248,7 +248,9 @@ class GoogleGenerativeAI_ChatModels implements INode {
 
         const model = new ChatGoogleGenerativeAI(nodeData.id, obj)
         model.setMultiModalOption(multiModalOption)
-        if (contextCache) model.setContextCache(contextCache)
+        if (contextCache && typeof (model as any).setContextCache === 'function') {
+            ;(model as any).setContextCache(contextCache)
+        }
 
         return model
     }

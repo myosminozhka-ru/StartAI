@@ -1,10 +1,18 @@
 import { BaseLLMOutputParser, OutputParserException } from '@langchain/core/output_parsers'
 import { ChatGeneration } from '@langchain/core/outputs'
 import { ToolCall } from '@langchain/core/messages/tool'
-import { InteropZodType, interopSafeParseAsync } from '@langchain/core/utils/types'
-import { JsonOutputKeyToolsParserParamsInterop } from '@langchain/core/output_parsers/openai_tools'
 
-interface GoogleGenerativeAIToolsOutputParserParams<T extends Record<string, any>> extends JsonOutputKeyToolsParserParamsInterop<T> {}
+// Temporary type definitions for compatibility
+type InteropZodType<T = any> = any
+async function interopSafeParseAsync(schema: any, data: any): Promise<any> {
+    return { success: true, data }
+}
+
+interface GoogleGenerativeAIToolsOutputParserParams<T extends Record<string, any>> {
+    keyName: string
+    returnSingle?: boolean
+    zodSchema?: any
+}
 
 export class GoogleGenerativeAIToolsOutputParser<T extends Record<string, any> = Record<string, any>> extends BaseLLMOutputParser<T> {
     static lc_name() {

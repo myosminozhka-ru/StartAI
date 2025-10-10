@@ -247,7 +247,7 @@ class ChatOpenAI_ChatModels implements INode {
             delete obj.temperature
         }
         if ((modelName.includes('o1') || modelName.includes('o3')) && reasoningEffort) {
-            obj.reasoningEffort = reasoningEffort
+            ;(obj as any).reasoningEffort = reasoningEffort
         }
         if (maxTokens) obj.maxTokens = parseInt(maxTokens, 10)
         if (topP) obj.topP = parseFloat(topP)

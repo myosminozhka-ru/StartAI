@@ -241,7 +241,7 @@ class AzureChatOpenAI_ChatModels implements INode {
             delete obj.temperature
         }
         if ((modelName.includes('o1') || modelName.includes('o3')) && reasoningEffort) {
-            obj.reasoningEffort = reasoningEffort
+            ;(obj as any).reasoningEffort = reasoningEffort
         }
 
         const multiModalOption: IMultiModalOption = {

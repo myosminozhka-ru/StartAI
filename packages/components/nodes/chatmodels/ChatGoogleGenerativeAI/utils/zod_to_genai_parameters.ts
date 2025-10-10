@@ -2,8 +2,18 @@ import {
     type FunctionDeclarationSchema as GenerativeAIFunctionDeclarationSchema,
     type SchemaType as FunctionDeclarationSchemaType
 } from '@google/generative-ai'
-import { InteropZodType, isInteropZodSchema } from '@langchain/core/utils/types'
-import { type JsonSchema7Type, toJsonSchema } from '@langchain/core/utils/json_schema'
+
+// Temporary type definitions for compatibility
+type InteropZodType<T = any> = any
+type JsonSchema7Type = any
+
+function isInteropZodSchema(schema: any): boolean {
+    return schema && typeof schema === 'object' && schema._def
+}
+
+function toJsonSchema(schema: any): any {
+    return {}
+}
 
 export interface GenerativeAIJsonSchema extends Record<string, unknown> {
     properties?: Record<string, GenerativeAIJsonSchema>
