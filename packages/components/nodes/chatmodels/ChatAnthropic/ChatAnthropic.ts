@@ -1,8 +1,10 @@
-import { ICommonObject, INode, INodeData, INodeParams } from '../../../src/Interface'
+import { AnthropicInput, ChatAnthropic as LangchainChatAnthropic } from '@langchain/anthropic'
+import { BaseCache } from '@langchain/core/caches'
+import { BaseLLMParams } from '@langchain/core/language_models/llms'
+import { ICommonObject, IMultiModalOption, INode, INodeData, INodeOptionsValue, INodeParams } from '../../../src/Interface'
 import { getBaseClasses, getCredentialData, getCredentialParam } from '../../../src/utils'
-import { AnthropicInput, ChatAnthropic } from 'langchain/chat_models/anthropic'
-import { BaseCache } from 'langchain/schema'
-import { BaseLLMParams } from 'langchain/llms/base'
+import { ChatAnthropic } from './FlowiseChatAnthropic'
+import { getModels, MODEL_TYPE } from '../../../src/modelLoader'
 
 class ChatAnthropic_ChatModels implements INode {
     label: string
@@ -19,95 +21,34 @@ class ChatAnthropic_ChatModels implements INode {
     constructor() {
         this.label = 'ChatAnthropic'
         this.name = 'chatAnthropic'
-        this.version = 3.0
+        this.version = 8.0
         this.type = 'ChatAnthropic'
-        this.icon = 'chatAnthropic.png'
+        this.icon = 'Anthropic.svg'
         this.category = 'Chat Models'
-        this.description = 'Wrapper around ChatAnthropic large language models that use the Chat endpoint'
-        this.baseClasses = [this.type, ...getBaseClasses(ChatAnthropic)]
+        this.description = 'Обертка вокруг ChatAnthropic больших языковых моделей, использующих Chat endpoint'
+        this.baseClasses = [this.type, ...getBaseClasses(LangchainChatAnthropic)]
         this.credential = {
-            label: 'Connect Credential',
+            label: 'Подключите учетные данные',
             name: 'credential',
             type: 'credential',
             credentialNames: ['anthropicApi']
         }
         this.inputs = [
             {
-                label: 'Cache',
+                label: 'Кэш',
                 name: 'cache',
                 type: 'BaseCache',
                 optional: true
             },
             {
-                label: 'Model Name',
+                label: 'Название модели',
                 name: 'modelName',
-                type: 'options',
-                options: [
-                    {
-                        label: 'claude-2',
-                        name: 'claude-2',
-                        description: 'Claude 2 latest major version, automatically get updates to the model as they are released'
-                    },
-                    {
-                        label: 'claude-2.1',
-                        name: 'claude-2.1',
-                        description: 'Claude 2 latest full version'
-                    },
-                    {
-                        label: 'claude-instant-1',
-                        name: 'claude-instant-1',
-                        description: 'Claude Instant latest major version, automatically get updates to the model as they are released'
-                    },
-                    {
-                        label: 'claude-v1',
-                        name: 'claude-v1'
-                    },
-                    {
-                        label: 'claude-v1-100k',
-                        name: 'claude-v1-100k'
-                    },
-                    {
-                        label: 'claude-v1.0',
-                        name: 'claude-v1.0'
-                    },
-                    {
-                        label: 'claude-v1.2',
-                        name: 'claude-v1.2'
-                    },
-                    {
-                        label: 'claude-v1.3',
-                        name: 'claude-v1.3'
-                    },
-                    {
-                        label: 'claude-v1.3-100k',
-                        name: 'claude-v1.3-100k'
-                    },
-                    {
-                        label: 'claude-instant-v1',
-                        name: 'claude-instant-v1'
-                    },
-                    {
-                        label: 'claude-instant-v1-100k',
-                        name: 'claude-instant-v1-100k'
-                    },
-                    {
-                        label: 'claude-instant-v1.0',
-                        name: 'claude-instant-v1.0'
-                    },
-                    {
-                        label: 'claude-instant-v1.1',
-                        name: 'claude-instant-v1.1'
-                    },
-                    {
-                        label: 'claude-instant-v1.1-100k',
-                        name: 'claude-instant-v1.1-100k'
-                    }
-                ],
-                default: 'claude-2',
-                optional: true
+                type: 'asyncOptions',
+                loadMethod: 'listModels',
+                default: 'claude-3-haiku'
             },
             {
-                label: 'Temperature',
+                label: 'Температура',
                 name: 'temperature',
                 type: 'number',
                 step: 0.1,
@@ -115,7 +56,15 @@ class ChatAnthropic_ChatModels implements INode {
                 optional: true
             },
             {
-                label: 'Max Tokens',
+                label: 'Потоковая передача',
+                name: 'streaming',
+                type: 'boolean',
+                default: true,
+                optional: true,
+                additionalParams: true
+            },
+            {
+                label: 'Максимум токенов',
                 name: 'maxTokensToSample',
                 type: 'number',
                 step: 1,
@@ -137,21 +86,60 @@ class ChatAnthropic_ChatModels implements INode {
                 step: 0.1,
                 optional: true,
                 additionalParams: true
+            },
+            {
+                label: 'Расширенное мышление',
+                name: 'extendedThinking',
+                type: 'boolean',
+                description: 'Включить расширенное мышление для модели рассуждений, такой как Claude Sonnet 3.7',
+                optional: true,
+                additionalParams: true
+            },
+            {
+                label: 'Бюджет токенов',
+                name: 'budgetTokens',
+                type: 'number',
+                step: 1,
+                default: 1024,
+                description:
+                    'Максимальное количество токенов, которое Claude может использовать для своего внутреннего процесса рассуждения',
+                optional: true,
+                additionalParams: true
+            },
+            {
+                label: 'Разрешить загрузку изображений',
+                name: 'allowImageUploads',
+                type: 'boolean',
+                description:
+                    'Разрешить ввод изображений. См. <a href="https://docs.flowiseai.com/using-flowise/uploads#image" target="_blank">документацию</a> для получения дополнительной информации.',
+                default: false,
+                optional: true
             }
         ]
+    }
+
+    //@ts-ignore
+    loadMethods = {
+        async listModels(): Promise<INodeOptionsValue[]> {
+            return await getModels(MODEL_TYPE.CHAT, 'chatAnthropic')
+        }
     }
 
     async init(nodeData: INodeData, _: string, options: ICommonObject): Promise<any> {
         const temperature = nodeData.inputs?.temperature as string
         const modelName = nodeData.inputs?.modelName as string
-        const maxTokensToSample = nodeData.inputs?.maxTokensToSample as string
+        const maxTokens = nodeData.inputs?.maxTokensToSample as string
         const topP = nodeData.inputs?.topP as string
         const topK = nodeData.inputs?.topK as string
         const streaming = nodeData.inputs?.streaming as boolean
         const cache = nodeData.inputs?.cache as BaseCache
+        const extendedThinking = nodeData.inputs?.extendedThinking as boolean
+        const budgetTokens = nodeData.inputs?.budgetTokens as string
 
         const credentialData = await getCredentialData(nodeData.credential ?? '', options)
         const anthropicApiKey = getCredentialParam('anthropicApiKey', credentialData, nodeData)
+
+        const allowImageUploads = nodeData.inputs?.allowImageUploads as boolean
 
         const obj: Partial<AnthropicInput> & BaseLLMParams & { anthropicApiKey?: string } = {
             temperature: parseFloat(temperature),
@@ -160,12 +148,26 @@ class ChatAnthropic_ChatModels implements INode {
             streaming: streaming ?? true
         }
 
-        if (maxTokensToSample) obj.maxTokensToSample = parseInt(maxTokensToSample, 10)
+        if (maxTokens) obj.maxTokens = parseInt(maxTokens, 10)
         if (topP) obj.topP = parseFloat(topP)
         if (topK) obj.topK = parseFloat(topK)
         if (cache) obj.cache = cache
+        if (extendedThinking) {
+            obj.thinking = {
+                type: 'enabled',
+                budget_tokens: parseInt(budgetTokens, 10)
+            }
+            delete obj.temperature
+        }
 
-        const model = new ChatAnthropic(obj)
+        const multiModalOption: IMultiModalOption = {
+            image: {
+                allowImageUploads: allowImageUploads ?? false
+            }
+        }
+
+        const model = new ChatAnthropic(nodeData.id, obj)
+        model.setMultiModalOption(multiModalOption)
         return model
     }
 }

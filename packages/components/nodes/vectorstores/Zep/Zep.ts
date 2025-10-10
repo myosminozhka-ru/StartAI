@@ -1,10 +1,11 @@
 import { flatten } from 'lodash'
 import { IDocument, ZepClient } from '@getzep/zep-js'
-import { ZepVectorStore, IZepConfig } from 'langchain/vectorstores/zep'
-import { Embeddings } from 'langchain/embeddings/base'
-import { Document } from 'langchain/document'
-import { ICommonObject, INode, INodeData, INodeOutputsValue, INodeParams } from '../../../src/Interface'
+import { ZepVectorStore, IZepConfig } from '@langchain/community/vectorstores/zep'
+import { Embeddings } from '@langchain/core/embeddings'
+import { Document } from '@langchain/core/documents'
+import { ICommonObject, INode, INodeData, INodeOutputsValue, INodeParams, IndexingResult } from '../../../src/Interface'
 import { getBaseClasses, getCredentialData, getCredentialParam } from '../../../src/utils'
+import { addMMRInputParams, resolveVectorStoreOrRetriever } from '../VectorStoreUtils'
 
 class Zep_VectorStores implements INode {
     label: string
@@ -21,81 +22,82 @@ class Zep_VectorStores implements INode {
     outputs: INodeOutputsValue[]
 
     constructor() {
-        this.label = 'Zep'
+        this.label = 'Zep Collection - Open Source'
         this.name = 'zep'
-        this.version = 1.0
+        this.version = 2.0
         this.type = 'Zep'
-        this.icon = 'zep.png'
+        this.icon = 'zep.svg'
         this.category = 'Vector Stores'
         this.description =
-            'Upsert embedded data and perform similarity search upon query using Zep, a fast and scalable building block for LLM apps'
+            'Загружайте встроенные данные и выполняйте поиск по сходству или mmr при запросе с помощью Zep, быстрого и масштабируемого строительного блока для LLM-приложений'
         this.baseClasses = [this.type, 'VectorStoreRetriever', 'BaseRetriever']
-        this.badge = 'NEW'
         this.credential = {
-            label: 'Connect Credential',
+            label: 'Подключите учетные данные',
             name: 'credential',
             type: 'credential',
             optional: true,
-            description: 'Configure JWT authentication on your Zep instance (Optional)',
+            description: 'Настройте JWT-аутентификацию на вашем экземпляре Zep (необязательно)',
             credentialNames: ['zepMemoryApi']
         }
         this.inputs = [
             {
-                label: 'Document',
+                label: 'Документ',
                 name: 'document',
                 type: 'Document',
                 list: true,
                 optional: true
             },
             {
-                label: 'Embeddings',
+                label: 'Встраивания',
                 name: 'embeddings',
                 type: 'Embeddings'
             },
             {
-                label: 'Base URL',
+                label: 'Базовый URL',
                 name: 'baseURL',
                 type: 'string',
                 default: 'http://127.0.0.1:8000'
             },
             {
-                label: 'Zep Collection',
+                label: 'Zep Коллекция',
                 name: 'zepCollection',
                 type: 'string',
                 placeholder: 'my-first-collection'
             },
             {
-                label: 'Zep Metadata Filter',
+                label: 'Zep Фильтр метаданных',
                 name: 'zepMetadataFilter',
                 type: 'json',
                 optional: true,
-                additionalParams: true
+                additionalParams: true,
+                acceptVariable: true
             },
             {
-                label: 'Embedding Dimension',
+                label: 'Размерность встраивания',
                 name: 'dimension',
                 type: 'number',
                 default: 1536,
                 additionalParams: true
             },
             {
-                label: 'Top K',
+                label: 'Топ K',
                 name: 'topK',
-                description: 'Number of top results to fetch. Default to 4',
+                description: 'Количество лучших результатов для получения. По умолчанию 4',
                 placeholder: '4',
                 type: 'number',
                 additionalParams: true,
                 optional: true
             }
         ]
+        addMMRInputParams(this.inputs)
         this.outputs = [
             {
-                label: 'Zep Retriever',
+                label: 'Zep Извлекатель',
                 name: 'retriever',
                 baseClasses: this.baseClasses
             },
             {
-                label: 'Zep Vector Store',
+                label: 'Zep Векторное хранилище',
                 name: 'vectorStore',
                 baseClasses: [this.type, ...getBaseClasses(ZepVectorStore)]
             }
@@ -104,7 +106,7 @@ class Zep_VectorStores implements INode {
 
     //@ts-ignore
     vectorStoreMethods = {
-        async upsert(nodeData: INodeData, options: ICommonObject): Promise<void> {
+        async upsert(nodeData: INodeData, options: ICommonObject): Promise<Partial<IndexingResult>> {
             const baseURL = nodeData.inputs?.baseURL as string
             const zepCollection = nodeData.inputs?.zepCollection as string
             const dimension = (nodeData.inputs?.dimension as number) ?? 1536
@@ -132,6 +134,7 @@ class Zep_VectorStores implements INode {
 
             try {
                 await ZepVectorStore.fromDocuments(finalDocs, embeddings, zepConfig)
+                return { numAdded: finalDocs.length, addedDocs: finalDocs }
             } catch (e) {
                 throw new Error(e)
             }
@@ -144,9 +147,6 @@ class Zep_VectorStores implements INode {
         const zepMetadataFilter = nodeData.inputs?.zepMetadataFilter
         const dimension = nodeData.inputs?.dimension as number
         const embeddings = nodeData.inputs?.embeddings as Embeddings
-        const output = nodeData.outputs?.output as string
-        const topK = nodeData.inputs?.topK as string
-        const k = topK ? parseFloat(topK) : 4
 
         const credentialData = await getCredentialData(nodeData.credential ?? '', options)
         const apiKey = getCredentialParam('apiKey', credentialData, nodeData)
@@ -165,14 +165,7 @@ class Zep_VectorStores implements INode {
 
         const vectorStore = await ZepExistingVS.fromExistingIndex(embeddings, zepConfig)
 
-        if (output === 'retriever') {
-            const retriever = vectorStore.asRetriever(k)
-            return retriever
-        } else if (output === 'vectorStore') {
-            ;(vectorStore as any).k = k
-            return vectorStore
-        }
-        return vectorStore
+        return resolveVectorStoreOrRetriever(nodeData, vectorStore, zepConfig.filter)
     }
 }
 
@@ -210,7 +203,7 @@ class ZepExistingVS extends ZepVectorStore {
         this.args = args
     }
 
-    async initalizeCollection(args: IZepConfig & Partial<ZepFilter>) {
+    async initializeCollection(args: IZepConfig & Partial<ZepFilter>) {
         this.client = await ZepClient.init(args.apiUrl, args.apiKey)
         try {
             this.collection = await this.client.document.getCollection(args.collectionName)
@@ -259,7 +252,7 @@ class ZepExistingVS extends ZepVectorStore {
         const newfilter = {
             where: { and: ANDFilters }
         }
-        await this.initalizeCollection(this.args!).catch((err) => {
+        await this.initializeCollection(this.args!).catch((err) => {
             console.error('Error initializing collection:', err)
             throw err
         })

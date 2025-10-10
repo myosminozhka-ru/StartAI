@@ -1,10 +1,10 @@
 import { flatten } from 'lodash'
 import { Client } from '@opensearch-project/opensearch'
-import { Document } from 'langchain/document'
-import { OpenSearchVectorStore } from 'langchain/vectorstores/opensearch'
-import { Embeddings } from 'langchain/embeddings/base'
-import { INode, INodeData, INodeOutputsValue, INodeParams } from '../../../src/Interface'
-import { getBaseClasses } from '../../../src/utils'
+import { Document } from '@langchain/core/documents'
+import { OpenSearchVectorStore } from '@langchain/community/vectorstores/opensearch'
+import { Embeddings } from '@langchain/core/embeddings'
+import { ICommonObject, INode, INodeData, INodeOutputsValue, INodeParams, IndexingResult } from '../../../src/Interface'
+import { getBaseClasses, getCredentialData, getCredentialParam } from '../../../src/utils'
 
 class OpenSearch_VectorStores implements INode {
     label: string
@@ -18,45 +18,45 @@ class OpenSearch_VectorStores implements INode {
     baseClasses: string[]
     inputs: INodeParams[]
     outputs: INodeOutputsValue[]
+    credential: INodeParams
 
     constructor() {
         this.label = 'OpenSearch'
         this.name = 'openSearch'
-        this.version = 1.0
+        this.version = 3.0
         this.type = 'OpenSearch'
-        this.icon = 'opensearch.png'
+        this.icon = 'opensearch.svg'
         this.category = 'Vector Stores'
-        this.description = `Upsert embedded data and perform similarity search upon query using OpenSearch, an open-source, all-in-one vector database`
+        this.description = `Загружайте встроенные данные и выполняйте поиск по сходству при запросе с помощью OpenSearch, открытой векторной базы данных "все в одном"`
         this.baseClasses = [this.type, 'VectorStoreRetriever', 'BaseRetriever']
-        this.badge = 'NEW'
+        this.credential = {
+            label: 'Подключите учетные данные',
+            name: 'credential',
+            type: 'credential',
+            credentialNames: ['openSearchUrl']
+        }
         this.inputs = [
             {
-                label: 'Document',
+                label: 'Документ',
                 name: 'document',
                 type: 'Document',
                 list: true,
                 optional: true
             },
             {
-                label: 'Embeddings',
+                label: 'Встраивания',
                 name: 'embeddings',
                 type: 'Embeddings'
             },
             {
-                label: 'OpenSearch URL',
-                name: 'opensearchURL',
-                type: 'string',
-                placeholder: 'http://127.0.0.1:9200'
-            },
-            {
-                label: 'Index Name',
+                label: 'Имя индекса',
                 name: 'indexName',
                 type: 'string'
             },
             {
-                label: 'Top K',
+                label: 'Топ K',
                 name: 'topK',
-                description: 'Number of top results to fetch. Default to 4',
+                description: 'Количество лучших результатов для получения. По умолчанию 4',
                 placeholder: '4',
                 type: 'number',
                 additionalParams: true,
@@ -65,12 +65,12 @@ class OpenSearch_VectorStores implements INode {
         ]
         this.outputs = [
             {
-                label: 'OpenSearch Retriever',
+                label: 'OpenSearch Извлекатель',
                 name: 'retriever',
                 baseClasses: this.baseClasses
             },
             {
-                label: 'OpenSearch Vector Store',
+                label: 'OpenSearch Векторное хранилище',
                 name: 'vectorStore',
                 baseClasses: [this.type, ...getBaseClasses(OpenSearchVectorStore)]
             }
@@ -79,11 +79,17 @@ class OpenSearch_VectorStores implements INode {
 
     //@ts-ignore
     vectorStoreMethods = {
-        async upsert(nodeData: INodeData): Promise<void> {
+        async upsert(nodeData: INodeData, options: ICommonObject): Promise<Partial<IndexingResult>> {
             const docs = nodeData.inputs?.document as Document[]
             const embeddings = nodeData.inputs?.embeddings as Embeddings
-            const opensearchURL = nodeData.inputs?.opensearchURL as string
             const indexName = nodeData.inputs?.indexName as string
+
+            const credentialData = await getCredentialData(nodeData.credential ?? '', options)
+            const opensearchURL = getCredentialParam('openSearchUrl', credentialData, nodeData)
+            const user = getCredentialParam('user', credentialData, nodeData)
+            const password = getCredentialParam('password', credentialData, nodeData)
+
+            const client = getOpenSearchClient(opensearchURL, user, password)
 
             const flattenDocs = docs && docs.length ? flatten(docs) : []
             const finalDocs = []
@@ -93,32 +99,31 @@ class OpenSearch_VectorStores implements INode {
                 }
             }
 
-            const client = new Client({
-                nodes: [opensearchURL]
-            })
-
             try {
                 await OpenSearchVectorStore.fromDocuments(finalDocs, embeddings, {
                     client,
                     indexName: indexName
                 })
+                return { numAdded: finalDocs.length, addedDocs: finalDocs }
             } catch (e) {
                 throw new Error(e)
             }
         }
     }
 
-    async init(nodeData: INodeData): Promise<any> {
+    async init(nodeData: INodeData, _: string, options: ICommonObject): Promise<any> {
         const embeddings = nodeData.inputs?.embeddings as Embeddings
-        const opensearchURL = nodeData.inputs?.opensearchURL as string
         const indexName = nodeData.inputs?.indexName as string
         const output = nodeData.outputs?.output as string
         const topK = nodeData.inputs?.topK as string
         const k = topK ? parseFloat(topK) : 4
 
-        const client = new Client({
-            nodes: [opensearchURL]
-        })
+        const credentialData = await getCredentialData(nodeData.credential ?? '', options)
+        const opensearchURL = getCredentialParam('openSearchUrl', credentialData, nodeData)
+        const user = getCredentialParam('user', credentialData, nodeData)
+        const password = getCredentialParam('password', credentialData, nodeData)
+
+        const client = getOpenSearchClient(opensearchURL, user, password)
 
         const vectorStore = new OpenSearchVectorStore(embeddings, {
             client,
@@ -134,6 +139,19 @@ class OpenSearch_VectorStores implements INode {
         }
         return vectorStore
     }
+}
+
+const getOpenSearchClient = (url: string, user?: string, password?: string): Client => {
+    if (user && password) {
+        const urlObj = new URL(url)
+        urlObj.username = user
+        urlObj.password = password
+        url = urlObj.toString()
+    }
+
+    return new Client({
+        nodes: [url]
+    })
 }
 
 module.exports = { nodeClass: OpenSearch_VectorStores }

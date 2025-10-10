@@ -1,3 +1,4 @@
-**/node_modules
-**/dist
-**/build
+*.yaml
+*.yml
+**/*.yaml
+**/*.yml

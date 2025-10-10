@@ -1,6 +1,7 @@
+import { VectaraStore, VectaraLibArgs, VectaraFilter, VectaraContextConfig, VectaraFile } from '@langchain/community/vectorstores/vectara'
 import { ICommonObject, INode, INodeData, INodeOutputsValue, INodeParams } from '../../../src/Interface'
 import { getBaseClasses, getCredentialData, getCredentialParam } from '../../../src/utils'
-import { VectaraStore, VectaraLibArgs, VectaraFilter, VectaraContextConfig, VectaraFile } from 'langchain/vectorstores/vectara'
+import { getFileFromStorage } from '../../../src'
 
 class VectaraUpload_VectorStores implements INode {
     label: string
@@ -23,60 +24,61 @@ class VectaraUpload_VectorStores implements INode {
         this.type = 'Vectara'
         this.icon = 'vectara.png'
         this.category = 'Vector Stores'
-        this.description = 'Upload files to Vectara'
+        this.description = 'Загружайте файлы в Vectara'
         this.baseClasses = [this.type, 'VectorStoreRetriever', 'BaseRetriever']
         this.badge = 'DEPRECATING'
         this.credential = {
-            label: 'Connect Credential',
+            label: 'Подключите учетные данные',
             name: 'credential',
             type: 'credential',
             credentialNames: ['vectaraApi']
         }
         this.inputs = [
             {
-                label: 'File',
+                label: 'Файл',
                 name: 'file',
                 description:
-                    'File to upload to Vectara. Supported file types: https://docs.vectara.com/docs/api-reference/indexing-apis/file-upload/file-upload-filetypes',
+                    'Файл для загрузки в Vectara. Поддерживаемые типы файлов: https://docs.vectara.com/docs/api-reference/indexing-apis/file-upload/file-upload-filetypes',
                 type: 'file'
             },
             {
-                label: 'Metadata Filter',
+                label: 'Фильтр метаданных',
                 name: 'filter',
-                description: 'Filter to apply to Vectara metadata.',
+                description:
+                    'Фильтр для применения к метаданным Vectara. См. <a target="_blank" href="https://docs.flowiseai.com/vector-stores/vectara">документацию</a> о том, как использовать фильтры Vectara',
                 type: 'string',
                 additionalParams: true,
                 optional: true
             },
             {
-                label: 'Sentences Before',
+                label: 'Предложения до',
                 name: 'sentencesBefore',
-                description: 'Number of sentences to fetch before the matched sentence. Defaults to 2.',
+                description: 'Количество предложений для получения перед совпадающим предложением. По умолчанию 2.',
                 type: 'number',
                 additionalParams: true,
                 optional: true
             },
             {
-                label: 'Sentences After',
+                label: 'Предложения после',
                 name: 'sentencesAfter',
-                description: 'Number of sentences to fetch after the matched sentence. Defaults to 2.',
+                description: 'Количество предложений для получения после совпадающего предложения. По умолчанию 2.',
                 type: 'number',
                 additionalParams: true,
                 optional: true
             },
             {
-                label: 'Lambda',
+                label: 'Лямбда',
                 name: 'lambda',
                 description:
-                    'Improves retrieval accuracy by adjusting the balance (from 0 to 1) between neural search and keyword-based search factors.',
+                    'Улучшает точность извлечения, регулируя баланс (от 0 до 1) между нейронным поиском и факторами поиска на основе ключевых слов.',
                 type: 'number',
                 additionalParams: true,
                 optional: true
             },
             {
-                label: 'Top K',
+                label: 'Топ K',
                 name: 'topK',
-                description: 'Number of top results to fetch. Defaults to 4',
+                description: 'Количество лучших результатов для получения. По умолчанию 4',
                 placeholder: '4',
                 type: 'number',
                 additionalParams: true,
@@ -85,12 +87,12 @@ class VectaraUpload_VectorStores implements INode {
         ]
         this.outputs = [
             {
-                label: 'Vectara Retriever',
+                label: 'Vectara Извлекатель',
                 name: 'retriever',
                 baseClasses: this.baseClasses
             },
             {
-                label: 'Vectara Vector Store',
+                label: 'Vectara Векторное хранилище',
                 name: 'vectorStore',
                 baseClasses: [this.type, ...getBaseClasses(VectaraStore)]
             }
@@ -128,20 +130,37 @@ class VectaraUpload_VectorStores implements INode {
         vectaraFilter.contextConfig = vectaraContextConfig
 
         let files: string[] = []
-
-        if (fileBase64.startsWith('[') && fileBase64.endsWith(']')) {
-            files = JSON.parse(fileBase64)
-        } else {
-            files = [fileBase64]
-        }
-
         const vectaraFiles: VectaraFile[] = []
-        for (const file of files) {
-            const splitDataURI = file.split(',')
-            splitDataURI.pop()
-            const bf = Buffer.from(splitDataURI.pop() || '', 'base64')
-            const blob = new Blob([bf])
-            vectaraFiles.push({ blob: blob, fileName: getFileName(file) })
+
+        if (fileBase64.startsWith('FILE-STORAGE::')) {
+            const fileName = fileBase64.replace('FILE-STORAGE::', '')
+            if (fileName.startsWith('[') && fileName.endsWith(']')) {
+                files = JSON.parse(fileName)
+            } else {
+                files = [fileName]
+            }
+            const orgId = options.orgId
+            const chatflowid = options.chatflowid
+
+            for (const file of files) {
+                const fileData = await getFileFromStorage(file, orgId, chatflowid)
+                const blob = new Blob([fileData])
+                vectaraFiles.push({ blob: blob, fileName: getFileName(file) })
+            }
+        } else {
+            if (fileBase64.startsWith('[') && fileBase64.endsWith(']')) {
+                files = JSON.parse(fileBase64)
+            } else {
+                files = [fileBase64]
+            }
+
+            for (const file of files) {
+                const splitDataURI = file.split(',')
+                splitDataURI.pop()
+                const bf = Buffer.from(splitDataURI.pop() || '', 'base64')
+                const blob = new Blob([bf])
+                vectaraFiles.push({ blob: blob, fileName: getFileName(file) })
+            }
         }
 
         const vectorStore = new VectaraStore(vectaraArgs)

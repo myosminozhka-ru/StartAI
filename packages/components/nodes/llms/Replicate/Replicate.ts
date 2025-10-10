@@ -1,8 +1,8 @@
+import { BaseCache } from '@langchain/core/caches'
+import { BaseLLMParams } from '@langchain/core/language_models/llms'
 import { ICommonObject, INode, INodeData, INodeParams } from '../../../src/Interface'
 import { getBaseClasses, getCredentialData, getCredentialParam } from '../../../src/utils'
-import { Replicate, ReplicateInput } from 'langchain/llms/replicate'
-import { BaseCache } from 'langchain/schema'
-import { BaseLLMParams } from 'langchain/llms/base'
+import { Replicate, ReplicateInput } from './core'
 
 class Replicate_LLMs implements INode {
     label: string
@@ -23,73 +23,73 @@ class Replicate_LLMs implements INode {
         this.type = 'Replicate'
         this.icon = 'replicate.svg'
         this.category = 'LLMs'
-        this.description = 'Use Replicate to run open source models on cloud'
+        this.description = 'Использование Replicate для запуска открытых моделей в облаке'
         this.baseClasses = [this.type, 'BaseChatModel', ...getBaseClasses(Replicate)]
         this.credential = {
-            label: 'Connect Credential',
+            label: 'Подключите учетные данные',
             name: 'credential',
             type: 'credential',
             credentialNames: ['replicateApi']
         }
         this.inputs = [
             {
-                label: 'Cache',
+                label: 'Кэш',
                 name: 'cache',
                 type: 'BaseCache',
                 optional: true
             },
             {
-                label: 'Model',
+                label: 'Модель',
                 name: 'model',
                 type: 'string',
                 placeholder: 'a16z-infra/llama13b-v2-chat:df7690f1994d94e96ad9d568eac121aecf50684a0b0963b25a41cc40061269e5',
                 optional: true
             },
             {
-                label: 'Temperature',
+                label: 'Температура',
                 name: 'temperature',
                 type: 'number',
                 step: 0.1,
                 description:
-                    'Adjusts randomness of outputs, greater than 1 is random and 0 is deterministic, 0.75 is a good starting value.',
+                    'Настраивает случайность выходных данных, больше 1 - случайно, а 0 - детерминированно, 0.75 - хорошее начальное значение.',
                 default: 0.7,
                 optional: true
             },
             {
-                label: 'Max Tokens',
+                label: 'Максимальное количество токенов',
                 name: 'maxTokens',
                 type: 'number',
                 step: 1,
-                description: 'Maximum number of tokens to generate. A word is generally 2-3 tokens',
+                description: 'Максимальное количество токенов для генерации. Слово обычно составляет 2-3 токена',
                 optional: true,
                 additionalParams: true
             },
             {
-                label: 'Top Probability',
+                label: 'Верхняя вероятность',
                 name: 'topP',
                 type: 'number',
                 step: 0.1,
                 description:
-                    'When decoding text, samples from the top p percentage of most likely tokens; lower to ignore less likely tokens',
+                    'При декодировании текста выбирает из верхнего p процента наиболее вероятных токенов; уменьшите, чтобы игнорировать менее вероятные токены',
                 optional: true,
                 additionalParams: true
             },
             {
-                label: 'Repetition Penalty',
+                label: 'Штраф за повторение',
                 name: 'repetitionPenalty',
                 type: 'number',
                 step: 0.1,
                 description:
-                    'Penalty for repeated words in generated text; 1 is no penalty, values greater than 1 discourage repetition, less than 1 encourage it. (minimum: 0.01; maximum: 5)',
+                    'Штраф за повторяющиеся слова в сгенерированном тексте; 1 - без штрафа, значения больше 1 препятствуют повторению, меньше 1 поощряют его. (минимум: 0.01; максимум: 5)',
                 optional: true,
                 additionalParams: true
             },
             {
-                label: 'Additional Inputs',
+                label: 'Дополнительные входы',
                 name: 'additionalInputs',
                 type: 'json',
                 description:
-                    'Each model has different parameters, refer to the specific model accepted inputs. For example: <a target="_blank" href="https://replicate.com/a16z-infra/llama13b-v2-chat/api#inputs">llama13b-v2</a>',
+                    'Каждая модель имеет разные параметры, обратитесь к конкретным принятым входам модели. Например: <a target="_blank" href="https://replicate.com/a16z-infra/llama13b-v2-chat/api#inputs">llama13b-v2</a>',
                 additionalParams: true,
                 optional: true
             }
@@ -97,7 +97,7 @@ class Replicate_LLMs implements INode {
     }
 
     async init(nodeData: INodeData, _: string, options: ICommonObject): Promise<any> {
-        const modelName = nodeData.inputs?.model as string
+        const modelName = nodeData.inputs?.model as `${string}/${string}` | `${string}/${string}:${string}`
         const temperature = nodeData.inputs?.temperature as string
         const maxTokens = nodeData.inputs?.maxTokens as string
         const topP = nodeData.inputs?.topP as string
@@ -107,14 +107,10 @@ class Replicate_LLMs implements INode {
         const credentialData = await getCredentialData(nodeData.credential ?? '', options)
         const apiKey = getCredentialParam('replicateApiKey', credentialData, nodeData)
 
-        const version = modelName.split(':').pop()
-        const name = modelName.split(':')[0].split('/').pop()
-        const org = modelName.split(':')[0].split('/')[0]
-
         const cache = nodeData.inputs?.cache as BaseCache
 
         const obj: ReplicateInput & BaseLLMParams = {
-            model: `${org}/${name}:${version}`,
+            model: modelName,
             apiKey
         }
 

@@ -1,9 +1,9 @@
-import { INode, INodeData, INodeParams } from '../../../src/Interface'
+import { ChatOllamaInput } from '@langchain/ollama'
+import { BaseChatModelParams } from '@langchain/core/language_models/chat_models'
+import { BaseCache } from '@langchain/core/caches'
+import { IMultiModalOption, INode, INodeData, INodeParams } from '../../../src/Interface'
 import { getBaseClasses } from '../../../src/utils'
-import { ChatOllama } from 'langchain/chat_models/ollama'
-import { BaseCache } from 'langchain/schema'
-import { OllamaInput } from 'langchain/dist/util/ollama'
-import { BaseLLMParams } from 'langchain/llms/base'
+import { ChatOllama } from './FlowiseChatOllama'
 
 class ChatOllama_ChatModels implements INode {
     label: string
@@ -20,47 +20,82 @@ class ChatOllama_ChatModels implements INode {
     constructor() {
         this.label = 'ChatOllama'
         this.name = 'chatOllama'
-        this.version = 2.0
+        this.version = 5.0
         this.type = 'ChatOllama'
-        this.icon = 'ollama.png'
+        this.icon = 'Ollama.svg'
         this.category = 'Chat Models'
-        this.description = 'Chat completion using open-source LLM on Ollama'
+        this.description = 'Чат-завершение с использованием открытой LLM на Ollama'
         this.baseClasses = [this.type, ...getBaseClasses(ChatOllama)]
         this.inputs = [
             {
-                label: 'Cache',
+                label: 'Кэш',
                 name: 'cache',
                 type: 'BaseCache',
                 optional: true
             },
             {
-                label: 'Base URL',
+                label: 'Базовый URL',
                 name: 'baseUrl',
                 type: 'string',
                 default: 'http://localhost:11434'
             },
             {
-                label: 'Model Name',
+                label: 'Название модели',
                 name: 'modelName',
                 type: 'string',
                 placeholder: 'llama2'
             },
             {
-                label: 'Temperature',
+                label: 'Температура',
                 name: 'temperature',
                 type: 'number',
                 description:
-                    'The temperature of the model. Increasing the temperature will make the model answer more creatively. (Default: 0.8). Refer to <a target="_blank" href="https://github.com/jmorganca/ollama/blob/main/docs/modelfile.md#valid-parameters-and-values">docs</a> for more details',
+                    'Температура модели. Увеличение температуры заставит модель отвечать более креативно. (По умолчанию: 0.8). См. <a target="_blank" href="https://github.com/jmorganca/ollama/blob/main/docs/modelfile.md#valid-parameters-and-values">документацию</a> для подробностей',
                 step: 0.1,
                 default: 0.9,
                 optional: true
+            },
+            {
+                label: 'Разрешить загрузку изображений',
+                name: 'allowImageUploads',
+                type: 'boolean',
+                description:
+                    'Разрешить ввод изображений. См. <a href="https://docs.flowiseai.com/using-flowise/uploads#image" target="_blank">документацию</a> для подробностей.',
+                default: false,
+                optional: true
+            },
+            {
+                label: 'Потоковая передача',
+                name: 'streaming',
+                type: 'boolean',
+                default: true,
+                optional: true,
+                additionalParams: true
+            },
+            {
+                label: 'JSON режим',
+                name: 'jsonMode',
+                type: 'boolean',
+                description:
+                    'Принуждает модель возвращать только JSON. Укажите в системном промпте возврат JSON. Пример: Форматируйте все ответы как JSON объект',
+                optional: true,
+                additionalParams: true
+            },
+            {
+                label: 'Поддержание соединения',
+                name: 'keepAlive',
+                type: 'string',
+                description: 'Как долго поддерживать соединение активным. Строка продолжительности (например "10m" или "24h")',
+                default: '5m',
+                optional: true,
+                additionalParams: true
             },
             {
                 label: 'Top P',
                 name: 'topP',
                 type: 'number',
                 description:
-                    'Works together with top-k. A higher value (e.g., 0.95) will lead to more diverse text, while a lower value (e.g., 0.5) will generate more focused and conservative text. (Default: 0.9). Refer to <a target="_blank" href="https://github.com/jmorganca/ollama/blob/main/docs/modelfile.md#valid-parameters-and-values">docs</a> for more details',
+                    'Работает вместе с top-k. Более высокое значение (например, 0.95) приведет к более разнообразному тексту, а более низкое значение (например, 0.5) будет генерировать более сфокусированный и консервативный текст. (По умолчанию: 0.9). См. <a target="_blank" href="https://github.com/jmorganca/ollama/blob/main/docs/modelfile.md#valid-parameters-and-values">документацию</a> для подробностей',
                 step: 0.1,
                 optional: true,
                 additionalParams: true
@@ -70,7 +105,7 @@ class ChatOllama_ChatModels implements INode {
                 name: 'topK',
                 type: 'number',
                 description:
-                    'Reduces the probability of generating nonsense. A higher value (e.g. 100) will give more diverse answers, while a lower value (e.g. 10) will be more conservative. (Default: 40). Refer to <a target="_blank" href="https://github.com/jmorganca/ollama/blob/main/docs/modelfile.md#valid-parameters-and-values">docs</a> for more details',
+                    'Уменьшает вероятность генерации бессмыслицы. Более высокое значение (например 100) даст более разнообразные ответы, а более низкое значение (например 10) будет более консервативным. (По умолчанию: 40). См. <a target="_blank" href="https://github.com/jmorganca/ollama/blob/main/docs/modelfile.md#valid-parameters-and-values">документацию</a> для подробностей',
                 step: 1,
                 optional: true,
                 additionalParams: true
@@ -80,7 +115,7 @@ class ChatOllama_ChatModels implements INode {
                 name: 'mirostat',
                 type: 'number',
                 description:
-                    'Enable Mirostat sampling for controlling perplexity. (default: 0, 0 = disabled, 1 = Mirostat, 2 = Mirostat 2.0). Refer to <a target="_blank" href="https://github.com/jmorganca/ollama/blob/main/docs/modelfile.md#valid-parameters-and-values">docs</a> for more details',
+                    'Включить Mirostat сэмплинг для контроля перплексии. (по умолчанию: 0, 0 = отключено, 1 = Mirostat, 2 = Mirostat 2.0). См. <a target="_blank" href="https://github.com/jmorganca/ollama/blob/main/docs/modelfile.md#valid-parameters-and-values">документацию</a> для подробностей',
                 step: 1,
                 optional: true,
                 additionalParams: true
@@ -90,7 +125,7 @@ class ChatOllama_ChatModels implements INode {
                 name: 'mirostatEta',
                 type: 'number',
                 description:
-                    'Influences how quickly the algorithm responds to feedback from the generated text. A lower learning rate will result in slower adjustments, while a higher learning rate will make the algorithm more responsive. (Default: 0.1) Refer to <a target="_blank" href="https://github.com/jmorganca/ollama/blob/main/docs/modelfile.md#valid-parameters-and-values">docs</a> for more details',
+                    'Влияет на то, как быстро алгоритм реагирует на обратную связь от сгенерированного текста. Более низкая скорость обучения приведет к более медленным корректировкам, а более высокая скорость обучения сделает алгоритм более отзывчивым. (По умолчанию: 0.1) См. <a target="_blank" href="https://github.com/jmorganca/ollama/blob/main/docs/modelfile.md#valid-parameters-and-values">документацию</a> для подробностей',
                 step: 0.1,
                 optional: true,
                 additionalParams: true
@@ -100,79 +135,69 @@ class ChatOllama_ChatModels implements INode {
                 name: 'mirostatTau',
                 type: 'number',
                 description:
-                    'Controls the balance between coherence and diversity of the output. A lower value will result in more focused and coherent text. (Default: 5.0) Refer to <a target="_blank" href="https://github.com/jmorganca/ollama/blob/main/docs/modelfile.md#valid-parameters-and-values">docs</a> for more details',
+                    'Контролирует баланс между связностью и разнообразием вывода. Более низкое значение приведет к более сфокусированному и связному тексту. (По умолчанию: 5.0) См. <a target="_blank" href="https://github.com/jmorganca/ollama/blob/main/docs/modelfile.md#valid-parameters-and-values">документацию</a> для подробностей',
                 step: 0.1,
                 optional: true,
                 additionalParams: true
             },
             {
-                label: 'Context Window Size',
+                label: 'Размер окна контекста',
                 name: 'numCtx',
                 type: 'number',
                 description:
-                    'Sets the size of the context window used to generate the next token. (Default: 2048) Refer to <a target="_blank" href="https://github.com/jmorganca/ollama/blob/main/docs/modelfile.md#valid-parameters-and-values">docs</a> for more details',
+                    'Устанавливает размер окна контекста, используемого для генерации следующего токена. (По умолчанию: 2048) См. <a target="_blank" href="https://github.com/jmorganca/ollama/blob/main/docs/modelfile.md#valid-parameters-and-values">документацию</a> для подробностей',
                 step: 1,
                 optional: true,
                 additionalParams: true
             },
             {
-                label: 'Number of GQA groups',
-                name: 'numGqa',
-                type: 'number',
-                description:
-                    'The number of GQA groups in the transformer layer. Required for some models, for example it is 8 for llama2:70b. Refer to <a target="_blank" href="https://github.com/jmorganca/ollama/blob/main/docs/modelfile.md#valid-parameters-and-values">docs</a> for more details',
-                step: 1,
-                optional: true,
-                additionalParams: true
-            },
-            {
-                label: 'Number of GPU',
+                label: 'Количество GPU',
                 name: 'numGpu',
                 type: 'number',
                 description:
-                    'The number of layers to send to the GPU(s). On macOS it defaults to 1 to enable metal support, 0 to disable. Refer to <a target="_blank" href="https://github.com/jmorganca/ollama/blob/main/docs/modelfile.md#valid-parameters-and-values">docs</a> for more details',
+                    'Количество слоев для отправки на GPU. В macOS по умолчанию 1 для включения поддержки metal, 0 для отключения. См. <a target="_blank" href="https://github.com/jmorganca/ollama/blob/main/docs/modelfile.md#valid-parameters-and-values">документацию</a> для подробностей',
                 step: 1,
                 optional: true,
                 additionalParams: true
             },
             {
-                label: 'Number of Thread',
+                label: 'Количество потоков',
                 name: 'numThread',
                 type: 'number',
                 description:
-                    'Sets the number of threads to use during computation. By default, Ollama will detect this for optimal performance. It is recommended to set this value to the number of physical CPU cores your system has (as opposed to the logical number of cores). Refer to <a target="_blank" href="https://github.com/jmorganca/ollama/blob/main/docs/modelfile.md#valid-parameters-and-values">docs</a> for more details',
+                    'Устанавливает количество потоков для использования во время вычислений. По умолчанию Ollama определит это для оптимальной производительности. Рекомендуется установить это значение равным количеству физических ядер CPU в вашей системе (в отличие от логического количества ядер). См. <a target="_blank" href="https://github.com/jmorganca/ollama/blob/main/docs/modelfile.md#valid-parameters-and-values">документацию</a> для подробностей',
                 step: 1,
                 optional: true,
                 additionalParams: true
             },
             {
-                label: 'Repeat Last N',
+                label: 'Повторить последние N',
                 name: 'repeatLastN',
                 type: 'number',
                 description:
-                    'Sets how far back for the model to look back to prevent repetition. (Default: 64, 0 = disabled, -1 = num_ctx). Refer to <a target="_blank" href="https://github.com/jmorganca/ollama/blob/main/docs/modelfile.md#valid-parameters-and-values">docs</a> for more details',
+                    'Устанавливает, как далеко назад модель должна смотреть, чтобы предотвратить повторения. (По умолчанию: 64, 0 = отключено, -1 = num_ctx). См. <a target="_blank" href="https://github.com/jmorganca/ollama/blob/main/docs/modelfile.md#valid-parameters-and-values">документацию</a> для подробностей',
                 step: 1,
                 optional: true,
                 additionalParams: true
             },
             {
-                label: 'Repeat Penalty',
+                label: 'Штраф за повторение',
                 name: 'repeatPenalty',
                 type: 'number',
                 description:
-                    'Sets how strongly to penalize repetitions. A higher value (e.g., 1.5) will penalize repetitions more strongly, while a lower value (e.g., 0.9) will be more lenient. (Default: 1.1). Refer to <a target="_blank" href="https://github.com/jmorganca/ollama/blob/main/docs/modelfile.md#valid-parameters-and-values">docs</a> for more details',
+                    'Устанавливает, насколько сильно штрафовать повторения. Более высокое значение (например, 1.5) будет более строго штрафовать повторения, а более низкое значение (например, 0.9) будет более снисходительным. (По умолчанию: 1.1). См. <a target="_blank" href="https://github.com/jmorganca/ollama/blob/main/docs/modelfile.md#valid-parameters-and-values">документацию</a> для подробностей',
                 step: 0.1,
                 optional: true,
                 additionalParams: true
             },
             {
-                label: 'Stop Sequence',
+                label: 'Стоп-последовательность',
                 name: 'stop',
                 type: 'string',
                 rows: 4,
                 placeholder: 'AI assistant:',
                 description:
-                    'Sets the stop sequences to use. Use comma to seperate different sequences. Refer to <a target="_blank" href="https://github.com/jmorganca/ollama/blob/main/docs/modelfile.md#valid-parameters-and-values">docs</a> for more details',
+                    'Устанавливает стоп-последовательности для использования. Используйте запятую для разделения разных последовательностей. См. <a target="_blank" href="https://github.com/jmorganca/ollama/blob/main/docs/modelfile.md#valid-parameters-and-values">документацию</a> для подробностей',
                 optional: true,
                 additionalParams: true
             },
@@ -181,7 +206,7 @@ class ChatOllama_ChatModels implements INode {
                 name: 'tfsZ',
                 type: 'number',
                 description:
-                    'Tail free sampling is used to reduce the impact of less probable tokens from the output. A higher value (e.g., 2.0) will reduce the impact more, while a value of 1.0 disables this setting. (Default: 1). Refer to <a target="_blank" href="https://github.com/jmorganca/ollama/blob/main/docs/modelfile.md#valid-parameters-and-values">docs</a> for more details',
+                    'Tail free sampling используется для уменьшения влияния менее вероятных токенов из вывода. Более высокое значение (например, 2.0) уменьшит влияние больше, а значение 1.0 отключит эту настройку. (По умолчанию: 1). См. <a target="_blank" href="https://github.com/jmorganca/ollama/blob/main/docs/modelfile.md#valid-parameters-and-values">документацию</a> для подробностей',
                 step: 0.1,
                 optional: true,
                 additionalParams: true
@@ -199,20 +224,23 @@ class ChatOllama_ChatModels implements INode {
         const mirostatEta = nodeData.inputs?.mirostatEta as string
         const mirostatTau = nodeData.inputs?.mirostatTau as string
         const numCtx = nodeData.inputs?.numCtx as string
-        const numGqa = nodeData.inputs?.numGqa as string
+        const keepAlive = nodeData.inputs?.keepAlive as string
         const numGpu = nodeData.inputs?.numGpu as string
         const numThread = nodeData.inputs?.numThread as string
         const repeatLastN = nodeData.inputs?.repeatLastN as string
         const repeatPenalty = nodeData.inputs?.repeatPenalty as string
-        const stop = nodeData.inputs?.stop as string
         const tfsZ = nodeData.inputs?.tfsZ as string
+        const allowImageUploads = nodeData.inputs?.allowImageUploads as boolean
+        const jsonMode = nodeData.inputs?.jsonMode as boolean
+        const streaming = nodeData.inputs?.streaming as boolean
 
         const cache = nodeData.inputs?.cache as BaseCache
 
-        const obj: OllamaInput & BaseLLMParams = {
+        const obj: ChatOllamaInput & BaseChatModelParams = {
             baseUrl,
             temperature: parseFloat(temperature),
-            model: modelName
+            model: modelName,
+            streaming: streaming ?? true
         }
 
         if (topP) obj.topP = parseFloat(topP)
@@ -221,19 +249,23 @@ class ChatOllama_ChatModels implements INode {
         if (mirostatEta) obj.mirostatEta = parseFloat(mirostatEta)
         if (mirostatTau) obj.mirostatTau = parseFloat(mirostatTau)
         if (numCtx) obj.numCtx = parseFloat(numCtx)
-        if (numGqa) obj.numGqa = parseFloat(numGqa)
         if (numGpu) obj.numGpu = parseFloat(numGpu)
         if (numThread) obj.numThread = parseFloat(numThread)
         if (repeatLastN) obj.repeatLastN = parseFloat(repeatLastN)
         if (repeatPenalty) obj.repeatPenalty = parseFloat(repeatPenalty)
         if (tfsZ) obj.tfsZ = parseFloat(tfsZ)
-        if (stop) {
-            const stopSequences = stop.split(',')
-            obj.stop = stopSequences
-        }
+        if (keepAlive) obj.keepAlive = keepAlive
         if (cache) obj.cache = cache
+        if (jsonMode) obj.format = 'json'
 
-        const model = new ChatOllama(obj)
+        const multiModalOption: IMultiModalOption = {
+            image: {
+                allowImageUploads: allowImageUploads ?? false
+            }
+        }
+
+        const model = new ChatOllama(nodeData.id, obj)
+        model.setMultiModalOption(multiModalOption)
         return model
     }
 }

@@ -20,7 +20,7 @@ class RequestsGet_Tools implements INode {
         this.type = 'RequestsGet'
         this.icon = 'requestsget.svg'
         this.category = 'Tools'
-        this.description = 'Execute HTTP GET requests'
+        this.description = 'Выполнение HTTP GET запросов'
         this.baseClasses = [this.type, ...getBaseClasses(RequestsGetTool)]
         this.inputs = [
             {
@@ -28,22 +28,22 @@ class RequestsGet_Tools implements INode {
                 name: 'url',
                 type: 'string',
                 description:
-                    'Agent will make call to this exact URL. If not specified, agent will try to figure out itself from AIPlugin if provided',
+                    'Агент будет делать вызов к этому точному URL. Если не указано, агент попытается сам разобраться из AIPlugin, если предоставлен',
                 additionalParams: true,
                 optional: true
             },
             {
-                label: 'Description',
+                label: 'Описание',
                 name: 'description',
                 type: 'string',
                 rows: 4,
                 default: desc,
-                description: 'Acts like a prompt to tell agent when it should use this tool',
+                description: 'Действует как промпт, чтобы сказать агенту, когда он должен использовать этот инструмент',
                 additionalParams: true,
                 optional: true
             },
             {
-                label: 'Headers',
+                label: 'Заголовки',
                 name: 'headers',
                 type: 'json',
                 additionalParams: true,

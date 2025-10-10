@@ -1,8 +1,7 @@
 import { INode, INodeData, INodeParams } from '../../../src/Interface'
 import { getBaseClasses, getInputVariables } from '../../../src/utils'
-import { FewShotPromptTemplate, FewShotPromptTemplateInput, PromptTemplate } from 'langchain/prompts'
-import { Example } from 'langchain/schema'
-import { TemplateFormat } from 'langchain/dist/prompts/template'
+import { FewShotPromptTemplate, FewShotPromptTemplateInput, PromptTemplate, TemplateFormat } from '@langchain/core/prompts'
+import type { Example } from '@langchain/core/prompts'
 
 class FewShotPromptTemplate_Prompts implements INode {
     label: string
@@ -16,17 +15,17 @@ class FewShotPromptTemplate_Prompts implements INode {
     inputs: INodeParams[]
 
     constructor() {
-        this.label = 'Few Shot Prompt Template'
+        this.label = 'Шаблон промпта с примерами'
         this.name = 'fewShotPromptTemplate'
         this.version = 1.0
         this.type = 'FewShotPromptTemplate'
         this.icon = 'prompt.svg'
         this.category = 'Prompts'
-        this.description = 'Prompt template you can build with examples'
+        this.description = 'Шаблон промпта, который можно построить с примерами'
         this.baseClasses = [this.type, ...getBaseClasses(FewShotPromptTemplate)]
         this.inputs = [
             {
-                label: 'Examples',
+                label: 'Примеры',
                 name: 'examples',
                 type: 'string',
                 rows: 4,
@@ -36,32 +35,32 @@ class FewShotPromptTemplate_Prompts implements INode {
 ]`
             },
             {
-                label: 'Example Prompt',
+                label: 'Промпт примера',
                 name: 'examplePrompt',
                 type: 'PromptTemplate'
             },
             {
-                label: 'Prefix',
+                label: 'Префикс',
                 name: 'prefix',
                 type: 'string',
                 rows: 4,
                 placeholder: `Give the antonym of every input`
             },
             {
-                label: 'Suffix',
+                label: 'Суффикс',
                 name: 'suffix',
                 type: 'string',
                 rows: 4,
                 placeholder: `Word: {input}\nAntonym:`
             },
             {
-                label: 'Example Separator',
+                label: 'Разделитель примеров',
                 name: 'exampleSeparator',
                 type: 'string',
                 placeholder: `\n\n`
             },
             {
-                label: 'Template Format',
+                label: 'Формат шаблона',
                 name: 'templateFormat',
                 type: 'options',
                 options: [
@@ -87,7 +86,7 @@ class FewShotPromptTemplate_Prompts implements INode {
         const templateFormat = nodeData.inputs?.templateFormat as TemplateFormat
         const examplePrompt = nodeData.inputs?.examplePrompt as PromptTemplate
 
-        const inputVariables = getInputVariables(suffix)
+        const inputVariables = [...new Set([...getInputVariables(suffix), ...getInputVariables(prefix)])]
 
         let examples: Example[] = []
         if (examplesStr) {

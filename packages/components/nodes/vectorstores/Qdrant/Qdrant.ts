@@ -1,13 +1,20 @@
 import { flatten } from 'lodash'
+import { v4 as uuid } from 'uuid'
 import { QdrantClient } from '@qdrant/js-client-rest'
-import { VectorStoreRetrieverInput } from 'langchain/vectorstores/base'
-import { Document } from 'langchain/document'
-import { QdrantVectorStore, QdrantLibArgs } from 'langchain/vectorstores/qdrant'
-import { Embeddings } from 'langchain/embeddings/base'
-import { ICommonObject, INode, INodeData, INodeOutputsValue, INodeParams } from '../../../src/Interface'
-import { getBaseClasses, getCredentialData, getCredentialParam } from '../../../src/utils'
+import { VectorStoreRetrieverInput } from '@langchain/core/vectorstores'
+import { Document } from '@langchain/core/documents'
+import { QdrantVectorStore, QdrantLibArgs } from '@langchain/qdrant'
+import { Embeddings } from '@langchain/core/embeddings'
+import { ICommonObject, INode, INodeData, INodeOutputsValue, INodeParams, IndexingResult } from '../../../src/Interface'
+import { FLOWISE_CHATID, getBaseClasses, getCredentialData, getCredentialParam } from '../../../src/utils'
+import { index } from '../../../src/indexing'
+import { howToUseFileUpload } from '../VectorStoreUtils'
 
 type RetrieverConfig = Partial<VectorStoreRetrieverInput<QdrantVectorStore>>
+type QdrantAddDocumentOptions = {
+    customPayload?: Record<string, any>[]
+    ids?: string[]
+}
 
 class Qdrant_VectorStores implements INode {
     label: string
@@ -26,110 +33,156 @@ class Qdrant_VectorStores implements INode {
     constructor() {
         this.label = 'Qdrant'
         this.name = 'qdrant'
-        this.version = 1.0
+        this.version = 5.0
         this.type = 'Qdrant'
         this.icon = 'qdrant.png'
         this.category = 'Vector Stores'
         this.description =
-            'Upsert embedded data and perform similarity search upon query using Qdrant, a scalable open source vector database written in Rust'
+            'Загружайте встроенные данные и выполняйте поиск по сходству при запросе с помощью Qdrant, масштабируемой открытой векторной базы данных, написанной на Rust'
         this.baseClasses = [this.type, 'VectorStoreRetriever', 'BaseRetriever']
-        this.badge = 'NEW'
         this.credential = {
-            label: 'Connect Credential',
+            label: 'Подключите учетные данные',
             name: 'credential',
             type: 'credential',
-            description: 'Only needed when using Qdrant cloud hosted',
+            description: 'Требуется только при использовании облачного размещения Qdrant',
             optional: true,
             credentialNames: ['qdrantApi']
         }
         this.inputs = [
             {
-                label: 'Document',
+                label: 'Документ',
                 name: 'document',
                 type: 'Document',
                 list: true,
                 optional: true
             },
             {
-                label: 'Embeddings',
+                label: 'Встраивания',
                 name: 'embeddings',
                 type: 'Embeddings'
             },
             {
-                label: 'Qdrant Server URL',
+                label: 'Менеджер записей',
+                name: 'recordManager',
+                type: 'RecordManager',
+                description: 'Отслеживайте запись для предотвращения дублирования',
+                optional: true
+            },
+            {
+                label: 'URL сервера Qdrant',
                 name: 'qdrantServerUrl',
                 type: 'string',
                 placeholder: 'http://localhost:6333'
             },
             {
-                label: 'Qdrant Collection Name',
+                label: 'Имя коллекции Qdrant',
                 name: 'qdrantCollection',
                 type: 'string'
             },
             {
-                label: 'Vector Dimension',
+                label: 'Загрузка файлов',
+                name: 'fileUpload',
+                description: 'Разрешить загрузку файлов в чате',
+                hint: {
+                    label: 'Как использовать',
+                    value: howToUseFileUpload
+                },
+                type: 'boolean',
+                additionalParams: true,
+                optional: true
+            },
+            {
+                label: 'Размерность вектора',
                 name: 'qdrantVectorDimension',
                 type: 'number',
                 default: 1536,
                 additionalParams: true
             },
             {
-                label: 'Similarity',
+                label: 'Ключ содержимого',
+                name: 'contentPayloadKey',
+                description: 'Ключ для хранения текста. По умолчанию `content`',
+                type: 'string',
+                default: 'content',
+                optional: true,
+                additionalParams: true
+            },
+            {
+                label: 'Ключ метаданных',
+                name: 'metadataPayloadKey',
+                description: 'Ключ для хранения метаданных. По умолчанию `metadata`',
+                type: 'string',
+                default: 'metadata',
+                optional: true,
+                additionalParams: true
+            },
+            {
+                label: 'Размер пакета загрузки',
+                name: 'batchSize',
+                type: 'number',
+                step: 1,
+                description: 'Загружать пакетами размером N',
+                additionalParams: true,
+                optional: true
+            },
+            {
+                label: 'Сходство',
                 name: 'qdrantSimilarity',
-                description: 'Similarity measure used in Qdrant.',
+                description: 'Мера сходства, используемая в Qdrant.',
                 type: 'options',
                 default: 'Cosine',
                 options: [
                     {
-                        label: 'Cosine',
+                        label: 'Косинус',
                         name: 'Cosine'
                     },
                     {
-                        label: 'Euclid',
+                        label: 'Евклидово',
                         name: 'Euclid'
                     },
                     {
-                        label: 'Dot',
+                        label: 'Точка',
                         name: 'Dot'
                     }
                 ],
                 additionalParams: true
             },
             {
-                label: 'Additional Collection Cofiguration',
+                label: 'Дополнительная конфигурация коллекции',
                 name: 'qdrantCollectionConfiguration',
                 description:
-                    'Refer to <a target="_blank" href="https://qdrant.tech/documentation/concepts/collections">collection docs</a> for more reference',
+                    'См. <a target="_blank" href="https://qdrant.tech/documentation/concepts/collections">документацию по коллекциям</a> для получения дополнительной информации',
                 type: 'json',
                 optional: true,
                 additionalParams: true
             },
             {
-                label: 'Top K',
+                label: 'Топ K',
                 name: 'topK',
-                description: 'Number of top results to fetch. Default to 4',
+                description: 'Количество лучших результатов для получения. По умолчанию 4',
                 placeholder: '4',
                 type: 'number',
                 additionalParams: true,
                 optional: true
             },
             {
-                label: 'Qdrant Search Filter',
+                label: 'Фильтр поиска Qdrant',
                 name: 'qdrantFilter',
-                description: 'Only return points which satisfy the conditions',
+                description: 'Возвращать только точки, которые удовлетворяют условиям',
                 type: 'json',
                 additionalParams: true,
-                optional: true
+                optional: true,
+                acceptVariable: true
             }
         ]
         this.outputs = [
             {
-                label: 'Qdrant Retriever',
+                label: 'Qdrant Извлекатель',
                 name: 'retriever',
                 baseClasses: this.baseClasses
             },
             {
-                label: 'Qdrant Vector Store',
+                label: 'Qdrant Векторное хранилище',
                 name: 'vectorStore',
                 baseClasses: [this.type, ...getBaseClasses(QdrantVectorStore)]
             }
@@ -138,26 +191,37 @@ class Qdrant_VectorStores implements INode {
 
     //@ts-ignore
     vectorStoreMethods = {
-        async upsert(nodeData: INodeData, options: ICommonObject): Promise<void> {
+        async upsert(nodeData: INodeData, options: ICommonObject): Promise<Partial<IndexingResult>> {
             const qdrantServerUrl = nodeData.inputs?.qdrantServerUrl as string
             const collectionName = nodeData.inputs?.qdrantCollection as string
             const docs = nodeData.inputs?.document as Document[]
             const embeddings = nodeData.inputs?.embeddings as Embeddings
             const qdrantSimilarity = nodeData.inputs?.qdrantSimilarity
             const qdrantVectorDimension = nodeData.inputs?.qdrantVectorDimension
+            const recordManager = nodeData.inputs?.recordManager
+            const _batchSize = nodeData.inputs?.batchSize
+            const contentPayloadKey = nodeData.inputs?.contentPayloadKey || 'content'
+            const metadataPayloadKey = nodeData.inputs?.metadataPayloadKey || 'metadata'
+            const isFileUploadEnabled = nodeData.inputs?.fileUpload as boolean
 
             const credentialData = await getCredentialData(nodeData.credential ?? '', options)
             const qdrantApiKey = getCredentialParam('qdrantApiKey', credentialData, nodeData)
 
+            const port = Qdrant_VectorStores.determinePortByUrl(qdrantServerUrl)
+
             const client = new QdrantClient({
                 url: qdrantServerUrl,
-                apiKey: qdrantApiKey
+                apiKey: qdrantApiKey,
+                port: port
             })
 
             const flattenDocs = docs && docs.length ? flatten(docs) : []
             const finalDocs = []
             for (let i = 0; i < flattenDocs.length; i += 1) {
                 if (flattenDocs[i] && flattenDocs[i].pageContent) {
+                    if (isFileUploadEnabled && options.chatId) {
+                        flattenDocs[i].metadata = { ...flattenDocs[i].metadata, [FLOWISE_CHATID]: options.chatId }
+                    }
                     finalDocs.push(new Document(flattenDocs[i]))
                 }
             }
@@ -171,11 +235,162 @@ class Qdrant_VectorStores implements INode {
                         size: qdrantVectorDimension ? parseInt(qdrantVectorDimension, 10) : 1536,
                         distance: qdrantSimilarity ?? 'Cosine'
                     }
+                },
+                contentPayloadKey,
+                metadataPayloadKey
+            }
+
+            try {
+                if (recordManager) {
+                    const vectorStore = new QdrantVectorStore(embeddings, dbConfig)
+                    await vectorStore.ensureCollection()
+
+                    vectorStore.addVectors = async (
+                        vectors: number[][],
+                        documents: Document[],
+                        documentOptions?: QdrantAddDocumentOptions
+                    ): Promise<void> => {
+                        if (vectors.length === 0) {
+                            return
+                        }
+
+                        await vectorStore.ensureCollection()
+
+                        const points = vectors.map((embedding, idx) => ({
+                            id: documentOptions?.ids?.length ? documentOptions?.ids[idx] : uuid(),
+                            vector: embedding,
+                            payload: {
+                                [contentPayloadKey]: documents[idx].pageContent,
+                                [metadataPayloadKey]: documents[idx].metadata,
+                                customPayload: documentOptions?.customPayload?.length ? documentOptions?.customPayload[idx] : undefined
+                            }
+                        }))
+
+                        try {
+                            if (_batchSize) {
+                                const batchSize = parseInt(_batchSize, 10)
+                                for (let i = 0; i < points.length; i += batchSize) {
+                                    const batchPoints = points.slice(i, i + batchSize)
+                                    await client.upsert(collectionName, {
+                                        wait: true,
+                                        points: batchPoints
+                                    })
+                                }
+                            } else {
+                                await client.upsert(collectionName, {
+                                    wait: true,
+                                    points
+                                })
+                            }
+                        } catch (e: any) {
+                            const error = new Error(`${e?.status ?? 'Undefined error code'} ${e?.message}: ${e?.data?.status?.error}`)
+                            throw error
+                        }
+                    }
+
+                    vectorStore.delete = async (params: { ids: string[] }): Promise<void> => {
+                        const { ids } = params
+
+                        if (ids?.length) {
+                            try {
+                                client.delete(collectionName, {
+                                    points: ids
+                                })
+                            } catch (e) {
+                                console.error('Failed to delete')
+                            }
+                        }
+                    }
+
+                    await recordManager.createSchema()
+
+                    const res = await index({
+                        docsSource: finalDocs,
+                        recordManager,
+                        vectorStore,
+                        options: {
+                            cleanup: recordManager?.cleanup,
+                            sourceIdKey: recordManager?.sourceIdKey ?? 'source',
+                            vectorStoreName: collectionName
+                        }
+                    })
+
+                    return res
+                } else {
+                    if (_batchSize) {
+                        const batchSize = parseInt(_batchSize, 10)
+                        for (let i = 0; i < finalDocs.length; i += batchSize) {
+                            const batch = finalDocs.slice(i, i + batchSize)
+                            await QdrantVectorStore.fromDocuments(batch, embeddings, dbConfig)
+                        }
+                    } else {
+                        await QdrantVectorStore.fromDocuments(finalDocs, embeddings, dbConfig)
+                    }
+                    return { numAdded: finalDocs.length, addedDocs: finalDocs }
+                }
+            } catch (e) {
+                throw new Error(e)
+            }
+        },
+        async delete(nodeData: INodeData, ids: string[], options: ICommonObject): Promise<void> {
+            const qdrantServerUrl = nodeData.inputs?.qdrantServerUrl as string
+            const collectionName = nodeData.inputs?.qdrantCollection as string
+            const embeddings = nodeData.inputs?.embeddings as Embeddings
+            const qdrantSimilarity = nodeData.inputs?.qdrantSimilarity
+            const qdrantVectorDimension = nodeData.inputs?.qdrantVectorDimension
+            const recordManager = nodeData.inputs?.recordManager
+
+            const credentialData = await getCredentialData(nodeData.credential ?? '', options)
+            const qdrantApiKey = getCredentialParam('qdrantApiKey', credentialData, nodeData)
+
+            const port = Qdrant_VectorStores.determinePortByUrl(qdrantServerUrl)
+
+            const client = new QdrantClient({
+                url: qdrantServerUrl,
+                apiKey: qdrantApiKey,
+                port: port
+            })
+
+            const dbConfig: QdrantLibArgs = {
+                client,
+                url: qdrantServerUrl,
+                collectionName,
+                collectionConfig: {
+                    vectors: {
+                        size: qdrantVectorDimension ? parseInt(qdrantVectorDimension, 10) : 1536,
+                        distance: qdrantSimilarity ?? 'Cosine'
+                    }
+                }
+            }
+
+            const vectorStore = new QdrantVectorStore(embeddings, dbConfig)
+
+            vectorStore.delete = async (params: { ids: string[] }): Promise<void> => {
+                const { ids } = params
+
+                if (ids?.length) {
+                    try {
+                        client.delete(collectionName, {
+                            points: ids
+                        })
+                    } catch (e) {
+                        console.error('Failed to delete')
+                    }
                 }
             }
 
             try {
-                await QdrantVectorStore.fromDocuments(finalDocs, embeddings, dbConfig)
+                if (recordManager) {
+                    const vectorStoreName = collectionName
+                    await recordManager.createSchema()
+                    ;(recordManager as any).namespace = (recordManager as any).namespace + '_' + vectorStoreName
+                    const keys: string[] = await recordManager.listKeys({})
+
+                    await vectorStore.delete({ ids: keys })
+                    await recordManager.deleteKeys(keys)
+                } else {
+                    await vectorStore.delete({ ids })
+                }
             } catch (e) {
                 throw new Error(e)
             }
@@ -191,21 +406,29 @@ class Qdrant_VectorStores implements INode {
         const qdrantVectorDimension = nodeData.inputs?.qdrantVectorDimension
         const output = nodeData.outputs?.output as string
         const topK = nodeData.inputs?.topK as string
-        let queryFilter = nodeData.inputs?.queryFilter
+        let queryFilter = nodeData.inputs?.qdrantFilter
+        const contentPayloadKey = nodeData.inputs?.contentPayloadKey || 'content'
+        const metadataPayloadKey = nodeData.inputs?.metadataPayloadKey || 'metadata'
+        const isFileUploadEnabled = nodeData.inputs?.fileUpload as boolean
 
         const k = topK ? parseFloat(topK) : 4
 
         const credentialData = await getCredentialData(nodeData.credential ?? '', options)
         const qdrantApiKey = getCredentialParam('qdrantApiKey', credentialData, nodeData)
 
+        const port = Qdrant_VectorStores.determinePortByUrl(qdrantServerUrl)
+
         const client = new QdrantClient({
             url: qdrantServerUrl,
-            apiKey: qdrantApiKey
+            apiKey: qdrantApiKey,
+            port: port
         })
 
         const dbConfig: QdrantLibArgs = {
             client,
-            collectionName
+            collectionName,
+            contentPayloadKey,
+            metadataPayloadKey
         }
 
         const retrieverConfig: RetrieverConfig = {
@@ -230,6 +453,25 @@ class Qdrant_VectorStores implements INode {
         if (queryFilter) {
             retrieverConfig.filter = typeof queryFilter === 'object' ? queryFilter : JSON.parse(queryFilter)
         }
+        if (isFileUploadEnabled && options.chatId) {
+            retrieverConfig.filter = retrieverConfig.filter || {}
+
+            retrieverConfig.filter.should = Array.isArray(retrieverConfig.filter.should) ? retrieverConfig.filter.should : []
+
+            retrieverConfig.filter.should.push(
+                {
+                    key: `metadata.${FLOWISE_CHATID}`,
+                    match: {
+                        value: options.chatId
+                    }
+                },
+                {
+                    is_empty: {
+                        key: `metadata.${FLOWISE_CHATID}`
+                    }
+                }
+            )
+        }
 
         const vectorStore = await QdrantVectorStore.fromExistingCollection(embeddings, dbConfig)
 
@@ -238,9 +480,34 @@ class Qdrant_VectorStores implements INode {
             return retriever
         } else if (output === 'vectorStore') {
             ;(vectorStore as any).k = k
+            if (queryFilter) {
+                ;(vectorStore as any).filter = retrieverConfig.filter
+            }
             return vectorStore
         }
         return vectorStore
+    }
+
+    /**
+     * Determine the port number from the given URL.
+     *
+     * The problem is when not doing this the qdrant-client.js will fall back on 6663 when you enter a port 443 and 80.
+     * See: https://stackoverflow.com/questions/59104197/nodejs-new-url-urlhttps-myurl-com80-lists-the-port-as-empty
+     * @param qdrantServerUrl the url to get the port from
+     */
+    static determinePortByUrl(qdrantServerUrl: string): number {
+        const parsedUrl = new URL(qdrantServerUrl)
+
+        let port = parsedUrl.port ? parseInt(parsedUrl.port) : 6663
+
+        if (parsedUrl.protocol === 'https:' && parsedUrl.port === '') {
+            port = 443
+        }
+        if (parsedUrl.protocol === 'http:' && parsedUrl.port === '') {
+            port = 80
+        }
+
+        return port
     }
 }
 

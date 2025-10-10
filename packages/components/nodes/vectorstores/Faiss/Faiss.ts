@@ -1,8 +1,8 @@
 import { flatten } from 'lodash'
-import { Document } from 'langchain/document'
-import { FaissStore } from 'langchain/vectorstores/faiss'
-import { Embeddings } from 'langchain/embeddings/base'
-import { INode, INodeData, INodeOutputsValue, INodeParams } from '../../../src/Interface'
+import { Document } from '@langchain/core/documents'
+import { FaissStore } from '@langchain/community/vectorstores/faiss'
+import { Embeddings } from '@langchain/core/embeddings'
+import { INode, INodeData, INodeOutputsValue, INodeParams, IndexingResult } from '../../../src/Interface'
 import { getBaseClasses } from '../../../src/utils'
 
 class Faiss_VectorStores implements INode {
@@ -25,33 +25,32 @@ class Faiss_VectorStores implements INode {
         this.type = 'Faiss'
         this.icon = 'faiss.svg'
         this.category = 'Vector Stores'
-        this.description = 'Upsert embedded data and perform similarity search upon query using Faiss library from Meta'
+        this.description = 'Вставить встроенные данные и выполнить поиск по сходству по запросу, используя библиотеку Faiss от Meta'
         this.baseClasses = [this.type, 'VectorStoreRetriever', 'BaseRetriever']
-        this.badge = 'NEW'
         this.inputs = [
             {
-                label: 'Document',
+                label: 'Документ',
                 name: 'document',
                 type: 'Document',
                 list: true,
                 optional: true
             },
             {
-                label: 'Embeddings',
+                label: 'Вложения',
                 name: 'embeddings',
                 type: 'Embeddings'
             },
             {
-                label: 'Base Path to load',
+                label: 'Базовый путь для загрузки',
                 name: 'basePath',
-                description: 'Path to load faiss.index file',
+                description: 'Путь для загрузки файла faiss.index',
                 placeholder: `C:\\Users\\User\\Desktop`,
                 type: 'string'
             },
             {
-                label: 'Top K',
+                label: 'Топ K',
                 name: 'topK',
-                description: 'Number of top results to fetch. Default to 4',
+                description: 'Количество лучших результатов для получения. По умолчанию 4',
                 placeholder: '4',
                 type: 'number',
                 additionalParams: true,
@@ -74,7 +73,7 @@ class Faiss_VectorStores implements INode {
 
     //@ts-ignore
     vectorStoreMethods = {
-        async upsert(nodeData: INodeData): Promise<void> {
+        async upsert(nodeData: INodeData): Promise<Partial<IndexingResult>> {
             const docs = nodeData.inputs?.document as Document[]
             const embeddings = nodeData.inputs?.embeddings as Embeddings
             const basePath = nodeData.inputs?.basePath as string
@@ -95,6 +94,8 @@ class Faiss_VectorStores implements INode {
                 vectorStore.similaritySearchVectorWithScore = async (query: number[], k: number) => {
                     return await similaritySearchVectorWithScore(query, k, vectorStore)
                 }
+
+                return { numAdded: finalDocs.length, addedDocs: finalDocs }
             } catch (e) {
                 throw new Error(e)
             }

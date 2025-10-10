@@ -1,9 +1,17 @@
 import { flatten } from 'lodash'
-import { VectaraStore, VectaraLibArgs, VectaraFilter, VectaraContextConfig, VectaraFile } from 'langchain/vectorstores/vectara'
-import { Document } from 'langchain/document'
-import { Embeddings } from 'langchain/embeddings/base'
-import { ICommonObject, INode, INodeData, INodeOutputsValue, INodeParams } from '../../../src/Interface'
+import {
+    VectaraStore,
+    VectaraLibArgs,
+    VectaraFilter,
+    VectaraContextConfig,
+    VectaraFile,
+    MMRConfig
+} from '@langchain/community/vectorstores/vectara'
+import { Document } from '@langchain/core/documents'
+import { Embeddings } from '@langchain/core/embeddings'
+import { ICommonObject, INode, INodeData, INodeOutputsValue, INodeParams, IndexingResult } from '../../../src/Interface'
 import { getBaseClasses, getCredentialData, getCredentialParam } from '../../../src/utils'
+import { getFileFromStorage } from '../../../src'
 
 class Vectara_VectorStores implements INode {
     label: string
@@ -22,75 +30,101 @@ class Vectara_VectorStores implements INode {
     constructor() {
         this.label = 'Vectara'
         this.name = 'vectara'
-        this.version = 1.0
+        this.version = 2.0
         this.type = 'Vectara'
         this.icon = 'vectara.png'
         this.category = 'Vector Stores'
-        this.description = 'Upsert embedded data and perform similarity search upon query using Vectara, a LLM-powered search-as-a-service'
+        this.description =
+            'Загружайте встроенные данные и выполняйте поиск по сходству при запросе с помощью Vectara, поисковой службы на базе LLM'
         this.baseClasses = [this.type, 'VectorStoreRetriever', 'BaseRetriever']
-        this.badge = 'NEW'
         this.credential = {
-            label: 'Connect Credential',
+            label: 'Подключите учетные данные',
             name: 'credential',
             type: 'credential',
             credentialNames: ['vectaraApi']
         }
         this.inputs = [
             {
-                label: 'Document',
+                label: 'Документ',
                 name: 'document',
                 type: 'Document',
                 list: true,
                 optional: true
             },
             {
-                label: 'File',
+                label: 'Файл',
                 name: 'file',
                 description:
-                    'File to upload to Vectara. Supported file types: https://docs.vectara.com/docs/api-reference/indexing-apis/file-upload/file-upload-filetypes',
+                    'Файл для загрузки в Vectara. Поддерживаемые типы файлов: https://docs.vectara.com/docs/api-reference/indexing-apis/file-upload/file-upload-filetypes',
                 type: 'file',
                 optional: true
             },
             {
-                label: 'Metadata Filter',
+                label: 'Фильтр метаданных',
                 name: 'filter',
-                description: 'Filter to apply to Vectara metadata.',
+                description:
+                    'Фильтр для применения к метаданным Vectara. См. <a target="_blank" href="https://docs.flowiseai.com/vector-stores/vectara">документацию</a> о том, как использовать фильтры Vectara.',
                 type: 'string',
                 additionalParams: true,
-                optional: true
+                optional: true,
+                acceptVariable: true
             },
             {
-                label: 'Sentences Before',
+                label: 'Предложения до',
                 name: 'sentencesBefore',
-                description: 'Number of sentences to fetch before the matched sentence. Defaults to 2.',
+                description: 'Количество предложений для получения перед совпадающим предложением. По умолчанию 2.',
                 type: 'number',
                 default: 2,
                 additionalParams: true,
                 optional: true
             },
             {
-                label: 'Sentences After',
+                label: 'Предложения после',
                 name: 'sentencesAfter',
-                description: 'Number of sentences to fetch after the matched sentence. Defaults to 2.',
+                description: 'Количество предложений для получения после совпадающего предложения. По умолчанию 2.',
                 type: 'number',
                 default: 2,
                 additionalParams: true,
                 optional: true
             },
             {
-                label: 'Lambda',
+                label: 'Лямбда',
                 name: 'lambda',
                 description:
-                    'Improves retrieval accuracy by adjusting the balance (from 0 to 1) between neural search and keyword-based search factors.',
+                    'Включите гибридный поиск для улучшения точности извлечения, регулируя баланс (от 0 до 1) между нейронным поиском и факторами поиска на основе ключевых слов.' +
+                    'Значение 0.0 означает, что используется только нейронный поиск, а значение 1.0 означает, что используется только поиск на основе ключевых слов. По умолчанию 0.0 (только нейронный).',
+                default: 0.0,
                 type: 'number',
                 additionalParams: true,
                 optional: true
             },
             {
-                label: 'Top K',
+                label: 'Топ K',
                 name: 'topK',
-                description: 'Number of top results to fetch. Defaults to 4',
-                placeholder: '4',
+                description: 'Количество лучших результатов для получения. По умолчанию 5',
+                placeholder: '5',
+                type: 'number',
+                additionalParams: true,
+                optional: true
+            },
+            {
+                label: 'MMR K',
+                name: 'mmrK',
+                description: 'Количество лучших результатов для получения для MMR. По умолчанию 50',
+                placeholder: '50',
+                type: 'number',
+                additionalParams: true,
+                optional: true
+            },
+            {
+                label: 'MMR смещение разнообразия',
+                name: 'mmrDiversityBias',
+                step: 0.1,
+                description:
+                    'Смещение разнообразия для использования в MMR. Это значение от 0.0 до 1.0' +
+                    'Значения ближе к 1.0 оптимизируют для наиболее разнообразных результатов.' +
+                    'По умолчанию 0 (MMR отключен)',
+                placeholder: '0.0',
                 type: 'number',
                 additionalParams: true,
                 optional: true
@@ -98,12 +132,12 @@ class Vectara_VectorStores implements INode {
         ]
         this.outputs = [
             {
-                label: 'Vectara Retriever',
+                label: 'Vectara Извлекатель',
                 name: 'retriever',
                 baseClasses: this.baseClasses
             },
             {
-                label: 'Vectara Vector Store',
+                label: 'Vectara Векторное хранилище',
                 name: 'vectorStore',
                 baseClasses: [this.type, ...getBaseClasses(VectaraStore)]
             }
@@ -112,7 +146,7 @@ class Vectara_VectorStores implements INode {
 
     //@ts-ignore
     vectorStoreMethods = {
-        async upsert(nodeData: INodeData, options: ICommonObject): Promise<void> {
+        async upsert(nodeData: INodeData, options: ICommonObject): Promise<Partial<IndexingResult>> {
             const credentialData = await getCredentialData(nodeData.credential ?? '', options)
             const apiKey = getCredentialParam('apiKey', credentialData, nodeData)
             const customerId = getCredentialParam('customerID', credentialData, nodeData)
@@ -150,20 +184,39 @@ class Vectara_VectorStores implements INode {
                 }
             }
 
-            let files: string[] = []
-            if (fileBase64.startsWith('[') && fileBase64.endsWith(']')) {
-                files = JSON.parse(fileBase64)
-            } else {
-                files = [fileBase64]
-            }
-
             const vectaraFiles: VectaraFile[] = []
-            for (const file of files) {
-                const splitDataURI = file.split(',')
-                splitDataURI.pop()
-                const bf = Buffer.from(splitDataURI.pop() || '', 'base64')
-                const blob = new Blob([bf])
-                vectaraFiles.push({ blob: blob, fileName: getFileName(file) })
+            let files: string[] = []
+            if (fileBase64.startsWith('FILE-STORAGE::')) {
+                const fileName = fileBase64.replace('FILE-STORAGE::', '')
+                if (fileName.startsWith('[') && fileName.endsWith(']')) {
+                    files = JSON.parse(fileName)
+                } else {
+                    files = [fileName]
+                }
+                const orgId = options.orgId
+                const chatflowid = options.chatflowid
+
+                for (const file of files) {
+                    if (!file) continue
+                    const fileData = await getFileFromStorage(file, orgId, chatflowid)
+                    const blob = new Blob([fileData])
+                    vectaraFiles.push({ blob: blob, fileName: getFileName(file) })
+                }
+            } else {
+                if (fileBase64.startsWith('[') && fileBase64.endsWith(']')) {
+                    files = JSON.parse(fileBase64)
+                } else {
+                    files = [fileBase64]
+                }
+
+                for (const file of files) {
+                    if (!file) continue
+                    const splitDataURI = file.split(',')
+                    splitDataURI.pop()
+                    const bf = Buffer.from(splitDataURI.pop() || '', 'base64')
+                    const blob = new Blob([bf])
+                    vectaraFiles.push({ blob: blob, fileName: getFileName(file) })
+                }
             }
 
             try {
@@ -172,6 +225,7 @@ class Vectara_VectorStores implements INode {
                     const vectorStore = new VectaraStore(vectaraArgs)
                     await vectorStore.addFiles(vectaraFiles)
                 }
+                return { numAdded: finalDocs.length, addedDocs: finalDocs }
             } catch (e) {
                 throw new Error(e)
             }
@@ -190,7 +244,9 @@ class Vectara_VectorStores implements INode {
         const lambda = nodeData.inputs?.lambda as number
         const output = nodeData.outputs?.output as string
         const topK = nodeData.inputs?.topK as string
-        const k = topK ? parseFloat(topK) : 4
+        const k = topK ? parseFloat(topK) : 5
+        const mmrK = nodeData.inputs?.mmrK as number
+        const mmrDiversityBias = nodeData.inputs?.mmrDiversityBias as number
 
         const vectaraArgs: VectaraLibArgs = {
             apiKey: apiKey,
@@ -207,6 +263,11 @@ class Vectara_VectorStores implements INode {
         if (sentencesBefore) vectaraContextConfig.sentencesBefore = sentencesBefore
         if (sentencesAfter) vectaraContextConfig.sentencesAfter = sentencesAfter
         vectaraFilter.contextConfig = vectaraContextConfig
+        const mmrConfig: MMRConfig = {}
+        mmrConfig.enabled = mmrDiversityBias > 0
+        mmrConfig.mmrTopK = mmrK
+        mmrConfig.diversityBias = mmrDiversityBias
+        vectaraFilter.mmrConfig = mmrConfig
 
         const vectorStore = new VectaraStore(vectaraArgs)
 
@@ -215,6 +276,9 @@ class Vectara_VectorStores implements INode {
             return retriever
         } else if (output === 'vectorStore') {
             ;(vectorStore as any).k = k
+            if (vectaraMetadataFilter) {
+                ;(vectorStore as any).filter = vectaraFilter.filter
+            }
             return vectorStore
         }
         return vectorStore

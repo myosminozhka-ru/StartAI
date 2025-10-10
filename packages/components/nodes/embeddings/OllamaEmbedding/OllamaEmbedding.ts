@@ -1,7 +1,7 @@
+import { OllamaEmbeddings } from '@langchain/community/embeddings/ollama'
+import { OllamaInput } from '@langchain/community/llms/ollama'
 import { INode, INodeData, INodeParams } from '../../../src/Interface'
 import { getBaseClasses } from '../../../src/utils'
-import { OllamaEmbeddings } from 'langchain/embeddings/ollama'
-import { OllamaInput } from 'langchain/dist/util/ollama'
 
 class OllamaEmbedding_Embeddings implements INode {
     label: string
@@ -20,47 +20,48 @@ class OllamaEmbedding_Embeddings implements INode {
         this.name = 'ollamaEmbedding'
         this.version = 1.0
         this.type = 'OllamaEmbeddings'
-        this.icon = 'ollama.png'
+        this.icon = 'Ollama.svg'
         this.category = 'Embeddings'
-        this.description = 'Generate embeddings for a given text using open source model on Ollama'
+        this.description = 'Генерация эмбеддингов для заданного текста с использованием открытой модели на Ollama'
         this.baseClasses = [this.type, ...getBaseClasses(OllamaEmbeddings)]
         this.inputs = [
             {
-                label: 'Base URL',
+                label: 'Базовый URL',
                 name: 'baseUrl',
                 type: 'string',
                 default: 'http://localhost:11434'
             },
             {
-                label: 'Model Name',
+                label: 'Название модели',
                 name: 'modelName',
                 type: 'string',
                 placeholder: 'llama2'
             },
             {
-                label: 'Number of GPU',
+                label: 'Количество GPU',
                 name: 'numGpu',
                 type: 'number',
                 description:
-                    'The number of layers to send to the GPU(s). On macOS it defaults to 1 to enable metal support, 0 to disable. Refer to <a target="_blank" href="https://github.com/jmorganca/ollama/blob/main/docs/modelfile.md#valid-parameters-and-values">docs</a> for more details',
+                    'Количество слоев для отправки на GPU. В macOS по умолчанию 1 для включения поддержки metal, 0 для отключения. См. <a target="_blank" href="https://github.com/jmorganca/ollama/blob/main/docs/modelfile.md#valid-parameters-and-values">документацию</a> для подробностей',
                 step: 1,
                 optional: true,
                 additionalParams: true
             },
             {
-                label: 'Number of Thread',
+                label: 'Количество потоков',
                 name: 'numThread',
                 type: 'number',
                 description:
-                    'Sets the number of threads to use during computation. By default, Ollama will detect this for optimal performance. It is recommended to set this value to the number of physical CPU cores your system has (as opposed to the logical number of cores). Refer to <a target="_blank" href="https://github.com/jmorganca/ollama/blob/main/docs/modelfile.md#valid-parameters-and-values">docs</a> for more details',
+                    'Устанавливает количество потоков для использования во время вычислений. По умолчанию Ollama определит это для оптимальной производительности. Рекомендуется установить это значение равным количеству физических ядер CPU в вашей системе (в отличие от логического количества ядер). См. <a target="_blank" href="https://github.com/jmorganca/ollama/blob/main/docs/modelfile.md#valid-parameters-and-values">документацию</a> для подробностей',
                 step: 1,
                 optional: true,
                 additionalParams: true
             },
             {
-                label: 'Use MMap',
+                label: 'Использовать MMap',
                 name: 'useMMap',
                 type: 'boolean',
+                default: true,
                 optional: true,
                 additionalParams: true
             }
@@ -83,7 +84,9 @@ class OllamaEmbedding_Embeddings implements INode {
         const requestOptions: OllamaInput = {}
         if (numThread) requestOptions.numThread = parseFloat(numThread)
         if (numGpu) requestOptions.numGpu = parseFloat(numGpu)
-        if (useMMap !== undefined) requestOptions.useMMap = useMMap
+
+        // default useMMap to true
+        requestOptions.useMMap = useMMap === undefined ? true : useMMap
 
         if (Object.keys(requestOptions).length) obj.requestOptions = requestOptions
 

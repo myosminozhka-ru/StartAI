@@ -1,13 +1,23 @@
-import { ICommonObject, INode, INodeData, INodeOutputsValue, INodeParams } from '../../../src/Interface'
-import { getBaseClasses, handleEscapeCharacters } from '../../../src/utils'
-import { LLMChain } from 'langchain/chains'
-import { BaseLanguageModel, BaseLanguageModelCallOptions } from 'langchain/base_language'
-import { ConsoleCallbackHandler, CustomChainHandler, additionalCallbacks } from '../../../src/handler'
-import { BaseOutputParser } from 'langchain/schema/output_parser'
-import { formatResponse, injectOutputParser } from '../../outputparsers/OutputParserHelpers'
-import { BaseLLMOutputParser } from 'langchain/schema/output_parser'
+import { BaseLanguageModel, BaseLanguageModelCallOptions } from '@langchain/core/language_models/base'
+import { BaseLLMOutputParser, BaseOutputParser } from '@langchain/core/output_parsers'
+import { HumanMessage } from '@langchain/core/messages'
+import { ChatPromptTemplate, FewShotPromptTemplate, HumanMessagePromptTemplate, PromptTemplate } from '@langchain/core/prompts'
 import { OutputFixingParser } from 'langchain/output_parsers'
+import { LLMChain } from 'langchain/chains'
+import {
+    IVisionChatModal,
+    ICommonObject,
+    INode,
+    INodeData,
+    INodeOutputsValue,
+    INodeParams,
+    IServerSideEventStreamer
+} from '../../../src/Interface'
+import { additionalCallbacks, ConsoleCallbackHandler, CustomChainHandler } from '../../../src/handler'
+import { getBaseClasses, handleEscapeCharacters } from '../../../src/utils'
 import { checkInputs, Moderation, streamResponse } from '../../moderation/Moderation'
+import { formatResponse, injectOutputParser } from '../../outputparsers/OutputParserHelpers'
+import { addImagesToMessages, llmSupportsVision } from '../../../src/multiModalUtils'
 
 class LLMChain_Chains implements INode {
     label: string
@@ -23,55 +33,56 @@ class LLMChain_Chains implements INode {
     outputParser: BaseOutputParser
 
     constructor() {
-        this.label = 'LLM Chain'
+        this.label = 'Цепочка LLM'
         this.name = 'llmChain'
         this.version = 3.0
         this.type = 'LLMChain'
-        this.icon = 'chain.svg'
+        this.icon = 'LLM_Chain.svg'
         this.category = 'Chains'
-        this.description = 'Chain to run queries against LLMs'
+        this.description = 'Цепочка для выполнения запросов к языковым моделям'
         this.baseClasses = [this.type, ...getBaseClasses(LLMChain)]
         this.inputs = [
             {
-                label: 'Language Model',
+                label: 'Языковая модель',
                 name: 'model',
                 type: 'BaseLanguageModel'
             },
             {
-                label: 'Prompt',
+                label: 'Промпт',
                 name: 'prompt',
                 type: 'BasePromptTemplate'
             },
             {
-                label: 'Output Parser',
+                label: 'Парсер вывода',
                 name: 'outputParser',
                 type: 'BaseLLMOutputParser',
                 optional: true
             },
             {
-                label: 'Input Moderation',
-                description: 'Detect text that could generate harmful output and prevent it from being sent to the language model',
+                label: 'Модерация ввода',
+                description:
+                    'Обнаружение текста, который может генерировать вредоносный вывод, и предотвращение его отправки языковой модели',
                 name: 'inputModeration',
                 type: 'Moderation',
                 optional: true,
                 list: true
             },
             {
-                label: 'Chain Name',
+                label: 'Название цепочки',
                 name: 'chainName',
                 type: 'string',
-                placeholder: 'Name Your Chain',
+                placeholder: 'Назовите вашу цепочку',
                 optional: true
             }
         ]
         this.outputs = [
             {
-                label: 'LLM Chain',
+                label: 'Цепочка LLM',
                 name: 'llmChain',
                 baseClasses: [this.type, ...getBaseClasses(LLMChain)]
             },
             {
-                label: 'Output Prediction',
+                label: 'Предсказание вывода',
                 name: 'outputPrediction',
                 baseClasses: ['string', 'json']
             }
@@ -82,7 +93,7 @@ class LLMChain_Chains implements INode {
         const model = nodeData.inputs?.model as BaseLanguageModel
         const prompt = nodeData.inputs?.prompt
         const output = nodeData.outputs?.output as string
-        const promptValues = prompt.promptValues as ICommonObject
+        let promptValues: ICommonObject | undefined = nodeData.inputs?.prompt.promptValues as ICommonObject
         const llmOutputParser = nodeData.inputs?.outputParser as BaseOutputParser
         this.outputParser = llmOutputParser
         if (llmOutputParser) {
@@ -107,17 +118,26 @@ class LLMChain_Chains implements INode {
                 verbose: process.env.DEBUG === 'true'
             })
             const inputVariables = chain.prompt.inputVariables as string[] // ["product"]
-            const res = await runPrediction(inputVariables, chain, input, promptValues, options, nodeData)
+            promptValues = injectOutputParser(this.outputParser, chain, promptValues)
+            // Disable streaming because its not final chain
+            const disableStreaming = true
+            const res = await runPrediction(inputVariables, chain, input, promptValues, options, nodeData, disableStreaming)
             // eslint-disable-next-line no-console
-            console.log('\x1b[92m\x1b[1m\n*****OUTPUT PREDICTION*****\n\x1b[0m\x1b[0m')
+            console.log('\x1b[92m\x1b[1m\n*****ПРЕДСКАЗАНИЕ ВЫВОДА*****\n\x1b[0m\x1b[0m')
             // eslint-disable-next-line no-console
             console.log(res)
+
+            let finalRes = res
+            if (this.outputParser && typeof res === 'object' && Object.prototype.hasOwnProperty.call(res, 'json')) {
+                finalRes = (res as ICommonObject).json
+            }
+
             /**
              * Apply string transformation to convert special chars:
              * FROM: hello i am ben\n\n\thow are you?
              * TO: hello i am benFLOWISE_NEWLINEFLOWISE_NEWLINEFLOWISE_TABhow are you?
              */
-            return handleEscapeCharacters(res, false)
+            return handleEscapeCharacters(finalRes, false)
         }
     }
 
@@ -132,7 +152,7 @@ class LLMChain_Chains implements INode {
         promptValues = injectOutputParser(this.outputParser, chain, promptValues)
         const res = await runPrediction(inputVariables, chain, input, promptValues, options, nodeData)
         // eslint-disable-next-line no-console
-        console.log('\x1b[93m\x1b[1m\n*****FINAL RESULT*****\n\x1b[0m\x1b[0m')
+        console.log('\x1b[93m\x1b[1m\n*****ФИНАЛЬНЫЙ РЕЗУЛЬТАТ*****\n\x1b[0m\x1b[0m')
         // eslint-disable-next-line no-console
         console.log(res)
         return res
@@ -145,21 +165,18 @@ const runPrediction = async (
     input: string,
     promptValuesRaw: ICommonObject | undefined,
     options: ICommonObject,
-    nodeData: INodeData
+    nodeData: INodeData,
+    disableStreaming?: boolean
 ) => {
-    const loggerHandler = new ConsoleCallbackHandler(options.logger)
+    const loggerHandler = new ConsoleCallbackHandler(options.logger, options?.orgId)
     const callbacks = await additionalCallbacks(nodeData, options)
 
-    const isStreaming = options.socketIO && options.socketIOClientId
-    const socketIO = isStreaming ? options.socketIO : undefined
-    const socketIOClientId = isStreaming ? options.socketIOClientId : ''
     const moderations = nodeData.inputs?.inputModeration as Moderation[]
-    /**
-     * Apply string transformation to reverse converted special chars:
-     * FROM: { "value": "hello i am benFLOWISE_NEWLINEFLOWISE_NEWLINEFLOWISE_TABhow are you?" }
-     * TO: { "value": "hello i am ben\n\n\thow are you?" }
-     */
-    const promptValues = handleEscapeCharacters(promptValuesRaw, true)
+
+    // this is true if the prediction is external and the client has requested streaming='true'
+    const shouldStreamResponse = !disableStreaming && options.shouldStreamResponse
+    const sseStreamer: IServerSideEventStreamer = options.sseStreamer as IServerSideEventStreamer
+    const chatId = options.chatId
 
     if (moderations && moderations.length > 0) {
         try {
@@ -167,8 +184,64 @@ const runPrediction = async (
             input = await checkInputs(moderations, input)
         } catch (e) {
             await new Promise((resolve) => setTimeout(resolve, 500))
-            streamResponse(isStreaming, e.message, socketIO, socketIOClientId)
+            if (shouldStreamResponse) {
+                streamResponse(sseStreamer, chatId, e.message)
+            }
             return formatResponse(e.message)
+        }
+    }
+
+    /**
+     * Apply string transformation to reverse converted special chars:
+     * FROM: { "value": "hello i am benFLOWISE_NEWLINEFLOWISE_NEWLINEFLOWISE_TABhow are you?" }
+     * TO: { "value": "hello i am ben\n\n\thow are you?" }
+     */
+    const promptValues = handleEscapeCharacters(promptValuesRaw, true)
+
+    if (llmSupportsVision(chain.llm)) {
+        const visionChatModel = chain.llm as IVisionChatModal
+        const messageContent = await addImagesToMessages(nodeData, options, visionChatModel.multiModalOption)
+        if (messageContent?.length) {
+            // Change model to gpt-4-vision && max token to higher when using gpt-4-vision
+            visionChatModel.setVisionModel()
+            // Add image to the message
+            if (chain.prompt instanceof PromptTemplate) {
+                const existingPromptTemplate = chain.prompt.template as string
+                const msg = HumanMessagePromptTemplate.fromTemplate([
+                    ...messageContent,
+                    {
+                        text: existingPromptTemplate
+                    }
+                ])
+                msg.inputVariables = chain.prompt.inputVariables
+                chain.prompt = ChatPromptTemplate.fromMessages([msg])
+            } else if (chain.prompt instanceof ChatPromptTemplate) {
+                if (chain.prompt.promptMessages.at(-1) instanceof HumanMessagePromptTemplate) {
+                    const lastMessage = chain.prompt.promptMessages.pop() as HumanMessagePromptTemplate
+                    const template = (lastMessage.prompt as PromptTemplate).template as string
+                    const msg = HumanMessagePromptTemplate.fromTemplate([
+                        ...messageContent,
+                        {
+                            text: template
+                        }
+                    ])
+                    msg.inputVariables = lastMessage.inputVariables
+                    chain.prompt.promptMessages.push(msg)
+                } else {
+                    chain.prompt.promptMessages.push(new HumanMessage({ content: messageContent }))
+                }
+            } else if (chain.prompt instanceof FewShotPromptTemplate) {
+                let existingFewShotPromptTemplate = chain.prompt.examplePrompt.template as string
+                let newFewShotPromptTemplate = ChatPromptTemplate.fromMessages([
+                    HumanMessagePromptTemplate.fromTemplate(existingFewShotPromptTemplate)
+                ])
+                newFewShotPromptTemplate.promptMessages.push(new HumanMessage({ content: messageContent }))
+                // @ts-ignore
+                chain.prompt.examplePrompt = newFewShotPromptTemplate
+            }
+        } else {
+            // revert to previous values if image upload is empty
+            visionChatModel.revertToOriginalModel()
         }
     }
 
@@ -177,7 +250,7 @@ const runPrediction = async (
 
         for (const variable of inputVariables) {
             seen.push(variable)
-            if (promptValues[variable]) {
+            if (promptValues[variable] != null) {
                 seen.pop()
             }
         }
@@ -185,8 +258,8 @@ const runPrediction = async (
         if (seen.length === 0) {
             // All inputVariables have fixed values specified
             const options = { ...promptValues }
-            if (isStreaming) {
-                const handler = new CustomChainHandler(socketIO, socketIOClientId)
+            if (shouldStreamResponse) {
+                const handler = new CustomChainHandler(sseStreamer, chatId)
                 const res = await chain.call(options, [loggerHandler, handler, ...callbacks])
                 return formatResponse(res?.text)
             } else {
@@ -196,13 +269,13 @@ const runPrediction = async (
         } else if (seen.length === 1) {
             // If one inputVariable is not specify, use input (user's question) as value
             const lastValue = seen.pop()
-            if (!lastValue) throw new Error('Please provide Prompt Values')
+            if (!lastValue) throw new Error('Пожалуйста, укажите значения промпта')
             const options = {
                 ...promptValues,
                 [lastValue]: input
             }
-            if (isStreaming) {
-                const handler = new CustomChainHandler(socketIO, socketIOClientId)
+            if (shouldStreamResponse) {
+                const handler = new CustomChainHandler(sseStreamer, chatId)
                 const res = await chain.call(options, [loggerHandler, handler, ...callbacks])
                 return formatResponse(res?.text)
             } else {
@@ -210,11 +283,12 @@ const runPrediction = async (
                 return formatResponse(res?.text)
             }
         } else {
-            throw new Error(`Please provide Prompt Values for: ${seen.join(', ')}`)
+            throw new Error(`Пожалуйста, укажите значения промпта для: ${seen.join(', ')}`)
         }
     } else {
-        if (isStreaming) {
-            const handler = new CustomChainHandler(socketIO, socketIOClientId)
+        if (shouldStreamResponse) {
+            const handler = new CustomChainHandler(sseStreamer, chatId)
+
             const res = await chain.run(input, [loggerHandler, handler, ...callbacks])
             return formatResponse(res)
         } else {

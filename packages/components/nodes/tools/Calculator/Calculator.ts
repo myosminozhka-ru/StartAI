@@ -1,6 +1,6 @@
 import { INode } from '../../../src/Interface'
 import { getBaseClasses } from '../../../src/utils'
-import { Calculator } from 'langchain/tools/calculator'
+import { Calculator } from '@langchain/community/tools/calculator'
 
 class Calculator_Tools implements INode {
     label: string
@@ -19,7 +19,7 @@ class Calculator_Tools implements INode {
         this.type = 'Calculator'
         this.icon = 'calculator.svg'
         this.category = 'Tools'
-        this.description = 'Perform calculations on response'
+        this.description = 'Выполнение вычислений в ответе'
         this.baseClasses = [this.type, ...getBaseClasses(Calculator)]
     }
 

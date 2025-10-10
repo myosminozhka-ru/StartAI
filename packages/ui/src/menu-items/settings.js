@@ -1,10 +1,31 @@
 // assets
-import { IconTrash, IconFileUpload, IconFileExport, IconCopy, IconSearch, IconMessage } from '@tabler/icons'
+import {
+    IconTrash,
+    IconFileUpload,
+    IconFileExport,
+    IconCopy,
+    IconMessage,
+    IconDatabaseExport,
+    IconAdjustmentsHorizontal,
+    IconUsers,
+    IconTemplate
+} from '@tabler/icons-react'
 
 // constant
-const icons = { IconTrash, IconFileUpload, IconFileExport, IconCopy, IconSearch, IconMessage }
+const icons = {
+    IconTrash,
+    IconFileUpload,
+    IconFileExport,
+    IconCopy,
+    IconMessage,
+    IconDatabaseExport,
+    IconAdjustmentsHorizontal,
+    IconUsers,
+    IconTemplate
+}
 
 // ==============================|| SETTINGS MENU ITEMS ||============================== //
+
 const settings = {
     id: 'settings',
     title: '',
@@ -18,39 +39,66 @@ const settings = {
             icon: icons.IconMessage
         },
         {
-            id: 'duplicateChatflow',
-            title: 'Дублировать Проект',
+            id: 'viewLeads',
+            title: 'Просмотр лидов',
             type: 'item',
             url: '',
-            icon: icons.IconCopy
+            icon: icons.IconUsers
+        },
+        {
+            id: 'viewUpsertHistory',
+            title: 'История обновлений',
+            type: 'item',
+            url: '',
+            icon: icons.IconDatabaseExport
+        },
+        {
+            id: 'chatflowConfiguration',
+            title: 'Конфигурация',
+            type: 'item',
+            url: '',
+            permission: 'chatflows:config',
+            icon: icons.IconAdjustmentsHorizontal
+        },
+        {
+            id: 'saveAsTemplate',
+            title: 'Сохранить как шаблон',
+            type: 'item',
+            url: '',
+            icon: icons.IconTemplate,
+            permission: 'templates:flowexport'
+        },
+        {
+            id: 'duplicateChatflow',
+            title: 'Дублировать чат-поток',
+            type: 'item',
+            url: '',
+            icon: icons.IconCopy,
+            permission: 'chatflows:duplicate'
         },
         {
             id: 'loadChatflow',
-            title: 'Загрузить Проект',
+            title: 'Загрузить чат-поток',
             type: 'item',
             url: '',
-            icon: icons.IconFileUpload
+            icon: icons.IconFileUpload,
+            permission: 'chatflows:import'
         },
         {
             id: 'exportChatflow',
-            title: 'Скачать Проект',
+            title: 'Экспорт чат-потока',
             type: 'item',
             url: '',
-            icon: icons.IconFileExport
-        },
-        {
-            id: 'analyseChatflow',
-            title: 'Анализ Проекта',
-            type: 'item',
-            url: '',
-            icon: icons.IconSearch
+            icon: icons.IconFileExport,
+            permission: 'chatflows:export'
         },
         {
             id: 'deleteChatflow',
-            title: 'Удалить Проект',
+            title: 'Удалить чат-поток',
             type: 'item',
             url: '',
-            icon: icons.IconTrash
+            icon: icons.IconTrash,
+            permission: 'chatflows:delete'
         }
     ]
 }

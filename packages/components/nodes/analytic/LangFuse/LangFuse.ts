@@ -17,12 +17,12 @@ class LangFuse_Analytic implements INode {
         this.name = 'langFuse'
         this.version = 1.0
         this.type = 'LangFuse'
-        this.icon = 'langfuse.png'
+        this.icon = 'Langfuse.svg'
         this.category = 'Analytic'
         this.baseClasses = [this.type]
         this.inputs = []
         this.credential = {
-            label: 'Connect Credential',
+            label: 'Подключите учетные данные',
             name: 'credential',
             type: 'credential',
             credentialNames: ['langfuseApi']

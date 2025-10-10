@@ -1,11 +1,11 @@
 import { flatten } from 'lodash'
 import { createClient, SearchOptions } from 'redis'
-import { Embeddings } from 'langchain/embeddings/base'
-import { RedisVectorStore, RedisVectorStoreConfig } from 'langchain/vectorstores/redis'
-import { Document } from 'langchain/document'
-import { ICommonObject, INode, INodeData, INodeOutputsValue, INodeParams } from '../../../src/Interface'
+import { Embeddings } from '@langchain/core/embeddings'
+import { RedisVectorStore, RedisVectorStoreConfig } from '@langchain/community/vectorstores/redis'
+import { Document } from '@langchain/core/documents'
+import { ICommonObject, INode, INodeData, INodeOutputsValue, INodeParams, IndexingResult } from '../../../src/Interface'
 import { getBaseClasses, getCredentialData, getCredentialParam } from '../../../src/utils'
-import { escapeAllStrings, escapeSpecialChars, unEscapeSpecialChars } from './utils'
+import { escapeSpecialChars, unEscapeSpecialChars } from './utils'
 
 class Redis_VectorStores implements INode {
     label: string
@@ -26,75 +26,74 @@ class Redis_VectorStores implements INode {
         this.name = 'redis'
         this.version = 1.0
         this.description =
-            'Upsert embedded data and perform similarity search upon query using Redis, an open source, in-memory data structure store'
+            'Загружайте встроенные данные и выполняйте поиск по сходству при запросе с помощью Redis, открытого хранилища структур данных в памяти'
         this.type = 'Redis'
         this.icon = 'redis.svg'
         this.category = 'Vector Stores'
         this.baseClasses = [this.type, 'VectorStoreRetriever', 'BaseRetriever']
-        this.badge = 'NEW'
         this.credential = {
-            label: 'Connect Credential',
+            label: 'Подключите учетные данные',
             name: 'credential',
             type: 'credential',
             credentialNames: ['redisCacheUrlApi', 'redisCacheApi']
         }
         this.inputs = [
             {
-                label: 'Document',
+                label: 'Документ',
                 name: 'document',
                 type: 'Document',
                 list: true,
                 optional: true
             },
             {
-                label: 'Embeddings',
+                label: 'Встраивания',
                 name: 'embeddings',
                 type: 'Embeddings'
             },
             {
-                label: 'Index Name',
+                label: 'Имя индекса',
                 name: 'indexName',
                 placeholder: '<VECTOR_INDEX_NAME>',
                 type: 'string'
             },
             {
-                label: 'Replace Index on Upsert',
+                label: 'Заменить индекс при загрузке',
                 name: 'replaceIndex',
-                description: 'Selecting this option will delete the existing index and recreate a new one when upserting',
+                description: 'Выбор этой опции удалит существующий индекс и создаст новый при загрузке',
                 default: false,
                 type: 'boolean'
             },
             {
-                label: 'Content Field',
+                label: 'Поле содержимого',
                 name: 'contentKey',
-                description: 'Name of the field (column) that contains the actual content',
+                description: 'Имя поля (столбца), которое содержит фактическое содержимое',
                 type: 'string',
                 default: 'content',
                 additionalParams: true,
                 optional: true
             },
             {
-                label: 'Metadata Field',
+                label: 'Поле метаданных',
                 name: 'metadataKey',
-                description: 'Name of the field (column) that contains the metadata of the document',
+                description: 'Имя поля (столбца), которое содержит метаданные документа',
                 type: 'string',
                 default: 'metadata',
                 additionalParams: true,
                 optional: true
             },
             {
-                label: 'Vector Field',
+                label: 'Поле вектора',
                 name: 'vectorKey',
-                description: 'Name of the field (column) that contains the vector',
+                description: 'Имя поля (столбца), которое содержит вектор',
                 type: 'string',
                 default: 'content_vector',
                 additionalParams: true,
                 optional: true
             },
             {
-                label: 'Top K',
+                label: 'Топ K',
                 name: 'topK',
-                description: 'Number of top results to fetch. Default to 4',
+                description: 'Количество лучших результатов для получения. По умолчанию 4',
                 placeholder: '4',
                 type: 'number',
                 additionalParams: true,
@@ -103,12 +102,12 @@ class Redis_VectorStores implements INode {
         ]
         this.outputs = [
             {
-                label: 'Redis Retriever',
+                label: 'Redis Извлекатель',
                 name: 'retriever',
                 baseClasses: this.baseClasses
             },
             {
-                label: 'Redis Vector Store',
+                label: 'Redis Векторное хранилище',
                 name: 'vectorStore',
                 baseClasses: [this.type, ...getBaseClasses(RedisVectorStore)]
             }
@@ -117,7 +116,7 @@ class Redis_VectorStores implements INode {
 
     //@ts-ignore
     vectorStoreMethods = {
-        async upsert(nodeData: INodeData, options: ICommonObject): Promise<void> {
+        async upsert(nodeData: INodeData, options: ICommonObject): Promise<Partial<IndexingResult>> {
             const credentialData = await getCredentialData(nodeData.credential ?? '', options)
             const indexName = nodeData.inputs?.indexName as string
             let contentKey = nodeData.inputs?.contentKey as string
@@ -143,15 +142,26 @@ class Redis_VectorStores implements INode {
             for (let i = 0; i < flattenDocs.length; i += 1) {
                 if (flattenDocs[i] && flattenDocs[i].pageContent) {
                     const document = new Document(flattenDocs[i])
-                    escapeAllStrings(document.metadata)
                     finalDocs.push(document)
                 }
             }
 
-            const redisClient = createClient({ url: redisUrl })
-            await redisClient.connect()
-
             try {
+                const redisClient = createClient({
+                    url: redisUrl,
+                    socket: {
+                        keepAlive:
+                            process.env.REDIS_KEEP_ALIVE && !isNaN(parseInt(process.env.REDIS_KEEP_ALIVE, 10))
+                                ? parseInt(process.env.REDIS_KEEP_ALIVE, 10)
+                                : undefined
+                    },
+                    pingInterval:
+                        process.env.REDIS_KEEP_ALIVE && !isNaN(parseInt(process.env.REDIS_KEEP_ALIVE, 10))
+                            ? parseInt(process.env.REDIS_KEEP_ALIVE, 10)
+                            : undefined // Add Redis protocol-level pings
+                })
+                await redisClient.connect()
+
                 const storeConfig: RedisVectorStoreConfig = {
                     redisClient: redisClient,
                     indexName: indexName
@@ -183,6 +193,10 @@ class Redis_VectorStores implements INode {
                         filter
                     )
                 }
+
+                await redisClient.quit()
+
+                return { numAdded: finalDocs.length, addedDocs: finalDocs }
             } catch (e) {
                 throw new Error(e)
             }
@@ -210,8 +224,19 @@ class Redis_VectorStores implements INode {
             redisUrl = 'redis://' + username + ':' + password + '@' + host + ':' + portStr
         }
 
-        const redisClient = createClient({ url: redisUrl })
-        await redisClient.connect()
+        const redisClient = createClient({
+            url: redisUrl,
+            socket: {
+                keepAlive:
+                    process.env.REDIS_KEEP_ALIVE && !isNaN(parseInt(process.env.REDIS_KEEP_ALIVE, 10))
+                        ? parseInt(process.env.REDIS_KEEP_ALIVE, 10)
+                        : undefined
+            },
+            pingInterval:
+                process.env.REDIS_KEEP_ALIVE && !isNaN(parseInt(process.env.REDIS_KEEP_ALIVE, 10))
+                    ? parseInt(process.env.REDIS_KEEP_ALIVE, 10)
+                    : undefined // Add Redis protocol-level pings
+        })
 
         const storeConfig: RedisVectorStoreConfig = {
             redisClient: redisClient,
@@ -226,7 +251,19 @@ class Redis_VectorStores implements INode {
 
         // Avoid Illegal invocation error
         vectorStore.similaritySearchVectorWithScore = async (query: number[], k: number, filter?: any) => {
-            return await similaritySearchVectorWithScore(query, k, indexName, metadataKey, vectorKey, contentKey, redisClient, filter)
+            await redisClient.connect()
+            const results = await similaritySearchVectorWithScore(
+                query,
+                k,
+                indexName,
+                metadataKey,
+                vectorKey,
+                contentKey,
+                redisClient,
+                filter
+            )
+            await redisClient.quit()
+            return results
         }
 
         if (output === 'retriever') {

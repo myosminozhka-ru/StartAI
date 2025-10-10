@@ -1,8 +1,7 @@
+import { ChatOpenAI, ChatOpenAIFields } from '@langchain/openai'
+import { BaseCache } from '@langchain/core/caches'
 import { ICommonObject, INode, INodeData, INodeParams } from '../../../src/Interface'
 import { getBaseClasses, getCredentialData, getCredentialParam } from '../../../src/utils'
-import { ChatOpenAI, OpenAIChatInput } from 'langchain/chat_models/openai'
-import { BaseCache } from 'langchain/schema'
-import { BaseLLMParams } from 'langchain/llms/base'
 
 class ChatOpenAICustom_ChatModels implements INode {
     label: string
@@ -19,14 +18,14 @@ class ChatOpenAICustom_ChatModels implements INode {
     constructor() {
         this.label = 'ChatOpenAI Custom'
         this.name = 'chatOpenAICustom'
-        this.version = 2.0
+        this.version = 4.0
         this.type = 'ChatOpenAI-Custom'
-        this.icon = 'openai.png'
+        this.icon = 'openai.svg'
         this.category = 'Chat Models'
-        this.description = 'Custom/FineTuned model using OpenAI Chat compatible API'
+        this.description = 'Пользовательская/Дообученная модель с использованием OpenAI Chat совместимого API'
         this.baseClasses = [this.type, ...getBaseClasses(ChatOpenAI)]
         this.credential = {
-            label: 'Connect Credential',
+            label: 'Подключите учетные данные',
             name: 'credential',
             type: 'credential',
             credentialNames: ['openAIApi'],
@@ -34,19 +33,19 @@ class ChatOpenAICustom_ChatModels implements INode {
         }
         this.inputs = [
             {
-                label: 'Cache',
+                label: 'Кэш',
                 name: 'cache',
                 type: 'BaseCache',
                 optional: true
             },
             {
-                label: 'Model Name',
+                label: 'Название модели',
                 name: 'modelName',
                 type: 'string',
                 placeholder: 'ft:gpt-3.5-turbo:my-org:custom_suffix:id'
             },
             {
-                label: 'Temperature',
+                label: 'Температура',
                 name: 'temperature',
                 type: 'number',
                 step: 0.1,
@@ -54,7 +53,15 @@ class ChatOpenAICustom_ChatModels implements INode {
                 optional: true
             },
             {
-                label: 'Max Tokens',
+                label: 'Потоковая передача',
+                name: 'streaming',
+                type: 'boolean',
+                default: true,
+                optional: true,
+                additionalParams: true
+            },
+            {
+                label: 'Максимум токенов',
                 name: 'maxTokens',
                 type: 'number',
                 step: 1,
@@ -62,7 +69,7 @@ class ChatOpenAICustom_ChatModels implements INode {
                 additionalParams: true
             },
             {
-                label: 'Top Probability',
+                label: 'Вероятность Top P',
                 name: 'topP',
                 type: 'number',
                 step: 0.1,
@@ -70,7 +77,7 @@ class ChatOpenAICustom_ChatModels implements INode {
                 additionalParams: true
             },
             {
-                label: 'Frequency Penalty',
+                label: 'Штраф за частоту',
                 name: 'frequencyPenalty',
                 type: 'number',
                 step: 0.1,
@@ -78,7 +85,7 @@ class ChatOpenAICustom_ChatModels implements INode {
                 additionalParams: true
             },
             {
-                label: 'Presence Penalty',
+                label: 'Штраф за присутствие',
                 name: 'presencePenalty',
                 type: 'number',
                 step: 0.1,
@@ -86,7 +93,7 @@ class ChatOpenAICustom_ChatModels implements INode {
                 additionalParams: true
             },
             {
-                label: 'Timeout',
+                label: 'Таймаут',
                 name: 'timeout',
                 type: 'number',
                 step: 1,
@@ -94,14 +101,14 @@ class ChatOpenAICustom_ChatModels implements INode {
                 additionalParams: true
             },
             {
-                label: 'BasePath',
+                label: 'Базовый путь',
                 name: 'basepath',
                 type: 'string',
                 optional: true,
                 additionalParams: true
             },
             {
-                label: 'BaseOptions',
+                label: 'Базовые опции',
                 name: 'baseOptions',
                 type: 'json',
                 optional: true,
@@ -126,10 +133,11 @@ class ChatOpenAICustom_ChatModels implements INode {
         const credentialData = await getCredentialData(nodeData.credential ?? '', options)
         const openAIApiKey = getCredentialParam('openAIApiKey', credentialData, nodeData)
 
-        const obj: Partial<OpenAIChatInput> & BaseLLMParams & { openAIApiKey?: string } = {
+        const obj: ChatOpenAIFields = {
             temperature: parseFloat(temperature),
             modelName,
             openAIApiKey,
+            apiKey: openAIApiKey,
             streaming: streaming ?? true
         }
 
@@ -149,10 +157,15 @@ class ChatOpenAICustom_ChatModels implements INode {
                 throw new Error("Invalid JSON in the ChatOpenAI's BaseOptions: " + exception)
             }
         }
-        const model = new ChatOpenAI(obj, {
-            basePath,
-            baseOptions: parsedBaseOptions
-        })
+
+        if (basePath || parsedBaseOptions) {
+            obj.configuration = {
+                baseURL: basePath,
+                defaultHeaders: parsedBaseOptions
+            }
+        }
+
+        const model = new ChatOpenAI(obj)
         return model
     }
 }

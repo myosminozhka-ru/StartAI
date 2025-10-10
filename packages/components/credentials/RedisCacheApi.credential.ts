@@ -22,7 +22,7 @@ class RedisCacheApi implements INodeCredential {
                 label: 'Port',
                 name: 'redisCachePort',
                 type: 'number',
-                default: '6789'
+                default: '6379'
             },
             {
                 label: 'User',
@@ -35,6 +35,11 @@ class RedisCacheApi implements INodeCredential {
                 name: 'redisCachePwd',
                 type: 'password',
                 placeholder: '<REDIS_PASSWORD>'
+            },
+            {
+                label: 'Use SSL',
+                name: 'redisCacheSslEnabled',
+                type: 'boolean'
             }
         ]
     }

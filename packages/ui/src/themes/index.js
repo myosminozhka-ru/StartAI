@@ -1,8 +1,7 @@
 import { createTheme } from '@mui/material/styles'
 
 // assets
-import colors from 'assets/scss/_themes-vars.module.scss'
-import colorsStartAI from 'assets/scss/_themes-vars-StartAI.module.scss'
+import colors from '@/assets/scss/_themes-vars.module.scss'
 
 // project imports
 import componentStyleOverrides from './compStyleOverride'
@@ -15,7 +14,7 @@ import themeTypography from './typography'
  */
 
 export const theme = (customization) => {
-    let color
+    let color = colors
 
     switch (window.location.hostname) {
         case 'app.start-ai.ru':
@@ -88,7 +87,7 @@ export const theme = (customization) => {
               heading: color.grey900,
               paper: color.paper,
               backgroundDefault: color.paper,
-              background: color.paper,
+              background: color.primaryLight,
               darkTextPrimary: color.grey700,
               darkTextSecondary: color.grey500,
               textDark: color.grey900,

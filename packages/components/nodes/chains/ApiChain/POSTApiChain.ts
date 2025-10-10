@@ -1,9 +1,9 @@
-import { ICommonObject, INode, INodeData, INodeParams } from '../../../src/Interface'
-import { getBaseClasses } from '../../../src/utils'
-import { BaseLanguageModel } from 'langchain/base_language'
-import { PromptTemplate } from 'langchain/prompts'
+import { BaseLanguageModel } from '@langchain/core/language_models/base'
+import { PromptTemplate } from '@langchain/core/prompts'
 import { API_RESPONSE_RAW_PROMPT_TEMPLATE, API_URL_RAW_PROMPT_TEMPLATE, APIChain } from './postCore'
 import { ConsoleCallbackHandler, CustomChainHandler, additionalCallbacks } from '../../../src/handler'
+import { ICommonObject, INode, INodeData, INodeParams, IServerSideEventStreamer } from '../../../src/Interface'
+import { getBaseClasses } from '../../../src/utils'
 
 class POSTApiChain_Chains implements INode {
     label: string
@@ -17,50 +17,50 @@ class POSTApiChain_Chains implements INode {
     inputs: INodeParams[]
 
     constructor() {
-        this.label = 'POST API Chain'
+        this.label = 'Цепочка POST API'
         this.name = 'postApiChain'
         this.version = 1.0
         this.type = 'POSTApiChain'
-        this.icon = 'apichain.svg'
+        this.icon = 'post.svg'
         this.category = 'Chains'
-        this.description = 'Chain to run queries against POST API'
+        this.description = 'Цепочка для выполнения запросов к POST API'
         this.baseClasses = [this.type, ...getBaseClasses(APIChain)]
         this.inputs = [
             {
-                label: 'Language Model',
+                label: 'Языковая модель',
                 name: 'model',
                 type: 'BaseLanguageModel'
             },
             {
-                label: 'API Documentation',
+                label: 'Документация API',
                 name: 'apiDocs',
                 type: 'string',
                 description:
-                    'Description of how API works. Please refer to more <a target="_blank" href="https://github.com/langchain-ai/langchain/blob/master/libs/langchain/langchain/chains/api/open_meteo_docs.py">examples</a>',
+                    'Описание работы API. Подробнее смотрите <a target="_blank" href="https://github.com/langchain-ai/langchain/blob/master/libs/langchain/langchain/chains/api/open_meteo_docs.py">примеры</a>',
                 rows: 4
             },
             {
-                label: 'Headers',
+                label: 'Заголовки',
                 name: 'headers',
                 type: 'json',
                 additionalParams: true,
                 optional: true
             },
             {
-                label: 'URL Prompt',
+                label: 'Промпт URL',
                 name: 'urlPrompt',
                 type: 'string',
-                description: 'Prompt used to tell LLMs how to construct the URL. Must contains {api_docs} and {question}',
+                description: 'Промпт, используемый для указания LLM как построить URL. Должен содержать {api_docs} и {question}',
                 default: API_URL_RAW_PROMPT_TEMPLATE,
                 rows: 4,
                 additionalParams: true
             },
             {
-                label: 'Answer Prompt',
+                label: 'Промпт ответа',
                 name: 'ansPrompt',
                 type: 'string',
                 description:
-                    'Prompt used to tell LLMs how to return the API response. Must contains {api_response}, {api_url}, and {question}',
+                    'Промпт, используемый для указания LLM как вернуть ответ API. Должен содержать {api_response}, {api_url} и {question}',
                 default: API_RESPONSE_RAW_PROMPT_TEMPLATE,
                 rows: 4,
                 additionalParams: true
@@ -87,11 +87,15 @@ class POSTApiChain_Chains implements INode {
         const ansPrompt = nodeData.inputs?.ansPrompt as string
 
         const chain = await getAPIChain(apiDocs, model, headers, urlPrompt, ansPrompt)
-        const loggerHandler = new ConsoleCallbackHandler(options.logger)
+        const loggerHandler = new ConsoleCallbackHandler(options.logger, options?.orgId)
         const callbacks = await additionalCallbacks(nodeData, options)
 
-        if (options.socketIO && options.socketIOClientId) {
-            const handler = new CustomChainHandler(options.socketIO, options.socketIOClientId, 2)
+        const shouldStreamResponse = options.shouldStreamResponse
+        const sseStreamer: IServerSideEventStreamer = options.sseStreamer as IServerSideEventStreamer
+        const chatId = options.chatId
+
+        if (shouldStreamResponse) {
+            const handler = new CustomChainHandler(sseStreamer, chatId)
             const res = await chain.run(input, [loggerHandler, handler, ...callbacks])
             return res
         } else {
@@ -115,7 +119,7 @@ const getAPIChain = async (documents: string, llm: BaseLanguageModel, headers: s
     const chain = APIChain.fromLLMAndAPIDocs(llm, documents, {
         apiUrlPrompt,
         apiResponsePrompt,
-        verbose: process.env.DEBUG === 'true' ? true : false,
+        verbose: process.env.DEBUG === 'true',
         headers: typeof headers === 'object' ? headers : headers ? JSON.parse(headers) : {}
     })
     return chain

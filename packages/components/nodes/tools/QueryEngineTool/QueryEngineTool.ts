@@ -1,0 +1,63 @@
+import { INode, INodeData, INodeParams } from '../../../src/Interface'
+import { QueryEngineTool } from 'llamaindex'
+
+class QueryEngine_Tools implements INode {
+    label: string
+    name: string
+    version: number
+    description: string
+    type: string
+    icon: string
+    category: string
+    tags: string[]
+    baseClasses: string[]
+    inputs?: INodeParams[]
+
+    constructor() {
+        this.label = 'QueryEngine Tool'
+        this.name = 'queryEngineToolLlamaIndex'
+        this.version = 2.0
+        this.type = 'QueryEngineTool'
+        this.icon = 'queryEngineTool.svg'
+        this.category = 'Tools'
+        this.tags = ['LlamaIndex']
+        this.description = 'Инструмент, используемый для вызова query engine'
+        this.baseClasses = [this.type, 'Tool_LlamaIndex']
+        this.inputs = [
+            {
+                label: 'Базовый QueryEngine',
+                name: 'baseQueryEngine',
+                type: 'BaseQueryEngine'
+            },
+            {
+                label: 'Название инструмента',
+                name: 'toolName',
+                type: 'string',
+                description: 'Название инструмента должно быть написано строчными буквами с подчеркиванием. Например: my_tool'
+            },
+            {
+                label: 'Описание инструмента',
+                name: 'toolDesc',
+                type: 'string',
+                rows: 4
+            }
+        ]
+    }
+
+    async init(nodeData: INodeData): Promise<any> {
+        const baseQueryEngine = nodeData.inputs?.baseQueryEngine
+        const toolName = nodeData.inputs?.toolName as string
+        const toolDesc = nodeData.inputs?.toolDesc as string
+        const queryEngineTool = new QueryEngineTool({
+            queryEngine: baseQueryEngine,
+            metadata: {
+                name: toolName,
+                description: toolDesc
+            }
+        })
+
+        return queryEngineTool
+    }
+}
+
+module.exports = { nodeClass: QueryEngine_Tools }

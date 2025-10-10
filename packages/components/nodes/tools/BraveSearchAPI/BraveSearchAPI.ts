@@ -1,6 +1,6 @@
+import { BraveSearch } from '@langchain/community/tools/brave_search'
 import { ICommonObject, INode, INodeData, INodeParams } from '../../../src/Interface'
 import { getBaseClasses, getCredentialData, getCredentialParam } from '../../../src/utils'
-import { BraveSearch } from 'langchain/tools'
 
 class BraveSearchAPI_Tools implements INode {
     label: string
@@ -21,10 +21,10 @@ class BraveSearchAPI_Tools implements INode {
         this.type = 'BraveSearchAPI'
         this.icon = 'brave.svg'
         this.category = 'Tools'
-        this.description = 'Wrapper around BraveSearch API - a real-time API to access Brave search results'
+        this.description = 'Обертка вокруг BraveSearch API - API в реальном времени для доступа к результатам поиска Brave'
         this.inputs = []
         this.credential = {
-            label: 'Connect Credential',
+            label: 'Подключите учетные данные',
             name: 'credential',
             type: 'credential',
             credentialNames: ['braveSearchApi']

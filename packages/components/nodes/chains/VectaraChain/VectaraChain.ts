@@ -1,9 +1,11 @@
+import fetch from 'node-fetch'
+import { Document } from '@langchain/core/documents'
+import { VectaraStore } from '@langchain/community/vectorstores/vectara'
+import { VectorDBQAChain } from 'langchain/chains'
 import { INode, INodeData, INodeParams } from '../../../src/Interface'
 import { getBaseClasses } from '../../../src/utils'
-import { VectorDBQAChain } from 'langchain/chains'
-import { Document } from 'langchain/document'
-import { VectaraStore } from 'langchain/vectorstores/vectara'
-import fetch from 'node-fetch'
+import { checkInputs, Moderation } from '../../moderation/Moderation'
+import { formatResponse } from '../../outputparsers/OutputParserHelpers'
 
 // functionality based on https://github.com/vectara/vectara-answer
 const reorderCitations = (unorderedSummary: string) => {
@@ -46,166 +48,168 @@ class VectaraChain_Chains implements INode {
     inputs: INodeParams[]
 
     constructor() {
-        this.label = 'Vectara QA Chain'
+        this.label = 'Цепочка вопросов-ответов Vectara'
         this.name = 'vectaraQAChain'
-        this.version = 1.0
+        this.version = 2.0
         this.type = 'VectaraQAChain'
         this.icon = 'vectara.png'
         this.category = 'Chains'
-        this.description = 'QA chain for Vectara'
+        this.description = 'Цепочка вопросов-ответов для Vectara'
         this.baseClasses = [this.type, ...getBaseClasses(VectorDBQAChain)]
         this.inputs = [
             {
-                label: 'Vectara Store',
+                label: 'Хранилище Vectara',
                 name: 'vectaraStore',
                 type: 'VectorStore'
             },
             {
-                label: 'Summarizer Prompt Name',
+                label: 'Название промпта суммаризации',
                 name: 'summarizerPromptName',
                 description:
-                    'Summarize the results fetched from Vectara. Read <a target="_blank" href="https://docs.vectara.com/docs/learn/grounded-generation/select-a-summarizer">more</a>',
+                    'Суммаризация результатов, полученных из Vectara. Подробнее <a target="_blank" href="https://docs.vectara.com/docs/learn/grounded-generation/select-a-summarizer">здесь</a>',
                 type: 'options',
                 options: [
                     {
                         label: 'vectara-summary-ext-v1.2.0 (gpt-3.5-turbo)',
-                        name: 'vectara-summary-ext-v1.2.0'
+                        name: 'vectara-summary-ext-v1.2.0',
+                        description: 'базовый суммаризатор, доступен всем пользователям Vectara'
                     },
                     {
                         label: 'vectara-experimental-summary-ext-2023-10-23-small (gpt-3.5-turbo)',
                         name: 'vectara-experimental-summary-ext-2023-10-23-small',
-                        description: 'In beta, available to both Growth and Scale Vectara users'
+                        description: `В бета-версии, доступен пользователям Vectara уровня Growth и <a target="_blank" href="https://vectara.com/pricing/">Scale</a>`
                     },
                     {
                         label: 'vectara-summary-ext-v1.3.0 (gpt-4.0)',
                         name: 'vectara-summary-ext-v1.3.0',
-                        description: 'Only available to paying Scale Vectara users'
+                        description:
+                            'Доступен только пользователям Vectara уровня <a target="_blank" href="https://vectara.com/pricing/">Scale</a>'
                     },
                     {
                         label: 'vectara-experimental-summary-ext-2023-10-23-med (gpt-4.0)',
                         name: 'vectara-experimental-summary-ext-2023-10-23-med',
-                        description: 'In beta, only available to paying Scale Vectara users'
+                        description: `В бета-версии, доступен только пользователям Vectara уровня <a target="_blank" href="https://vectara.com/pricing/">Scale</a>`
                     }
                 ],
                 default: 'vectara-summary-ext-v1.2.0'
             },
             {
-                label: 'Response Language',
+                label: 'Язык ответа',
                 name: 'responseLang',
                 description:
-                    'Return the response in specific language. If not selected, Vectara will automatically detects the language. Read <a target="_blank" href="https://docs.vectara.com/docs/learn/grounded-generation/grounded-generation-response-languages">more</a>',
+                    'Возвращает ответ на указанном языке. Если не выбран, Vectara автоматически определит язык. Подробнее <a target="_blank" href="https://docs.vectara.com/docs/learn/grounded-generation/grounded-generation-response-languages">здесь</a>',
                 type: 'options',
                 options: [
                     {
-                        label: 'English',
+                        label: 'Английский',
                         name: 'eng'
                     },
                     {
-                        label: 'German',
+                        label: 'Немецкий',
                         name: 'deu'
                     },
                     {
-                        label: 'French',
+                        label: 'Французский',
                         name: 'fra'
                     },
                     {
-                        label: 'Chinese',
+                        label: 'Китайский',
                         name: 'zho'
                     },
                     {
-                        label: 'Korean',
+                        label: 'Корейский',
                         name: 'kor'
                     },
                     {
-                        label: 'Arabic',
+                        label: 'Арабский',
                         name: 'ara'
                     },
                     {
-                        label: 'Russian',
+                        label: 'Русский',
                         name: 'rus'
                     },
                     {
-                        label: 'Thai',
+                        label: 'Тайский',
                         name: 'tha'
                     },
                     {
-                        label: 'Dutch',
+                        label: 'Голландский',
                         name: 'nld'
                     },
                     {
-                        label: 'Italian',
+                        label: 'Итальянский',
                         name: 'ita'
                     },
                     {
-                        label: 'Portuguese',
+                        label: 'Португальский',
                         name: 'por'
                     },
                     {
-                        label: 'Spanish',
+                        label: 'Испанский',
                         name: 'spa'
                     },
                     {
-                        label: 'Japanese',
+                        label: 'Японский',
                         name: 'jpn'
                     },
                     {
-                        label: 'Polish',
+                        label: 'Польский',
                         name: 'pol'
                     },
                     {
-                        label: 'Turkish',
+                        label: 'Турецкий',
                         name: 'tur'
                     },
                     {
-                        label: 'Vietnamese',
+                        label: 'Вьетнамский',
                         name: 'vie'
                     },
                     {
-                        label: 'Indonesian',
+                        label: 'Индонезийский',
                         name: 'ind'
                     },
                     {
-                        label: 'Czech',
+                        label: 'Чешский',
                         name: 'ces'
                     },
                     {
-                        label: 'Ukrainian',
+                        label: 'Украинский',
                         name: 'ukr'
                     },
                     {
-                        label: 'Greek',
+                        label: 'Греческий',
                         name: 'ell'
                     },
                     {
-                        label: 'Hebrew',
+                        label: 'Иврит',
                         name: 'heb'
                     },
                     {
-                        label: 'Farsi/Persian',
+                        label: 'Фарси/Персидский',
                         name: 'fas'
                     },
                     {
-                        label: 'Hindi',
+                        label: 'Хинди',
                         name: 'hin'
                     },
                     {
-                        label: 'Urdu',
+                        label: 'Урду',
                         name: 'urd'
                     },
                     {
-                        label: 'Swedish',
+                        label: 'Шведский',
                         name: 'swe'
                     },
                     {
-                        label: 'Bengali',
+                        label: 'Бенгальский',
                         name: 'ben'
                     },
                     {
-                        label: 'Malay',
+                        label: 'Малайский',
                         name: 'msa'
                     },
                     {
-                        label: 'Romanian',
+                        label: 'Румынский',
                         name: 'ron'
                     }
                 ],
@@ -213,11 +217,20 @@ class VectaraChain_Chains implements INode {
                 default: 'eng'
             },
             {
-                label: 'Max Summarized Results',
+                label: 'Максимальное количество результатов для суммаризации',
                 name: 'maxSummarizedResults',
-                description: 'Maximum results used to build the summarized response',
+                description: 'Максимальное количество результатов, используемых для построения суммаризированного ответа',
                 type: 'number',
                 default: 7
+            },
+            {
+                label: 'Модерация ввода',
+                description:
+                    'Обнаружение текста, который может генерировать вредоносный вывод, и предотвращение его отправки в языковую модель',
+                name: 'inputModeration',
+                type: 'Moderation',
+                optional: true,
+                list: true
             }
         ]
     }
@@ -226,9 +239,9 @@ class VectaraChain_Chains implements INode {
         return null
     }
 
-    async run(nodeData: INodeData, input: string): Promise<object> {
+    async run(nodeData: INodeData, input: string): Promise<string | object> {
         const vectorStore = nodeData.inputs?.vectaraStore as VectaraStore
-        const responseLang = (nodeData.inputs?.responseLang as string) ?? 'auto'
+        const responseLang = (nodeData.inputs?.responseLang as string) ?? 'eng'
         const summarizerPromptName = nodeData.inputs?.summarizerPromptName as string
         const maxSummarizedResultsStr = nodeData.inputs?.maxSummarizedResults as string
         const maxSummarizedResults = maxSummarizedResultsStr ? parseInt(maxSummarizedResultsStr, 10) : 7
@@ -247,17 +260,45 @@ class VectaraChain_Chains implements INode {
             lexicalInterpolationConfig: { lambda: vectaraFilter?.lambda ?? 0.025 }
         }))
 
+        // Vectara reranker ID for MMR (https://docs.vectara.com/docs/api-reference/search-apis/reranking#maximal-marginal-relevance-mmr-reranker)
+        const mmrRerankerId = 272725718
+        const mmrEnabled = vectaraFilter?.mmrConfig?.enabled
+
+        const moderations = nodeData.inputs?.inputModeration as Moderation[]
+        if (moderations && moderations.length > 0) {
+            try {
+                // Use the output of the moderation chain as input for the Vectara chain
+                input = await checkInputs(moderations, input)
+            } catch (e) {
+                await new Promise((resolve) => setTimeout(resolve, 500))
+                // if (options.shouldStreamResponse) {
+                //     streamResponse(options.sseStreamer, options.chatId, e.message)
+                // }
+                return formatResponse(e.message)
+            }
+        }
+
         const data = {
             query: [
                 {
                     query: input,
                     start: 0,
-                    numResults: topK,
+                    numResults: mmrEnabled ? vectaraFilter?.mmrTopK : topK,
+                    corpusKey: corpusKeys,
                     contextConfig: {
                         sentencesAfter: vectaraFilter?.contextConfig?.sentencesAfter ?? 2,
                         sentencesBefore: vectaraFilter?.contextConfig?.sentencesBefore ?? 2
                     },
-                    corpusKey: corpusKeys,
+                    ...(mmrEnabled
+                        ? {
+                              rerankingConfig: {
+                                  rerankerId: mmrRerankerId,
+                                  mmrConfig: {
+                                      diversityBias: vectaraFilter?.mmrConfig.diversityBias
+                                  }
+                              }
+                          }
+                        : {}),
                     summary: [
                         {
                             summarizerPromptName,
@@ -285,6 +326,14 @@ class VectaraChain_Chains implements INode {
             const documents = result.responseSet[0].document
             let rawSummarizedText = ''
 
+            // remove responses that are not in the topK (in case of MMR)
+            // Note that this does not really matter functionally due to the reorder citations, but it is more efficient
+            const maxResponses = mmrEnabled ? Math.min(responses.length, topK) : responses.length
+            if (responses.length > maxResponses) {
+                responses.splice(0, maxResponses)
+            }
+
+            // Add metadata to each text response given its corresponding document metadata
             for (let i = 0; i < responses.length; i += 1) {
                 const responseMetadata = responses[i].metadata
                 const documentMetadata = documents[responses[i].documentIndex].metadata
@@ -301,13 +350,13 @@ class VectaraChain_Chains implements INode {
                 responses[i].metadata = combinedMetadata
             }
 
+            // Create the summarization response
             const summaryStatus = result.responseSet[0].summary[0].status
             if (summaryStatus.length > 0 && summaryStatus[0].code === 'BAD_REQUEST') {
                 throw new Error(
                     `BAD REQUEST: Too much text for the summarizer to summarize. Please try reducing the number of search results to summarize, or the context of each result by adjusting the 'summary_num_sentences', and 'summary_num_results' parameters respectively.`
                 )
             }
-
             if (
                 summaryStatus.length > 0 &&
                 summaryStatus[0].code === 'NOT_FOUND' &&
@@ -316,8 +365,8 @@ class VectaraChain_Chains implements INode {
                 throw new Error(`BAD REQUEST: summarizer ${summarizerPromptName} is invalid for this account.`)
             }
 
+            // Reorder citations in summary and create the list of returned source documents
             rawSummarizedText = result.responseSet[0].summary[0]?.text
-
             let summarizedText = reorderCitations(rawSummarizedText)
             let summaryResponses = applyCitationOrder(responses, rawSummarizedText)
 

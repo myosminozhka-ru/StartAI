@@ -20,28 +20,32 @@ class RecursiveCharacterTextSplitter_TextSplitters implements INode {
         this.type = 'RecursiveCharacterTextSplitter'
         this.icon = 'textsplitter.svg'
         this.category = 'Text Splitters'
-        this.description = `Split documents recursively by different characters - starting with "\\n\\n", then "\\n", then " "`
+        this.description = `Разделяет документы рекурсивно по различным символам - начиная с "\\n\\n", затем "\\n", затем " "`
         this.baseClasses = [this.type, ...getBaseClasses(RecursiveCharacterTextSplitter)]
         this.inputs = [
             {
-                label: 'Chunk Size',
+                label: 'Размер фрагмента',
                 name: 'chunkSize',
                 type: 'number',
+                description: 'Количество символов в каждом фрагменте. По умолчанию 1000.',
                 default: 1000,
                 optional: true
             },
             {
-                label: 'Chunk Overlap',
+                label: 'Перекрытие фрагментов',
                 name: 'chunkOverlap',
                 type: 'number',
+                description: 'Количество символов для перекрытия между фрагментами. По умолчанию 200.',
+                default: 200,
                 optional: true
             },
             {
-                label: 'Custom Separators',
+                label: 'Пользовательские разделители',
                 name: 'separators',
                 type: 'string',
                 rows: 4,
-                description: 'Array of custom separators to determine when to split the text, will override the default separators',
+                description:
+                    'Массив пользовательских разделителей для определения, когда разделять текст, переопределит разделители по умолчанию',
                 placeholder: `["|", "##", ">", "-"]`,
                 additionalParams: true,
                 optional: true

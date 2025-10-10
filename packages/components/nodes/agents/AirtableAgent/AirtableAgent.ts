@@ -1,11 +1,13 @@
-import { ICommonObject, INode, INodeData, INodeParams, PromptTemplate } from '../../../src/Interface'
-import { AgentExecutor } from 'langchain/agents'
-import { getBaseClasses, getCredentialData, getCredentialParam } from '../../../src/utils'
-import { LoadPyodide, finalSystemPrompt, systemPrompt } from './core'
-import { LLMChain } from 'langchain/chains'
-import { BaseLanguageModel } from 'langchain/base_language'
-import { ConsoleCallbackHandler, CustomChainHandler, additionalCallbacks } from '../../../src/handler'
 import axios from 'axios'
+import { BaseLanguageModel } from '@langchain/core/language_models/base'
+import { AgentExecutor } from 'langchain/agents'
+import { LLMChain } from 'langchain/chains'
+import { ICommonObject, INode, INodeData, INodeParams, IServerSideEventStreamer, PromptTemplate } from '../../../src/Interface'
+import { getBaseClasses, getCredentialData, getCredentialParam } from '../../../src/utils'
+import { ConsoleCallbackHandler, CustomChainHandler, additionalCallbacks } from '../../../src/handler'
+import { LoadPyodide, finalSystemPrompt, systemPrompt } from './core'
+import { checkInputs, Moderation } from '../../moderation/Moderation'
+import { formatResponse } from '../../outputparsers/OutputParserHelpers'
 
 class Airtable_Agents implements INode {
     label: string
@@ -20,57 +22,66 @@ class Airtable_Agents implements INode {
     inputs: INodeParams[]
 
     constructor() {
-        this.label = 'Airtable Agent'
+        this.label = 'Airtable Агент'
         this.name = 'airtableAgent'
-        this.version = 1.0
+        this.version = 2.0
         this.type = 'AgentExecutor'
         this.category = 'Agents'
         this.icon = 'airtable.svg'
-        this.description = 'Agent used to to answer queries on Airtable table'
+        this.description = 'Агент для ответов на запросы по таблице Airtable'
         this.baseClasses = [this.type, ...getBaseClasses(AgentExecutor)]
         this.credential = {
-            label: 'Connect Credential',
+            label: 'Подключите учетные данные',
             name: 'credential',
             type: 'credential',
             credentialNames: ['airtableApi']
         }
         this.inputs = [
             {
-                label: 'Language Model',
+                label: 'Языковая модель',
                 name: 'model',
                 type: 'BaseLanguageModel'
             },
             {
-                label: 'Base Id',
+                label: 'ID базы',
                 name: 'baseId',
                 type: 'string',
                 placeholder: 'app11RobdGoX0YNsC',
                 description:
-                    'If your table URL looks like: https://airtable.com/app11RobdGoX0YNsC/tblJdmvbrgizbYICO/viw9UrP77Id0CE4ee, app11RovdGoX0YNsC is the base id'
+                    'Если URL вашей таблицы выглядит так: https://airtable.com/app11RobdGoX0YNsC/tblJdmvbrgizbYICO/viw9UrP77Id0CE4ee, то app11RovdGoX0YNsC - это ID базы'
             },
             {
-                label: 'Table Id',
+                label: 'ID таблицы',
                 name: 'tableId',
                 type: 'string',
                 placeholder: 'tblJdmvbrgizbYICO',
                 description:
-                    'If your table URL looks like: https://airtable.com/app11RobdGoX0YNsC/tblJdmvbrgizbYICO/viw9UrP77Id0CE4ee, tblJdmvbrgizbYICO is the table id'
+                    'Если URL вашей таблицы выглядит так: https://airtable.com/app11RobdGoX0YNsC/tblJdmvbrgizbYICO/viw9UrP77Id0CE4ee, то tblJdmvbrgizbYICO - это ID таблицы'
             },
             {
-                label: 'Return All',
+                label: 'Вернуть все',
                 name: 'returnAll',
                 type: 'boolean',
                 default: true,
                 additionalParams: true,
-                description: 'If all results should be returned or only up to a given limit'
+                description: 'Возвращать все результаты или только до указанного лимита'
             },
             {
-                label: 'Limit',
+                label: 'Лимит',
                 name: 'limit',
                 type: 'number',
                 default: 100,
                 additionalParams: true,
-                description: 'Number of results to return'
+                description: 'Количество возвращаемых результатов'
+            },
+            {
+                label: 'Модерация ввода',
+                description:
+                    'Обнаружение текста, который может генерировать вредоносный вывод, и предотвращение его отправки в языковую модель',
+                name: 'inputModeration',
+                type: 'Moderation',
+                optional: true,
+                list: true
             }
         ]
     }
@@ -80,12 +91,30 @@ class Airtable_Agents implements INode {
         return undefined
     }
 
-    async run(nodeData: INodeData, input: string, options: ICommonObject): Promise<string> {
+    async run(nodeData: INodeData, input: string, options: ICommonObject): Promise<string | object> {
         const model = nodeData.inputs?.model as BaseLanguageModel
         const baseId = nodeData.inputs?.baseId as string
         const tableId = nodeData.inputs?.tableId as string
         const returnAll = nodeData.inputs?.returnAll as boolean
         const limit = nodeData.inputs?.limit as string
+        const moderations = nodeData.inputs?.inputModeration as Moderation[]
+
+        if (moderations && moderations.length > 0) {
+            try {
+                // Use the output of the moderation chain as input for the Vectara chain
+                input = await checkInputs(moderations, input)
+            } catch (e) {
+                await new Promise((resolve) => setTimeout(resolve, 500))
+                // if (options.shouldStreamResponse) {
+                //     streamResponse(options.sseStreamer, options.chatId, e.message)
+                // }
+                return formatResponse(e.message)
+            }
+        }
+
+        const shouldStreamResponse = options.shouldStreamResponse
+        const sseStreamer: IServerSideEventStreamer = options.sseStreamer as IServerSideEventStreamer
+        const chatId = options.chatId
 
         const credentialData = await getCredentialData(nodeData.credential ?? '', options)
         const accessToken = getCredentialParam('accessToken', credentialData, nodeData)
@@ -100,8 +129,7 @@ class Airtable_Agents implements INode {
 
         let base64String = Buffer.from(JSON.stringify(airtableData)).toString('base64')
 
-        const loggerHandler = new ConsoleCallbackHandler(options.logger)
-        const handler = new CustomChainHandler(options.socketIO, options.socketIOClientId)
+        const loggerHandler = new ConsoleCallbackHandler(options.logger, options?.orgId)
         const callbacks = await additionalCallbacks(nodeData, options)
 
         const pyodide = await LoadPyodide()
@@ -136,7 +164,7 @@ json.dumps(my_dict)`
             const chain = new LLMChain({
                 llm: model,
                 prompt: PromptTemplate.fromTemplate(systemPrompt),
-                verbose: process.env.DEBUG === 'true' ? true : false
+                verbose: process.env.DEBUG === 'true'
             })
             const inputs = {
                 dict: dataframeColDict,
@@ -144,6 +172,8 @@ json.dumps(my_dict)`
             }
             const res = await chain.call(inputs, [loggerHandler, ...callbacks])
             pythonCode = res?.text
+            // Regex to get rid of markdown code blocks syntax
+            pythonCode = pythonCode.replace(/^```[a-z]+\n|\n```$/gm, '')
         }
 
         // Then run the code using Pyodide
@@ -151,9 +181,10 @@ json.dumps(my_dict)`
         if (pythonCode) {
             try {
                 const code = `import pandas as pd\n${pythonCode}`
+                // TODO: get print console output
                 finalResult = await pyodide.runPythonAsync(code)
             } catch (error) {
-                throw new Error(`Sorry, I'm unable to find answer for question: "${input}" using follwoing code: "${pythonCode}"`)
+                throw new Error(`Извините, я не могу найти ответ на вопрос: "${input}" используя следующий код: "${pythonCode}"`)
             }
         }
 
@@ -162,14 +193,15 @@ json.dumps(my_dict)`
             const chain = new LLMChain({
                 llm: model,
                 prompt: PromptTemplate.fromTemplate(finalSystemPrompt),
-                verbose: process.env.DEBUG === 'true' ? true : false
+                verbose: process.env.DEBUG === 'true'
             })
             const inputs = {
                 question: input,
                 answer: finalResult
             }
 
-            if (options.socketIO && options.socketIOClientId) {
+            if (options.shouldStreamResponse) {
+                const handler = new CustomChainHandler(shouldStreamResponse ? sseStreamer : undefined, chatId)
                 const result = await chain.call(inputs, [loggerHandler, handler, ...callbacks])
                 return result?.text
             } else {
@@ -203,7 +235,7 @@ const fetchAirtableData = async (url: string, params: ICommonObject, accessToken
         const response = await axios.get(url, { params, headers })
         return response.data
     } catch (error) {
-        throw new Error(`Failed to fetch ${url} from Airtable: ${error}`)
+        throw new Error(`Не удалось получить данные из Airtable по адресу ${url}: ${error}`)
     }
 }
 

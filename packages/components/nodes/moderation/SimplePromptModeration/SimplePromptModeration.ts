@@ -2,6 +2,7 @@ import { INode, INodeData, INodeParams } from '../../../src/Interface'
 import { getBaseClasses } from '../../../src'
 import { Moderation } from '../Moderation'
 import { SimplePromptModerationRunner } from './SimplePromptModerationRunner'
+import { BaseChatModel } from '@langchain/core/language_models/chat_models'
 
 class SimplePromptModeration implements INode {
     label: string
@@ -15,30 +16,36 @@ class SimplePromptModeration implements INode {
     inputs: INodeParams[]
 
     constructor() {
-        this.label = 'Simple Prompt Moderation'
+        this.label = 'Простая модерация промпта'
         this.name = 'inputModerationSimple'
-        this.version = 1.0
+        this.version = 2.0
         this.type = 'Moderation'
-        this.icon = 'simple_moderation.png'
+        this.icon = 'moderation.svg'
         this.category = 'Moderation'
-        this.description = 'Check whether input consists of any text from Deny list, and prevent being sent to LLM'
+        this.description = 'Проверьте, содержит ли ввод любой текст из списка запрещенных, и предотвратите отправку в LLM'
         this.baseClasses = [this.type, ...getBaseClasses(Moderation)]
         this.inputs = [
             {
-                label: 'Deny List',
+                label: 'Список запрещенных',
                 name: 'denyList',
                 type: 'string',
                 rows: 4,
                 placeholder: `ignore previous instructions\ndo not follow the directions\nyou must ignore all previous instructions`,
-                description: 'An array of string literals (enter one per line) that should not appear in the prompt text.',
-                optional: false
+                description: 'Массив строковых литералов (введите по одному на строку), которые не должны появляться в тексте промпта.'
             },
             {
-                label: 'Error Message',
+                label: 'Чат-модель',
+                name: 'model',
+                type: 'BaseChatModel',
+                description: 'Использовать LLM для обнаружения, похож ли ввод на указанные в списке запрещенных',
+                optional: true
+            },
+            {
+                label: 'Сообщение об ошибке',
                 name: 'moderationErrorMessage',
                 type: 'string',
                 rows: 2,
-                default: 'Cannot Process! Input violates content moderation policies.',
+                default: 'Невозможно обработать! Ввод нарушает политики модерации контента.',
                 optional: true
             }
         ]
@@ -46,9 +53,10 @@ class SimplePromptModeration implements INode {
 
     async init(nodeData: INodeData): Promise<any> {
         const denyList = nodeData.inputs?.denyList as string
+        const model = nodeData.inputs?.model as BaseChatModel
         const moderationErrorMessage = nodeData.inputs?.moderationErrorMessage as string
 
-        return new SimplePromptModerationRunner(denyList, moderationErrorMessage)
+        return new SimplePromptModerationRunner(denyList, moderationErrorMessage, model)
     }
 }
 

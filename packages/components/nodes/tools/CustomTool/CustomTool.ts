@@ -1,8 +1,9 @@
 import { ICommonObject, IDatabaseEntity, INode, INodeData, INodeOptionsValue, INodeParams } from '../../../src/Interface'
-import { convertSchemaToZod, getBaseClasses } from '../../../src/utils'
+import { convertSchemaToZod, getBaseClasses, getVars } from '../../../src/utils'
 import { DynamicStructuredTool } from './core'
 import { z } from 'zod'
 import { DataSource } from 'typeorm'
+import { SecureZodSchemaParser } from '../../../src/secureZodParser'
 
 class CustomTool_Tools implements INode {
     label: string
@@ -18,17 +19,48 @@ class CustomTool_Tools implements INode {
     constructor() {
         this.label = 'Custom Tool'
         this.name = 'customTool'
-        this.version = 1.0
+        this.version = 3.0
         this.type = 'CustomTool'
         this.icon = 'customtool.svg'
         this.category = 'Tools'
-        this.description = `Use custom tool you've created in StartAI within chatflow`
+        this.description = `Использовать пользовательский инструмент, который вы создали в chatflow`
         this.inputs = [
             {
-                label: 'Select Tool',
+                label: 'Выберите инструмент',
                 name: 'selectedTool',
                 type: 'asyncOptions',
                 loadMethod: 'listTools'
+            },
+            {
+                label: 'Возврат напрямую',
+                name: 'returnDirect',
+                description: 'Возвратить результат инструмента напрямую пользователю',
+                type: 'boolean',
+                optional: true
+            },
+            {
+                label: 'Пользовательское название инструмента',
+                name: 'customToolName',
+                type: 'string',
+                hidden: true
+            },
+            {
+                label: 'Пользовательское описание инструмента',
+                name: 'customToolDesc',
+                type: 'string',
+                hidden: true
+            },
+            {
+                label: 'Пользовательская схема инструмента',
+                name: 'customToolSchema',
+                type: 'string',
+                hidden: true
+            },
+            {
+                label: 'Пользовательская функция инструмента',
+                name: 'customToolFunc',
+                type: 'string',
+                hidden: true
             }
         ]
         this.baseClasses = [this.type, 'Tool', ...getBaseClasses(DynamicStructuredTool)]
@@ -46,7 +78,8 @@ class CustomTool_Tools implements INode {
                 return returnData
             }
 
-            const tools = await appDataSource.getRepository(databaseEntities['Tool']).find()
+            const searchOptions = options.searchOptions || {}
+            const tools = await appDataSource.getRepository(databaseEntities['Tool']).findBy(searchOptions)
 
             for (let i = 0; i < tools.length; i += 1) {
                 const data = {
@@ -63,6 +96,10 @@ class CustomTool_Tools implements INode {
     async init(nodeData: INodeData, _: string, options: ICommonObject): Promise<any> {
         const selectedToolId = nodeData.inputs?.selectedTool as string
         const customToolFunc = nodeData.inputs?.customToolFunc as string
+        const customToolName = nodeData.inputs?.customToolName as string
+        const customToolDesc = nodeData.inputs?.customToolDesc as string
+        const customToolSchema = nodeData.inputs?.customToolSchema as string
+        const customToolReturnDirect = nodeData.inputs?.returnDirect as boolean
 
         const appDataSource = options.appDataSource as DataSource
         const databaseEntities = options.databaseEntities as IDatabaseEntity
@@ -80,7 +117,22 @@ class CustomTool_Tools implements INode {
                 code: tool.func
             }
             if (customToolFunc) obj.code = customToolFunc
-            return new DynamicStructuredTool(obj)
+            if (customToolName) obj.name = customToolName
+            if (customToolDesc) obj.description = customToolDesc
+            if (customToolSchema) {
+                obj.schema = SecureZodSchemaParser.parseZodSchema(customToolSchema) as z.ZodObject<ICommonObject, 'strip', z.ZodTypeAny>
+            }
+
+            const variables = await getVars(appDataSource, databaseEntities, nodeData, options)
+
+            const flow = { chatflowId: options.chatflowid }
+
+            let dynamicStructuredTool = new DynamicStructuredTool(obj)
+            dynamicStructuredTool.setVariables(variables)
+            dynamicStructuredTool.setFlowObject(flow)
+            dynamicStructuredTool.returnDirect = customToolReturnDirect
+
+            return dynamicStructuredTool
         } catch (e) {
             throw new Error(e)
         }

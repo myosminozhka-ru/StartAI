@@ -1,11 +1,36 @@
-import { Pool } from 'pg'
 import { flatten } from 'lodash'
-import { DataSourceOptions } from 'typeorm'
-import { Embeddings } from 'langchain/embeddings/base'
-import { Document } from 'langchain/document'
-import { TypeORMVectorStore, TypeORMVectorStoreDocument } from 'langchain/vectorstores/typeorm'
-import { ICommonObject, INode, INodeData, INodeOutputsValue, INodeParams } from '../../../src/Interface'
-import { getBaseClasses, getCredentialData, getCredentialParam } from '../../../src/utils'
+import { Document } from '@langchain/core/documents'
+import { ICommonObject, INode, INodeData, INodeOutputsValue, INodeParams, IndexingResult } from '../../../src/Interface'
+import { FLOWISE_CHATID, getBaseClasses } from '../../../src/utils'
+import { index } from '../../../src/indexing'
+import { howToUseFileUpload } from '../VectorStoreUtils'
+import { VectorStore } from '@langchain/core/vectorstores'
+import { VectorStoreDriver } from './driver/Base'
+import { TypeORMDriver } from './driver/TypeORM'
+// import { PGVectorDriver } from './driver/PGVector'
+import { getContentColumnName, getDatabase, getHost, getPort, getTableName } from './utils'
+
+const serverCredentialsExists = !!process.env.POSTGRES_VECTORSTORE_USER && !!process.env.POSTGRES_VECTORSTORE_PASSWORD
+
+// added temporarily to fix the base class return for VectorStore when postgres node is using TypeORM
+function getVectorStoreBaseClasses() {
+    // Try getting base classes through the utility function
+    const baseClasses = getBaseClasses(VectorStore)
+
+    // If we got results, return them
+    if (baseClasses && baseClasses.length > 0) {
+        return baseClasses
+    }
+
+    // If VectorStore is recognized as a class but getBaseClasses returned nothing,
+    // return the known inheritance chain
+    if (VectorStore instanceof Function) {
+        return ['VectorStore']
+    }
+
+    // Fallback to minimum required class
+    return ['VectorStore']
+}
 
 class Postgres_VectorStores implements INode {
     label: string
@@ -24,138 +49,230 @@ class Postgres_VectorStores implements INode {
     constructor() {
         this.label = 'Postgres'
         this.name = 'postgres'
-        this.version = 1.0
+        this.version = 7.0
         this.type = 'Postgres'
         this.icon = 'postgres.svg'
         this.category = 'Vector Stores'
-        this.description = 'Upsert embedded data and perform similarity search upon query using pgvector on Postgres'
+        this.description = 'Загружайте встроенные данные и выполняйте поиск по сходству при запросе с помощью pgvector на Postgres'
         this.baseClasses = [this.type, 'VectorStoreRetriever', 'BaseRetriever']
-        this.badge = 'NEW'
         this.credential = {
-            label: 'Connect Credential',
+            label: 'Подключите учетные данные',
             name: 'credential',
             type: 'credential',
-            credentialNames: ['PostgresApi']
+            credentialNames: ['PostgresApi'],
+            optional: serverCredentialsExists
         }
         this.inputs = [
             {
-                label: 'Document',
+                label: 'Документ',
                 name: 'document',
                 type: 'Document',
                 list: true,
                 optional: true
             },
             {
-                label: 'Embeddings',
+                label: 'Встраивания',
                 name: 'embeddings',
                 type: 'Embeddings'
             },
             {
-                label: 'Host',
-                name: 'host',
-                type: 'string'
-            },
-            {
-                label: 'Database',
-                name: 'database',
-                type: 'string'
-            },
-            {
-                label: 'Port',
-                name: 'port',
-                type: 'number',
-                placeholder: '6432',
+                label: 'Менеджер записей',
+                name: 'recordManager',
+                type: 'RecordManager',
+                description: 'Отслеживайте запись для предотвращения дублирования',
                 optional: true
             },
             {
-                label: 'Table Name',
-                name: 'tableName',
+                label: 'Хост',
+                name: 'host',
                 type: 'string',
-                placeholder: 'documents',
+                placeholder: getHost(),
+                optional: !!getHost()
+            },
+            {
+                label: 'База данных',
+                name: 'database',
+                type: 'string',
+                placeholder: getDatabase(),
+                optional: !!getDatabase()
+            },
+            {
+                label: 'Порт',
+                name: 'port',
+                type: 'number',
+                placeholder: getPort(),
+                optional: true
+            },
+            {
+                label: 'SSL',
+                name: 'ssl',
+                description: 'Использовать SSL для подключения к Postgres',
+                type: 'boolean',
                 additionalParams: true,
                 optional: true
             },
             {
-                label: 'Additional Configuration',
+                label: 'Имя таблицы',
+                name: 'tableName',
+                type: 'string',
+                placeholder: getTableName(),
+                additionalParams: true,
+                optional: true
+            },
+            {
+                label: 'Стратегия расстояния',
+                name: 'distanceStrategy',
+                description: 'Стратегия для вычисления расстояний между векторами',
+                type: 'options',
+                options: [
+                    {
+                        label: 'Косинус',
+                        name: 'cosine'
+                    },
+                    {
+                        label: 'Евклидово',
+                        name: 'euclidean'
+                    },
+                    {
+                        label: 'Внутреннее произведение',
+                        name: 'innerProduct'
+                    }
+                ],
+                additionalParams: true,
+                default: 'cosine',
+                optional: true
+            },
+            {
+                label: 'Загрузка файлов',
+                name: 'fileUpload',
+                description: 'Разрешить загрузку файлов в чате',
+                hint: {
+                    label: 'Как использовать',
+                    value: howToUseFileUpload
+                },
+                type: 'boolean',
+                additionalParams: true,
+                optional: true
+            },
+            {
+                label: 'Дополнительная конфигурация',
                 name: 'additionalConfig',
                 type: 'json',
                 additionalParams: true,
                 optional: true
             },
             {
-                label: 'Top K',
+                label: 'Топ K',
                 name: 'topK',
-                description: 'Number of top results to fetch. Default to 4',
+                description: 'Количество лучших результатов для получения. По умолчанию 4',
                 placeholder: '4',
                 type: 'number',
+                additionalParams: true,
+                optional: true
+            },
+            {
+                label: 'Postgres Фильтр метаданных',
+                name: 'pgMetadataFilter',
+                type: 'json',
+                additionalParams: true,
+                optional: true,
+                acceptVariable: true
+            },
+            {
+                label: 'Имя столбца содержимого',
+                name: 'contentColumnName',
+                description:
+                    'Имя столбца для хранения текстового содержимого (только для драйвера PGVector, другие используют pageContent)',
+                type: 'string',
+                placeholder: getContentColumnName(),
                 additionalParams: true,
                 optional: true
             }
         ]
         this.outputs = [
             {
-                label: 'Postgres Retriever',
+                label: 'Postgres Извлекатель',
                 name: 'retriever',
                 baseClasses: this.baseClasses
             },
             {
-                label: 'Postgres Vector Store',
+                label: 'Postgres Векторное хранилище',
                 name: 'vectorStore',
-                baseClasses: [this.type, ...getBaseClasses(TypeORMVectorStore)]
+                baseClasses: [
+                    this.type,
+                    // ...getBaseClasses(VectorStore), // disabled temporarily for using TypeORM
+                    ...getVectorStoreBaseClasses() // added temporarily for using TypeORM
+                ]
             }
         ]
     }
 
     //@ts-ignore
     vectorStoreMethods = {
-        async upsert(nodeData: INodeData, options: ICommonObject): Promise<void> {
-            const credentialData = await getCredentialData(nodeData.credential ?? '', options)
-            const user = getCredentialParam('user', credentialData, nodeData)
-            const password = getCredentialParam('password', credentialData, nodeData)
-            const _tableName = nodeData.inputs?.tableName as string
-            const tableName = _tableName ? _tableName : 'documents'
+        async upsert(nodeData: INodeData, options: ICommonObject): Promise<Partial<IndexingResult>> {
+            const tableName = getTableName(nodeData)
             const docs = nodeData.inputs?.document as Document[]
-            const embeddings = nodeData.inputs?.embeddings as Embeddings
-            const additionalConfig = nodeData.inputs?.additionalConfig as string
-
-            let additionalConfiguration = {}
-            if (additionalConfig) {
-                try {
-                    additionalConfiguration = typeof additionalConfig === 'object' ? additionalConfig : JSON.parse(additionalConfig)
-                } catch (exception) {
-                    throw new Error('Invalid JSON in the Additional Configuration: ' + exception)
-                }
-            }
-
-            const postgresConnectionOptions = {
-                ...additionalConfiguration,
-                type: 'postgres',
-                host: nodeData.inputs?.host as string,
-                port: nodeData.inputs?.port as number,
-                username: user,
-                password: password,
-                database: nodeData.inputs?.database as string
-            }
-
-            const args = {
-                postgresConnectionOptions: postgresConnectionOptions as DataSourceOptions,
-                tableName: tableName
-            }
+            const recordManager = nodeData.inputs?.recordManager
+            const isFileUploadEnabled = nodeData.inputs?.fileUpload as boolean
+            const vectorStoreDriver: VectorStoreDriver = Postgres_VectorStores.getDriverFromConfig(nodeData, options)
 
             const flattenDocs = docs && docs.length ? flatten(docs) : []
             const finalDocs = []
+
             for (let i = 0; i < flattenDocs.length; i += 1) {
                 if (flattenDocs[i] && flattenDocs[i].pageContent) {
+                    if (isFileUploadEnabled && options.chatId) {
+                        flattenDocs[i].metadata = { ...flattenDocs[i].metadata, [FLOWISE_CHATID]: options.chatId }
+                    }
                     finalDocs.push(new Document(flattenDocs[i]))
                 }
             }
 
             try {
-                const vectorStore = await TypeORMVectorStore.fromDocuments(finalDocs, embeddings, args)
+                if (recordManager) {
+                    const vectorStore = await vectorStoreDriver.instanciate()
 
-                // Avoid Illegal invocation error
-                vectorStore.similaritySearchVectorWithScore = async (query: number[], k: number, filter?: any) => {
-                    return await similaritySearchVectorWithScore(query, k, tableName, postgresConnectionOptions, filter)
+                    await recordManager.createSchema()
+
+                    const res = await index({
+                        docsSource: finalDocs,
+                        recordManager,
+                        vectorStore,
+                        options: {
+                            cleanup: recordManager?.cleanup,
+                            sourceIdKey: recordManager?.sourceIdKey ?? 'source',
+                            vectorStoreName: tableName
+                        }
+                    })
+
+                    return res
+                } else {
+                    await vectorStoreDriver.fromDocuments(finalDocs)
+
+                    return { numAdded: finalDocs.length, addedDocs: finalDocs }
+                }
+            } catch (e) {
+                throw new Error(e)
+            }
+        },
+        async delete(nodeData: INodeData, ids: string[], options: ICommonObject): Promise<void> {
+            const vectorStoreDriver: VectorStoreDriver = Postgres_VectorStores.getDriverFromConfig(nodeData, options)
+            const tableName = getTableName(nodeData)
+            const recordManager = nodeData.inputs?.recordManager
+
+            const vectorStore = await vectorStoreDriver.instanciate()
+
+            try {
+                if (recordManager) {
+                    const vectorStoreName = tableName
+                    await recordManager.createSchema()
+                    ;(recordManager as any).namespace = (recordManager as any).namespace + '_' + vectorStoreName
+                    const keys: string[] = await recordManager.listKeys({})
+
+                    await vectorStore.delete({ ids: keys })
+                    await recordManager.deleteKeys(keys)
+                } else {
+                    await vectorStore.delete({ ids })
                 }
             } catch (e) {
                 throw new Error(e)
@@ -164,105 +281,50 @@ class Postgres_VectorStores implements INode {
     }
 
     async init(nodeData: INodeData, _: string, options: ICommonObject): Promise<any> {
-        const credentialData = await getCredentialData(nodeData.credential ?? '', options)
-        const user = getCredentialParam('user', credentialData, nodeData)
-        const password = getCredentialParam('password', credentialData, nodeData)
-        const _tableName = nodeData.inputs?.tableName as string
-        const tableName = _tableName ? _tableName : 'documents'
-        const embeddings = nodeData.inputs?.embeddings as Embeddings
-        const additionalConfig = nodeData.inputs?.additionalConfig as string
+        const vectorStoreDriver: VectorStoreDriver = Postgres_VectorStores.getDriverFromConfig(nodeData, options)
         const output = nodeData.outputs?.output as string
         const topK = nodeData.inputs?.topK as string
         const k = topK ? parseFloat(topK) : 4
+        const _pgMetadataFilter = nodeData.inputs?.pgMetadataFilter
+        const isFileUploadEnabled = nodeData.inputs?.fileUpload as boolean
 
-        let additionalConfiguration = {}
-        if (additionalConfig) {
-            try {
-                additionalConfiguration = typeof additionalConfig === 'object' ? additionalConfig : JSON.parse(additionalConfig)
-            } catch (exception) {
-                throw new Error('Invalid JSON in the Additional Configuration: ' + exception)
+        let pgMetadataFilter: any
+        if (_pgMetadataFilter) {
+            pgMetadataFilter = typeof _pgMetadataFilter === 'object' ? _pgMetadataFilter : JSON.parse(_pgMetadataFilter)
+        }
+        if (isFileUploadEnabled && options.chatId) {
+            pgMetadataFilter = {
+                ...(pgMetadataFilter || {}),
+                [FLOWISE_CHATID]: options.chatId
             }
         }
 
-        const postgresConnectionOptions = {
-            ...additionalConfiguration,
-            type: 'postgres',
-            host: nodeData.inputs?.host as string,
-            port: nodeData.inputs?.port as number,
-            username: user,
-            password: password,
-            database: nodeData.inputs?.database as string
-        }
-
-        const args = {
-            postgresConnectionOptions: postgresConnectionOptions as DataSourceOptions,
-            tableName: tableName
-        }
-
-        const vectorStore = await TypeORMVectorStore.fromDataSource(embeddings, args)
-
-        // Rewrite the method to use pg pool connection instead of the default connection
-        /* Otherwise a connection error is displayed when the chain tries to execute the function
-            [chain/start] [1:chain:ConversationalRetrievalQAChain] Entering Chain run with input: { "question": "what the document is about", "chat_history": [] }
-            [retriever/start] [1:chain:ConversationalRetrievalQAChain > 2:retriever:VectorStoreRetriever] Entering Retriever run with input: { "query": "what the document is about" }
-            [ERROR]: uncaughtException:  Illegal invocation TypeError: Illegal invocation at Socket.ref (node:net:1524:18) at Connection.ref (.../node_modules/pg/lib/connection.js:183:17) at Client.ref (.../node_modules/pg/lib/client.js:591:21) at BoundPool._pulseQueue (/node_modules/pg-pool/index.js:148:28) at .../node_modules/pg-pool/index.js:184:37 at process.processTicksAndRejections (node:internal/process/task_queues:77:11)
-        */
-        vectorStore.similaritySearchVectorWithScore = async (query: number[], k: number, filter?: any) => {
-            return await similaritySearchVectorWithScore(query, k, tableName, postgresConnectionOptions, filter)
-        }
+        const vectorStore = await vectorStoreDriver.instanciate(pgMetadataFilter)
 
         if (output === 'retriever') {
             const retriever = vectorStore.asRetriever(k)
             return retriever
         } else if (output === 'vectorStore') {
             ;(vectorStore as any).k = k
+            if (pgMetadataFilter) {
+                ;(vectorStore as any).filter = pgMetadataFilter
+            }
             return vectorStore
         }
         return vectorStore
     }
-}
 
-const similaritySearchVectorWithScore = async (
-    query: number[],
-    k: number,
-    tableName: string,
-    postgresConnectionOptions: ICommonObject,
-    filter?: any
-) => {
-    const embeddingString = `[${query.join(',')}]`
-    const _filter = filter ?? '{}'
-
-    const queryString = `
-        SELECT *, embedding <=> $1 as "_distance"
-        FROM ${tableName}
-        WHERE metadata @> $2
-        ORDER BY "_distance" ASC
-        LIMIT $3;`
-
-    const poolOptions = {
-        host: postgresConnectionOptions.host,
-        port: postgresConnectionOptions.port,
-        user: postgresConnectionOptions.username,
-        password: postgresConnectionOptions.password,
-        database: postgresConnectionOptions.database
+    static getDriverFromConfig(nodeData: INodeData, options: ICommonObject): VectorStoreDriver {
+        /*switch (nodeData.inputs?.driver) {
+            case 'typeorm':
+                return new TypeORMDriver(nodeData, options)
+            case 'pgvector':
+                return new PGVectorDriver(nodeData, options)
+            default:
+                return new TypeORMDriver(nodeData, options)
+        }*/
+        return new TypeORMDriver(nodeData, options)
     }
-    const pool = new Pool(poolOptions)
-    const conn = await pool.connect()
-
-    const documents = await conn.query(queryString, [embeddingString, _filter, k])
-
-    conn.release()
-
-    const results = [] as [TypeORMVectorStoreDocument, number][]
-    for (const doc of documents.rows) {
-        if (doc._distance != null && doc.pageContent != null) {
-            const document = new Document(doc) as TypeORMVectorStoreDocument
-            document.id = doc.id
-            results.push([document, doc._distance])
-        }
-    }
-
-    return results
 }
 
 module.exports = { nodeClass: Postgres_VectorStores }

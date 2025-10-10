@@ -1,6 +1,6 @@
-import { getBaseClasses, ICommonObject, INode, INodeData, INodeParams } from '../../../src'
-import { BaseCache } from 'langchain/schema'
+import { BaseCache } from '@langchain/core/caches'
 import hash from 'object-hash'
+import { getBaseClasses, ICommonObject, INode, INodeData, INodeParams } from '../../../src'
 
 class InMemoryCache implements INode {
     label: string
@@ -15,29 +15,29 @@ class InMemoryCache implements INode {
     credential: INodeParams
 
     constructor() {
-        this.label = 'InMemory Cache'
+        this.label = 'Кэш в памяти'
         this.name = 'inMemoryCache'
         this.version = 1.0
         this.type = 'InMemoryCache'
-        this.description = 'Cache LLM response in memory, will be cleared once app restarted'
-        this.icon = 'inmemorycache.png'
+        this.description = 'Кэширование ответов LLM в памяти, данные будут очищены при перезапуске приложения'
+        this.icon = 'Memory.svg'
         this.category = 'Cache'
         this.baseClasses = [this.type, ...getBaseClasses(InMemoryCacheExtended)]
         this.inputs = []
     }
 
     async init(nodeData: INodeData, _: string, options: ICommonObject): Promise<any> {
-        const memoryMap = options.cachePool.getLLMCache(options.chatflowid) ?? new Map()
+        const memoryMap = (await options.cachePool.getLLMCache(options.chatflowid)) ?? new Map()
         const inMemCache = new InMemoryCacheExtended(memoryMap)
 
         inMemCache.lookup = async (prompt: string, llmKey: string): Promise<any | null> => {
-            const memory = options.cachePool.getLLMCache(options.chatflowid) ?? inMemCache.cache
+            const memory = (await options.cachePool.getLLMCache(options.chatflowid)) ?? inMemCache.cache
             return Promise.resolve(memory.get(getCacheKey(prompt, llmKey)) ?? null)
         }
 
         inMemCache.update = async (prompt: string, llmKey: string, value: any): Promise<void> => {
             inMemCache.cache.set(getCacheKey(prompt, llmKey), value)
-            options.cachePool.addLLMCache(options.chatflowid, inMemCache.cache)
+            await options.cachePool.addLLMCache(options.chatflowid, inMemCache.cache)
         }
         return inMemCache
     }

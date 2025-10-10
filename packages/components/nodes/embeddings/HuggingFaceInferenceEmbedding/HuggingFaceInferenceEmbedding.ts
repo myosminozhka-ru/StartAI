@@ -19,22 +19,22 @@ class HuggingFaceInferenceEmbedding_Embeddings implements INode {
         this.name = 'huggingFaceInferenceEmbeddings'
         this.version = 1.0
         this.type = 'HuggingFaceInferenceEmbeddings'
-        this.icon = 'huggingface.png'
+        this.icon = 'HuggingFace.svg'
         this.category = 'Embeddings'
-        this.description = 'HuggingFace Inference API to generate embeddings for a given text'
+        this.description = 'HuggingFace Inference API для генерации эмбеддингов для заданного текста'
         this.baseClasses = [this.type, ...getBaseClasses(HuggingFaceInferenceEmbeddings)]
         this.credential = {
-            label: 'Connect Credential',
+            label: 'Подключите учетные данные',
             name: 'credential',
             type: 'credential',
             credentialNames: ['huggingFaceApi']
         }
         this.inputs = [
             {
-                label: 'Model',
+                label: 'Модель',
                 name: 'modelName',
                 type: 'string',
-                description: 'If using own inference endpoint, leave this blank',
+                description: 'Если используете собственный inference endpoint, оставьте это поле пустым',
                 placeholder: 'sentence-transformers/distilbert-base-nli-mean-tokens',
                 optional: true
             },
@@ -43,7 +43,7 @@ class HuggingFaceInferenceEmbedding_Embeddings implements INode {
                 name: 'endpoint',
                 type: 'string',
                 placeholder: 'https://xyz.eu-west-1.aws.endpoints.huggingface.cloud/sentence-transformers/all-MiniLM-L6-v2',
-                description: 'Using your own inference endpoint',
+                description: 'Использование собственного inference endpoint',
                 optional: true
             }
         ]

@@ -1,10 +1,11 @@
-import { INode, INodeData, INodeParams } from '../../../src/Interface'
 import { TextSplitter } from 'langchain/text_splitter'
-import { CheerioWebBaseLoader, WebBaseLoaderParams } from 'langchain/document_loaders/web/cheerio'
+import { omit } from 'lodash'
+import { CheerioWebBaseLoader, WebBaseLoaderParams } from '@langchain/community/document_loaders/web/cheerio'
 import { test } from 'linkifyjs'
 import { parse } from 'css-what'
-import { webCrawl, xmlScrape } from '../../../src'
 import { SelectorType } from 'cheerio'
+import { ICommonObject, INodeOutputsValue, IDocument, INode, INodeData, INodeParams } from '../../../src/Interface'
+import { handleEscapeCharacters, webCrawl, xmlScrape } from '../../../src/utils'
 
 class Cheerio_DocumentLoaders implements INode {
     label: string
@@ -16,15 +17,16 @@ class Cheerio_DocumentLoaders implements INode {
     category: string
     baseClasses: string[]
     inputs: INodeParams[]
+    outputs: INodeOutputsValue[]
 
     constructor() {
-        this.label = 'Cheerio Web Scraper'
+        this.label = 'Cheerio Веб-скрапер'
         this.name = 'cheerioWebScraper'
-        this.version = 1.1
+        this.version = 2.0
         this.type = 'Document'
         this.icon = 'cheerio.svg'
         this.category = 'Document Loaders'
-        this.description = `Load data from webpages`
+        this.description = `Загрузка данных с веб-страниц`
         this.baseClasses = [this.type]
         this.inputs = [
             {
@@ -33,64 +35,102 @@ class Cheerio_DocumentLoaders implements INode {
                 type: 'string'
             },
             {
-                label: 'Text Splitter',
+                label: 'Разделитель текста',
                 name: 'textSplitter',
                 type: 'TextSplitter',
                 optional: true
             },
             {
-                label: 'Get Relative Links Method',
+                label: 'Метод получения относительных ссылок',
                 name: 'relativeLinksMethod',
                 type: 'options',
-                description: 'Select a method to retrieve relative links',
+                description: 'Выберите метод получения относительных ссылок',
                 options: [
                     {
-                        label: 'Web Crawl',
+                        label: 'Веб-краулинг',
                         name: 'webCrawl',
-                        description: 'Crawl relative links from HTML URL'
+                        description: 'Обход относительных ссылок из HTML URL'
                     },
                     {
-                        label: 'Scrape XML Sitemap',
+                        label: 'Скрапинг XML карты сайта',
                         name: 'scrapeXMLSitemap',
-                        description: 'Scrape relative links from XML sitemap URL'
+                        description: 'Извлечение относительных ссылок из URL XML карты сайта'
                     }
                 ],
+                default: 'webCrawl',
                 optional: true,
                 additionalParams: true
             },
             {
-                label: 'Get Relative Links Limit',
+                label: 'Лимит получения относительных ссылок',
                 name: 'limit',
                 type: 'number',
                 optional: true,
+                default: '10',
                 additionalParams: true,
                 description:
-                    'Only used when "Get Relative Links Method" is selected. Set 0 to retrieve all relative links, default limit is 10.',
-                warning: `Retrieving all links might take long time, and all links will be upserted again if the flow's state changed (eg: different URL, chunk size, etc)`
+                    'Используется только когда выбран "Метод получения относительных ссылок". Установите 0 для получения всех относительных ссылок, по умолчанию лимит 10.',
+                warning: `Получение всех ссылок может занять много времени, и все ссылки будут обновлены, если состояние потока изменится (например: другой URL, размер чанка и т.д.)`
             },
             {
-                label: 'Selector (CSS)',
+                label: 'Селектор (CSS)',
                 name: 'selector',
                 type: 'string',
-                description: 'Specify a CSS selector to select the content to be extracted',
+                description: 'Укажите CSS селектор для выбора контента, который нужно извлечь',
                 optional: true,
                 additionalParams: true
             },
             {
-                label: 'Metadata',
+                label: 'Дополнительные метаданные',
                 name: 'metadata',
                 type: 'json',
+                description: 'Дополнительные метаданные для добавления к извлеченным документам',
+                optional: true,
+                additionalParams: true
+            },
+            {
+                label: 'Исключить ключи метаданных',
+                name: 'omitMetadataKeys',
+                type: 'string',
+                rows: 4,
+                description:
+                    'Каждый загрузчик документов имеет стандартный набор ключей метаданных, извлекаемых из документа. Вы можете использовать это поле для исключения некоторых стандартных ключей метаданных. Значение должно быть списком ключей, разделенных запятыми. Используйте * для исключения всех ключей метаданных, кроме тех, которые вы указали в поле Дополнительные метаданные',
+                placeholder: 'key1, key2, key3.nestedKey1',
                 optional: true,
                 additionalParams: true
             }
         ]
+        this.outputs = [
+            {
+                label: 'Документ',
+                name: 'document',
+                description: 'Массив объектов документов, содержащих метаданные и содержимое страницы',
+                baseClasses: [...this.baseClasses, 'json']
+            },
+            {
+                label: 'Текст',
+                name: 'text',
+                description: 'Объединенная строка из содержимого страниц документов',
+                baseClasses: ['string', 'json']
+            }
+        ]
     }
 
-    async init(nodeData: INodeData): Promise<any> {
+    async init(nodeData: INodeData, _: string, options: ICommonObject): Promise<any> {
         const textSplitter = nodeData.inputs?.textSplitter as TextSplitter
         const metadata = nodeData.inputs?.metadata
         const relativeLinksMethod = nodeData.inputs?.relativeLinksMethod as string
-        let limit = nodeData.inputs?.limit as string
+        const selectedLinks = nodeData.inputs?.selectedLinks as string[]
+        let limit = parseInt(nodeData.inputs?.limit as string)
+        const output = nodeData.outputs?.output as string
+        const orgId = options.orgId
+
+        const _omitMetadataKeys = nodeData.inputs?.omitMetadataKeys as string
+
+        let omitMetadataKeys: string[] = []
+        if (_omitMetadataKeys) {
+            omitMetadataKeys = _omitMetadataKeys.split(',').map((key) => key.trim())
+        }
 
         let url = nodeData.inputs?.url as string
         url = url.trim()
@@ -108,53 +148,101 @@ class Cheerio_DocumentLoaders implements INode {
 
         async function cheerioLoader(url: string): Promise<any> {
             try {
-                let docs = []
+                let docs: IDocument[] = []
+                if (url.endsWith('.pdf')) {
+                    if (process.env.DEBUG === 'true')
+                        options.logger.info(`[${orgId}]: CheerioWebBaseLoader does not support PDF files: ${url}`)
+                    return docs
+                }
                 const loader = new CheerioWebBaseLoader(url, params)
                 if (textSplitter) {
-                    docs = await loader.loadAndSplit(textSplitter)
+                    docs = await loader.load()
+                    docs = await textSplitter.splitDocuments(docs)
                 } else {
                     docs = await loader.load()
                 }
                 return docs
             } catch (err) {
-                if (process.env.DEBUG === 'true') console.error(`error in CheerioWebBaseLoader: ${err.message}, on page: ${url}`)
+                if (process.env.DEBUG === 'true')
+                    options.logger.error(`[${orgId}]: Error in CheerioWebBaseLoader: ${err.message}, on page: ${url}`)
+                return []
             }
         }
 
-        let docs = []
+        let docs: IDocument[] = []
+
         if (relativeLinksMethod) {
-            if (process.env.DEBUG === 'true') console.info(`Start ${relativeLinksMethod}`)
-            if (!limit) limit = '10'
-            else if (parseInt(limit) < 0) throw new Error('Limit cannot be less than 0')
+            if (process.env.DEBUG === 'true') options.logger.info(`[${orgId}]: Start CheerioWebBaseLoader ${relativeLinksMethod}`)
+            // if limit is 0 we don't want it to default to 10 so we check explicitly for null or undefined
+            // so when limit is 0 we can fetch all the links
+            if (limit === null || limit === undefined) limit = 10
+            else if (limit < 0) throw new Error('Limit cannot be less than 0')
             const pages: string[] =
-                relativeLinksMethod === 'webCrawl' ? await webCrawl(url, parseInt(limit)) : await xmlScrape(url, parseInt(limit))
-            if (process.env.DEBUG === 'true') console.info(`pages: ${JSON.stringify(pages)}, length: ${pages.length}`)
+                selectedLinks && selectedLinks.length > 0
+                    ? selectedLinks.slice(0, limit === 0 ? undefined : limit)
+                    : relativeLinksMethod === 'webCrawl'
+                    ? await webCrawl(url, limit)
+                    : await xmlScrape(url, limit)
+            if (process.env.DEBUG === 'true')
+                options.logger.info(`[${orgId}]: CheerioWebBaseLoader pages: ${JSON.stringify(pages)}, length: ${pages.length}`)
             if (!pages || pages.length === 0) throw new Error('No relative links found')
             for (const page of pages) {
                 docs.push(...(await cheerioLoader(page)))
             }
-            if (process.env.DEBUG === 'true') console.info(`Finish ${relativeLinksMethod}`)
+            if (process.env.DEBUG === 'true') options.logger.info(`[${orgId}]: Finish CheerioWebBaseLoader ${relativeLinksMethod}`)
+        } else if (selectedLinks && selectedLinks.length > 0) {
+            if (process.env.DEBUG === 'true')
+                options.logger.info(
+                    `[${orgId}]: CheerioWebBaseLoader pages: ${JSON.stringify(selectedLinks)}, length: ${selectedLinks.length}`
+                )
+            for (const page of selectedLinks.slice(0, limit)) {
+                docs.push(...(await cheerioLoader(page)))
+            }
         } else {
             docs = await cheerioLoader(url)
         }
 
         if (metadata) {
             const parsedMetadata = typeof metadata === 'object' ? metadata : JSON.parse(metadata)
-            let finaldocs = []
-            for (const doc of docs) {
-                const newdoc = {
-                    ...doc,
-                    metadata: {
-                        ...doc.metadata,
-                        ...parsedMetadata
-                    }
-                }
-                finaldocs.push(newdoc)
-            }
-            return finaldocs
+            docs = docs.map((doc) => ({
+                ...doc,
+                metadata:
+                    _omitMetadataKeys === '*'
+                        ? {
+                              ...parsedMetadata
+                          }
+                        : omit(
+                              {
+                                  ...doc.metadata,
+                                  ...parsedMetadata
+                              },
+                              omitMetadataKeys
+                          )
+            }))
+        } else {
+            docs = docs.map((doc) => ({
+                ...doc,
+                metadata:
+                    _omitMetadataKeys === '*'
+                        ? {}
+                        : omit(
+                              {
+                                  ...doc.metadata
+                              },
+                              omitMetadataKeys
+                          )
+            }))
         }
 
-        return docs
+        if (output === 'document') {
+            return docs
+        } else {
+            let finaltext = ''
+            for (const doc of docs) {
+                finaltext += `${doc.pageContent}\n`
+            }
+            return handleEscapeCharacters(finaltext, false)
+        }
     }
 }
 

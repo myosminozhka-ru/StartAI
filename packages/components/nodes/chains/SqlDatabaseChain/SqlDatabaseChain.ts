@@ -1,12 +1,14 @@
-import { ICommonObject, INode, INodeData, INodeParams } from '../../../src/Interface'
-import { SqlDatabaseChain, SqlDatabaseChainInput, DEFAULT_SQL_DATABASE_PROMPT } from 'langchain/chains/sql_db'
-import { getBaseClasses, getInputVariables } from '../../../src/utils'
-import { DataSource } from 'typeorm'
-import { SqlDatabase } from 'langchain/sql_db'
-import { BaseLanguageModel } from 'langchain/base_language'
-import { PromptTemplate, PromptTemplateInput } from 'langchain/prompts'
-import { ConsoleCallbackHandler, CustomChainHandler, additionalCallbacks } from '../../../src/handler'
 import { DataSourceOptions } from 'typeorm/data-source'
+import { DataSource } from 'typeorm'
+import { BaseLanguageModel } from '@langchain/core/language_models/base'
+import { PromptTemplate, PromptTemplateInput } from '@langchain/core/prompts'
+import { SqlDatabaseChain, SqlDatabaseChainInput, DEFAULT_SQL_DATABASE_PROMPT } from 'langchain/chains/sql_db'
+import { SqlDatabase } from 'langchain/sql_db'
+import { ICommonObject, INode, INodeData, INodeParams, IServerSideEventStreamer } from '../../../src/Interface'
+import { ConsoleCallbackHandler, CustomChainHandler, additionalCallbacks } from '../../../src/handler'
+import { getBaseClasses, getInputVariables, transformBracesWithColon } from '../../../src/utils'
+import { checkInputs, Moderation, streamResponse } from '../../moderation/Moderation'
+import { formatResponse } from '../../outputparsers/OutputParserHelpers'
 
 type DatabaseType = 'sqlite' | 'postgres' | 'mssql' | 'mysql'
 
@@ -22,22 +24,22 @@ class SqlDatabaseChain_Chains implements INode {
     inputs: INodeParams[]
 
     constructor() {
-        this.label = 'Sql Database Chain'
+        this.label = 'Цепочка SQL базы данных'
         this.name = 'sqlDatabaseChain'
-        this.version = 4.0
+        this.version = 5.0
         this.type = 'SqlDatabaseChain'
         this.icon = 'sqlchain.svg'
         this.category = 'Chains'
-        this.description = 'Answer questions over a SQL database'
+        this.description = 'Отвечайте на вопросы с помощью базы данных SQL'
         this.baseClasses = [this.type, ...getBaseClasses(SqlDatabaseChain)]
         this.inputs = [
             {
-                label: 'Language Model',
+                label: 'Языковая модель',
                 name: 'model',
                 type: 'BaseLanguageModel'
             },
             {
-                label: 'Database',
+                label: 'База данных',
                 name: 'database',
                 type: 'options',
                 options: [
@@ -61,60 +63,71 @@ class SqlDatabaseChain_Chains implements INode {
                 default: 'sqlite'
             },
             {
-                label: 'Connection string or file path (sqlite only)',
+                label: 'Строка подключения или путь к файлу (только для sqlite)',
                 name: 'url',
                 type: 'string',
-                placeholder: '1270.0.0.1:5432/chinook'
+                placeholder: '127.0.0.1:5432/chinook'
             },
             {
-                label: 'Include Tables',
+                label: 'Включить таблицы',
                 name: 'includesTables',
                 type: 'string',
-                description: 'Tables to include for queries, seperated by comma. Can only use Include Tables or Ignore Tables',
+                description:
+                    'Таблицы для включения в запросы, разделенные запятыми. Можно использовать только Включить таблицы или Игнорировать таблицы',
                 placeholder: 'table1, table2',
                 additionalParams: true,
                 optional: true
             },
             {
-                label: 'Ignore Tables',
+                label: 'Игнорировать таблицы',
                 name: 'ignoreTables',
                 type: 'string',
-                description: 'Tables to ignore for queries, seperated by comma. Can only use Ignore Tables or Include Tables',
+                description:
+                    'Таблицы для исключения из запросов, разделенные запятыми. Можно использовать только Игнорировать таблицы или Включить таблицы',
                 placeholder: 'table1, table2',
                 additionalParams: true,
                 optional: true
             },
             {
-                label: "Sample table's rows info",
+                label: 'Информация о примерах строк таблицы',
                 name: 'sampleRowsInTableInfo',
                 type: 'number',
-                description: 'Number of sample row for tables to load for info.',
+                description: 'Количество примеров строк для загрузки информации о таблицах.',
                 placeholder: '3',
                 additionalParams: true,
                 optional: true
             },
             {
-                label: 'Top Keys',
+                label: 'Топ ключей',
                 name: 'topK',
                 type: 'number',
                 description:
-                    'If you are querying for several rows of a table you can select the maximum number of results you want to get by using the "top_k" parameter (default is 10). This is useful for avoiding query results that exceed the prompt max length or consume tokens unnecessarily.',
+                    'Если вы запрашиваете несколько строк таблицы, вы можете выбрать максимальное количество результатов, которое хотите получить, используя параметр "top_k" (по умолчанию 10). Это полезно для избежания результатов запроса, превышающих максимальную длину промпта или потребляющих токены без необходимости.',
                 placeholder: '10',
                 additionalParams: true,
                 optional: true
             },
             {
-                label: 'Custom Prompt',
+                label: 'Пользовательский промпт',
                 name: 'customPrompt',
                 type: 'string',
                 description:
-                    'You can provide custom prompt to the chain. This will override the existing default prompt used. See <a target="_blank" href="https://python.langchain.com/docs/integrations/tools/sqlite#customize-prompt">guide</a>',
+                    'Вы можете предоставить пользовательский промпт для цепочки. Это переопределит существующий промпт по умолчанию. См. <a target="_blank" href="https://python.langchain.com/docs/integrations/tools/sqlite#customize-prompt">руководство</a>',
                 warning:
-                    'Prompt must include 3 input variables: {input}, {dialect}, {table_info}. You can refer to official guide from description above',
+                    'Промпт должен включать 3 входные переменные: {input}, {dialect}, {table_info}. Вы можете обратиться к официальному руководству из описания выше',
                 rows: 4,
                 placeholder: DEFAULT_SQL_DATABASE_PROMPT.template + DEFAULT_SQL_DATABASE_PROMPT.templateFormat,
                 additionalParams: true,
                 optional: true
+            },
+            {
+                label: 'Модерация ввода',
+                description:
+                    'Обнаружение текста, который может генерировать вредоносный вывод, и предотвращение его отправки языковой модели',
+                name: 'inputModeration',
+                type: 'Moderation',
+                optional: true,
+                list: true
             }
         ]
     }
@@ -144,7 +157,7 @@ class SqlDatabaseChain_Chains implements INode {
         return chain
     }
 
-    async run(nodeData: INodeData, input: string, options: ICommonObject): Promise<string> {
+    async run(nodeData: INodeData, input: string, options: ICommonObject): Promise<string | object> {
         const databaseType = nodeData.inputs?.database as DatabaseType
         const model = nodeData.inputs?.model as BaseLanguageModel
         const url = nodeData.inputs?.url as string
@@ -155,6 +168,24 @@ class SqlDatabaseChain_Chains implements INode {
         const sampleRowsInTableInfo = nodeData.inputs?.sampleRowsInTableInfo as number
         const topK = nodeData.inputs?.topK as number
         const customPrompt = nodeData.inputs?.customPrompt as string
+        const moderations = nodeData.inputs?.inputModeration as Moderation[]
+
+        const shouldStreamResponse = options.shouldStreamResponse
+        const sseStreamer: IServerSideEventStreamer = options.sseStreamer as IServerSideEventStreamer
+        const chatId = options.chatId
+
+        if (moderations && moderations.length > 0) {
+            try {
+                // Use the output of the moderation chain as input for the Sql Database Chain
+                input = await checkInputs(moderations, input)
+            } catch (e) {
+                await new Promise((resolve) => setTimeout(resolve, 500))
+                if (shouldStreamResponse) {
+                    streamResponse(sseStreamer, chatId, e.message)
+                }
+                return formatResponse(e.message)
+            }
+        }
 
         const chain = await getSQLDBChain(
             databaseType,
@@ -166,11 +197,12 @@ class SqlDatabaseChain_Chains implements INode {
             topK,
             customPrompt
         )
-        const loggerHandler = new ConsoleCallbackHandler(options.logger)
+        const loggerHandler = new ConsoleCallbackHandler(options.logger, options?.orgId)
         const callbacks = await additionalCallbacks(nodeData, options)
 
-        if (options.socketIO && options.socketIOClientId) {
-            const handler = new CustomChainHandler(options.socketIO, options.socketIOClientId, 2)
+        if (shouldStreamResponse) {
+            const handler = new CustomChainHandler(sseStreamer, chatId, 2)
+
             const res = await chain.run(input, [loggerHandler, handler, ...callbacks])
             return res
         } else {
@@ -212,11 +244,12 @@ const getSQLDBChain = async (
     const obj: SqlDatabaseChainInput = {
         llm,
         database: db,
-        verbose: process.env.DEBUG === 'true' ? true : false,
+        verbose: process.env.DEBUG === 'true',
         topK: topK
     }
 
     if (customPrompt) {
+        customPrompt = transformBracesWithColon(customPrompt)
         const options: PromptTemplateInput = {
             template: customPrompt,
             inputVariables: getInputVariables(customPrompt)

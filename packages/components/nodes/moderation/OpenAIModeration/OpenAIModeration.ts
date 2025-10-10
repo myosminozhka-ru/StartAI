@@ -1,7 +1,7 @@
-import { ICommonObject, INode, INodeData, INodeParams } from '../../../src/Interface'
-import { getBaseClasses, getCredentialData, getCredentialParam } from '../../../src'
 import { Moderation } from '../Moderation'
 import { OpenAIModerationRunner } from './OpenAIModerationRunner'
+import { ICommonObject, INode, INodeData, INodeParams } from '../../../src/Interface'
+import { getBaseClasses, getCredentialData, getCredentialParam } from '../../../src'
 
 class OpenAIModeration implements INode {
     label: string
@@ -16,27 +16,27 @@ class OpenAIModeration implements INode {
     inputs: INodeParams[]
 
     constructor() {
-        this.label = 'OpenAI Moderation'
+        this.label = 'OpenAI Модерация'
         this.name = 'inputModerationOpenAI'
         this.version = 1.0
         this.type = 'Moderation'
-        this.icon = 'openai.png'
+        this.icon = 'openai.svg'
         this.category = 'Moderation'
-        this.description = 'Check whether content complies with OpenAI usage policies.'
+        this.description = 'Проверьте, соответствует ли контент политикам использования OpenAI.'
         this.baseClasses = [this.type, ...getBaseClasses(Moderation)]
         this.credential = {
-            label: 'Connect Credential',
+            label: 'Подключите учетные данные',
             name: 'credential',
             type: 'credential',
             credentialNames: ['openAIApi']
         }
         this.inputs = [
             {
-                label: 'Error Message',
+                label: 'Сообщение об ошибке',
                 name: 'moderationErrorMessage',
                 type: 'string',
                 rows: 2,
-                default: "Cannot Process! Input violates OpenAI's content moderation policies.",
+                default: 'Невозможно обработать! Ввод нарушает политики модерации контента OpenAI.',
                 optional: true
             }
         ]

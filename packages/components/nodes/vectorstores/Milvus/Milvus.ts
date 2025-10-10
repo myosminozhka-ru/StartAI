@@ -1,10 +1,11 @@
 import { flatten } from 'lodash'
 import { DataType, ErrorCode, MetricType, IndexType } from '@zilliz/milvus2-sdk-node'
-import { Document } from 'langchain/document'
-import { MilvusLibArgs, Milvus } from 'langchain/vectorstores/milvus'
-import { Embeddings } from 'langchain/embeddings/base'
-import { ICommonObject, INode, INodeData, INodeOutputsValue, INodeParams } from '../../../src/Interface'
-import { getBaseClasses, getCredentialData, getCredentialParam } from '../../../src/utils'
+import { Document } from '@langchain/core/documents'
+import { MilvusLibArgs, Milvus } from '@langchain/community/vectorstores/milvus'
+import { Embeddings } from '@langchain/core/embeddings'
+import { ICommonObject, INode, INodeData, INodeOutputsValue, INodeParams, IndexingResult } from '../../../src/Interface'
+import { FLOWISE_CHATID, getBaseClasses, getCredentialData, getCredentialParam } from '../../../src/utils'
+import { howToUseFileUpload } from '../VectorStoreUtils'
 
 interface InsertRow {
     [x: string]: string | number[]
@@ -27,15 +28,14 @@ class Milvus_VectorStores implements INode {
     constructor() {
         this.label = 'Milvus'
         this.name = 'milvus'
-        this.version = 1.0
+        this.version = 2.1
         this.type = 'Milvus'
         this.icon = 'milvus.svg'
         this.category = 'Vector Stores'
-        this.description = `Upsert embedded data and perform similarity search upon query using Milvus, world's most advanced open-source vector database`
+        this.description = `Вставить встроенные данные и выполнить поиск по сходству по запросу, используя Milvus, самую передовую открытую векторную базу данных в мире`
         this.baseClasses = [this.type, 'VectorStoreRetriever', 'BaseRetriever']
-        this.badge = 'NEW'
         this.credential = {
-            label: 'Connect Credential',
+            label: 'Подключите учетные данные',
             name: 'credential',
             type: 'credential',
             optional: true,
@@ -43,46 +43,114 @@ class Milvus_VectorStores implements INode {
         }
         this.inputs = [
             {
-                label: 'Document',
+                label: 'Документ',
                 name: 'document',
                 type: 'Document',
                 list: true,
                 optional: true
             },
             {
-                label: 'Embeddings',
+                label: 'Вложения',
                 name: 'embeddings',
                 type: 'Embeddings'
             },
             {
-                label: 'Milvus Server URL',
+                label: 'URL сервера Milvus',
                 name: 'milvusServerUrl',
                 type: 'string',
                 placeholder: 'http://localhost:19530'
             },
             {
-                label: 'Milvus Collection Name',
+                label: 'Имя коллекции Milvus',
                 name: 'milvusCollection',
                 type: 'string'
             },
             {
-                label: 'Milvus Filter',
+                label: 'Имя раздела Milvus',
+                name: 'milvusPartition',
+                default: '_default',
+                type: 'string',
+                optional: true
+            },
+            {
+                label: 'Загрузка файла',
+                name: 'fileUpload',
+                description: 'Разрешить загрузку файла в чате',
+                hint: {
+                    label: 'Как использовать',
+                    value: howToUseFileUpload
+                },
+                type: 'boolean',
+                additionalParams: true,
+                optional: true
+            },
+            {
+                label: 'Текстовое поле Milvus',
+                name: 'milvusTextField',
+                type: 'string',
+                placeholder: 'langchain_text',
+                optional: true,
+                additionalParams: true
+            },
+            {
+                label: 'Фильтр Milvus',
                 name: 'milvusFilter',
                 type: 'string',
                 optional: true,
                 description:
-                    'Filter data with a simple string query. Refer Milvus <a target="_blank" href="https://milvus.io/blog/2022-08-08-How-to-use-string-data-to-empower-your-similarity-search-applications.md#Hybrid-search">docs</a> for more details.',
+                    'Фильтровать данные с помощью простого строкового запроса. См. документацию Milvus <a target="_blank" href="https://milvus.io/blog/2022-08-08-How-to-use-string-data-to-empower-your-similarity-search-applications.md#Hybrid-search">docs</a> для получения дополнительной информации.',
                 placeholder: 'doc=="a"',
-                additionalParams: true
+                additionalParams: true,
+                acceptVariable: true
             },
             {
-                label: 'Top K',
+                label: 'Топ K',
                 name: 'topK',
-                description: 'Number of top results to fetch. Default to 4',
+                description: 'Количество лучших результатов для получения. По умолчанию 4',
                 placeholder: '4',
                 type: 'number',
                 additionalParams: true,
                 optional: true
+            },
+            {
+                label: 'Безопасный',
+                name: 'secure',
+                type: 'boolean',
+                optional: true,
+                description: 'Включить безопасное подключение к серверу Milvus',
+                additionalParams: true
+            },
+            {
+                label: 'Путь к клиентскому PEM',
+                name: 'clientPemPath',
+                type: 'string',
+                optional: true,
+                description: 'Путь к файлу клиентского PEM',
+                additionalParams: true
+            },
+            {
+                label: 'Путь к клиентскому ключу',
+                name: 'clientKeyPath',
+                type: 'string',
+                optional: true,
+                description: 'Путь к файлу клиентского ключа',
+                additionalParams: true
+            },
+            {
+                label: 'Путь к CA PEM',
+                name: 'caPemPath',
+                type: 'string',
+                optional: true,
+                description: 'Путь к корневому PEM файлу',
+                additionalParams: true
+            },
+            {
+                label: 'Имя сервера',
+                name: 'serverName',
+                type: 'string',
+                optional: true,
+                description: 'Имя сервера для безопасного подключения',
+                additionalParams: true
             }
         ]
         this.outputs = [
@@ -101,7 +169,7 @@ class Milvus_VectorStores implements INode {
 
     //@ts-ignore
     vectorStoreMethods = {
-        async upsert(nodeData: INodeData, options: ICommonObject): Promise<void> {
+        async upsert(nodeData: INodeData, options: ICommonObject): Promise<Partial<IndexingResult>> {
             // server setup
             const address = nodeData.inputs?.milvusServerUrl as string
             const collectionName = nodeData.inputs?.milvusCollection as string
@@ -109,16 +177,41 @@ class Milvus_VectorStores implements INode {
             // embeddings
             const docs = nodeData.inputs?.document as Document[]
             const embeddings = nodeData.inputs?.embeddings as Embeddings
+            const isFileUploadEnabled = nodeData.inputs?.fileUpload as boolean
 
             // credential
             const credentialData = await getCredentialData(nodeData.credential ?? '', options)
             const milvusUser = getCredentialParam('milvusUser', credentialData, nodeData)
             const milvusPassword = getCredentialParam('milvusPassword', credentialData, nodeData)
 
+            // tls
+            const secure = nodeData.inputs?.secure as boolean
+            const clientPemPath = nodeData.inputs?.clientPemPath as string
+            const clientKeyPath = nodeData.inputs?.clientKeyPath as string
+            const caPemPath = nodeData.inputs?.caPemPath as string
+            const serverName = nodeData.inputs?.serverName as string
+
+            // partition
+            const partitionName = nodeData.inputs?.milvusPartition ?? '_default'
+
             // init MilvusLibArgs
             const milVusArgs: MilvusLibArgs = {
                 url: address,
-                collectionName: collectionName
+                collectionName: collectionName,
+                partitionName: partitionName
+            }
+
+            if (secure) {
+                milVusArgs.clientConfig = {
+                    address: address,
+                    ssl: secure,
+                    tls: {
+                        rootCertPath: caPemPath,
+                        certChainPath: clientPemPath,
+                        privateKeyPath: clientKeyPath,
+                        serverName: serverName
+                    }
+                }
             }
 
             if (milvusUser) milVusArgs.username = milvusUser
@@ -128,6 +221,9 @@ class Milvus_VectorStores implements INode {
             const finalDocs = []
             for (let i = 0; i < flattenDocs.length; i += 1) {
                 if (flattenDocs[i] && flattenDocs[i].pageContent) {
+                    if (isFileUploadEnabled && options.chatId) {
+                        flattenDocs[i].metadata = { ...flattenDocs[i].metadata, [FLOWISE_CHATID]: options.chatId }
+                    }
                     finalDocs.push(new Document(flattenDocs[i]))
                 }
             }
@@ -139,6 +235,8 @@ class Milvus_VectorStores implements INode {
                 vectorStore.similaritySearchVectorWithScore = async (query: number[], k: number, filter?: string) => {
                     return await similaritySearchVectorWithScore(query, k, vectorStore, undefined, filter)
                 }
+
+                return { numAdded: finalDocs.length, addedDocs: finalDocs }
             } catch (e) {
                 throw new Error(e)
             }
@@ -149,7 +247,9 @@ class Milvus_VectorStores implements INode {
         // server setup
         const address = nodeData.inputs?.milvusServerUrl as string
         const collectionName = nodeData.inputs?.milvusCollection as string
-        const milvusFilter = nodeData.inputs?.milvusFilter as string
+        const _milvusFilter = nodeData.inputs?.milvusFilter as string
+        const textField = nodeData.inputs?.milvusTextField as string
+        const isFileUploadEnabled = nodeData.inputs?.fileUpload as boolean
 
         // embeddings
         const embeddings = nodeData.inputs?.embeddings as Embeddings
@@ -166,14 +266,45 @@ class Milvus_VectorStores implements INode {
         const milvusUser = getCredentialParam('milvusUser', credentialData, nodeData)
         const milvusPassword = getCredentialParam('milvusPassword', credentialData, nodeData)
 
+        // tls
+        const secure = nodeData.inputs?.secure as boolean
+        const clientPemPath = nodeData.inputs?.clientPemPath as string
+        const clientKeyPath = nodeData.inputs?.clientKeyPath as string
+        const caPemPath = nodeData.inputs?.caPemPath as string
+        const serverName = nodeData.inputs?.serverName as string
+
+        // partition
+        const partitionName = nodeData.inputs?.milvusPartition ?? '_default'
+
         // init MilvusLibArgs
         const milVusArgs: MilvusLibArgs = {
             url: address,
-            collectionName: collectionName
+            collectionName: collectionName,
+            partitionName: partitionName,
+            textField: textField
+        }
+
+        if (secure) {
+            milVusArgs.clientConfig = {
+                address: address,
+                ssl: secure,
+                tls: {
+                    rootCertPath: caPemPath,
+                    certChainPath: clientPemPath,
+                    privateKeyPath: clientKeyPath,
+                    serverName: serverName
+                }
+            }
         }
 
         if (milvusUser) milVusArgs.username = milvusUser
         if (milvusPassword) milVusArgs.password = milvusPassword
+
+        let milvusFilter = _milvusFilter
+        if (isFileUploadEnabled && options.chatId) {
+            if (milvusFilter) milvusFilter += ` OR ${FLOWISE_CHATID} == "${options.chatId}" OR NOT EXISTS(${FLOWISE_CHATID})`
+            else milvusFilter = `${FLOWISE_CHATID} == "${options.chatId}" OR NOT EXISTS(${FLOWISE_CHATID})`
+        }
 
         const vectorStore = await Milvus.fromExistingCollection(embeddings, milVusArgs)
 
@@ -187,6 +318,9 @@ class Milvus_VectorStores implements INode {
             return retriever
         } else if (output === 'vectorStore') {
             ;(vectorStore as any).k = k
+            if (milvusFilter) {
+                ;(vectorStore as any).filter = milvusFilter
+            }
             return vectorStore
         }
         return vectorStore
@@ -227,14 +361,15 @@ const similaritySearchVectorWithScore = async (query: number[], k: number, vecto
 
     const outputFields = vectorStore.fields.filter((field) => field !== vectorStore.vectorField)
 
+    const search_params: any = {
+        anns_field: vectorStore.vectorField,
+        topk: k.toString(),
+        metric_type: vectorStore.indexCreateParams.metric_type,
+        params: JSON.stringify(vectorStore.indexSearchParams)
+    }
     const searchResp = await vectorStore.client.search({
         collection_name: vectorStore.collectionName,
-        search_params: {
-            anns_field: vectorStore.vectorField,
-            topk: k.toString(),
-            metric_type: vectorStore.indexCreateParams.metric_type,
-            params: vectorStore.indexSearchParams
-        },
+        search_params,
         output_fields: outputFields,
         vector_type: DataType.FloatVector,
         vectors: [query],
@@ -261,7 +396,18 @@ const similaritySearchVectorWithScore = async (query: number[], k: number, vecto
                 }
             }
         })
-        results.push([new Document(fields), result.score])
+        let normalizedScore = result.score
+        switch (vectorStore.indexCreateParams.metric_type) {
+            case MetricType.L2:
+                normalizedScore = 1 / (1 + result.score)
+                break
+            case MetricType.IP:
+            case MetricType.COSINE:
+                normalizedScore = (result.score + 1) / 2
+                break
+        }
+
+        results.push([new Document(fields), normalizedScore])
     })
     return results
 }
