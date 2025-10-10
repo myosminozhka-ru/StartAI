@@ -1,12 +1,7 @@
 {
-<<<<<<<< HEAD:packages/server/marketplaces/chatflows/Docs QnA.json
     "description": "Вопросно-ответная система с использованием Retrieval Augmented Generation (RAG)",
     "badge": "NEW",
     "usecases": ["Вопросно-ответная система для документов"],
-========
-    "description": "Github Docs QnA using Retrieval Augmented Generation (RAG)",
-    "usecases": ["Documents QnA"],
->>>>>>>> upstream/main:packages/server/marketplaces/chatflows/Github Docs QnA.json
     "framework": ["Langchain"],
     "nodes": [
         {

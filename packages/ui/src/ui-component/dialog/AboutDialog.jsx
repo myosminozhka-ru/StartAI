@@ -58,14 +58,14 @@ const AboutDialog = ({ show, onCancel }) => {
                             <TableBody>
                                 <TableRow sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
                                     <TableCell component='th' scope='row'>
-                                        3.0.1
+                                        3.0.8
                                     </TableCell>
                                     <TableCell component='th' scope='row'>
                                         <a target='_blank' rel='noreferrer' href='https://app.osmi-it.ru/'>
                                             Osmi AI
                                         </a>
                                     </TableCell>
-                                    <TableCell>01.05.2025</TableCell>
+                                    <TableCell>10.10.2025</TableCell>
                                 </TableRow>
                             </TableBody>
                         </Table>
