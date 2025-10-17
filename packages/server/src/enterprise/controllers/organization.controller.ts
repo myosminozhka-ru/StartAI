@@ -2,7 +2,7 @@ import { Request, Response, NextFunction } from 'express'
 import { StatusCodes } from 'http-status-codes'
 import { OrganizationErrorMessage, OrganizationService } from '../services/organization.service'
 import { getRunningExpressApp } from '../../utils/getRunningExpressApp'
-import { InternalFlowiseError } from '../../errors/internalFlowiseError'
+import { InternalStartAIError } from '../../errors/internalFlowiseError'
 import { Organization } from '../database/entities/organization.entity'
 import { GeneralErrorMessage } from '../../utils/constants'
 import { OrganizationUserService } from '../services/organization-user.service'
@@ -30,12 +30,12 @@ export class OrganizationController {
             let organization: Organization | null
             if (query.id) {
                 organization = await organizationService.readOrganizationById(query.id, queryRunner)
-                if (!organization) throw new InternalFlowiseError(StatusCodes.NOT_FOUND, OrganizationErrorMessage.ORGANIZATION_NOT_FOUND)
+                if (!organization) throw new InternalStartAIError(StatusCodes.NOT_FOUND, OrganizationErrorMessage.ORGANIZATION_NOT_FOUND)
             } else if (query.name) {
                 organization = await organizationService.readOrganizationByName(query.name, queryRunner)
-                if (!organization) throw new InternalFlowiseError(StatusCodes.NOT_FOUND, OrganizationErrorMessage.ORGANIZATION_NOT_FOUND)
+                if (!organization) throw new InternalStartAIError(StatusCodes.NOT_FOUND, OrganizationErrorMessage.ORGANIZATION_NOT_FOUND)
             } else {
-                throw new InternalFlowiseError(StatusCodes.BAD_REQUEST, GeneralErrorMessage.UNHANDLED_EDGE_CASE)
+                throw new InternalStartAIError(StatusCodes.BAD_REQUEST, GeneralErrorMessage.UNHANDLED_EDGE_CASE)
             }
 
             return res.status(StatusCodes.OK).json(organization)

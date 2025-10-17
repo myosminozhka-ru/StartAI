@@ -1,7 +1,7 @@
 import { StatusCodes } from 'http-status-codes'
 import { EvaluationRunner, ICommonObject } from 'flowise-components'
 import { getRunningExpressApp } from '../../utils/getRunningExpressApp'
-import { InternalFlowiseError } from '../../errors/internalFlowiseError'
+import { InternalStartAIError } from '../../errors/internalFlowiseError'
 import { getErrorMessage } from '../../errors/utils'
 import { Dataset } from '../../database/entities/Dataset'
 import { DatasetRow } from '../../database/entities/DatasetRow'
@@ -57,7 +57,7 @@ const runAgain = async (id: string, baseURL: string, orgId: string) => {
         data.version = true
         return await createEvaluation(data, baseURL, orgId)
     } catch (error) {
-        throw new InternalFlowiseError(StatusCodes.INTERNAL_SERVER_ERROR, `Error: EvalsService.runAgain - ${getErrorMessage(error)}`)
+        throw new InternalStartAIError(StatusCodes.INTERNAL_SERVER_ERROR, `Error: EvalsService.runAgain - ${getErrorMessage(error)}`)
     }
 }
 
@@ -331,7 +331,7 @@ const createEvaluation = async (body: ICommonObject, baseURL: string, orgId: str
 
         return getAllEvaluations(body.workspaceId)
     } catch (error) {
-        throw new InternalFlowiseError(
+        throw new InternalStartAIError(
             StatusCodes.INTERNAL_SERVER_ERROR,
             `Error: EvalsService.createEvaluation - ${getErrorMessage(error)}`
         )
@@ -413,7 +413,7 @@ const getAllEvaluations = async (workspaceId?: string, page: number = -1, limit:
             return returnResults
         }
     } catch (error) {
-        throw new InternalFlowiseError(
+        throw new InternalStartAIError(
             StatusCodes.INTERNAL_SERVER_ERROR,
             `Error: EvalsService.getAllEvaluations - ${getErrorMessage(error)}`
         )
@@ -429,7 +429,7 @@ const deleteEvaluation = async (id: string, activeWorkspaceId?: string) => {
         const results = await appServer.AppDataSource.getRepository(Evaluation).findBy(getWorkspaceSearchOptions(activeWorkspaceId))
         return results
     } catch (error) {
-        throw new InternalFlowiseError(
+        throw new InternalStartAIError(
             StatusCodes.INTERNAL_SERVER_ERROR,
             `Error: EvalsService.deleteEvaluation - ${getErrorMessage(error)}`
         )
@@ -536,7 +536,7 @@ const isOutdated = async (id: string) => {
         returnObj.isOutdated = isOutdated
         return returnObj
     } catch (error) {
-        throw new InternalFlowiseError(StatusCodes.INTERNAL_SERVER_ERROR, `Error: EvalsService.isOutdated - ${getErrorMessage(error)}`)
+        throw new InternalStartAIError(StatusCodes.INTERNAL_SERVER_ERROR, `Error: EvalsService.isOutdated - ${getErrorMessage(error)}`)
     }
 }
 
@@ -562,7 +562,7 @@ const getEvaluation = async (id: string) => {
             rows: items
         }
     } catch (error) {
-        throw new InternalFlowiseError(StatusCodes.INTERNAL_SERVER_ERROR, `Error: EvalsService.getEvaluation - ${getErrorMessage(error)}`)
+        throw new InternalStartAIError(StatusCodes.INTERNAL_SERVER_ERROR, `Error: EvalsService.getEvaluation - ${getErrorMessage(error)}`)
     }
 }
 
@@ -593,7 +593,7 @@ const getVersions = async (id: string) => {
             versions: returnResults
         }
     } catch (error) {
-        throw new InternalFlowiseError(StatusCodes.INTERNAL_SERVER_ERROR, `Error: EvalsService.getEvaluation - ${getErrorMessage(error)}`)
+        throw new InternalStartAIError(StatusCodes.INTERNAL_SERVER_ERROR, `Error: EvalsService.getEvaluation - ${getErrorMessage(error)}`)
     }
 }
 
@@ -631,7 +631,7 @@ const patchDeleteEvaluations = async (ids: string[] = [], isDeleteAllVersion?: b
         const results = await appServer.AppDataSource.getRepository(Evaluation).findBy(getWorkspaceSearchOptions(activeWorkspaceId))
         return results
     } catch (error) {
-        throw new InternalFlowiseError(
+        throw new InternalStartAIError(
             StatusCodes.INTERNAL_SERVER_ERROR,
             `Error: EvalsService.patchDeleteEvaluations - ${getErrorMessage(error)}`
         )

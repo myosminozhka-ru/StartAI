@@ -3,7 +3,7 @@ import { StatusCodes } from 'http-status-codes'
 import { getRunningExpressApp } from '../../utils/getRunningExpressApp'
 import { Role } from '../database/entities/role.entity'
 import { RoleService } from '../services/role.service'
-import { InternalFlowiseError } from '../../errors/internalFlowiseError'
+import { InternalStartAIError } from '../../errors/internalFlowiseError'
 
 export class RoleController {
     public async create(req: Request, res: Response, next: NextFunction) {
@@ -55,10 +55,10 @@ export class RoleController {
         try {
             const query = req.query as Partial<Role>
             if (!query.id) {
-                throw new InternalFlowiseError(StatusCodes.BAD_REQUEST, 'Role ID is required')
+                throw new InternalStartAIError(StatusCodes.BAD_REQUEST, 'Role ID is required')
             }
             if (!query.organizationId) {
-                throw new InternalFlowiseError(StatusCodes.BAD_REQUEST, 'Organization ID is required')
+                throw new InternalStartAIError(StatusCodes.BAD_REQUEST, 'Organization ID is required')
             }
             const roleService = new RoleService()
             const role = await roleService.deleteRole(query.organizationId, query.id)

@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from 'express'
 import { StatusCodes } from 'http-status-codes'
-import { InternalFlowiseError } from '../../errors/internalFlowiseError'
+import { InternalStartAIError } from '../../errors/internalFlowiseError'
 import { GeneralErrorMessage } from '../../utils/constants'
 import { getRunningExpressApp } from '../../utils/getRunningExpressApp'
 import { User } from '../database/entities/user.entity'
@@ -28,12 +28,12 @@ export class UserController {
             let user: User | null
             if (query.id) {
                 user = await userService.readUserById(query.id, queryRunner)
-                if (!user) throw new InternalFlowiseError(StatusCodes.NOT_FOUND, UserErrorMessage.USER_NOT_FOUND)
+                if (!user) throw new InternalStartAIError(StatusCodes.NOT_FOUND, UserErrorMessage.USER_NOT_FOUND)
             } else if (query.email) {
                 user = await userService.readUserByEmail(query.email, queryRunner)
-                if (!user) throw new InternalFlowiseError(StatusCodes.NOT_FOUND, UserErrorMessage.USER_NOT_FOUND)
+                if (!user) throw new InternalStartAIError(StatusCodes.NOT_FOUND, UserErrorMessage.USER_NOT_FOUND)
             } else {
-                throw new InternalFlowiseError(StatusCodes.BAD_REQUEST, GeneralErrorMessage.UNHANDLED_EDGE_CASE)
+                throw new InternalStartAIError(StatusCodes.BAD_REQUEST, GeneralErrorMessage.UNHANDLED_EDGE_CASE)
             }
 
             if (user) {
@@ -54,11 +54,11 @@ export class UserController {
             const userService = new UserService()
             const currentUser = req.user
             if (!currentUser) {
-                throw new InternalFlowiseError(StatusCodes.UNAUTHORIZED, UserErrorMessage.USER_NOT_FOUND)
+                throw new InternalStartAIError(StatusCodes.UNAUTHORIZED, UserErrorMessage.USER_NOT_FOUND)
             }
             const { id } = req.body
             if (currentUser.id !== id) {
-                throw new InternalFlowiseError(StatusCodes.FORBIDDEN, UserErrorMessage.USER_NOT_FOUND)
+                throw new InternalStartAIError(StatusCodes.FORBIDDEN, UserErrorMessage.USER_NOT_FOUND)
             }
             const user = await userService.updateUser(req.body)
             return res.status(StatusCodes.OK).json(user)

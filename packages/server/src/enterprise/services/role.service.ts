@@ -1,6 +1,6 @@
 import { StatusCodes } from 'http-status-codes'
 import { DataSource, IsNull, QueryRunner } from 'typeorm'
-import { InternalFlowiseError } from '../../errors/internalFlowiseError'
+import { InternalStartAIError } from '../../errors/internalFlowiseError'
 import { GeneralSuccessMessage } from '../../utils/constants'
 import { getRunningExpressApp } from '../../utils/getRunningExpressApp'
 import { Role } from '../database/entities/role.entity'
@@ -29,7 +29,7 @@ export class RoleService {
     }
 
     public validateRoleId(id: string | undefined) {
-        if (isInvalidUUID(id)) throw new InternalFlowiseError(StatusCodes.BAD_REQUEST, RoleErrorMessage.INVALID_ROLE_ID)
+        if (isInvalidUUID(id)) throw new InternalStartAIError(StatusCodes.BAD_REQUEST, RoleErrorMessage.INVALID_ROLE_ID)
     }
 
     public async readRoleById(id: string | undefined, queryRunner: QueryRunner) {
@@ -38,12 +38,12 @@ export class RoleService {
     }
 
     public validateRoleName(name: string | undefined) {
-        if (isInvalidName(name)) throw new InternalFlowiseError(StatusCodes.BAD_REQUEST, RoleErrorMessage.INVALID_ROLE_NAME)
+        if (isInvalidName(name)) throw new InternalStartAIError(StatusCodes.BAD_REQUEST, RoleErrorMessage.INVALID_ROLE_NAME)
     }
 
     public async readRoleByOrganizationId(organizationId: string | undefined, queryRunner: QueryRunner) {
         const organization = await this.organizationService.readOrganizationById(organizationId, queryRunner)
-        if (!organization) throw new InternalFlowiseError(StatusCodes.NOT_FOUND, OrganizationErrorMessage.ORGANIZATION_NOT_FOUND)
+        if (!organization) throw new InternalStartAIError(StatusCodes.NOT_FOUND, OrganizationErrorMessage.ORGANIZATION_NOT_FOUND)
 
         const roles = await queryRunner.manager.findBy(Role, { organizationId })
         return await Promise.all(
@@ -58,7 +58,7 @@ export class RoleService {
     public async readRoleByRoleIdOrganizationId(id: string | undefined, organizationId: string | undefined, queryRunner: QueryRunner) {
         this.validateRoleId(id)
         const organization = await this.organizationService.readOrganizationById(organizationId, queryRunner)
-        if (!organization) throw new InternalFlowiseError(StatusCodes.NOT_FOUND, OrganizationErrorMessage.ORGANIZATION_NOT_FOUND)
+        if (!organization) throw new InternalStartAIError(StatusCodes.NOT_FOUND, OrganizationErrorMessage.ORGANIZATION_NOT_FOUND)
 
         return await queryRunner.manager.findOneBy(Role, { id, organizationId })
     }
@@ -66,7 +66,7 @@ export class RoleService {
     public async readGeneralRoleByName(name: string | undefined, queryRunner: QueryRunner) {
         this.validateRoleName(name)
         const generalRole = await queryRunner.manager.findOneBy(Role, { name, organizationId: IsNull() })
-        if (!generalRole) throw new InternalFlowiseError(StatusCodes.NOT_FOUND, RoleErrorMessage.ROLE_NOT_FOUND)
+        if (!generalRole) throw new InternalStartAIError(StatusCodes.NOT_FOUND, RoleErrorMessage.ROLE_NOT_FOUND)
         return generalRole
     }
 
@@ -77,7 +77,7 @@ export class RoleService {
 
     public async readRoleByGeneral(queryRunner: QueryRunner) {
         const generalRoles = await queryRunner.manager.find(Role, { where: { organizationId: IsNull() } })
-        if (generalRoles.length <= 0) throw new InternalFlowiseError(StatusCodes.NOT_FOUND, RoleErrorMessage.ROLE_NOT_FOUND)
+        if (generalRoles.length <= 0) throw new InternalStartAIError(StatusCodes.NOT_FOUND, RoleErrorMessage.ROLE_NOT_FOUND)
         return generalRoles
     }
 
@@ -94,11 +94,11 @@ export class RoleService {
         await queryRunner.connect()
 
         const user = await this.userService.readUserById(data.createdBy, queryRunner)
-        if (!user) throw new InternalFlowiseError(StatusCodes.NOT_FOUND, UserErrorMessage.USER_NOT_FOUND)
+        if (!user) throw new InternalStartAIError(StatusCodes.NOT_FOUND, UserErrorMessage.USER_NOT_FOUND)
         const organization = await this.organizationService.readOrganizationById(data.organizationId, queryRunner)
-        if (!organization) throw new InternalFlowiseError(StatusCodes.NOT_FOUND, OrganizationErrorMessage.ORGANIZATION_NOT_FOUND)
+        if (!organization) throw new InternalStartAIError(StatusCodes.NOT_FOUND, OrganizationErrorMessage.ORGANIZATION_NOT_FOUND)
         this.validateRoleName(data.name)
-        if (!data.permissions) throw new InternalFlowiseError(StatusCodes.BAD_REQUEST, RoleErrorMessage.INVALID_ROLE_PERMISSIONS)
+        if (!data.permissions) throw new InternalStartAIError(StatusCodes.BAD_REQUEST, RoleErrorMessage.INVALID_ROLE_PERMISSIONS)
         data.updatedBy = data.createdBy
 
         let newRole = queryRunner.manager.create(Role, data)
@@ -121,9 +121,9 @@ export class RoleService {
         await queryRunner.connect()
 
         const oldRole = await this.readRoleById(newRole.id, queryRunner)
-        if (!oldRole) throw new InternalFlowiseError(StatusCodes.NOT_FOUND, RoleErrorMessage.ROLE_NOT_FOUND)
+        if (!oldRole) throw new InternalStartAIError(StatusCodes.NOT_FOUND, RoleErrorMessage.ROLE_NOT_FOUND)
         const user = await this.userService.readUserById(newRole.updatedBy, queryRunner)
-        if (!user) throw new InternalFlowiseError(StatusCodes.NOT_FOUND, UserErrorMessage.USER_NOT_FOUND)
+        if (!user) throw new InternalStartAIError(StatusCodes.NOT_FOUND, UserErrorMessage.USER_NOT_FOUND)
         if (newRole.name) this.validateRoleName(newRole.name)
         newRole.organizationId = oldRole.organizationId
         newRole.createdBy = oldRole.createdBy
@@ -149,7 +149,7 @@ export class RoleService {
             await queryRunner.connect()
 
             const role = await this.readRoleByRoleIdOrganizationId(roleId, organizationId, queryRunner)
-            if (!role) throw new InternalFlowiseError(StatusCodes.NOT_FOUND, RoleErrorMessage.ROLE_NOT_FOUND)
+            if (!role) throw new InternalStartAIError(StatusCodes.NOT_FOUND, RoleErrorMessage.ROLE_NOT_FOUND)
 
             await queryRunner.startTransaction()
 

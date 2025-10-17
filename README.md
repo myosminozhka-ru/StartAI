@@ -26,7 +26,7 @@ English | [繁體中文](./i18n/README-TW.md) | [简体中文](./i18n/README-ZH.
 -   [🌱 Env Variables](#-env-variables)
 -   [📖 Documentation](#-documentation)
 -   [🌐 Self Host](#-self-host)
--   [☁️ Flowise Cloud](#️-flowise-cloud)
+-   [☁️ StartAI Cloud](#️-startai-cloud)
 -   [🙋 Support](#-support)
 -   [🙌 Contributing](#-contributing)
 -   [📄 License](#-license)
@@ -167,15 +167,15 @@ Flowise has 3 different modules in a single mono repository.
 
 ## 🌱 Env Variables
 
-Flowise supports different environment variables to configure your instance. You can specify the following variables in the `.env` file inside `packages/server` folder. Read [more](https://github.com/FlowiseAI/Flowise/blob/main/CONTRIBUTING.md#-env-variables)
+StartAI supports different environment variables to configure your instance. You can specify the following variables in the `.env` file inside `packages/server` folder. Read [more](https://github.com/myosminozhka-ru/StartAI/blob/main/CONTRIBUTING.md#-env-variables)
 
 ## 📖 Documentation
 
-You can view the Flowise Docs [here](https://docs.flowiseai.com/)
+You can view the StartAI Docs [here](https://docs.osmi-it.ru/)
 
 ## 🌐 Self Host
 
-Deploy Flowise self-hosted in your existing infrastructure, we support various [deployments](https://docs.flowiseai.com/configuration/deployment)
+Deploy StartAI self-hosted in your existing infrastructure, we support various [deployments](https://docs.osmi-it.ru/configuration/deployment)
 
 -   [AWS](https://docs.flowiseai.com/configuration/deployment/aws)
 -   [Azure](https://docs.flowiseai.com/configuration/deployment/azure)
@@ -211,13 +211,13 @@ Deploy Flowise self-hosted in your existing infrastructure, we support various [
 
       </details>
 
-## ☁️ Flowise Cloud
+## ☁️ StartAI Cloud
 
-Get Started with [Flowise Cloud](https://flowiseai.com/).
+Get Started with [StartAI Cloud](https://app.osmi-it.ru/).
 
 ## 🙋 Support
 
-Feel free to ask any questions, raise problems, and request new features in [Discussion](https://github.com/FlowiseAI/Flowise/discussions).
+Feel free to ask any questions, raise problems, and request new features in [Discussion](https://github.com/myosminozhka-ru/StartAI/discussions).
 
 ## 🙌 Contributing
 

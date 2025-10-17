@@ -16,7 +16,7 @@ import { checkStorage, updateStorageUsage } from './quotaUsage'
 import { ChatFlow } from '../database/entities/ChatFlow'
 import { Workspace } from '../enterprise/database/entities/workspace.entity'
 import { Organization } from '../enterprise/database/entities/organization.entity'
-import { InternalFlowiseError } from '../errors/internalFlowiseError'
+import { InternalStartAIError } from '../errors/internalFlowiseError'
 import { StatusCodes } from 'http-status-codes'
 
 /**
@@ -28,10 +28,10 @@ export const createFileAttachment = async (req: Request) => {
 
     const chatflowid = req.params.chatflowId
     if (!chatflowid || !isValidUUID(chatflowid)) {
-        throw new InternalFlowiseError(StatusCodes.BAD_REQUEST, 'Invalid chatflowId format - must be a valid UUID')
+        throw new InternalStartAIError(StatusCodes.BAD_REQUEST, 'Invalid chatflowId format - must be a valid UUID')
     }
     if (isPathTraversal(chatflowid)) {
-        throw new InternalFlowiseError(StatusCodes.BAD_REQUEST, 'Invalid path characters detected')
+        throw new InternalStartAIError(StatusCodes.BAD_REQUEST, 'Invalid path characters detected')
     }
 
     const chatId = req.params.chatId
@@ -41,7 +41,7 @@ export const createFileAttachment = async (req: Request) => {
         id: chatflowid
     })
     if (!chatflow) {
-        throw new InternalFlowiseError(StatusCodes.NOT_FOUND, `Chatflow ${chatflowid} not found`)
+        throw new InternalStartAIError(StatusCodes.NOT_FOUND, `Chatflow ${chatflowid} not found`)
     }
 
     let orgId = req.user?.activeOrganizationId || ''
@@ -55,7 +55,7 @@ export const createFileAttachment = async (req: Request) => {
             id: chatflowWorkspaceId
         })
         if (!workspace) {
-            throw new InternalFlowiseError(StatusCodes.NOT_FOUND, `Workspace ${chatflowWorkspaceId} not found`)
+            throw new InternalStartAIError(StatusCodes.NOT_FOUND, `Workspace ${chatflowWorkspaceId} not found`)
         }
         workspaceId = workspace.id
 
@@ -63,7 +63,7 @@ export const createFileAttachment = async (req: Request) => {
             id: workspace.organizationId
         })
         if (!org) {
-            throw new InternalFlowiseError(StatusCodes.NOT_FOUND, `Organization ${workspace.organizationId} not found`)
+            throw new InternalStartAIError(StatusCodes.NOT_FOUND, `Organization ${workspace.organizationId} not found`)
         }
 
         orgId = org.id
@@ -106,7 +106,7 @@ export const createFileAttachment = async (req: Request) => {
 
     // Check if file upload is enabled
     if (!fileUploadEnabled) {
-        throw new InternalFlowiseError(StatusCodes.BAD_REQUEST, 'File upload is not enabled for this chatflow')
+        throw new InternalStartAIError(StatusCodes.BAD_REQUEST, 'File upload is not enabled for this chatflow')
     }
 
     // Find FileLoader node
@@ -127,7 +127,7 @@ export const createFileAttachment = async (req: Request) => {
         const isBase64 = req.body.base64
         for (const file of files) {
             if (!allowedFileTypes.length) {
-                throw new InternalFlowiseError(
+                throw new InternalStartAIError(
                     StatusCodes.BAD_REQUEST,
                     `File type '${file.mimetype}' is not allowed. Allowed types: ${allowedFileTypes.join(', ')}`
                 )
@@ -135,7 +135,7 @@ export const createFileAttachment = async (req: Request) => {
 
             // Validate file type against allowed types
             if (allowedFileTypes.length > 0 && !allowedFileTypes.includes(file.mimetype)) {
-                throw new InternalFlowiseError(
+                throw new InternalStartAIError(
                     StatusCodes.BAD_REQUEST,
                     `File type '${file.mimetype}' is not allowed. Allowed types: ${allowedFileTypes.join(', ')}`
                 )

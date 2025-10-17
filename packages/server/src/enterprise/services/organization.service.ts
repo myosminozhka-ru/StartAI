@@ -1,6 +1,6 @@
 import { StatusCodes } from 'http-status-codes'
 import { DataSource, QueryRunner } from 'typeorm'
-import { InternalFlowiseError } from '../../errors/internalFlowiseError'
+import { InternalStartAIError } from '../../errors/internalFlowiseError'
 import { generateId } from '../../utils'
 import { getRunningExpressApp } from '../../utils/getRunningExpressApp'
 import { Telemetry } from '../../utils/telemetry'
@@ -29,7 +29,7 @@ export class OrganizationService {
     }
 
     public validateOrganizationId(id: string | undefined) {
-        if (isInvalidUUID(id)) throw new InternalFlowiseError(StatusCodes.BAD_REQUEST, OrganizationErrorMessage.INVALID_ORGANIZATION_ID)
+        if (isInvalidUUID(id)) throw new InternalStartAIError(StatusCodes.BAD_REQUEST, OrganizationErrorMessage.INVALID_ORGANIZATION_ID)
     }
 
     public async readOrganizationById(id: string | undefined, queryRunner: QueryRunner) {
@@ -38,9 +38,9 @@ export class OrganizationService {
     }
 
     public validateOrganizationName(name: string | undefined, isRegister: boolean = false) {
-        if (isInvalidName(name)) throw new InternalFlowiseError(StatusCodes.BAD_REQUEST, OrganizationErrorMessage.INVALID_ORGANIZATION_NAME)
+        if (isInvalidName(name)) throw new InternalStartAIError(StatusCodes.BAD_REQUEST, OrganizationErrorMessage.INVALID_ORGANIZATION_NAME)
         if (!isRegister && name === OrganizationName.DEFAULT_ORGANIZATION) {
-            throw new InternalFlowiseError(StatusCodes.BAD_REQUEST, OrganizationErrorMessage.ORGANIZATION_RESERVERD_NAME)
+            throw new InternalStartAIError(StatusCodes.BAD_REQUEST, OrganizationErrorMessage.ORGANIZATION_RESERVERD_NAME)
         }
     }
 
@@ -74,7 +74,7 @@ export class OrganizationService {
         await queryRunner.connect()
 
         const user = await this.userService.readUserById(data.createdBy, queryRunner)
-        if (!user) throw new InternalFlowiseError(StatusCodes.NOT_FOUND, UserErrorMessage.USER_NOT_FOUND)
+        if (!user) throw new InternalStartAIError(StatusCodes.NOT_FOUND, UserErrorMessage.USER_NOT_FOUND)
 
         let newOrganization = this.createNewOrganization(data, queryRunner)
         try {
@@ -96,9 +96,9 @@ export class OrganizationService {
         await queryRunner.connect()
 
         const oldOrganizationData = await this.readOrganizationById(newOrganizationData.id, queryRunner)
-        if (!oldOrganizationData) throw new InternalFlowiseError(StatusCodes.NOT_FOUND, OrganizationErrorMessage.ORGANIZATION_NOT_FOUND)
+        if (!oldOrganizationData) throw new InternalStartAIError(StatusCodes.NOT_FOUND, OrganizationErrorMessage.ORGANIZATION_NOT_FOUND)
         const user = await this.userService.readUserById(newOrganizationData.updatedBy, queryRunner)
-        if (!user) throw new InternalFlowiseError(StatusCodes.NOT_FOUND, UserErrorMessage.USER_NOT_FOUND)
+        if (!user) throw new InternalStartAIError(StatusCodes.NOT_FOUND, UserErrorMessage.USER_NOT_FOUND)
         if (newOrganizationData.name) {
             this.validateOrganizationName(newOrganizationData.name)
         }

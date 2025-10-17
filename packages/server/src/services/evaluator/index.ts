@@ -1,6 +1,6 @@
 import { StatusCodes } from 'http-status-codes'
 import { getRunningExpressApp } from '../../utils/getRunningExpressApp'
-import { InternalFlowiseError } from '../../errors/internalFlowiseError'
+import { InternalStartAIError } from '../../errors/internalFlowiseError'
 import { getErrorMessage } from '../../errors/utils'
 import { Evaluator } from '../../database/entities/Evaluator'
 import { EvaluatorDTO } from '../../Interface.Evaluation'
@@ -24,7 +24,7 @@ const getAllEvaluators = async (workspaceId?: string, page: number = -1, limit: 
             return EvaluatorDTO.fromEntities(data)
         }
     } catch (error) {
-        throw new InternalFlowiseError(
+        throw new InternalStartAIError(
             StatusCodes.INTERNAL_SERVER_ERROR,
             `Error: evaluatorService.getAllEvaluators - ${getErrorMessage(error)}`
         )
@@ -40,7 +40,7 @@ const getEvaluator = async (id: string) => {
         if (!evaluator) throw new Error(`Evaluator ${id} not found`)
         return EvaluatorDTO.fromEntity(evaluator)
     } catch (error) {
-        throw new InternalFlowiseError(
+        throw new InternalStartAIError(
             StatusCodes.INTERNAL_SERVER_ERROR,
             `Error: evaluatorService.getEvaluator - ${getErrorMessage(error)}`
         )
@@ -57,7 +57,7 @@ const createEvaluator = async (body: any) => {
         const result = await appServer.AppDataSource.getRepository(Evaluator).save(evaluator)
         return EvaluatorDTO.fromEntity(result)
     } catch (error) {
-        throw new InternalFlowiseError(
+        throw new InternalStartAIError(
             StatusCodes.INTERNAL_SERVER_ERROR,
             `Error: evaluatorService.createEvaluator - ${getErrorMessage(error)}`
         )
@@ -80,7 +80,7 @@ const updateEvaluator = async (id: string, body: any) => {
         const result = await appServer.AppDataSource.getRepository(Evaluator).save(evaluator)
         return EvaluatorDTO.fromEntity(result)
     } catch (error) {
-        throw new InternalFlowiseError(
+        throw new InternalStartAIError(
             StatusCodes.INTERNAL_SERVER_ERROR,
             `Error: evaluatorService.updateEvaluator - ${getErrorMessage(error)}`
         )
@@ -93,7 +93,7 @@ const deleteEvaluator = async (id: string) => {
         const appServer = getRunningExpressApp()
         return await appServer.AppDataSource.getRepository(Evaluator).delete({ id: id })
     } catch (error) {
-        throw new InternalFlowiseError(
+        throw new InternalStartAIError(
             StatusCodes.INTERNAL_SERVER_ERROR,
             `Error: evaluatorService.deleteEvaluator - ${getErrorMessage(error)}`
         )

@@ -1,7 +1,7 @@
 import { DataSource, QueryRunner } from 'typeorm'
 import { getRunningExpressApp } from '../../utils/getRunningExpressApp'
 import { isInvalidName, isInvalidUUID } from '../utils/validation.util'
-import { InternalFlowiseError } from '../../errors/internalFlowiseError'
+import { InternalStartAIError } from '../../errors/internalFlowiseError'
 import { StatusCodes } from 'http-status-codes'
 import { LoginMethod, LoginMethodStatus } from '../database/entities/login-method.entity'
 import { decrypt, encrypt } from '../utils/encryption.util'
@@ -30,7 +30,7 @@ export class LoginMethodService {
     }
 
     public validateLoginMethodId(id: string | undefined) {
-        if (isInvalidUUID(id)) throw new InternalFlowiseError(StatusCodes.BAD_REQUEST, LoginMethodErrorMessage.INVALID_LOGIN_METHOD_ID)
+        if (isInvalidUUID(id)) throw new InternalStartAIError(StatusCodes.BAD_REQUEST, LoginMethodErrorMessage.INVALID_LOGIN_METHOD_ID)
     }
 
     public async readLoginMethodById(id: string | undefined, queryRunner: QueryRunner) {
@@ -39,18 +39,18 @@ export class LoginMethodService {
     }
 
     public validateLoginMethodName(name: string | undefined) {
-        if (isInvalidName(name)) throw new InternalFlowiseError(StatusCodes.BAD_REQUEST, LoginMethodErrorMessage.INVALID_LOGIN_METHOD_NAME)
+        if (isInvalidName(name)) throw new InternalStartAIError(StatusCodes.BAD_REQUEST, LoginMethodErrorMessage.INVALID_LOGIN_METHOD_NAME)
     }
 
     public validateLoginMethodStatus(status: string | undefined) {
         if (status && !Object.values(LoginMethodStatus).includes(status as LoginMethodStatus))
-            throw new InternalFlowiseError(StatusCodes.BAD_REQUEST, LoginMethodErrorMessage.INVALID_LOGIN_METHOD_STATUS)
+            throw new InternalStartAIError(StatusCodes.BAD_REQUEST, LoginMethodErrorMessage.INVALID_LOGIN_METHOD_STATUS)
     }
 
     public async readLoginMethodByOrganizationId(organizationId: string | undefined, queryRunner: QueryRunner) {
         if (organizationId) {
             const organization = await this.organizationService.readOrganizationById(organizationId, queryRunner)
-            if (!organization) throw new InternalFlowiseError(StatusCodes.NOT_FOUND, OrganizationErrorMessage.ORGANIZATION_NOT_FOUND)
+            if (!organization) throw new InternalStartAIError(StatusCodes.NOT_FOUND, OrganizationErrorMessage.ORGANIZATION_NOT_FOUND)
             return await queryRunner.manager.findBy(LoginMethod, { organizationId })
         } else {
             return await queryRunner.manager.findBy(LoginMethod, { organizationId: IsNull() })
@@ -58,12 +58,12 @@ export class LoginMethodService {
     }
 
     public async encryptLoginMethodConfig(config: string | undefined) {
-        if (!config) throw new InternalFlowiseError(StatusCodes.BAD_REQUEST, LoginMethodErrorMessage.INVALID_LOGIN_METHOD_STATUS)
+        if (!config) throw new InternalStartAIError(StatusCodes.BAD_REQUEST, LoginMethodErrorMessage.INVALID_LOGIN_METHOD_STATUS)
         return await encrypt(config)
     }
 
     public async decryptLoginMethodConfig(config: string | undefined) {
-        if (!config) throw new InternalFlowiseError(StatusCodes.BAD_REQUEST, LoginMethodErrorMessage.INVALID_LOGIN_METHOD_STATUS)
+        if (!config) throw new InternalStartAIError(StatusCodes.BAD_REQUEST, LoginMethodErrorMessage.INVALID_LOGIN_METHOD_STATUS)
         return await decrypt(config)
     }
 
@@ -78,9 +78,9 @@ export class LoginMethodService {
             queryRunner = this.dataSource.createQueryRunner()
             await queryRunner.connect()
             const createdBy = await this.userService.readUserById(data.createdBy, queryRunner)
-            if (!createdBy) throw new InternalFlowiseError(StatusCodes.NOT_FOUND, UserErrorMessage.USER_NOT_FOUND)
+            if (!createdBy) throw new InternalStartAIError(StatusCodes.NOT_FOUND, UserErrorMessage.USER_NOT_FOUND)
             const organization = await this.organizationService.readOrganizationById(data.organizationId, queryRunner)
-            if (!organization) throw new InternalFlowiseError(StatusCodes.NOT_FOUND, OrganizationErrorMessage.ORGANIZATION_NOT_FOUND)
+            if (!organization) throw new InternalStartAIError(StatusCodes.NOT_FOUND, OrganizationErrorMessage.ORGANIZATION_NOT_FOUND)
             this.validateLoginMethodName(data.name)
             this.validateLoginMethodStatus(data.status)
             data.config = await this.encryptLoginMethodConfig(data.config)
@@ -111,9 +111,9 @@ export class LoginMethodService {
             await queryRunner.connect()
             await queryRunner.startTransaction()
             const createdOrUpdatedByUser = await this.userService.readUserById(userId, queryRunner)
-            if (!createdOrUpdatedByUser) throw new InternalFlowiseError(StatusCodes.NOT_FOUND, UserErrorMessage.USER_NOT_FOUND)
+            if (!createdOrUpdatedByUser) throw new InternalStartAIError(StatusCodes.NOT_FOUND, UserErrorMessage.USER_NOT_FOUND)
             const organization = await this.organizationService.readOrganizationById(organizationId, queryRunner)
-            if (!organization) throw new InternalFlowiseError(StatusCodes.NOT_FOUND, OrganizationErrorMessage.ORGANIZATION_NOT_FOUND)
+            if (!organization) throw new InternalStartAIError(StatusCodes.NOT_FOUND, OrganizationErrorMessage.ORGANIZATION_NOT_FOUND)
 
             for (let provider of providers) {
                 this.validateLoginMethodName(provider.providerName)
@@ -155,12 +155,12 @@ export class LoginMethodService {
         await queryRunner.connect()
 
         const oldLoginMethod = await this.readLoginMethodById(newLoginMethod.id, queryRunner)
-        if (!oldLoginMethod) throw new InternalFlowiseError(StatusCodes.NOT_FOUND, LoginMethodErrorMessage.LOGIN_METHOD_NOT_FOUND)
+        if (!oldLoginMethod) throw new InternalStartAIError(StatusCodes.NOT_FOUND, LoginMethodErrorMessage.LOGIN_METHOD_NOT_FOUND)
         const updatedBy = await this.userService.readUserById(newLoginMethod.updatedBy, queryRunner)
-        if (!updatedBy) throw new InternalFlowiseError(StatusCodes.NOT_FOUND, UserErrorMessage.USER_NOT_FOUND)
+        if (!updatedBy) throw new InternalStartAIError(StatusCodes.NOT_FOUND, UserErrorMessage.USER_NOT_FOUND)
         if (newLoginMethod.organizationId) {
             const organization = await this.organizationService.readOrganizationById(newLoginMethod.organizationId, queryRunner)
-            if (!organization) throw new InternalFlowiseError(StatusCodes.NOT_FOUND, OrganizationErrorMessage.ORGANIZATION_NOT_FOUND)
+            if (!organization) throw new InternalStartAIError(StatusCodes.NOT_FOUND, OrganizationErrorMessage.ORGANIZATION_NOT_FOUND)
         }
         if (newLoginMethod.name) this.validateLoginMethodName(newLoginMethod.name)
         if (newLoginMethod.config) newLoginMethod.config = await this.encryptLoginMethodConfig(newLoginMethod.config)

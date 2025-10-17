@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from 'express'
 import { StatusCodes } from 'http-status-codes'
-import { InternalFlowiseError } from '../../errors/internalFlowiseError'
+import { InternalStartAIError } from '../../errors/internalFlowiseError'
 import { AssistantType } from '../../Interface'
 import assistantsService from '../../services/assistants'
 import { getRunningExpressApp } from '../../utils/getRunningExpressApp'
@@ -9,7 +9,7 @@ import { checkUsageLimit } from '../../utils/quotaUsage'
 const createAssistant = async (req: Request, res: Response, next: NextFunction) => {
     try {
         if (!req.body) {
-            throw new InternalFlowiseError(
+            throw new InternalStartAIError(
                 StatusCodes.PRECONDITION_FAILED,
                 `Error: assistantsController.createAssistant - body not provided!`
             )
@@ -17,14 +17,14 @@ const createAssistant = async (req: Request, res: Response, next: NextFunction) 
         const body = req.body
         const orgId = req.user?.activeOrganizationId
         if (!orgId) {
-            throw new InternalFlowiseError(
+            throw new InternalStartAIError(
                 StatusCodes.NOT_FOUND,
                 `Error: assistantsController.createAssistant - organization ${orgId} not found!`
             )
         }
         const workspaceId = req.user?.activeWorkspaceId
         if (!workspaceId) {
-            throw new InternalFlowiseError(
+            throw new InternalStartAIError(
                 StatusCodes.NOT_FOUND,
                 `Error: assistantsController.createAssistant - workspace ${workspaceId} not found!`
             )
@@ -47,7 +47,7 @@ const createAssistant = async (req: Request, res: Response, next: NextFunction) 
 const deleteAssistant = async (req: Request, res: Response, next: NextFunction) => {
     try {
         if (typeof req.params === 'undefined' || !req.params.id) {
-            throw new InternalFlowiseError(
+            throw new InternalStartAIError(
                 StatusCodes.PRECONDITION_FAILED,
                 `Error: assistantsController.deleteAssistant - id not provided!`
             )
@@ -72,7 +72,7 @@ const getAllAssistants = async (req: Request, res: Response, next: NextFunction)
 const getAssistantById = async (req: Request, res: Response, next: NextFunction) => {
     try {
         if (typeof req.params === 'undefined' || !req.params.id) {
-            throw new InternalFlowiseError(
+            throw new InternalStartAIError(
                 StatusCodes.PRECONDITION_FAILED,
                 `Error: assistantsController.getAssistantById - id not provided!`
             )
@@ -87,13 +87,13 @@ const getAssistantById = async (req: Request, res: Response, next: NextFunction)
 const updateAssistant = async (req: Request, res: Response, next: NextFunction) => {
     try {
         if (typeof req.params === 'undefined' || !req.params.id) {
-            throw new InternalFlowiseError(
+            throw new InternalStartAIError(
                 StatusCodes.PRECONDITION_FAILED,
                 `Error: assistantsController.updateAssistant - id not provided!`
             )
         }
         if (!req.body) {
-            throw new InternalFlowiseError(
+            throw new InternalStartAIError(
                 StatusCodes.PRECONDITION_FAILED,
                 `Error: assistantsController.updateAssistant - body not provided!`
             )
@@ -135,7 +135,7 @@ const getTools = async (req: Request, res: Response, next: NextFunction) => {
 const generateAssistantInstruction = async (req: Request, res: Response, next: NextFunction) => {
     try {
         if (!req.body) {
-            throw new InternalFlowiseError(
+            throw new InternalStartAIError(
                 StatusCodes.PRECONDITION_FAILED,
                 `Error: assistantsController.generateAssistantInstruction - body not provided!`
             )

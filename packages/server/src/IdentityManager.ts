@@ -26,7 +26,7 @@ import AzureSSO from './enterprise/sso/AzureSSO'
 import GithubSSO from './enterprise/sso/GithubSSO'
 import GoogleSSO from './enterprise/sso/GoogleSSO'
 import SSOBase from './enterprise/sso/SSOBase'
-import { InternalFlowiseError } from './errors/internalFlowiseError'
+import { InternalStartAIError } from './errors/internalFlowiseError'
 import { Platform, UserPlan } from './Interface'
 import { StripeManager } from './StripeManager'
 import { UsageCacheManager } from './UsageCacheManager'
@@ -167,7 +167,7 @@ export class IdentityManager {
                     if (!LICENSE_URL.includes('api')) this.currentInstancePlatform = Platform.ENTERPRISE
                     else if (LICENSE_URL.includes('v1')) this.currentInstancePlatform = Platform.ENTERPRISE
                     else if (LICENSE_URL.includes('v2')) this.currentInstancePlatform = response.data?.platform
-                    else throw new InternalFlowiseError(StatusCodes.INTERNAL_SERVER_ERROR, GeneralErrorMessage.UNHANDLED_EDGE_CASE)
+                    else throw new InternalStartAIError(StatusCodes.INTERNAL_SERVER_ERROR, GeneralErrorMessage.UNHANDLED_EDGE_CASE)
                 } catch (error) {
                     console.error('Error verifying license key:', error)
                     this.licenseValid = false
@@ -401,7 +401,7 @@ export class IdentityManager {
             throw new Error('Stripe manager is not initialized')
         }
         if (!req.user) {
-            throw new InternalFlowiseError(StatusCodes.UNAUTHORIZED, GeneralErrorMessage.UNAUTHORIZED)
+            throw new InternalStartAIError(StatusCodes.UNAUTHORIZED, GeneralErrorMessage.UNAUTHORIZED)
         }
         const { success, subscription } = await this.stripeManager.updateSubscriptionPlan(subscriptionId, newPlanId, prorationDate)
         if (success) {
@@ -471,7 +471,7 @@ export class IdentityManager {
             }
 
             req.session.save((err) => {
-                if (err) throw new InternalFlowiseError(StatusCodes.BAD_REQUEST, GeneralErrorMessage.UNHANDLED_EDGE_CASE)
+                if (err) throw new InternalStartAIError(StatusCodes.BAD_REQUEST, GeneralErrorMessage.UNHANDLED_EDGE_CASE)
             })
 
             return {

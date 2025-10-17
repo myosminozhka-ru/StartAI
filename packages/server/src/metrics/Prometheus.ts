@@ -1,4 +1,4 @@
-import { FLOWISE_METRIC_COUNTERS, IMetricsProvider } from '../Interface.Metrics'
+import { STARTAI_METRIC_COUNTERS, IMetricsProvider } from '../Interface.Metrics'
 import express from 'express'
 import promClient, { Counter, Histogram, Registry } from 'prom-client'
 import { getVersion } from 'flowise-components'
@@ -31,7 +31,7 @@ export class Prometheus implements IMetricsProvider {
         // look at the FLOWISE_COUNTER enum in Interface.Metrics.ts and get all values
         // for each counter in the enum, create a new promClient.Counter and add it to the registry
         this.counters = new Map<string, promClient.Counter<string> | promClient.Gauge<string> | promClient.Histogram<string>>()
-        const enumEntries = Object.entries(FLOWISE_METRIC_COUNTERS)
+        const enumEntries = Object.entries(STARTAI_METRIC_COUNTERS)
         enumEntries.forEach(([name, value]) => {
             // derive proper counter name from the enum value (chatflow_created = Chatflow Created)
             const properCounterName: string = name.replace(/_/g, ' ').replace(/\b\w/g, (l) => l.toUpperCase())
@@ -144,7 +144,7 @@ export class Prometheus implements IMetricsProvider {
         })
     }
 
-    public incrementCounter(counter: FLOWISE_METRIC_COUNTERS, payload: any) {
+    public incrementCounter(counter: STARTAI_METRIC_COUNTERS, payload: any) {
         // increment the counter with the payload
         if (this.counters.has(counter)) {
             ;(this.counters.get(counter) as Counter<string>).labels(payload).inc()

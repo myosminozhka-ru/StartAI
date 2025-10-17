@@ -3,7 +3,7 @@ import { useSelector } from 'react-redux'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
 
 // material-ui
-import { Stack, useTheme, Typography, Box, Alert, Button, Divider, Icon } from '@mui/material'
+import { Stack, useTheme, Typography, Box, Alert, Button, Divider, Icon, Checkbox, FormControlLabel } from '@mui/material'
 import { IconExclamationCircle } from '@tabler/icons-react'
 import { LoadingButton } from '@mui/lab'
 
@@ -61,6 +61,16 @@ const SignInPage = () => {
     const [loading, setLoading] = useState(false)
     const [showResendButton, setShowResendButton] = useState(false)
     const [successMessage, setSuccessMessage] = useState('')
+    const [eulaAccepted, setEulaAccepted] = useState(localStorage.getItem('eulaAccepted') === 'true')
+
+    // Функция для определения, нужно ли показывать EULA
+    // Пока показываем для всех пользователей, позже можно адаптировать для роли "Демо"
+    const shouldShowEula = () => {
+        // TODO: Добавить проверку роли пользователя "Демо" когда будет определена логика
+        // Например: return userRole === 'demo' || userRole === 'Демо'
+        console.log('shouldShowEula called, returning true')
+        return true // Пока показываем всем
+    }
 
     const loginApi = useApi(authApi.login)
     const ssoLoginApi = useApi(ssoApi.ssoLogin)
@@ -69,8 +79,21 @@ const SignInPage = () => {
     const location = useLocation()
     const resendVerificationApi = useApi(accountApi.resendVerificationEmail)
 
+    const handleEulaChange = (event) => {
+        const accepted = event.target.checked
+        setEulaAccepted(accepted)
+        localStorage.setItem('eulaAccepted', accepted.toString())
+    }
+
     const doLogin = (event) => {
         event.preventDefault()
+
+        // Проверяем согласие с EULA только если нужно показывать EULA
+        if (shouldShowEula() && !eulaAccepted) {
+            setAuthError('Необходимо принять условия Лицензионного соглашения для продолжения')
+            return
+        }
+
         setLoading(true)
         const body = {
             email: usernameVal,
@@ -244,7 +267,7 @@ const SignInPage = () => {
                                 {isCloud && (
                                     <Typography variant='body2' sx={{ color: theme.palette.grey[600], mt: 1, textAlign: 'right' }}>
                                         <a
-                                            href='https://docs.flowiseai.com/migration-guide/cloud-migration'
+                                            href='https://docs.osmi-it.ru/migration-guide/cloud-migration'
                                             target='_blank'
                                             rel='noopener noreferrer'
                                             style={{ color: theme.palette.primary.main }}
@@ -254,11 +277,30 @@ const SignInPage = () => {
                                     </Typography>
                                 )}
                             </Box>
+                            <Box sx={{ p: 0, mb: 2 }}>
+                                <FormControlLabel
+                                    control={<Checkbox checked={eulaAccepted} onChange={handleEulaChange} color='primary' />}
+                                    label={
+                                        <Typography variant='body2' sx={{ color: theme.palette.grey[600] }}>
+                                            Я принимаю условия{' '}
+                                            <a
+                                                href='/soglashenie'
+                                                target='_blank'
+                                                rel='noopener noreferrer'
+                                                style={{ color: theme.palette.primary.main, textDecoration: 'underline' }}
+                                            >
+                                                Лицензионного соглашения
+                                            </a>
+                                        </Typography>
+                                    }
+                                />
+                            </Box>
                             <LoadingButton
                                 loading={loading}
                                 variant='contained'
                                 style={{ borderRadius: 12, height: 40, marginRight: 5 }}
                                 type='submit'
+                                disabled={shouldShowEula() && !eulaAccepted}
                             >
                                 Войти
                             </LoadingButton>

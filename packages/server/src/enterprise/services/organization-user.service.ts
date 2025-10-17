@@ -1,6 +1,6 @@
 import { StatusCodes } from 'http-status-codes'
 import { DataSource, Not, QueryRunner } from 'typeorm'
-import { InternalFlowiseError } from '../../errors/internalFlowiseError'
+import { InternalStartAIError } from '../../errors/internalFlowiseError'
 import { GeneralErrorMessage } from '../../utils/constants'
 import { getRunningExpressApp } from '../../utils/getRunningExpressApp'
 import { OrganizationUser, OrganizationUserStatus } from '../database/entities/organization-user.entity'
@@ -35,7 +35,7 @@ export class OrganizationUserService {
 
     public validateOrganizationUserStatus(status: string | undefined) {
         if (status && !Object.values(OrganizationUserStatus).includes(status as OrganizationUserStatus))
-            throw new InternalFlowiseError(StatusCodes.BAD_REQUEST, OrganizationUserErrorMessage.INVALID_ORGANIZATION_USER_SATUS)
+            throw new InternalStartAIError(StatusCodes.BAD_REQUEST, OrganizationUserErrorMessage.INVALID_ORGANIZATION_USER_SATUS)
     }
 
     public async readOrganizationUserByOrganizationIdUserId(
@@ -44,9 +44,9 @@ export class OrganizationUserService {
         queryRunner: QueryRunner
     ) {
         const organization = await this.organizationService.readOrganizationById(organizationId, queryRunner)
-        if (!organization) throw new InternalFlowiseError(StatusCodes.NOT_FOUND, OrganizationErrorMessage.ORGANIZATION_NOT_FOUND)
+        if (!organization) throw new InternalStartAIError(StatusCodes.NOT_FOUND, OrganizationErrorMessage.ORGANIZATION_NOT_FOUND)
         const user = await this.userService.readUserById(userId, queryRunner)
-        if (!user) throw new InternalFlowiseError(StatusCodes.NOT_FOUND, UserErrorMessage.USER_NOT_FOUND)
+        if (!user) throw new InternalStartAIError(StatusCodes.NOT_FOUND, UserErrorMessage.USER_NOT_FOUND)
         const ownerRole = await this.roleService.readGeneralRoleByName(GeneralRole.OWNER, queryRunner)
 
         const organizationUser = await queryRunner.manager
@@ -79,13 +79,13 @@ export class OrganizationUserService {
             .innerJoinAndSelect('workspaceUser.role', 'role')
             .where('workspace.id = :workspaceId', { workspaceId })
             .getOne()
-        if (!workspace) throw new InternalFlowiseError(StatusCodes.NOT_FOUND, WorkspaceUserErrorMessage.WORKSPACE_USER_NOT_FOUND)
+        if (!workspace) throw new InternalStartAIError(StatusCodes.NOT_FOUND, WorkspaceUserErrorMessage.WORKSPACE_USER_NOT_FOUND)
         return await this.readOrganizationUserByOrganizationIdUserId(workspace.workspace.organizationId, userId, queryRunner)
     }
 
     public async readOrganizationUserByOrganizationId(organizationId: string | undefined, queryRunner: QueryRunner) {
         const organization = await this.organizationService.readOrganizationById(organizationId, queryRunner)
-        if (!organization) throw new InternalFlowiseError(StatusCodes.NOT_FOUND, OrganizationErrorMessage.ORGANIZATION_NOT_FOUND)
+        if (!organization) throw new InternalStartAIError(StatusCodes.NOT_FOUND, OrganizationErrorMessage.ORGANIZATION_NOT_FOUND)
         const ownerRole = await this.roleService.readGeneralRoleByName(GeneralRole.OWNER, queryRunner)
 
         const organizationUsers = await queryRunner.manager
@@ -131,9 +131,9 @@ export class OrganizationUserService {
         queryRunner: QueryRunner
     ) {
         const organization = await this.organizationService.readOrganizationById(organizationId, queryRunner)
-        if (!organization) throw new InternalFlowiseError(StatusCodes.NOT_FOUND, OrganizationErrorMessage.ORGANIZATION_NOT_FOUND)
+        if (!organization) throw new InternalStartAIError(StatusCodes.NOT_FOUND, OrganizationErrorMessage.ORGANIZATION_NOT_FOUND)
         const role = await this.roleService.readRoleById(roleId, queryRunner)
-        if (!role) throw new InternalFlowiseError(StatusCodes.NOT_FOUND, RoleErrorMessage.ROLE_NOT_FOUND)
+        if (!role) throw new InternalStartAIError(StatusCodes.NOT_FOUND, RoleErrorMessage.ROLE_NOT_FOUND)
         const ownerRole = await this.roleService.readGeneralRoleByName(GeneralRole.OWNER, queryRunner)
 
         const orgUsers = await queryRunner.manager
@@ -157,7 +157,7 @@ export class OrganizationUserService {
 
     public async readOrganizationUserByUserId(userId: string | undefined, queryRunner: QueryRunner) {
         const user = await this.userService.readUserById(userId, queryRunner)
-        if (!user) throw new InternalFlowiseError(StatusCodes.NOT_FOUND, UserErrorMessage.USER_NOT_FOUND)
+        if (!user) throw new InternalStartAIError(StatusCodes.NOT_FOUND, UserErrorMessage.USER_NOT_FOUND)
         const ownerRole = await this.roleService.readGeneralRoleByName(GeneralRole.OWNER, queryRunner)
 
         const orgUsers = await queryRunner.manager
@@ -194,7 +194,7 @@ export class OrganizationUserService {
             })
             return dbResponse
         } catch (error) {
-            throw new InternalFlowiseError(StatusCodes.BAD_REQUEST, OrganizationUserErrorMessage.ORGANIZATION_USER_NOT_FOUND)
+            throw new InternalStartAIError(StatusCodes.BAD_REQUEST, OrganizationUserErrorMessage.ORGANIZATION_USER_NOT_FOUND)
         }
     }
 
@@ -219,11 +219,11 @@ export class OrganizationUserService {
             queryRunner
         )
         if (organizationUser)
-            throw new InternalFlowiseError(StatusCodes.BAD_REQUEST, OrganizationUserErrorMessage.ORGANIZATION_USER_ALREADY_EXISTS)
+            throw new InternalStartAIError(StatusCodes.BAD_REQUEST, OrganizationUserErrorMessage.ORGANIZATION_USER_ALREADY_EXISTS)
         const role = await this.roleService.readRoleIsGeneral(data.roleId, queryRunner)
-        if (!role) throw new InternalFlowiseError(StatusCodes.NOT_FOUND, RoleErrorMessage.ROLE_NOT_FOUND)
+        if (!role) throw new InternalStartAIError(StatusCodes.NOT_FOUND, RoleErrorMessage.ROLE_NOT_FOUND)
         const createdBy = await this.userService.readUserById(data.createdBy, queryRunner)
-        if (!createdBy) throw new InternalFlowiseError(StatusCodes.NOT_FOUND, UserErrorMessage.USER_NOT_FOUND)
+        if (!createdBy) throw new InternalStartAIError(StatusCodes.NOT_FOUND, UserErrorMessage.USER_NOT_FOUND)
 
         let newOrganizationUser = this.createNewOrganizationUser(data, queryRunner)
         organization.updatedBy = data.createdBy
@@ -247,12 +247,12 @@ export class OrganizationUserService {
         await queryRunner.connect()
 
         const user = await this.userService.readUserById(data.createdBy, queryRunner)
-        if (!user) throw new InternalFlowiseError(StatusCodes.NOT_FOUND, UserErrorMessage.USER_NOT_FOUND)
+        if (!user) throw new InternalStartAIError(StatusCodes.NOT_FOUND, UserErrorMessage.USER_NOT_FOUND)
 
         let newOrganization = this.organizationService.createNewOrganization(data, queryRunner)
 
         const role = await this.roleService.readGeneralRoleByName(GeneralRole.OWNER, queryRunner)
-        if (!role) throw new InternalFlowiseError(StatusCodes.NOT_FOUND, RoleErrorMessage.ROLE_NOT_FOUND)
+        if (!role) throw new InternalStartAIError(StatusCodes.NOT_FOUND, RoleErrorMessage.ROLE_NOT_FOUND)
         let newOrganizationUser: Partial<OrganizationUser> = {
             organizationId: newOrganization.id,
             userId: user.id,
@@ -285,11 +285,11 @@ export class OrganizationUserService {
             queryRunner
         )
         if (!organizationUser)
-            throw new InternalFlowiseError(StatusCodes.NOT_FOUND, OrganizationUserErrorMessage.ORGANIZATION_USER_NOT_FOUND)
+            throw new InternalStartAIError(StatusCodes.NOT_FOUND, OrganizationUserErrorMessage.ORGANIZATION_USER_NOT_FOUND)
 
         if (newOrganizationUser.roleId) {
             const role = await this.roleService.readRoleIsGeneral(newOrganizationUser.roleId, queryRunner)
-            if (!role) throw new InternalFlowiseError(StatusCodes.NOT_FOUND, RoleErrorMessage.ROLE_NOT_FOUND)
+            if (!role) throw new InternalStartAIError(StatusCodes.NOT_FOUND, RoleErrorMessage.ROLE_NOT_FOUND)
         }
 
         if (newOrganizationUser.status) this.validateOrganizationUserStatus(newOrganizationUser.status)
@@ -314,11 +314,11 @@ export class OrganizationUserService {
     public async deleteOrganizationUser(queryRunner: QueryRunner, organizationId: string | undefined, userId: string | undefined) {
         const { organizationUser } = await this.readOrganizationUserByOrganizationIdUserId(organizationId, userId, queryRunner)
         if (!organizationUser)
-            throw new InternalFlowiseError(StatusCodes.NOT_FOUND, OrganizationUserErrorMessage.ORGANIZATION_USER_NOT_FOUND)
+            throw new InternalStartAIError(StatusCodes.NOT_FOUND, OrganizationUserErrorMessage.ORGANIZATION_USER_NOT_FOUND)
         const role = await this.roleService.readRoleById(organizationUser.roleId, queryRunner)
-        if (!role) throw new InternalFlowiseError(StatusCodes.NOT_FOUND, RoleErrorMessage.ROLE_NOT_FOUND)
+        if (!role) throw new InternalStartAIError(StatusCodes.NOT_FOUND, RoleErrorMessage.ROLE_NOT_FOUND)
         if (role.name === GeneralRole.OWNER)
-            throw new InternalFlowiseError(StatusCodes.BAD_REQUEST, GeneralErrorMessage.NOT_ALLOWED_TO_DELETE_OWNER)
+            throw new InternalStartAIError(StatusCodes.BAD_REQUEST, GeneralErrorMessage.NOT_ALLOWED_TO_DELETE_OWNER)
 
         const rolePersonalWorkspace = await this.roleService.readGeneralRoleByName(GeneralRole.PERSONAL_WORKSPACE, queryRunner)
         const organizationWorkspaces = await queryRunner.manager.findBy(Workspace, { organizationId })

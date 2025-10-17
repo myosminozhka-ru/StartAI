@@ -10,7 +10,7 @@ import { WorkspaceUser } from '../database/entities/workspace-user.entity'
 import { OrganizationService } from '../services/organization.service'
 import { GeneralRole } from '../database/entities/role.entity'
 import { RoleErrorMessage, RoleService } from '../services/role.service'
-import { InternalFlowiseError } from '../../errors/internalFlowiseError'
+import { InternalStartAIError } from '../../errors/internalFlowiseError'
 import { StatusCodes } from 'http-status-codes'
 import { Platform } from '../../Interface'
 import { UserStatus } from '../database/entities/user.entity'
@@ -59,7 +59,7 @@ abstract class SSOBase {
             if (!user) {
                 // In ENTERPRISE mode, we don't want to create a new user if the user is not found
                 if (getRunningExpressApp().identityManager.getPlatformType() === Platform.ENTERPRISE) {
-                    throw new InternalFlowiseError(StatusCodes.NOT_FOUND, UserErrorMessage.USER_NOT_FOUND)
+                    throw new InternalStartAIError(StatusCodes.NOT_FOUND, UserErrorMessage.USER_NOT_FOUND)
                 }
                 // no user found, register the user
                 const data: any = {
@@ -100,7 +100,7 @@ abstract class SSOBase {
             let roleService = new RoleService()
             const ownerRole = await roleService.readGeneralRoleByName(GeneralRole.OWNER, queryRunner)
             const role = await roleService.readRoleById(workspaceUser.roleId, queryRunner)
-            if (!role) throw new InternalFlowiseError(StatusCodes.NOT_FOUND, RoleErrorMessage.ROLE_NOT_FOUND)
+            if (!role) throw new InternalStartAIError(StatusCodes.NOT_FOUND, RoleErrorMessage.ROLE_NOT_FOUND)
 
             const workspaceUsers = await workspaceUserService.readWorkspaceUserByUserId(workspaceUser.userId, queryRunner)
             const assignedWorkspaces: IAssignedWorkspace[] = workspaceUsers.map((workspaceUser) => {
@@ -113,7 +113,7 @@ abstract class SSOBase {
             })
 
             const organization = await organizationService.readOrganizationById(workspaceUser.workspace.organizationId, queryRunner)
-            if (!organization) throw new InternalFlowiseError(StatusCodes.NOT_FOUND, 'Organization not found')
+            if (!organization) throw new InternalStartAIError(StatusCodes.NOT_FOUND, 'Organization not found')
             const subscriptionId = organization.subscriptionId as string
             const customerId = organization.customerId as string
             const features = await getRunningExpressApp().identityManager.getFeaturesByPlan(subscriptionId)
