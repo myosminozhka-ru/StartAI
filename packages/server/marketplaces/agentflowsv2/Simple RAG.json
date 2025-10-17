@@ -494,7 +494,7 @@
                     "agentMessages": [
                         {
                             "role": "system",
-                            "content": "<p>You are a customer support agent working in Flowise Inc. Write a professional email reply to user's query. Use the web search tools to get more details about the prospect.</p>"
+                            "content": "<p>You are a customer support agent working in OSMI AI Inc. Write a professional email reply to user's query. Use the web search tools to get more details about the prospect.</p>"
                         }
                     ],
                     "agentTools": [

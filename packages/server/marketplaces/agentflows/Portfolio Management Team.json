@@ -171,7 +171,7 @@
                     "tools": ["{{googleCustomSearch_0.data.instance}}"],
                     "supervisor": "{{supervisor_0.data.instance}}",
                     "model": "",
-                    "promptValues": "{\"company\":\"Flowise Inc\",\"portfolio_name\":\"Tesla Inc\"}",
+                    "promptValues": "{\"company\":\"OSMI AI Inc\",\"portfolio_name\":\"Tesla Inc\"}",
                     "maxIterations": ""
                 },
                 "outputAnchors": [
@@ -273,7 +273,7 @@
                     "tools": ["{{googleCustomSearch_1.data.instance}}"],
                     "supervisor": "{{supervisor_0.data.instance}}",
                     "model": "",
-                    "promptValues": "{\"company\":\"Flowise Inc\",\"investment_opportunity\":\"Tech Summit Fund\",\"portfolio_name\":\"Tesla Inc\"}",
+                    "promptValues": "{\"company\":\"OSMI AI Inc\",\"investment_opportunity\":\"Tech Summit Fund\",\"portfolio_name\":\"Tesla Inc\"}",
                     "maxIterations": ""
                 },
                 "outputAnchors": [
@@ -375,7 +375,7 @@
                     "tools": ["{{googleCustomSearch_2.data.instance}}"],
                     "supervisor": "{{supervisor_0.data.instance}}",
                     "model": "",
-                    "promptValues": "{\"company\":\"Flowise Inc\",\"portfolio_name\":\"Tesla Inc\"}",
+                    "promptValues": "{\"company\":\"OSMI AI Inc\",\"portfolio_name\":\"Tesla Inc\"}",
                     "maxIterations": ""
                 },
                 "outputAnchors": [

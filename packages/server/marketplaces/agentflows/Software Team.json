@@ -170,7 +170,7 @@
                     "tools": "",
                     "supervisor": "{{supervisor_0.data.instance}}",
                     "model": "",
-                    "promptValues": "{\"company\":\"Flowise Inc\",\"technology\":\"React, NodeJS, ExpressJS, Tailwindcss\"}",
+                    "promptValues": "{\"company\":\"OSMI AI Inc\",\"technology\":\"React, NodeJS, ExpressJS, Tailwindcss\"}",
                     "maxIterations": ""
                 },
                 "outputAnchors": [
@@ -272,7 +272,7 @@
                     "tools": "",
                     "supervisor": "{{supervisor_0.data.instance}}",
                     "model": "",
-                    "promptValues": "{\"company\":\"Flowise Inc\"}",
+                    "promptValues": "{\"company\":\"OSMI AI Inc\"}",
                     "maxIterations": ""
                 },
                 "outputAnchors": [

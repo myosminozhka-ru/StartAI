@@ -171,7 +171,7 @@
                     "tools": "",
                     "supervisor": "{{supervisor_0.data.instance}}",
                     "model": "",
-                    "promptValues": "{\"company\":\"Flowise Inc\"}",
+                    "promptValues": "{\"company\":\"OSMI AI Inc\"}",
                     "maxIterations": ""
                 },
                 "outputAnchors": [
@@ -273,7 +273,7 @@
                     "tools": ["{{retrieverTool_0.data.instance}}"],
                     "supervisor": "{{supervisor_0.data.instance}}",
                     "model": "",
-                    "promptValues": "{\"company\":\"Flowise Inc\",\"conversation\":\"{{customFunction_0.data.instance}}\"}",
+                    "promptValues": "{\"company\":\"OSMI AI Inc\",\"conversation\":\"{{customFunction_0.data.instance}}\"}",
                     "maxIterations": ""
                 },
                 "outputAnchors": [
@@ -498,8 +498,8 @@
                     "document": "",
                     "embeddings": "{{openAIEmbeddings_0.data.instance}}",
                     "recordManager": "",
-                    "pineconeIndex": "flowiseindex",
-                    "pineconeNamespace": "pinecone-flowise-docs",
+                    "pineconeIndex": "OSMI AIindex",
+                    "pineconeNamespace": "pinecone-OSMI AI-docs",
                     "pineconeMetadataFilter": "",
                     "topK": "",
                     "searchType": "similarity",
@@ -694,7 +694,7 @@
                 "inputs": {
                     "functionInputVariables": "",
                     "functionName": "",
-                    "javascriptFunction": "// Simulating fetching conversation between system and customer\nconst conversations =[\n  {\n    \"role\": \"bot\",\n    \"content\": \"Hey how can I help you?\",\n  },\n  {\n    \"role\": \"user\",\n    \"content\": \"There is a bug when installing Flowise\",\n  },\n  {\n    \"role\": \"bot\",\n    \"content\": \"Can you tell me what was the error?\",\n  }\n];\n\nreturn conversations;"
+                    "javascriptFunction": "// Simulating fetching conversation between system and customer\nconst conversations =[\n  {\n    \"role\": \"bot\",\n    \"content\": \"Hey how can I help you?\",\n  },\n  {\n    \"role\": \"user\",\n    \"content\": \"There is a bug when installing OSMI AI\",\n  },\n  {\n    \"role\": \"bot\",\n    \"content\": \"Can you tell me what was the error?\",\n  }\n];\n\nreturn conversations;"
                 },
                 "outputAnchors": [
                     {

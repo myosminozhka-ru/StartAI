@@ -154,7 +154,7 @@
                     "document": [],
                     "model": "{{chatOpenAI_LlamaIndex_0.data.instance}}",
                     "embeddings": "{{openAIEmbedding_LlamaIndex_0.data.instance}}",
-                    "pineconeIndex": "flowiseindex",
+                    "pineconeIndex": "OSMI AIindex",
                     "pineconeNamespace": "pinecone-form10k",
                     "pineconeMetadataFilter": "{\"source\":\"tesla\"}",
                     "topK": ""
@@ -454,7 +454,7 @@
                     "document": [],
                     "model": "{{chatOpenAI_LlamaIndex_0.data.instance}}",
                     "embeddings": "{{openAIEmbedding_LlamaIndex_0.data.instance}}",
-                    "pineconeIndex": "flowiseindex",
+                    "pineconeIndex": "OSMI AIindex",
                     "pineconeNamespace": "pinecone-form10k",
                     "pineconeMetadataFilter": "{\"source\":\"apple\"}",
                     "topK": ""

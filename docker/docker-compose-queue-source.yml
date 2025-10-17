@@ -3,69 +3,69 @@ version: '3.1'
 services:
     redis:
         image: redis:alpine
-        container_name: flowise-redis
+        container_name: osmi-ai-redis
         ports:
             - '6379:6379'
         volumes:
             - redis_data:/data
         networks:
-            - flowise-net
+            - osmi-ai-net
 
-    flowise:
-        container_name: flowise-main
+    osmi-ai:
+        container_name: osmi-ai-main
         build:
             context: .. # Build using the Dockerfile in the root directory
             dockerfile: docker/Dockerfile
         ports:
             - '${PORT}:${PORT}'
         volumes:
-            # Mount local .flowise to container's default location
-            - ../.flowise:/root/.flowise
+            # Mount local .osmi-ai to container's default location
+            - ../.osmi-ai:/root/.osmi-ai
         environment:
-            # --- Essential Flowise Vars ---
+            # --- Essential osmi-ai Vars ---
             - PORT=${PORT:-3000}
-            - DATABASE_PATH=/root/.flowise
-            - SECRETKEY_PATH=/root/.flowise
-            - LOG_PATH=/root/.flowise/logs
-            - BLOB_STORAGE_PATH=/root/.flowise/storage
+            - DATABASE_PATH=/root/.osmi-ai
+            - SECRETKEY_PATH=/root/.osmi-ai
+            - LOG_PATH=/root/.osmi-ai/logs
+            - BLOB_STORAGE_PATH=/root/.osmi-ai/storage
             # --- Queue Vars (Main Instance) ---
             - MODE=queue
-            - QUEUE_NAME=flowise-queue # Ensure this matches worker
+            - QUEUE_NAME=osmi-ai-queue # Ensure this matches worker
             - REDIS_URL=redis://redis:6379 # Use service name 'redis'
         depends_on:
             - redis
         networks:
-            - flowise-net
+            - osmi-ai-net
 
-    flowise-worker:
-        container_name: flowise-worker
+    osmi-ai-worker:
+        container_name: osmi-ai-worker
         build:
             context: .. # Build context is still the root
             dockerfile: docker/worker/Dockerfile # Ensure this path is correct
         volumes:
-            # Mount same local .flowise to worker
-            - ../.flowise:/root/.flowise
+            # Mount same local .osmi-ai to worker
+            - ../.osmi-ai:/root/.osmi-ai
         environment:
-            # --- Essential Flowise Vars ---
+            # --- Essential osmi-ai Vars ---
             - WORKER_PORT=${WORKER_PORT:-5566} # Port for worker healthcheck
-            - DATABASE_PATH=/root/.flowise
-            - SECRETKEY_PATH=/root/.flowise
-            - LOG_PATH=/root/.flowise/logs
-            - BLOB_STORAGE_PATH=/root/.flowise/storage
+            - DATABASE_PATH=/root/.osmi-ai
+            - SECRETKEY_PATH=/root/.osmi-ai
+            - LOG_PATH=/root/.osmi-ai/logs
+            - BLOB_STORAGE_PATH=/root/.osmi-ai/storage
             # --- Queue Vars (Main Instance) ---
             - MODE=queue
-            - QUEUE_NAME=flowise-queue # Ensure this matches worker
+            - QUEUE_NAME=osmi-ai-queue # Ensure this matches worker
             - REDIS_URL=redis://redis:6379 # Use service name 'redis'
         depends_on:
             - redis
-            - flowise
+            - osmi-ai
         networks:
-            - flowise-net
+            - osmi-ai-net
 
 volumes:
     redis_data:
         driver: local
 
 networks:
-    flowise-net:
+    osmi-ai-net:
         driver: bridge

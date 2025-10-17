@@ -342,7 +342,7 @@
                 ],
                 "inputs": {
                     "agentName": "Frontline Support",
-                    "systemMessagePrompt": "You are frontline support staff for Flowise, an e-commerce store that sells computer hardwares.\n\nBe concise in your responses.\n\nYou can chat with customers and help them with basic questions, but if the customer is having a billing or technical problem, do not try to answer the question directly or gather information.\n\nInstead, immediately transfer them to the billing or technical team by asking the user to hold for a moment.\n\nOtherwise, just respond conversationally.",
+                    "systemMessagePrompt": "You are frontline support staff for OSMI AI, an e-commerce store that sells computer hardwares.\n\nBe concise in your responses.\n\nYou can chat with customers and help them with basic questions, but if the customer is having a billing or technical problem, do not try to answer the question directly or gather information.\n\nInstead, immediately transfer them to the billing or technical team by asking the user to hold for a moment.\n\nOtherwise, just respond conversationally.",
                     "humanMessagePrompt": "",
                     "tools": "",
                     "sequentialNode": ["{{seqStart_0.data.instance}}", "{{seqStart_0.data.instance}}"],
@@ -866,7 +866,7 @@
                 ],
                 "inputs": {
                     "agentName": "Billing Team",
-                    "systemMessagePrompt": "You are an expert billing support specialist for Flowise, a company that sells computers.\nHelp the user to the best of your ability, but be concise in your responses.\nYou have the ability to authorize refunds, which you can do collecting the required information.",
+                    "systemMessagePrompt": "You are an expert billing support specialist for OSMI AI, a company that sells computers.\nHelp the user to the best of your ability, but be concise in your responses.\nYou have the ability to authorize refunds, which you can do collecting the required information.",
                     "humanMessagePrompt": "",
                     "tools": ["{{customTool_0.data.instance}}"],
                     "sequentialNode": ["{{seqConditionAgent_0.data.instance}}", "{{seqConditionAgent_0.data.instance}}"],
@@ -1121,7 +1121,7 @@
                 ],
                 "inputs": {
                     "agentName": "Technical Team",
-                    "systemMessagePrompt": "You are an expert at diagnosing technical computer issues. You work for a company called Flowise that sells computers.\n\nUse the \"search_manual\" tool to look for relavant information to answer user question to the best of your ability, be concise in your responses.",
+                    "systemMessagePrompt": "You are an expert at diagnosing technical computer issues. You work for a company called OSMI AI that sells computers.\n\nUse the \"search_manual\" tool to look for relavant information to answer user question to the best of your ability, be concise in your responses.",
                     "humanMessagePrompt": "",
                     "tools": ["{{retrieverTool_0.data.instance}}"],
                     "sequentialNode": ["{{seqConditionAgent_0.data.instance}}", "{{seqConditionAgent_0.data.instance}}"],
@@ -1486,7 +1486,7 @@
                 "type": "CustomTool",
                 "baseClasses": ["CustomTool", "Tool", "StructuredTool", "Runnable"],
                 "category": "Tools",
-                "description": "Use custom tool you've created in Flowise within chatflow",
+                "description": "Use custom tool you've created in OSMI AI within chatflow",
                 "inputParams": [
                     {
                         "label": "Select Tool",
@@ -1505,7 +1505,7 @@
                         "id": "customTool_0-output-customTool-CustomTool|Tool|StructuredTool|Runnable",
                         "name": "customTool",
                         "label": "CustomTool",
-                        "description": "Use custom tool you've created in Flowise within chatflow",
+                        "description": "Use custom tool you've created in OSMI AI within chatflow",
                         "type": "CustomTool | Tool | StructuredTool | Runnable"
                     }
                 ],
@@ -1937,7 +1937,7 @@
                         "label": "Database File Path",
                         "name": "databaseFilePath",
                         "type": "string",
-                        "placeholder": "C:\\Users\\User\\.flowise\\database.sqlite",
+                        "placeholder": "C:\\Users\\User\\.OSMI AI\\database.sqlite",
                         "description": "If SQLite is selected, provide the path to the SQLite database file. Leave empty to use default application database",
                         "additionalParams": true,
                         "optional": true,

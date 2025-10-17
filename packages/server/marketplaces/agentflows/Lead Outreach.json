@@ -350,7 +350,7 @@
                     "tools": ["{{googleCustomSearch_0.data.instance}}"],
                     "supervisor": "{{supervisor_0.data.instance}}",
                     "model": "",
-                    "promptValues": "{\"company\":\"Flowise Inc\",\"lead_company\":\"Langchain\",\"lead_person\":\"Harrison Chase\"}",
+                    "promptValues": "{\"company\":\"OSMI AI Inc\",\"lead_company\":\"Langchain\",\"lead_person\":\"Harrison Chase\"}",
                     "maxIterations": ""
                 },
                 "outputAnchors": [
@@ -452,7 +452,7 @@
                     "tools": "",
                     "supervisor": "{{supervisor_0.data.instance}}",
                     "model": "",
-                    "promptValues": "{\"company\":\"Flowise Inc\",\"lead_company\":\"Langchain\",\"lead_person\":\"Harrison Chase\",\"position\":\"CEO\",\"lead_activity\":\"Langgraph launch\"}",
+                    "promptValues": "{\"company\":\"OSMI AI Inc\",\"lead_company\":\"Langchain\",\"lead_person\":\"Harrison Chase\",\"position\":\"CEO\",\"lead_activity\":\"Langgraph launch\"}",
                     "maxIterations": ""
                 },
                 "outputAnchors": [

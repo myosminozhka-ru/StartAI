@@ -1121,7 +1121,7 @@
                         "label": "Database File Path",
                         "name": "databaseFilePath",
                         "type": "string",
-                        "placeholder": "C:\\Users\\User\\.flowise\\database.sqlite",
+                        "placeholder": "C:\\Users\\User\\.OSMI AI\\database.sqlite",
                         "description": "If SQLite is selected, provide the path to the SQLite database file. Leave empty to use default application database",
                         "additionalParams": true,
                         "optional": true,
@@ -1178,7 +1178,7 @@
                 "type": "CustomTool",
                 "baseClasses": ["CustomTool", "Tool", "StructuredTool", "Runnable"],
                 "category": "Tools",
-                "description": "Use custom tool you've created in Flowise within chatflow",
+                "description": "Use custom tool you've created in OSMI AI within chatflow",
                 "inputParams": [
                     {
                         "label": "Select Tool",
@@ -1197,7 +1197,7 @@
                         "id": "customTool_0-output-customTool-CustomTool|Tool|StructuredTool|Runnable",
                         "name": "customTool",
                         "label": "CustomTool",
-                        "description": "Use custom tool you've created in Flowise within chatflow",
+                        "description": "Use custom tool you've created in OSMI AI within chatflow",
                         "type": "CustomTool | Tool | StructuredTool | Runnable"
                     }
                 ],
@@ -1228,7 +1228,7 @@
                 "type": "CustomTool",
                 "baseClasses": ["CustomTool", "Tool", "StructuredTool", "Runnable"],
                 "category": "Tools",
-                "description": "Use custom tool you've created in Flowise within chatflow",
+                "description": "Use custom tool you've created in OSMI AI within chatflow",
                 "inputParams": [
                     {
                         "label": "Select Tool",
@@ -1247,7 +1247,7 @@
                         "id": "customTool_1-output-customTool-CustomTool|Tool|StructuredTool|Runnable",
                         "name": "customTool",
                         "label": "CustomTool",
-                        "description": "Use custom tool you've created in Flowise within chatflow",
+                        "description": "Use custom tool you've created in OSMI AI within chatflow",
                         "type": "CustomTool | Tool | StructuredTool | Runnable"
                     }
                 ],

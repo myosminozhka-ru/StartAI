@@ -12,6 +12,7 @@ const ResetPasswordPage = Loadable(lazy(() => import('@/views/auth/resetPassword
 const UnauthorizedPage = Loadable(lazy(() => import('@/views/auth/unauthorized')))
 const OrganizationSetupPage = Loadable(lazy(() => import('@/views/organization/index')))
 const LicenseExpiredPage = Loadable(lazy(() => import('@/views/auth/expired')))
+const EulaPage = Loadable(lazy(() => import('@/views/auth/eula')))
 
 const AuthRoutes = {
     path: '/',

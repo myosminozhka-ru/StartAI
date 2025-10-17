@@ -826,7 +826,7 @@
                         "label": "Database File Path",
                         "name": "databaseFilePath",
                         "type": "string",
-                        "placeholder": "C:\\Users\\User\\.flowise\\database.sqlite",
+                        "placeholder": "C:\\Users\\User\\.OSMI AI\\database.sqlite",
                         "description": "If SQLite is selected, provide the path to the SQLite database file. Leave empty to use default application database",
                         "additionalParams": true,
                         "optional": true,

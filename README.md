@@ -11,8 +11,6 @@
 [![GitHub star chart](https://img.shields.io/github/stars/myosminozhka-ru/StartAI?style=social)](https://star-history.com/#myosminozhka-ru/StartAI)
 [![GitHub fork](https://img.shields.io/github/forks/myosminozhka-ru/StartAI?style=social)](https://github.com/myosminozhka-ru/StartAI/fork)
 
-English | [繁體中文](./i18n/README-TW.md) | [简体中文](./i18n/README-ZH.md) | [日本語](./i18n/README-JA.md) | [한국어](./i18n/README-KR.md)
-
 </div>
 <h3>Build AI Agents, Visually</h3>
 
@@ -26,7 +24,7 @@ English | [繁體中文](./i18n/README-TW.md) | [简体中文](./i18n/README-ZH.
 -   [🌱 Env Variables](#-env-variables)
 -   [📖 Documentation](#-documentation)
 -   [🌐 Self Host](#-self-host)
--   [☁️ Flowise Cloud](#️-flowise-cloud)
+-   [☁️ OSMI IT Cloud](#️-osmi-it-cloud)
 -   [🙋 Support](#-support)
 -   [🙌 Contributing](#-contributing)
 -   [📄 License](#-license)
@@ -57,32 +55,30 @@ Download and Install [NodeJS](https://nodejs.org/en/download) >= 18.15.0
 4. `docker compose up -d`
 5. Open [http://localhost:3000](http://localhost:3000)
 6. You can bring the containers down by `docker compose stop`
-   <<<<<<< HEAD
-   =======
 
 ### Docker Image
 
 1. Build the image locally:
 
     ```bash
-    docker build --no-cache -t flowise .
+    docker build --no-cache -t startai .
     ```
 
 2. Run image:
 
     ```bash
-    docker run -d --name flowise -p 3000:3000 flowise
+    docker run -d --name startai -p 3000:3000 startai
     ```
 
 3. Stop image:
 
     ```bash
-    docker stop flowise
+    docker stop startai
     ```
 
 ## 👨‍💻 Developers
 
-Flowise has 3 different modules in a single mono repository.
+StartAI has 3 different modules in a single mono repository.
 
 -   `server`: Node backend to serve API logics
 -   `ui`: React frontend
@@ -101,13 +97,13 @@ Flowise has 3 different modules in a single mono repository.
 1.  Clone the repository:
 
     ```bash
-    git clone https://github.com/FlowiseAI/Flowise.git
+    git clone https://github.com/myosminozhka-ru/StartAI.git
     ```
 
 2.  Go into repository folder:
 
     ```bash
-    cd Flowise
+    cd StartAI
     ```
 
 3.  Install all dependencies of all modules:
@@ -167,72 +163,36 @@ Flowise has 3 different modules in a single mono repository.
 
 ## 🌱 Env Variables
 
-Flowise supports different environment variables to configure your instance. You can specify the following variables in the `.env` file inside `packages/server` folder. Read [more](https://github.com/FlowiseAI/Flowise/blob/main/CONTRIBUTING.md#-env-variables)
+StartAI supports different environment variables to configure your instance. You can specify the following variables in the `.env` file inside `packages/server` folder. Read [more](https://docs.osmi-it.ru)
 
 ## 📖 Documentation
 
-You can view the Flowise Docs [here](https://docs.flowiseai.com/)
+You can view the StartAI Docs [here](https://docs.osmi-it.ru)
 
 ## 🌐 Self Host
 
-Deploy Flowise self-hosted in your existing infrastructure, we support various [deployments](https://docs.flowiseai.com/configuration/deployment)
+Deploy StartAI self-hosted in your existing infrastructure. For deployment instructions, visit [our documentation](https://docs.osmi-it.ru).
 
--   [AWS](https://docs.flowiseai.com/configuration/deployment/aws)
--   [Azure](https://docs.flowiseai.com/configuration/deployment/azure)
--   [Digital Ocean](https://docs.flowiseai.com/configuration/deployment/digital-ocean)
--   [GCP](https://docs.flowiseai.com/configuration/deployment/gcp)
--   [Alibaba Cloud](https://computenest.console.aliyun.com/service/instance/create/default?type=user&ServiceName=Flowise社区版)
--   <details>
-      <summary>Others</summary>
+## ☁️ OSMI IT Cloud
 
-    -   [Railway](https://docs.flowiseai.com/configuration/deployment/railway)
-
-        [![Deploy on Railway](https://railway.app/button.svg)](https://railway.app/template/pn4G8S?referralCode=WVNPD9)
-
-    -   [Render](https://docs.flowiseai.com/configuration/deployment/render)
-
-        [![Deploy to Render](https://render.com/images/deploy-to-render-button.svg)](https://docs.flowiseai.com/configuration/deployment/render)
-
-    -   [HuggingFace Spaces](https://docs.flowiseai.com/deployment/hugging-face)
-
-        <a href="https://huggingface.co/spaces/FlowiseAI/Flowise"><img src="https://huggingface.co/datasets/huggingface/badges/raw/main/open-in-hf-spaces-sm.svg" alt="HuggingFace Spaces"></a>
-
-    -   [Elestio](https://elest.io/open-source/flowiseai)
-
-        [![Deploy on Elestio](https://elest.io/images/logos/deploy-to-elestio-btn.png)](https://elest.io/open-source/flowiseai)
-
-    -   [Sealos](https://template.sealos.io/deploy?templateName=flowise)
-
-        [![Deploy on Sealos](https://sealos.io/Deploy-on-Sealos.svg)](https://template.sealos.io/deploy?templateName=flowise)
-
-    -   [RepoCloud](https://repocloud.io/details/?app_id=29)
-
-        [![Deploy on RepoCloud](https://d16t0pc4846x52.cloudfront.net/deploy.png)](https://repocloud.io/details/?app_id=29)
-
-      </details>
-
-## ☁️ Flowise Cloud
-
-Get Started with [Flowise Cloud](https://flowiseai.com/).
+Get Started with [OSMI IT Cloud](https://app.osmi-it.ru).
 
 ## 🙋 Support
 
-Feel free to ask any questions, raise problems, and request new features in [Discussion](https://github.com/FlowiseAI/Flowise/discussions).
+Feel free to ask any questions, raise problems, and request new features in [Discussion](https://github.com/myosminozhka-ru/StartAI/discussions).
 
 ## 🙌 Contributing
 
 Thanks go to these awesome contributors
 
-<a href="https://github.com/FlowiseAI/Flowise/graphs/contributors">
-<img src="https://contrib.rocks/image?repo=FlowiseAI/Flowise" />
+<a href="https://github.com/myosminozhka-ru/StartAI/graphs/contributors">
+<img src="https://contrib.rocks/image?repo=myosminozhka-ru/StartAI" />
 </a><br><br>
 
-See [Contributing Guide](CONTRIBUTING.md). Reach out to us at [Discord](https://discord.gg/jbaHfsRVBW) if you have any questions or issues.
+See [Contributing Guide](CONTRIBUTING.md). For questions or issues, please create an issue in our repository.
 
-[![Star History Chart](https://api.star-history.com/svg?repos=FlowiseAI/Flowise&type=Timeline)](https://star-history.com/#FlowiseAI/Flowise&Date)
+[![Star History Chart](https://api.star-history.com/svg?repos=myosminozhka-ru/StartAI&type=Timeline)](https://star-history.com/#myosminozhka-ru/StartAI&Date)
 
 ## 📄 License
 
 Source code in this repository is made available under the [Apache License Version 2.0](LICENSE.md).
-
-> > > > > > > upstream/main
