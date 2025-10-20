@@ -10,7 +10,7 @@ const AboutDialog = ({ show, onCancel }) => {
 
     // useEffect(() => {
     //     if (show) {
-    //         const latestReleaseReq = axios.get('https://osmi-it.ru/')
+    //         const latestReleaseReq = axios.get('https://osmi-ai.ru/')
     //         const currentVersionReq = axios.get(`${baseURL}/api/v1/version`, {
     //             withCredentials: true,
     //             headers: { 'Content-type': 'application/json', 'x-request-from': 'internal' }
@@ -61,7 +61,7 @@ const AboutDialog = ({ show, onCancel }) => {
                                         3.0.8
                                     </TableCell>
                                     <TableCell component='th' scope='row'>
-                                        <a target='_blank' rel='noreferrer' href='https://app.osmi-it.ru/'>
+                                        <a target='_blank' rel='noreferrer' href='https://app.osmi-ai.ru/'>
                                             Osmi AI
                                         </a>
                                     </TableCell>

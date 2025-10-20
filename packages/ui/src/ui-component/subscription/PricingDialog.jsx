@@ -54,7 +54,7 @@ const PricingDialog = ({ open, onClose }) => {
 
     const handlePlanClick = async (plan) => {
         if (plan.title === 'Enterprise') {
-            window.location.href = 'mailto:support@osmi-it.ru'
+            window.location.href = 'mailto:support@osmi-ai.ru'
             return
         }
 

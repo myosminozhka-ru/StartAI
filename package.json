@@ -2,7 +2,7 @@
     "name": "osmi-ai",
     "version": "3.0.8",
     "private": true,
-    "homepage": "https://osmi-it.ru",
+    "homepage": "https://osmi-ai.ru",
     "workspaces": [
         "packages/*",
         "flowise",

@@ -56,18 +56,18 @@ body:
       id: method
       attributes:
           label: Use Method
-          description: How did you use Flowise?
+          description: How did you use OSMI AI?
           options:
-              - Flowise Cloud
+              - OSMI AI Cloud
               - Docker
-              - npx flowise start
+              - npx osmi-ai start
               - pnpm start
 
     - type: input
       id: version
       attributes:
-          label: Flowise Version
-          description: What version of Flowise are you running?
+          label: OSMI AI Version
+          description: What version of OSMI AI are you running?
           placeholder: e.g., 1.2.11
 
     - type: dropdown

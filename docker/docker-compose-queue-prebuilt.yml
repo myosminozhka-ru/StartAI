@@ -13,7 +13,7 @@ services:
         restart: always
 
     osmi-ai:
-        image: osmi-aiai/osmi-ai:latest
+        image: osmi-ai/osmi-ai:latest
         container_name: osmi-ai-main
         restart: always
         ports:
@@ -36,7 +36,7 @@ services:
             # SECRET KEYS
             - SECRETKEY_STORAGE_TYPE=${SECRETKEY_STORAGE_TYPE}
             - SECRETKEY_PATH=${SECRETKEY_PATH}
-            - osmi-ai_SECRETKEY_OVERWRITE=${osmi-ai_SECRETKEY_OVERWRITE}
+            - OSMI_AI_SECRETKEY_OVERWRITE=${OSMI_AI_SECRETKEY_OVERWRITE}
             - SECRETKEY_AWS_ACCESS_KEY=${SECRETKEY_AWS_ACCESS_KEY}
             - SECRETKEY_AWS_SECRET_KEY=${SECRETKEY_AWS_SECRET_KEY}
             - SECRETKEY_AWS_REGION=${SECRETKEY_AWS_REGION}
@@ -70,9 +70,9 @@ services:
             - NUMBER_OF_PROXIES=${NUMBER_OF_PROXIES}
             - CORS_ORIGINS=${CORS_ORIGINS}
             - IFRAME_ORIGINS=${IFRAME_ORIGINS}
-            - osmi-ai_FILE_SIZE_LIMIT=${osmi-ai_FILE_SIZE_LIMIT}
+            - OSMI_AI_FILE_SIZE_LIMIT=${OSMI_AI_FILE_SIZE_LIMIT}
             - SHOW_COMMUNITY_NODES=${SHOW_COMMUNITY_NODES}
-            - DISABLE_osmi-ai_TELEMETRY=${DISABLE_osmi-ai_TELEMETRY}
+            - DISABLE_OSMI_AI_TELEMETRY=${DISABLE_OSMI_AI_TELEMETRY}
             - DISABLED_NODES=${DISABLED_NODES}
             - MODEL_LIST_CONFIG_JSON=${MODEL_LIST_CONFIG_JSON}
 
@@ -180,7 +180,7 @@ services:
             # SECRET KEYS
             - SECRETKEY_STORAGE_TYPE=${SECRETKEY_STORAGE_TYPE}
             - SECRETKEY_PATH=${SECRETKEY_PATH}
-            - osmi-ai_SECRETKEY_OVERWRITE=${osmi-ai_SECRETKEY_OVERWRITE}
+            - OSMI_AI_SECRETKEY_OVERWRITE=${OSMI_AI_SECRETKEY_OVERWRITE}
             - SECRETKEY_AWS_ACCESS_KEY=${SECRETKEY_AWS_ACCESS_KEY}
             - SECRETKEY_AWS_SECRET_KEY=${SECRETKEY_AWS_SECRET_KEY}
             - SECRETKEY_AWS_REGION=${SECRETKEY_AWS_REGION}
@@ -214,9 +214,9 @@ services:
             - NUMBER_OF_PROXIES=${NUMBER_OF_PROXIES}
             - CORS_ORIGINS=${CORS_ORIGINS}
             - IFRAME_ORIGINS=${IFRAME_ORIGINS}
-            - osmi-ai_FILE_SIZE_LIMIT=${osmi-ai_FILE_SIZE_LIMIT}
+            - OSMI_AI_FILE_SIZE_LIMIT=${OSMI_AI_FILE_SIZE_LIMIT}
             - SHOW_COMMUNITY_NODES=${SHOW_COMMUNITY_NODES}
-            - DISABLE_osmi-ai_TELEMETRY=${DISABLE_osmi-ai_TELEMETRY}
+            - DISABLE_OSMI_AI_TELEMETRY=${DISABLE_OSMI_AI_TELEMETRY}
             - DISABLED_NODES=${DISABLED_NODES}
             - MODEL_LIST_CONFIG_JSON=${MODEL_LIST_CONFIG_JSON}
 

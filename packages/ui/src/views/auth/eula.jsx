@@ -117,7 +117,7 @@ const EulaPage = () => {
                     </Typography>
                     <Typography variant='body1' sx={{ mb: 2, lineHeight: 1.6 }}>
                         Правообладатель вправе вносить изменения в Соглашение в одностороннем порядке. Новая редакция публикуется на
-                        интернет-странице: https://app.osmi-it.ru/soglashenie
+                        интернет-странице: https://app.osmi-ai.ru/soglashenie
                     </Typography>
 
                     <Typography variant='body2' sx={{ mt: 4, color: theme.palette.grey[600], textAlign: 'center' }}>

@@ -1,4 +1,4 @@
-name: Docker Image CI
+name: OSMI AI Docker Build
 
 on:
     workflow_dispatch:
@@ -103,10 +103,10 @@ jobs:
                   tags: |
                       ${{ 
                           steps.defaults.outputs.registry == 'docker_hub' && 
-                          format('flowiseai/flowise{0}:{1}', 
+                          format('osmi-ai/osmi-ai{0}:{1}', 
                               steps.defaults.outputs.image_type == 'worker' && '-worker' || '', 
                               steps.defaults.outputs.tag_version) ||
-                          format('{0}.dkr.ecr.{1}.amazonaws.com/flowise{2}:{3}', 
+                          format('{0}.dkr.ecr.{1}.amazonaws.com/osmi-ai{2}:{3}', 
                               secrets.AWS_ACCOUNT_ID, 
                               secrets.AWS_REGION, 
                               steps.defaults.outputs.image_type == 'worker' && '-worker' || '',

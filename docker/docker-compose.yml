@@ -2,7 +2,7 @@ version: '3.1'
 
 services:
     osmi-ai:
-        image: osmi-it/osmi-ai:latest
+        image: osmi-ai/osmi-ai:latest
         restart: always
         environment:
             - PORT=${PORT}

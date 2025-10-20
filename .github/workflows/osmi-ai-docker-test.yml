@@ -1,4 +1,4 @@
-name: Test Docker Build
+name: OSMI AI Docker Test
 
 on:
     push:
@@ -16,4 +16,4 @@ jobs:
             PUPPETEER_SKIP_DOWNLOAD: true
         steps:
             - uses: actions/checkout@v4
-            - run: docker build --no-cache -t flowise .
+            - run: docker build --no-cache -t osmi-ai .

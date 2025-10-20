@@ -2,10 +2,10 @@
     "name": "flowise-ui",
     "version": "3.0.8",
     "license": "SEE LICENSE IN LICENSE.md",
-    "homepage": "https://app.osmi-it.ru",
+    "homepage": "https://app.osmi-ai.ru",
     "author": {
         "name": "OsmiAI Team",
-        "email": "support@osmi-it.ru"
+        "email": "support@osmi-ai.ru"
     },
     "dependencies": {
         "@codemirror/lang-javascript": "^6.2.1",

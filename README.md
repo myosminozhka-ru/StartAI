@@ -1,8 +1,8 @@
 <!-- markdownlint-disable MD030 -->
 
 <p align="center">
-<img src="https://app.osmi-it.ru/assets/osmi_black-VsBDPajo.png">
-<img src="https://app.osmi-it.ru/assets/osmi_black-VsBDPajo.png">
+<img src="https://app.osmi-ai.ru/assets/osmi_black-VsBDPajo.png">
+<img src="https://app.osmi-ai.ru/assets/osmi_black-VsBDPajo.png">
 </p>
 
 <div align="center">
@@ -14,7 +14,7 @@
 </div>
 <h3>Build AI Agents, Visually</h3>
 
-<img width="100%" src="https://app.osmi-it.ru/assets/osmi_black-VsBDPajo.png"></a>
+<img width="100%" src="https://app.osmi-ai.ru/assets/osmi_black-VsBDPajo.png"></a>
 
 ## 📚 Table of Contents
 
@@ -163,19 +163,19 @@ StartAI has 3 different modules in a single mono repository.
 
 ## 🌱 Env Variables
 
-StartAI supports different environment variables to configure your instance. You can specify the following variables in the `.env` file inside `packages/server` folder. Read [more](https://docs.osmi-it.ru)
+StartAI supports different environment variables to configure your instance. You can specify the following variables in the `.env` file inside `packages/server` folder. Read [more](https://docs.osmi-ai.ru)
 
 ## 📖 Documentation
 
-You can view the StartAI Docs [here](https://docs.osmi-it.ru)
+You can view the StartAI Docs [here](https://docs.osmi-ai.ru)
 
 ## 🌐 Self Host
 
-Deploy StartAI self-hosted in your existing infrastructure. For deployment instructions, visit [our documentation](https://docs.osmi-it.ru).
+Deploy StartAI self-hosted in your existing infrastructure. For deployment instructions, visit [our documentation](https://docs.osmi-ai.ru).
 
 ## ☁️ OSMI IT Cloud
 
-Get Started with [OSMI IT Cloud](https://app.osmi-it.ru).
+Get Started with [OSMI IT Cloud](https://app.osmi-ai.ru).
 
 ## 🙋 Support
 

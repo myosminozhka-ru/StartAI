@@ -14,7 +14,7 @@
         "test:coverage": "jest --coverage"
     },
     "keywords": [],
-    "homepage": "https://osmi-it.ru/",
+    "homepage": "https://osmi-ai.ru/",
     "author": {
         "name": "Henry Heng",
         "email": "henryheng@flowiseai.com"
