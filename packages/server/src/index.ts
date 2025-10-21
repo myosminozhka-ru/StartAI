@@ -343,6 +343,14 @@ export class App {
         const uiBuildPath = path.join(packagePath, 'build')
         const uiHtmlPath = path.join(packagePath, 'build', 'index.html')
 
+        // Special handling for soglashenie file to set correct Content-Type
+        this.app.get('/soglashenie', (req: Request, res: Response) => {
+            const soglasheniePath = path.join(uiBuildPath, 'soglashenie')
+            res.setHeader('Content-Type', 'application/pdf')
+            res.setHeader('Content-Disposition', 'inline; filename="soglashenie.pdf"')
+            res.sendFile(soglasheniePath)
+        })
+
         this.app.use('/', express.static(uiBuildPath))
 
         // All other requests not handled will return React app
