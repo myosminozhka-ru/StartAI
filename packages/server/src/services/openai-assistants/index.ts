@@ -1,11 +1,11 @@
-import OpenAI from 'openai'
+﻿import OpenAI from 'openai'
 import { StatusCodes } from 'http-status-codes'
 import { decryptCredentialData } from '../../utils'
 import { getRunningExpressApp } from '../../utils/getRunningExpressApp'
 import { Credential } from '../../database/entities/Credential'
-import { InternalFlowiseError } from '../../errors/internalFlowiseError'
+import { InternalOsmiError } from '../../errors/InternalOsmiError'
 import { getErrorMessage } from '../../errors/utils'
-import { getFileFromUpload, removeSpecificFileFromUpload } from 'flowise-components'
+import { getFileFromUpload, removeSpecificFileFromUpload } from 'osmi-ai-components'
 
 // ----------------------------------------
 // Assistants
@@ -19,20 +19,20 @@ const getAllOpenaiAssistants = async (credentialId: string): Promise<any> => {
             id: credentialId
         })
         if (!credential) {
-            throw new InternalFlowiseError(StatusCodes.NOT_FOUND, `Credential ${credentialId} not found in the database!`)
+            throw new InternalOsmiError(StatusCodes.NOT_FOUND, `Credential ${credentialId} not found in the database!`)
         }
         // Decrpyt credentialData
         const decryptedCredentialData = await decryptCredentialData(credential.encryptedData)
         const openAIApiKey = decryptedCredentialData['openAIApiKey']
         if (!openAIApiKey) {
-            throw new InternalFlowiseError(StatusCodes.NOT_FOUND, `OpenAI ApiKey not found`)
+            throw new InternalOsmiError(StatusCodes.NOT_FOUND, `OpenAI ApiKey not found`)
         }
         const openai = new OpenAI({ apiKey: openAIApiKey })
         const retrievedAssistants = await openai.beta.assistants.list()
         const dbResponse = retrievedAssistants.data
         return dbResponse
     } catch (error) {
-        throw new InternalFlowiseError(
+        throw new InternalOsmiError(
             StatusCodes.INTERNAL_SERVER_ERROR,
             `Error: openaiAssistantsService.getAllOpenaiAssistants - ${getErrorMessage(error)}`
         )
@@ -47,13 +47,13 @@ const getSingleOpenaiAssistant = async (credentialId: string, assistantId: strin
             id: credentialId
         })
         if (!credential) {
-            throw new InternalFlowiseError(StatusCodes.NOT_FOUND, `Credential ${credentialId} not found in the database!`)
+            throw new InternalOsmiError(StatusCodes.NOT_FOUND, `Credential ${credentialId} not found in the database!`)
         }
         // Decrpyt credentialData
         const decryptedCredentialData = await decryptCredentialData(credential.encryptedData)
         const openAIApiKey = decryptedCredentialData['openAIApiKey']
         if (!openAIApiKey) {
-            throw new InternalFlowiseError(StatusCodes.NOT_FOUND, `OpenAI ApiKey not found`)
+            throw new InternalOsmiError(StatusCodes.NOT_FOUND, `OpenAI ApiKey not found`)
         }
 
         const openai = new OpenAI({ apiKey: openAIApiKey })
@@ -75,7 +75,7 @@ const getSingleOpenaiAssistant = async (credentialId: string, assistantId: strin
         }
         return dbResponse
     } catch (error) {
-        throw new InternalFlowiseError(
+        throw new InternalOsmiError(
             StatusCodes.INTERNAL_SERVER_ERROR,
             `Error: openaiAssistantsService.getSingleOpenaiAssistant - ${getErrorMessage(error)}`
         )
@@ -88,13 +88,13 @@ const uploadFilesToAssistant = async (credentialId: string, files: { filePath: s
         id: credentialId
     })
     if (!credential) {
-        throw new InternalFlowiseError(StatusCodes.NOT_FOUND, `Credential ${credentialId} not found in the database!`)
+        throw new InternalOsmiError(StatusCodes.NOT_FOUND, `Credential ${credentialId} not found in the database!`)
     }
     // Decrpyt credentialData
     const decryptedCredentialData = await decryptCredentialData(credential.encryptedData)
     const openAIApiKey = decryptedCredentialData['openAIApiKey']
     if (!openAIApiKey) {
-        throw new InternalFlowiseError(StatusCodes.NOT_FOUND, `OpenAI ApiKey not found`)
+        throw new InternalOsmiError(StatusCodes.NOT_FOUND, `OpenAI ApiKey not found`)
     }
 
     const openai = new OpenAI({ apiKey: openAIApiKey })

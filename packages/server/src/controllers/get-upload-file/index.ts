@@ -1,9 +1,9 @@
-import { Request, Response, NextFunction } from 'express'
+﻿import { Request, Response, NextFunction } from 'express'
 import fs from 'fs'
 import contentDisposition from 'content-disposition'
-import { streamStorageFile } from 'flowise-components'
+import { streamStorageFile } from 'osmi-ai-components'
 import { StatusCodes } from 'http-status-codes'
-import { InternalFlowiseError } from '../../errors/internalFlowiseError'
+import { InternalOsmiError } from '../../errors/InternalOsmiError'
 import { getRunningExpressApp } from '../../utils/getRunningExpressApp'
 import { ChatFlow } from '../../database/entities/ChatFlow'
 import { Workspace } from '../../enterprise/database/entities/workspace.entity'
@@ -25,14 +25,14 @@ const streamUploadedFile = async (req: Request, res: Response, next: NextFunctio
             id: chatflowId
         })
         if (!chatflow) {
-            throw new InternalFlowiseError(StatusCodes.NOT_FOUND, `Chatflow ${chatflowId} not found`)
+            throw new InternalOsmiError(StatusCodes.NOT_FOUND, `Chatflow ${chatflowId} not found`)
         }
         const chatflowWorkspaceId = chatflow.workspaceId
         const workspace = await appServer.AppDataSource.getRepository(Workspace).findOneBy({
             id: chatflowWorkspaceId
         })
         if (!workspace) {
-            throw new InternalFlowiseError(StatusCodes.NOT_FOUND, `Workspace ${chatflowWorkspaceId} not found`)
+            throw new InternalOsmiError(StatusCodes.NOT_FOUND, `Workspace ${chatflowWorkspaceId} not found`)
         }
         const orgId = workspace.organizationId as string
 
@@ -44,7 +44,7 @@ const streamUploadedFile = async (req: Request, res: Response, next: NextFunctio
         }
         const fileStream = await streamStorageFile(chatflowId, chatId, fileName, orgId)
 
-        if (!fileStream) throw new InternalFlowiseError(StatusCodes.INTERNAL_SERVER_ERROR, `Error: streamStorageFile`)
+        if (!fileStream) throw new InternalOsmiError(StatusCodes.INTERNAL_SERVER_ERROR, `Error: streamStorageFile`)
 
         if (fileStream instanceof fs.ReadStream && fileStream?.pipe) {
             fileStream.pipe(res)

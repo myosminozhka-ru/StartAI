@@ -1,5 +1,5 @@
-import evaluatorsService from '../evaluator'
-import { ICommonObject } from 'flowise-components'
+﻿import evaluatorsService from '../evaluator'
+import { ICommonObject } from 'osmi-ai-components'
 
 interface EvaluatorReturnType {
     name: string

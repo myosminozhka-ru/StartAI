@@ -1,9 +1,9 @@
-import { FLOWISE_METRIC_COUNTERS, IMetricsProvider } from '../Interface.Metrics'
+﻿import { OSMI_METRIC_COUNTERS, IMetricsProvider } from '../Interface.Metrics'
 import { Resource } from '@opentelemetry/resources'
 import { ATTR_SERVICE_NAME, ATTR_SERVICE_VERSION } from '@opentelemetry/semantic-conventions'
 import { MeterProvider, PeriodicExportingMetricReader, Histogram } from '@opentelemetry/sdk-metrics'
 import { diag, DiagLogLevel, DiagConsoleLogger, Attributes, Counter } from '@opentelemetry/api'
-import { getVersion } from 'flowise-components'
+import { getVersion } from 'osmi-ai-components'
 import express from 'express'
 
 // Create a static map to track created metrics and prevent duplicates
@@ -45,11 +45,11 @@ export class OpenTelemetry implements IMetricsProvider {
     async initializeCounters(): Promise<void> {
         try {
             // Define the resource with the service name for trace grouping
-            const flowiseVersion = await getVersion()
+            const OSMIVersion = await getVersion()
 
             this.resource = new Resource({
-                [ATTR_SERVICE_NAME]: process.env.METRICS_SERVICE_NAME || 'FlowiseAI',
-                [ATTR_SERVICE_VERSION]: flowiseVersion.version // Version as a label
+                [ATTR_SERVICE_NAME]: process.env.METRICS_SERVICE_NAME || 'OSMIAI',
+                [ATTR_SERVICE_VERSION]: OSMIVersion.version // Version as a label
             })
 
             const metricProtocol = process.env.METRICS_OPEN_TELEMETRY_PROTOCOL || 'http' // Default to 'http'
@@ -104,10 +104,10 @@ export class OpenTelemetry implements IMetricsProvider {
 
             this.meterProvider = new MeterProvider({ resource: this.resource, readers: [this.metricReader] })
 
-            const meter = this.meterProvider.getMeter('flowise-metrics')
-            // look at the FLOWISE_COUNTER enum in Interface.Metrics.ts and get all values
+            const meter = this.meterProvider.getMeter('OSMI-metrics')
+            // look at the OSMI_COUNTER enum in Interface.Metrics.ts and get all values
             // for each counter in the enum, create a new promClient.Counter and add it to the registry
-            const enumEntries = Object.entries(FLOWISE_METRIC_COUNTERS)
+            const enumEntries = Object.entries(OSMI_METRIC_COUNTERS)
             enumEntries.forEach(([name, value]) => {
                 try {
                     // Check if we've already created this metric
@@ -130,14 +130,14 @@ export class OpenTelemetry implements IMetricsProvider {
 
             try {
                 // Add version gauge if not already created
-                if (!createdMetrics.has('flowise_version')) {
-                    const versionGuage = meter.createGauge('flowise_version', {
-                        description: 'Flowise version'
+                if (!createdMetrics.has('OSMI_version')) {
+                    const versionGuage = meter.createGauge('OSMI_version', {
+                        description: 'OSMI version'
                     })
                     // remove the last dot from the version string, e.g. 2.1.3 -> 2.13 (gauge needs a number - float)
-                    const formattedVersion = flowiseVersion.version.replace(/\.(\d+)$/, '$1')
+                    const formattedVersion = OSMIVersion.version.replace(/\.(\d+)$/, '$1')
                     versionGuage.record(parseFloat(formattedVersion))
-                    createdMetrics.set('flowise_version', true)
+                    createdMetrics.set('OSMI_version', true)
                 }
             } catch (error) {
                 console.error('Error creating version gauge:', error)

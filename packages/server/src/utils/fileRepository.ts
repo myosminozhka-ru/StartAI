@@ -1,6 +1,6 @@
-import { ChatFlow } from '../database/entities/ChatFlow'
+﻿import { ChatFlow } from '../database/entities/ChatFlow'
 import { IReactFlowObject } from '../Interface'
-import { addBase64FilesToStorage } from 'flowise-components'
+import { addBase64FilesToStorage } from 'osmi-ai-components'
 import { checkStorage, updateStorageUsage } from './quotaUsage'
 import { UsageCacheManager } from '../UsageCacheManager'
 

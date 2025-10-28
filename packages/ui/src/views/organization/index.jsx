@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+﻿import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { z } from 'zod'
 
@@ -299,7 +299,7 @@ const OrganizationSetupPage = () => {
                                             onChange={(e) => setExistingUsername(e.target.value)}
                                         />
                                         <Typography variant='caption'>
-                                            <i>Existing username that was set as FLOWISE_USERNAME environment variable</i>
+                                            <i>Existing username that was set as OSMI_USERNAME environment variable</i>
                                         </Typography>
                                     </Box>
                                     <Box>
@@ -317,7 +317,7 @@ const OrganizationSetupPage = () => {
                                             onChange={(e) => setExistingPassword(e.target.value)}
                                         />
                                         <Typography variant='caption'>
-                                            <i>Existing password that was set as FLOWISE_PASSWORD environment variable</i>
+                                            <i>Existing password that was set as OSMI_PASSWORD environment variable</i>
                                         </Typography>
                                     </Box>
                                     <Divider>

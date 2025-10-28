@@ -1,4 +1,4 @@
-import { Request } from 'express'
+﻿import { Request } from 'express'
 import * as path from 'path'
 import { DataSource } from 'typeorm'
 import { v4 as uuidv4 } from 'uuid'
@@ -19,7 +19,7 @@ import {
     EvaluationRunner,
     handleEscapeCharacters,
     IServerSideEventStreamer
-} from 'flowise-components'
+} from 'osmi-ai-components'
 import { StatusCodes } from 'http-status-codes'
 import {
     IncomingInput,
@@ -38,7 +38,7 @@ import {
     IVariableOverride,
     MODE
 } from '../Interface'
-import { InternalFlowiseError } from '../errors/internalFlowiseError'
+import { InternalOsmiError } from '../errors/InternalOsmiError'
 import { databaseEntities } from '.'
 import { ChatFlow } from '../database/entities/ChatFlow'
 import { ChatMessage } from '../database/entities/ChatMessage'
@@ -65,7 +65,7 @@ import { utilAddChatMessage } from './addChatMesage'
 import { checkPredictions, checkStorage, updatePredictionsUsage, updateStorageUsage } from './quotaUsage'
 import { buildAgentGraph } from './buildAgentGraph'
 import { getErrorMessage } from '../errors/utils'
-import { FLOWISE_METRIC_COUNTERS, FLOWISE_COUNTER_STATUS, IMetricsProvider } from '../Interface.Metrics'
+import { OSMI_METRIC_COUNTERS, OSMI_COUNTER_STATUS, IMetricsProvider } from '../Interface.Metrics'
 import { getWorkspaceSearchOptions } from '../enterprise/utils/ControllerServiceUtils'
 import { OMIT_QUEUE_JOB_DATA } from './constants'
 import { executeAgentFlow } from './buildAgentflow'
@@ -173,7 +173,7 @@ const initEndingNode = async ({
             : reactFlowNodes[reactFlowNodes.length - 1]
 
     if (!nodeToExecute) {
-        throw new InternalFlowiseError(StatusCodes.NOT_FOUND, `Node not found`)
+        throw new InternalOsmiError(StatusCodes.NOT_FOUND, `Node not found`)
     }
 
     if (incomingInput.overrideConfig && apiOverrideStatus) {
@@ -950,7 +950,7 @@ const checkIfStreamValid = async (
             Object.keys(endingNodeData.outputs).length &&
             !Object.values(endingNodeData.outputs ?? {}).includes(endingNodeData.name)
         ) {
-            throw new InternalFlowiseError(
+            throw new InternalOsmiError(
                 StatusCodes.INTERNAL_SERVER_ERROR,
                 `Output of ${endingNodeData.label} (${endingNodeData.id}) must be ${endingNodeData.label}, can't be an Output Prediction`
             )
@@ -979,7 +979,7 @@ export const utilBuildChatflow = async (req: Request, isInternal: boolean = fals
         id: chatflowid
     })
     if (!chatflow) {
-        throw new InternalFlowiseError(StatusCodes.NOT_FOUND, `Chatflow ${chatflowid} not found`)
+        throw new InternalOsmiError(StatusCodes.NOT_FOUND, `Chatflow ${chatflowid} not found`)
     }
 
     const isAgentFlow = chatflow.type === 'MULTIAGENT'
@@ -989,8 +989,8 @@ export const utilBuildChatflow = async (req: Request, isInternal: boolean = fals
     const chatId = incomingInput.chatId ?? incomingInput.overrideConfig?.sessionId ?? uuidv4()
     const files = (req.files as Express.Multer.File[]) || []
     const abortControllerId = `${chatflow.id}_${chatId}`
-    const isTool = req.get('flowise-tool') === 'true'
-    const isEvaluation: boolean = req.headers['X-Flowise-Evaluation'] || req.body.evaluation
+    const isTool = req.get('OSMI-tool') === 'true'
+    const isEvaluation: boolean = req.headers['X-OSMI-Evaluation'] || req.body.evaluation
     let evaluationRunId = ''
     evaluationRunId = req.body.evaluationRunId
     if (isEvaluation && chatflow.type !== 'AGENTFLOW' && req.body.evaluationRunId) {
@@ -1012,7 +1012,7 @@ export const utilBuildChatflow = async (req: Request, isInternal: boolean = fals
         if (!isInternal) {
             const isKeyValidated = await validateFlowAPIKey(req, chatflow)
             if (!isKeyValidated) {
-                throw new InternalFlowiseError(StatusCodes.UNAUTHORIZED, `Unauthorized`)
+                throw new InternalOsmiError(StatusCodes.UNAUTHORIZED, `Unauthorized`)
             }
         }
 
@@ -1022,7 +1022,7 @@ export const utilBuildChatflow = async (req: Request, isInternal: boolean = fals
             id: chatflowWorkspaceId
         })
         if (!workspace) {
-            throw new InternalFlowiseError(StatusCodes.NOT_FOUND, `Workspace ${chatflowWorkspaceId} not found`)
+            throw new InternalOsmiError(StatusCodes.NOT_FOUND, `Workspace ${chatflowWorkspaceId} not found`)
         }
         const workspaceId = workspace.id
 
@@ -1030,7 +1030,7 @@ export const utilBuildChatflow = async (req: Request, isInternal: boolean = fals
             id: workspace.organizationId
         })
         if (!org) {
-            throw new InternalFlowiseError(StatusCodes.NOT_FOUND, `Organization ${workspace.organizationId} not found`)
+            throw new InternalOsmiError(StatusCodes.NOT_FOUND, `Organization ${workspace.organizationId} not found`)
         }
 
         const orgId = org.id
@@ -1095,10 +1095,10 @@ export const utilBuildChatflow = async (req: Request, isInternal: boolean = fals
         logger.error(`[server]:${organizationId}/${chatflow.id}/${chatId} Error:`, e)
         appServer.abortControllerPool.remove(`${chatflow.id}_${chatId}`)
         incrementFailedMetricCounter(appServer.metricsProvider, isInternal, isAgentFlow)
-        if (e instanceof InternalFlowiseError && e.statusCode === StatusCodes.UNAUTHORIZED) {
+        if (e instanceof InternalOsmiError && e.statusCode === StatusCodes.UNAUTHORIZED) {
             throw e
         } else {
-            throw new InternalFlowiseError(StatusCodes.INTERNAL_SERVER_ERROR, getErrorMessage(e))
+            throw new InternalOsmiError(StatusCodes.INTERNAL_SERVER_ERROR, getErrorMessage(e))
         }
     }
 }
@@ -1112,13 +1112,13 @@ export const utilBuildChatflow = async (req: Request, isInternal: boolean = fals
 const incrementSuccessMetricCounter = (metricsProvider: IMetricsProvider, isInternal: boolean, isAgentFlow: boolean) => {
     if (isAgentFlow) {
         metricsProvider?.incrementCounter(
-            isInternal ? FLOWISE_METRIC_COUNTERS.AGENTFLOW_PREDICTION_INTERNAL : FLOWISE_METRIC_COUNTERS.AGENTFLOW_PREDICTION_EXTERNAL,
-            { status: FLOWISE_COUNTER_STATUS.SUCCESS }
+            isInternal ? OSMI_METRIC_COUNTERS.AGENTFLOW_PREDICTION_INTERNAL : OSMI_METRIC_COUNTERS.AGENTFLOW_PREDICTION_EXTERNAL,
+            { status: OSMI_COUNTER_STATUS.SUCCESS }
         )
     } else {
         metricsProvider?.incrementCounter(
-            isInternal ? FLOWISE_METRIC_COUNTERS.CHATFLOW_PREDICTION_INTERNAL : FLOWISE_METRIC_COUNTERS.CHATFLOW_PREDICTION_EXTERNAL,
-            { status: FLOWISE_COUNTER_STATUS.SUCCESS }
+            isInternal ? OSMI_METRIC_COUNTERS.CHATFLOW_PREDICTION_INTERNAL : OSMI_METRIC_COUNTERS.CHATFLOW_PREDICTION_EXTERNAL,
+            { status: OSMI_COUNTER_STATUS.SUCCESS }
         )
     }
 }
@@ -1132,13 +1132,13 @@ const incrementSuccessMetricCounter = (metricsProvider: IMetricsProvider, isInte
 const incrementFailedMetricCounter = (metricsProvider: IMetricsProvider, isInternal: boolean, isAgentFlow: boolean) => {
     if (isAgentFlow) {
         metricsProvider?.incrementCounter(
-            isInternal ? FLOWISE_METRIC_COUNTERS.AGENTFLOW_PREDICTION_INTERNAL : FLOWISE_METRIC_COUNTERS.AGENTFLOW_PREDICTION_EXTERNAL,
-            { status: FLOWISE_COUNTER_STATUS.FAILURE }
+            isInternal ? OSMI_METRIC_COUNTERS.AGENTFLOW_PREDICTION_INTERNAL : OSMI_METRIC_COUNTERS.AGENTFLOW_PREDICTION_EXTERNAL,
+            { status: OSMI_COUNTER_STATUS.FAILURE }
         )
     } else {
         metricsProvider?.incrementCounter(
-            isInternal ? FLOWISE_METRIC_COUNTERS.CHATFLOW_PREDICTION_INTERNAL : FLOWISE_METRIC_COUNTERS.CHATFLOW_PREDICTION_EXTERNAL,
-            { status: FLOWISE_COUNTER_STATUS.FAILURE }
+            isInternal ? OSMI_METRIC_COUNTERS.CHATFLOW_PREDICTION_INTERNAL : OSMI_METRIC_COUNTERS.CHATFLOW_PREDICTION_EXTERNAL,
+            { status: OSMI_COUNTER_STATUS.FAILURE }
         )
     }
 }

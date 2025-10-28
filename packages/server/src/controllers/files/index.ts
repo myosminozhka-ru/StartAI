@@ -1,8 +1,8 @@
-import path from 'path'
+﻿import path from 'path'
 import { NextFunction, Request, Response } from 'express'
-import { getFilesListFromStorage, getStoragePath, removeSpecificFileFromStorage } from 'flowise-components'
+import { getFilesListFromStorage, getStoragePath, removeSpecificFileFromStorage } from 'osmi-ai-components'
 import { updateStorageUsage } from '../../utils/quotaUsage'
-import { InternalFlowiseError } from '../../errors/internalFlowiseError'
+import { InternalOsmiError } from '../../errors/InternalOsmiError'
 import { StatusCodes } from 'http-status-codes'
 import { getRunningExpressApp } from '../../utils/getRunningExpressApp'
 
@@ -10,7 +10,7 @@ const getAllFiles = async (req: Request, res: Response, next: NextFunction) => {
     try {
         const activeOrganizationId = req.user?.activeOrganizationId
         if (!activeOrganizationId) {
-            throw new InternalFlowiseError(
+            throw new InternalOsmiError(
                 StatusCodes.NOT_FOUND,
                 `Error: filesController.getAllFiles - organization ${activeOrganizationId} not found!`
             )
@@ -31,14 +31,14 @@ const deleteFile = async (req: Request, res: Response, next: NextFunction) => {
     try {
         const activeOrganizationId = req.user?.activeOrganizationId
         if (!activeOrganizationId) {
-            throw new InternalFlowiseError(
+            throw new InternalOsmiError(
                 StatusCodes.NOT_FOUND,
                 `Error: filesController.deleteFile - organization ${activeOrganizationId} not found!`
             )
         }
         const activeWorkspaceId = req.user?.activeWorkspaceId
         if (!activeWorkspaceId) {
-            throw new InternalFlowiseError(
+            throw new InternalOsmiError(
                 StatusCodes.NOT_FOUND,
                 `Error: filesController.deleteFile - workspace ${activeWorkspaceId} not found!`
             )

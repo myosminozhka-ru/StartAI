@@ -1,5 +1,5 @@
-import { Request, Response, NextFunction } from 'express'
-import { getStoragePath } from 'flowise-components'
+﻿import { Request, Response, NextFunction } from 'express'
+import { getStoragePath } from 'osmi-ai-components'
 
 const getPathForUploads = async (req: Request, res: Response, next: NextFunction) => {
     try {

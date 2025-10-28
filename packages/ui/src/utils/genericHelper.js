@@ -1,4 +1,4 @@
-import { uniq, get, isEqual } from 'lodash'
+﻿import { uniq, get, isEqual } from 'lodash'
 import moment from 'moment'
 
 export const getUniqueNodeId = (nodeData, nodes) => {
@@ -550,7 +550,7 @@ const _removeCredentialId = (obj) => {
 
     const newObj = {}
     for (const [key, value] of Object.entries(obj)) {
-        if (key === 'FLOWISE_CREDENTIAL_ID') continue
+        if (key === 'OSMI_CREDENTIAL_ID') continue
         newObj[key] = _removeCredentialId(value)
     }
     return newObj

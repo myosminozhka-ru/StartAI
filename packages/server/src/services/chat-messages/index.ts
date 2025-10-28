@@ -1,9 +1,9 @@
-import { removeFilesFromStorage } from 'flowise-components'
+﻿import { removeFilesFromStorage } from 'osmi-ai-components'
 import { StatusCodes } from 'http-status-codes'
 import { DeleteResult, FindOptionsWhere, In } from 'typeorm'
 import { ChatMessage } from '../../database/entities/ChatMessage'
 import { ChatMessageFeedback } from '../../database/entities/ChatMessageFeedback'
-import { InternalFlowiseError } from '../../errors/internalFlowiseError'
+import { InternalOsmiError } from '../../errors/InternalOsmiError'
 import { getErrorMessage } from '../../errors/utils'
 import { ChatMessageRatingType, ChatType, IChatMessage, MODE } from '../../Interface'
 import { UsageCacheManager } from '../../UsageCacheManager'
@@ -18,7 +18,7 @@ const createChatMessage = async (chatMessage: Partial<IChatMessage>) => {
         const dbResponse = await utilAddChatMessage(chatMessage)
         return dbResponse
     } catch (error) {
-        throw new InternalFlowiseError(
+        throw new InternalOsmiError(
             StatusCodes.INTERNAL_SERVER_ERROR,
             `Error: chatMessagesService.createChatMessage - ${getErrorMessage(error)}`
         )
@@ -61,7 +61,7 @@ const getAllChatMessages = async (
         })
         return dbResponse
     } catch (error) {
-        throw new InternalFlowiseError(
+        throw new InternalOsmiError(
             StatusCodes.INTERNAL_SERVER_ERROR,
             `Error: chatMessagesService.getAllChatMessages - ${getErrorMessage(error)}`
         )
@@ -100,7 +100,7 @@ const getAllInternalChatMessages = async (
         })
         return dbResponse
     } catch (error) {
-        throw new InternalFlowiseError(
+        throw new InternalOsmiError(
             StatusCodes.INTERNAL_SERVER_ERROR,
             `Error: chatMessagesService.getAllInternalChatMessages - ${getErrorMessage(error)}`
         )
@@ -134,7 +134,7 @@ const removeAllChatMessages = async (
         const dbResponse = await appServer.AppDataSource.getRepository(ChatMessage).delete(deleteOptions)
         return dbResponse
     } catch (error) {
-        throw new InternalFlowiseError(
+        throw new InternalOsmiError(
             StatusCodes.INTERNAL_SERVER_ERROR,
             `Error: chatMessagesService.removeAllChatMessages - ${getErrorMessage(error)}`
         )
@@ -180,7 +180,7 @@ const removeChatMessagesByMessageIds = async (
         const dbResponse = await appServer.AppDataSource.getRepository(ChatMessage).delete(messageIds)
         return dbResponse
     } catch (error) {
-        throw new InternalFlowiseError(
+        throw new InternalOsmiError(
             StatusCodes.INTERNAL_SERVER_ERROR,
             `Error: chatMessagesService.removeChatMessagesByMessageIds - ${getErrorMessage(error)}`
         )
@@ -201,7 +201,7 @@ const abortChatMessage = async (chatId: string, chatflowid: string) => {
             appServer.abortControllerPool.abort(id)
         }
     } catch (error) {
-        throw new InternalFlowiseError(
+        throw new InternalOsmiError(
             StatusCodes.INTERNAL_SERVER_ERROR,
             `Error: chatMessagesService.abortChatMessage - ${getErrorMessage(error)}`
         )

@@ -1,9 +1,9 @@
-import { StatusCodes } from 'http-status-codes'
-import { INodeParams } from 'flowise-components'
+﻿import { StatusCodes } from 'http-status-codes'
+import { INodeParams } from 'osmi-ai-components'
 import { ChatFlow } from '../database/entities/ChatFlow'
 import { getRunningExpressApp } from '../utils/getRunningExpressApp'
 import { IUploadFileSizeAndTypes, IReactFlowNode, IReactFlowEdge } from '../Interface'
-import { InternalFlowiseError } from '../errors/internalFlowiseError'
+import { InternalOsmiError } from '../errors/InternalOsmiError'
 
 type IUploadConfig = {
     isSpeechToTextEnabled: boolean
@@ -23,7 +23,7 @@ export const utilGetUploadsConfig = async (chatflowid: string): Promise<IUploadC
         id: chatflowid
     })
     if (!chatflow) {
-        throw new InternalFlowiseError(StatusCodes.NOT_FOUND, `Chatflow ${chatflowid} not found`)
+        throw new InternalOsmiError(StatusCodes.NOT_FOUND, `Chatflow ${chatflowid} not found`)
     }
 
     const flowObj = JSON.parse(chatflow.flowData)

@@ -1,4 +1,4 @@
-import { createPortal } from 'react-dom'
+﻿import { createPortal } from 'react-dom'
 import { useNavigate } from 'react-router-dom'
 import { useState, useEffect, useMemo } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
@@ -797,7 +797,7 @@ formData.append("openAIApiKey[openAIEmbeddings_0]", "sk-my-openai-2nd-key")`
                                                     <a
                                                         rel='noreferrer'
                                                         target='_blank'
-                                                        href='https://docs.flowiseai.com/using-flowise/prediction#configuration-override'
+                                                        href='https://docs.OSMIai.com/using-OSMI/prediction#configuration-override'
                                                     >
                                                         здесь
                                                     </a>
@@ -937,7 +937,7 @@ formData.append("openAIApiKey[openAIEmbeddings_0]", "sk-my-openai-2nd-key")`
                                 {getIsChatflowStreamingApi.data?.isStreaming && (
                                     <p>
                                         Читайте&nbsp;
-                                        <a rel='noreferrer' target='_blank' href='https://docs.flowiseai.com/using-flowise/streaming'>
+                                        <a rel='noreferrer' target='_blank' href='https://docs.OSMIai.com/using-OSMI/streaming'>
                                             здесь
                                         </a>
                                         &nbsp;о том, как передавать ответ обратно в приложение

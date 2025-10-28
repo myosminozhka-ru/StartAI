@@ -1,10 +1,10 @@
-import express from 'express'
+﻿import express from 'express'
 import promClient, { Counter } from 'prom-client'
 
 export const initializePrometheus = (app: express.Application) => {
     const register = new promClient.Registry()
     register.setDefaultLabels({
-        app: 'FlowiseAI'
+        app: 'OSMIAI'
     })
 
     const predictionsTotal = new promClient.Counter({

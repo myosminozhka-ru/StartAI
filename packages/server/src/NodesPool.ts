@@ -3,7 +3,7 @@ import path from 'path'
 import { Dirent } from 'fs'
 import { getNodeModulesPackagePath } from './utils'
 import { promises } from 'fs'
-import { ICommonObject } from 'flowise-components'
+import { ICommonObject } from 'osmi-ai-components'
 import logger from './utils/logger'
 import { appConfig } from './AppConfig'
 
@@ -25,7 +25,7 @@ export class NodesPool {
      */
     private async initializeNodes() {
         const disabled_nodes = process.env.DISABLED_NODES ? process.env.DISABLED_NODES.split(',') : []
-        const packagePath = getNodeModulesPackagePath('flowise-components')
+        const packagePath = getNodeModulesPackagePath('osmi-ai-components')
         const nodesPath = path.join(packagePath, 'dist', 'nodes')
         const nodeFiles = await this.getFiles(nodesPath)
         return Promise.all(
@@ -84,7 +84,7 @@ export class NodesPool {
      * Initialize credentials
      */
     private async initializeCredentials() {
-        const packagePath = getNodeModulesPackagePath('flowise-components')
+        const packagePath = getNodeModulesPackagePath('osmi-ai-components')
         const nodesPath = path.join(packagePath, 'dist', 'credentials')
         const nodeFiles = await this.getFiles(nodesPath)
         return Promise.all(

@@ -1,4 +1,4 @@
-import { BaseQueue } from './BaseQueue'
+﻿import { BaseQueue } from './BaseQueue'
 import { PredictionQueue } from './PredictionQueue'
 import { UpsertQueue } from './UpsertQueue'
 import { IComponentNodes } from '../Interface'
@@ -13,7 +13,7 @@ import { Express } from 'express'
 import { UsageCacheManager } from '../UsageCacheManager'
 import { ExpressAdapter } from '@bull-board/express'
 
-const QUEUE_NAME = process.env.QUEUE_NAME || 'flowise-queue'
+const QUEUE_NAME = process.env.QUEUE_NAME || 'OSMI-queue'
 
 type QUEUE_TYPE = 'prediction' | 'upsert'
 

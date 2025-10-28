@@ -1,4 +1,4 @@
-import {
+﻿import {
     IAction,
     ICommonObject,
     IFileUpload,
@@ -8,7 +8,7 @@ import {
     INodeExecutionData,
     INodeParams,
     IServerSideEventStreamer
-} from 'flowise-components'
+} from 'osmi-ai-components'
 import { DataSource } from 'typeorm'
 import { CachePool } from './CachePool'
 import { Telemetry } from './utils/telemetry'

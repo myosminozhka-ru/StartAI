@@ -1,4 +1,4 @@
-import { createPortal } from 'react-dom'
+﻿import { createPortal } from 'react-dom'
 import PropTypes from 'prop-types'
 import { useState, useEffect, useCallback, useMemo } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
@@ -35,7 +35,7 @@ import { generateRandomGradient, formatDataGridRows } from '@/utils/genericHelpe
 import { HIDE_CANVAS_DIALOG, SHOW_CANVAS_DIALOG } from '@/store/actions'
 
 const exampleAPIFunc = `/*
-* Вы можете использовать любые библиотеки, импортированные в Flowise
+* Вы можете использовать любые библиотеки, импортированные в OSMI
 * Вы можете использовать свойства, указанные во входной схеме, как переменные. Например: Свойство = userid, Переменная = $userid
 * Вы можете получить стандартную конфигурацию flow: $flow.sessionId, $flow.chatId, $flow.chatflowId, $flow.input, $flow.state
 * Вы можете получить пользовательские переменные: $vars.<имя-переменной>
@@ -543,7 +543,7 @@ const ToolDialog = ({ show, dialogProps, onUseTemplate, onCancel, onConfirm, set
                         <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                             <Stack sx={{ position: 'relative', alignItems: 'center' }} direction='row'>
                                 <Typography variant='overline'>Javascript-функция</Typography>
-                                <TooltipWithParser title='Функция, которая выполняется при использовании инструмента. Вы можете использовать свойства, указанные во входной схеме, как переменные. Например, если свойство <code>userid</code>, используйте <code>$userid</code>. Возвращаемое значение должно быть строкой. Также можно переопределить код через API, следуя <a target="_blank" href="https://docs.flowiseai.com/tools/custom-tool#override-function-from-api">этой инструкции</a>' />
+                                <TooltipWithParser title='Функция, которая выполняется при использовании инструмента. Вы можете использовать свойства, указанные во входной схеме, как переменные. Например, если свойство <code>userid</code>, используйте <code>$userid</code>. Возвращаемое значение должно быть строкой. Также можно переопределить код через API, следуя <a target="_blank" href="https://docs.OSMIai.com/tools/custom-tool#override-function-from-api">этой инструкции</a>' />
                             </Stack>
                             <Stack direction='row'>
                                 <Button

@@ -1,4 +1,4 @@
-import { createPortal } from 'react-dom'
+﻿import { createPortal } from 'react-dom'
 import PropTypes from 'prop-types'
 import { Button, Dialog, DialogContent, DialogTitle } from '@mui/material'
 import { StyledButton } from '@/ui-component/button/StyledButton'
@@ -22,10 +22,10 @@ const DeleteConfirmDialog = ({ show, dialogProps, onCancel, onDelete, onDeleteBo
                 <span>{dialogProps.description}</span>
                 <div style={{ display: 'flex', flexDirection: 'row', marginTop: 20 }}>
                     <Button sx={{ flex: 1, mb: 1, mr: 1 }} color='error' variant='outlined' onClick={onDelete}>
-                        Только StartAI
+                        Только OSMI AI
                     </Button>
                     <StyledButton sx={{ flex: 1, mb: 1, ml: 1 }} color='error' variant='contained' onClick={onDeleteBoth}>
-                        OpenAI и StartAI
+                        OpenAI и OSMI AI
                     </StyledButton>
                 </div>
             </DialogContent>

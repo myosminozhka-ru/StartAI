@@ -1,4 +1,4 @@
-import PropTypes from 'prop-types'
+﻿import PropTypes from 'prop-types'
 import { useSelector, useDispatch } from 'react-redux'
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
@@ -199,7 +199,7 @@ const Header = ({ handleLeftDrawerToggle }) => {
         if (isCloud || isOpenSource) {
             const fetchStarCount = async () => {
                 try {
-                    const response = await fetch('https://api.github.com/repos/FlowiseAI/Flowise')
+                    const response = await fetch('https://api.github.com/repos/OSMIAI/OSMI')
                     const data = await response.json()
                     if (data.stargazers_count) {
                         setStarCount(data.stargazers_count)

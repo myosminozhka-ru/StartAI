@@ -1,7 +1,7 @@
-import path from 'path'
+﻿import path from 'path'
 import * as fs from 'fs'
 import { StatusCodes } from 'http-status-codes'
-import { InternalFlowiseError } from '../../errors/internalFlowiseError'
+import { InternalOsmiError } from '../../errors/InternalOsmiError'
 import { getErrorMessage } from '../../errors/utils'
 import { IReactFlowEdge, IReactFlowNode } from '../../Interface'
 import { getRunningExpressApp } from '../../utils/getRunningExpressApp'
@@ -109,14 +109,14 @@ const getAllTemplates = async () => {
             templates.push(template)
         })
         const sortedTemplates = templates.sort((a, b) => a.templateName.localeCompare(b.templateName))
-        const FlowiseDocsQnAIndex = sortedTemplates.findIndex((tmp) => tmp.templateName === 'Docs QnA')
-        if (FlowiseDocsQnAIndex > 0) {
-            sortedTemplates.unshift(sortedTemplates.splice(FlowiseDocsQnAIndex, 1)[0])
+        const OSMIDocsQnAIndex = sortedTemplates.findIndex((tmp) => tmp.templateName === 'Docs QnA')
+        if (OSMIDocsQnAIndex > 0) {
+            sortedTemplates.unshift(sortedTemplates.splice(OSMIDocsQnAIndex, 1)[0])
         }
         const dbResponse = sortedTemplates
         return dbResponse
     } catch (error) {
-        throw new InternalFlowiseError(
+        throw new InternalOsmiError(
             StatusCodes.INTERNAL_SERVER_ERROR,
             `Error: marketplacesService.getAllTemplates - ${getErrorMessage(error)}`
         )
@@ -128,7 +128,7 @@ const deleteCustomTemplate = async (templateId: string): Promise<DeleteResult> =
         const appServer = getRunningExpressApp()
         return await appServer.AppDataSource.getRepository(CustomTemplate).delete({ id: templateId })
     } catch (error) {
-        throw new InternalFlowiseError(
+        throw new InternalOsmiError(
             StatusCodes.INTERNAL_SERVER_ERROR,
             `Error: marketplacesService.deleteCustomTemplate - ${getErrorMessage(error)}`
         )
@@ -180,7 +180,7 @@ const getAllCustomTemplates = async (workspaceId?: string): Promise<any> => {
         }
         return dbResponse
     } catch (error) {
-        throw new InternalFlowiseError(
+        throw new InternalOsmiError(
             StatusCodes.INTERNAL_SERVER_ERROR,
             `Error: marketplacesService.getAllCustomTemplates - ${getErrorMessage(error)}`
         )
@@ -220,7 +220,7 @@ const saveCustomTemplate = async (body: any): Promise<any> => {
         const flowTemplate = await appServer.AppDataSource.getRepository(CustomTemplate).save(entity)
         return flowTemplate
     } catch (error) {
-        throw new InternalFlowiseError(
+        throw new InternalOsmiError(
             StatusCodes.INTERNAL_SERVER_ERROR,
             `Error: marketplacesService.saveCustomTemplate - ${getErrorMessage(error)}`
         )

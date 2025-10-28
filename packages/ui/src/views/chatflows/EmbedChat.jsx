@@ -42,7 +42,7 @@ const codes = ['Всплывающий Html', 'Полноэкранный Html',
 
 const embedPopupHtmlCode = (chatflowid) => {
     return `<script type="module">
-    import Chatbot from "https://cdn.jsdelivr.net/gh/myosminozhka-ru/FlowiseChatEmbed@main/dist/web.js"
+    import Chatbot from "https://cdn.jsdelivr.net/gh/myosminozhka-ru/OSMIChatEmbed@main/dist/web.js"
     Chatbot.init({
         chatflowid: "${chatflowid}",
         apiHost: "${baseURL}",
@@ -51,7 +51,7 @@ const embedPopupHtmlCode = (chatflowid) => {
 }
 
 const embedPopupReactCode = (chatflowid) => {
-    return `import { BubbleChat } from 'flowise-embed-react'
+    return `import { BubbleChat } from 'osmi-ai-embed-react'
 
 const App = () => {
     return (
@@ -66,7 +66,7 @@ const App = () => {
 const embedFullpageHtmlCode = (chatflowid) => {
     return `<osmi-ai-fullchatbot></osmi-ai-fullchatbot>
 <script type="module">
-    import Chatbot from "https://cdn.jsdelivr.net/gh/myosminozhka-ru/FlowiseChatEmbed@main/dist/web.js"
+    import Chatbot from "https://cdn.jsdelivr.net/gh/myosminozhka-ru/OSMIChatEmbed@main/dist/web.js"
     Chatbot.initFull({
         chatflowid: "${chatflowid}",
         apiHost: "${baseURL}",
@@ -75,7 +75,7 @@ const embedFullpageHtmlCode = (chatflowid) => {
 }
 
 const embedFullpageReactCode = (chatflowid) => {
-    return `import { FullPageChat } from "flowise-embed-react"
+    return `import { FullPageChat } from "osmi-ai-embed-react"
 
 const App = () => {
     return (
@@ -196,7 +196,7 @@ const customStringify = (obj) => {
 
 const embedPopupHtmlCodeCustomization = (chatflowid) => {
     return `<script type="module">
-    import Chatbot from "https://cdn.jsdelivr.net/gh/myosminozhka-ru/FlowiseChatEmbed@main/dist/web.js"
+    import Chatbot from "https://cdn.jsdelivr.net/gh/myosminozhka-ru/OSMIChatEmbed@main/dist/web.js"
     Chatbot.init({
         chatflowid: "${chatflowid}",
         apiHost: "${baseURL}",
@@ -212,7 +212,7 @@ const embedPopupHtmlCodeCustomization = (chatflowid) => {
 }
 
 const embedPopupReactCodeCustomization = (chatflowid) => {
-    return `import { BubbleChat } from 'flowise-embed-react'
+    return `import { BubbleChat } from 'osmi-ai-embed-react'
 
 const App = () => {
     return (
@@ -249,7 +249,7 @@ const getFullPageThemeConfig = () => {
 const embedFullpageHtmlCodeCustomization = (chatflowid) => {
     return `<osmi-ai-fullchatbot></osmi-ai-fullchatbot>
 <script type="module">
-    import Chatbot from "https://cdn.jsdelivr.net/gh/myosminozhka-ru/FlowiseChatEmbed@main/dist/web.js"
+    import Chatbot from "https://cdn.jsdelivr.net/gh/myosminozhka-ru/OSMIChatEmbed@main/dist/web.js"
     Chatbot.initFull({
         chatflowid: "${chatflowid}",
         apiHost: "${baseURL}",
@@ -265,7 +265,7 @@ const embedFullpageHtmlCodeCustomization = (chatflowid) => {
 }
 
 const embedFullpageReactCodeCustomization = (chatflowid) => {
-    return `import { FullPageChat } from 'flowise-embed-react'
+    return `import { FullPageChat } from 'osmi-ai-embed-react'
 
 const App = () => {
     return (
@@ -350,14 +350,10 @@ const EmbedChat = ({ chatflowid }) => {
                                 Вставьте этот код в любое место внутри тега <code>{`<body>`}</code> вашего html файла.
                                 <p>
                                     Вы также можете указать&nbsp;
-                                    <a
-                                        rel='noreferrer'
-                                        target='_blank'
-                                        href='https://www.npmjs.com/package/flowise-embed?activeTab=versions'
-                                    >
+                                    <a rel='noreferrer' target='_blank' href='https://www.npmjs.com/package/OSMI-embed?activeTab=versions'>
                                         версию
                                     </a>
-                                    :&nbsp;<code>{`https://cdn.jsdelivr.net/npm/flowise-embed@<version>/dist/web.js`}</code>
+                                    :&nbsp;<code>{`https://cdn.jsdelivr.net/npm/OSMI-embed@<version>/dist/web.js`}</code>
                                 </p>
                             </span>
                             <div style={{ height: 10 }}></div>

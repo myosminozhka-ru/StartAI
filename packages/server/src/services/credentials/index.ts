@@ -1,10 +1,10 @@
-import { omit } from 'lodash'
+﻿import { omit } from 'lodash'
 import { StatusCodes } from 'http-status-codes'
 import { getRunningExpressApp } from '../../utils/getRunningExpressApp'
 import { Credential } from '../../database/entities/Credential'
 import { transformToCredentialEntity, decryptCredentialData } from '../../utils'
 import { ICredentialReturnResponse } from '../../Interface'
-import { InternalFlowiseError } from '../../errors/internalFlowiseError'
+import { InternalOsmiError } from '../../errors/InternalOsmiError'
 import { getErrorMessage } from '../../errors/utils'
 import { getWorkspaceSearchOptions } from '../../enterprise/utils/ControllerServiceUtils'
 import { WorkspaceShared } from '../../enterprise/database/entities/EnterpriseEntities'
@@ -23,7 +23,7 @@ const createCredential = async (requestBody: any) => {
         const dbResponse = await appServer.AppDataSource.getRepository(Credential).save(credential)
         return dbResponse
     } catch (error) {
-        throw new InternalFlowiseError(
+        throw new InternalOsmiError(
             StatusCodes.INTERNAL_SERVER_ERROR,
             `Error: credentialsService.createCredential - ${getErrorMessage(error)}`
         )
@@ -36,11 +36,11 @@ const deleteCredentials = async (credentialId: string): Promise<any> => {
         const appServer = getRunningExpressApp()
         const dbResponse = await appServer.AppDataSource.getRepository(Credential).delete({ id: credentialId })
         if (!dbResponse) {
-            throw new InternalFlowiseError(StatusCodes.NOT_FOUND, `Credential ${credentialId} not found`)
+            throw new InternalOsmiError(StatusCodes.NOT_FOUND, `Credential ${credentialId} not found`)
         }
         return dbResponse
     } catch (error) {
-        throw new InternalFlowiseError(
+        throw new InternalOsmiError(
             StatusCodes.INTERNAL_SERVER_ERROR,
             `Error: credentialsService.deleteCredential - ${getErrorMessage(error)}`
         )
@@ -117,7 +117,7 @@ const getAllCredentials = async (paramCredentialName: any, workspaceId?: string)
         }
         return dbResponse
     } catch (error) {
-        throw new InternalFlowiseError(
+        throw new InternalOsmiError(
             StatusCodes.INTERNAL_SERVER_ERROR,
             `Error: credentialsService.getAllCredentials - ${getErrorMessage(error)}`
         )
@@ -131,7 +131,7 @@ const getCredentialById = async (credentialId: string, workspaceId?: string): Pr
             id: credentialId
         })
         if (!credential) {
-            throw new InternalFlowiseError(StatusCodes.NOT_FOUND, `Credential ${credentialId} not found`)
+            throw new InternalOsmiError(StatusCodes.NOT_FOUND, `Credential ${credentialId} not found`)
         }
         // Decrpyt credentialData
         const decryptedCredentialData = await decryptCredentialData(
@@ -158,7 +158,7 @@ const getCredentialById = async (credentialId: string, workspaceId?: string): Pr
         }
         return dbResponse
     } catch (error) {
-        throw new InternalFlowiseError(
+        throw new InternalOsmiError(
             StatusCodes.INTERNAL_SERVER_ERROR,
             `Error: credentialsService.createCredential - ${getErrorMessage(error)}`
         )
@@ -172,7 +172,7 @@ const updateCredential = async (credentialId: string, requestBody: any): Promise
             id: credentialId
         })
         if (!credential) {
-            throw new InternalFlowiseError(StatusCodes.NOT_FOUND, `Credential ${credentialId} not found`)
+            throw new InternalOsmiError(StatusCodes.NOT_FOUND, `Credential ${credentialId} not found`)
         }
         const decryptedCredentialData = await decryptCredentialData(credential.encryptedData)
         requestBody.plainDataObj = { ...decryptedCredentialData, ...requestBody.plainDataObj }
@@ -181,7 +181,7 @@ const updateCredential = async (credentialId: string, requestBody: any): Promise
         const dbResponse = await appServer.AppDataSource.getRepository(Credential).save(credential)
         return dbResponse
     } catch (error) {
-        throw new InternalFlowiseError(
+        throw new InternalOsmiError(
             StatusCodes.INTERNAL_SERVER_ERROR,
             `Error: credentialsService.updateCredential - ${getErrorMessage(error)}`
         )

@@ -1,4 +1,4 @@
-import PropTypes from 'prop-types'
+﻿import PropTypes from 'prop-types'
 import { useState } from 'react'
 import { useSelector } from 'react-redux'
 
@@ -23,7 +23,7 @@ import CredentialInputHandler from '@/views/canvas/CredentialInputHandler'
 import { ruRU } from '@mui/x-data-grid/locales'
 
 // const
-import { FLOWISE_CREDENTIAL_ID } from '@/store/constant'
+import { OSMI_CREDENTIAL_ID } from '@/store/constant'
 
 // ===========================|| DocStoreInputHandler ||=========================== //
 
@@ -73,7 +73,7 @@ const DocStoreInputHandler = ({ inputParam, data, disabled = false }) => {
     }
 
     const getCredential = () => {
-        const credential = data.inputs.credential || data.inputs[FLOWISE_CREDENTIAL_ID]
+        const credential = data.inputs.credential || data.inputs[OSMI_CREDENTIAL_ID]
         if (credential) {
             return { credential }
         }
@@ -134,7 +134,7 @@ const DocStoreInputHandler = ({ inputParam, data, disabled = false }) => {
                                 inputParam={inputParam}
                                 onSelect={(newValue) => {
                                     data.credential = newValue
-                                    data.inputs[FLOWISE_CREDENTIAL_ID] = newValue // in case data.credential is not updated
+                                    data.inputs[OSMI_CREDENTIAL_ID] = newValue // in case data.credential is not updated
                                 }}
                             />
                         )}

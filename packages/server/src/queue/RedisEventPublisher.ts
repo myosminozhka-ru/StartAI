@@ -1,4 +1,4 @@
-import { IServerSideEventStreamer } from 'flowise-components'
+﻿import { IServerSideEventStreamer } from 'osmi-ai-components'
 import { createClient } from 'redis'
 import logger from '../utils/logger'
 

@@ -1,4 +1,4 @@
-// constant
+﻿// constant
 import {
     IconLibrary,
     IconTools,
@@ -24,8 +24,8 @@ export const headerHeight = 80
 export const maxScroll = 100000
 export const baseURL = import.meta.env.VITE_API_BASE_URL || window.location.origin
 export const uiBaseURL = import.meta.env.VITE_UI_BASE_URL || window.location.origin
-export const FLOWISE_CREDENTIAL_ID = 'FLOWISE_CREDENTIAL_ID'
-export const REDACTED_CREDENTIAL_VALUE = '_FLOWISE_BLANK_07167752-1a71-43b1-bf8f-4f32252165db'
+export const OSMI_CREDENTIAL_ID = 'OSMI_CREDENTIAL_ID'
+export const REDACTED_CREDENTIAL_VALUE = '_OSMI_BLANK_07167752-1a71-43b1-bf8f-4f32252165db'
 export const ErrorMessage = {
     INVALID_MISSING_TOKEN: 'Invalid or Missing token',
     TOKEN_EXPIRED: 'Token Expired',

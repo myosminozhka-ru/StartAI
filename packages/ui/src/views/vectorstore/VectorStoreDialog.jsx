@@ -1,4 +1,4 @@
-import { createPortal } from 'react-dom'
+﻿import { createPortal } from 'react-dom'
 import PropTypes from 'prop-types'
 import { useDispatch } from 'react-redux'
 import { useContext, useState, useEffect } from 'react'
@@ -578,7 +578,7 @@ formData.append("openAIApiKey[openAIEmbeddings_0]", "sk-my-openai-2nd-key")`
                                                                             <a
                                                                                 rel='noreferrer'
                                                                                 target='_blank'
-                                                                                href='https://docs.flowiseai.com/using-flowise/api#override-config'
+                                                                                href='https://docs.OSMIai.com/using-OSMI/api#override-config'
                                                                             >
                                                                                 here
                                                                             </a>{' '}

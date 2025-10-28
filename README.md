@@ -78,7 +78,7 @@ Download and Install [NodeJS](https://nodejs.org/en/download) >= 18.15.0
 
 ## 👨‍💻 Developers
 
-StartAI has 3 different modules in a single mono repository.
+OSMI AI has 3 different modules in a single mono repository.
 
 -   `server`: Node backend to serve API logics
 -   `ui`: React frontend
@@ -163,15 +163,15 @@ StartAI has 3 different modules in a single mono repository.
 
 ## 🌱 Env Variables
 
-StartAI supports different environment variables to configure your instance. You can specify the following variables in the `.env` file inside `packages/server` folder. Read [more](https://docs.osmi-ai.ru)
+OSMI AI supports different environment variables to configure your instance. You can specify the following variables in the `.env` file inside `packages/server` folder. Read [more](https://docs.osmi-ai.ru)
 
 ## 📖 Documentation
 
-You can view the StartAI Docs [here](https://docs.osmi-ai.ru)
+You can view the OSMI AI Docs [here](https://docs.osmi-ai.ru)
 
 ## 🌐 Self Host
 
-Deploy StartAI self-hosted in your existing infrastructure. For deployment instructions, visit [our documentation](https://docs.osmi-ai.ru).
+Deploy OSMI AI self-hosted in your existing infrastructure. For deployment instructions, visit [our documentation](https://docs.osmi-ai.ru).
 
 ## ☁️ OSMI IT Cloud
 

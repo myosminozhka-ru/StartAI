@@ -1,12 +1,12 @@
-import { Request, Response, NextFunction } from 'express'
+﻿import { Request, Response, NextFunction } from 'express'
 import loadPromptsService from '../../services/load-prompts'
-import { InternalFlowiseError } from '../../errors/internalFlowiseError'
+import { InternalOsmiError } from '../../errors/InternalOsmiError'
 import { StatusCodes } from 'http-status-codes'
 
 const createPrompt = async (req: Request, res: Response, next: NextFunction) => {
     try {
         if (typeof req.body === 'undefined' || !req.body.promptName) {
-            throw new InternalFlowiseError(
+            throw new InternalOsmiError(
                 StatusCodes.PRECONDITION_FAILED,
                 `Error: loadPromptsController.createPrompt - promptName not provided!`
             )

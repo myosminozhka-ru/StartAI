@@ -2,7 +2,7 @@ import { createTheme } from '@mui/material/styles'
 
 // assets
 import colors from '@/assets/scss/_themes-vars.module.scss'
-import colorsStartAI from '@/assets/scss/_themes-startai.module.scss'
+import colorsOSMI_AI from '@/assets/scss/_themes-startai.module.scss'
 
 // project imports
 import componentStyleOverrides from './compStyleOverride'
@@ -18,50 +18,50 @@ export const theme = (customization) => {
     let color = colors
 
     switch (window.location.hostname) {
-        case 'app.start-ai.ru':
-            color = colorsStartAI
+        case 'app.osmi-ai.ru':
+            color = colorsOSMI_AI
             break
-        case 'u1.start-ai.ru':
-            color = colorsStartAI
+        case 'u1.osmi-ai.ru':
+            color = colorsOSMI_AI
             break
-        case 'u2.start-ai.ru':
-            color = colorsStartAI
+        case 'u2.osmi-ai.ru':
+            color = colorsOSMI_AI
             break
-        case 'u3.start-ai.ru':
-            color = colorsStartAI
+        case 'u3.osmi-ai.ru':
+            color = colorsOSMI_AI
             break
-        case 'u4.start-ai.ru':
-            color = colorsStartAI
+        case 'u4.osmi-ai.ru':
+            color = colorsOSMI_AI
             break
-        case 'u5.start-ai.ru':
-            color = colorsStartAI
+        case 'u5.osmi-ai.ru':
+            color = colorsOSMI_AI
             break
-        case 'u6.start-ai.ru':
-            color = colorsStartAI
+        case 'u6.osmi-ai.ru':
+            color = colorsOSMI_AI
             break
-        case 'u7.start-ai.ru':
-            color = colorsStartAI
+        case 'u7.osmi-ai.ru':
+            color = colorsOSMI_AI
             break
-        case 'u8.start-ai.ru':
-            color = colorsStartAI
+        case 'u8.osmi-ai.ru':
+            color = colorsOSMI_AI
             break
-        case 'u9.start-ai.ru':
-            color = colorsStartAI
+        case 'u9.osmi-ai.ru':
+            color = colorsOSMI_AI
             break
-        case 'u10.start-ai.ru':
-            color = colorsStartAI
+        case 'u10.osmi-ai.ru':
+            color = colorsOSMI_AI
             break
-        case 'u11.start-ai.ru':
-            color = colorsStartAI
+        case 'u11.osmi-ai.ru':
+            color = colorsOSMI_AI
             break
-        case 'u12.start-ai.ru':
-            color = colorsStartAI
+        case 'u12.osmi-ai.ru':
+            color = colorsOSMI_AI
             break
-        case 'test.start-ai.ru':
-            color = colorsStartAI
+        case 'test.osmi-ai.ru':
+            color = colorsOSMI_AI
             break
         case 'localhost':
-            color = colorsStartAI
+            color = colorsOSMI_AI
             break
         default:
             // Действия по умолчанию, если NODE_ENV не соответствует ни одному из условий

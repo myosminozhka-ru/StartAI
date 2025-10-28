@@ -1,4 +1,4 @@
-import { StatusCodes } from 'http-status-codes'
+﻿import { StatusCodes } from 'http-status-codes'
 import { DataSource, EntityManager, In, IsNull, QueryRunner, UpdateResult } from 'typeorm'
 import { ApiKey } from '../../database/entities/ApiKey'
 import { Assistant } from '../../database/entities/Assistant'
@@ -18,7 +18,7 @@ import { Execution } from '../../database/entities/Execution'
 import { Tool } from '../../database/entities/Tool'
 import { UpsertHistory } from '../../database/entities/UpsertHistory'
 import { Variable } from '../../database/entities/Variable'
-import { InternalFlowiseError } from '../../errors/internalFlowiseError'
+import { InternalOsmiError } from '../../errors/InternalOsmiError'
 import { generateId } from '../../utils'
 import { GeneralSuccessMessage } from '../../utils/constants'
 import { getRunningExpressApp } from '../../utils/getRunningExpressApp'
@@ -53,7 +53,7 @@ export class WorkspaceService {
     }
 
     public validateWorkspaceId(id: string | undefined) {
-        if (isInvalidUUID(id)) throw new InternalFlowiseError(StatusCodes.BAD_REQUEST, WorkspaceErrorMessage.INVALID_WORKSPACE_ID)
+        if (isInvalidUUID(id)) throw new InternalOsmiError(StatusCodes.BAD_REQUEST, WorkspaceErrorMessage.INVALID_WORKSPACE_ID)
     }
 
     public async readWorkspaceById(id: string | undefined, queryRunner: QueryRunner) {
@@ -62,9 +62,9 @@ export class WorkspaceService {
     }
 
     public validateWorkspaceName(name: string | undefined, isRegister: boolean = false) {
-        if (isInvalidName(name)) throw new InternalFlowiseError(StatusCodes.BAD_REQUEST, WorkspaceErrorMessage.INVALID_WORKSPACE_NAME)
+        if (isInvalidName(name)) throw new InternalOsmiError(StatusCodes.BAD_REQUEST, WorkspaceErrorMessage.INVALID_WORKSPACE_NAME)
         if (!isRegister && (name === WorkspaceName.DEFAULT_PERSONAL_WORKSPACE || name === WorkspaceName.DEFAULT_WORKSPACE)) {
-            throw new InternalFlowiseError(StatusCodes.BAD_REQUEST, WorkspaceErrorMessage.WORKSPACE_RESERVERD_NAME)
+            throw new InternalOsmiError(StatusCodes.BAD_REQUEST, WorkspaceErrorMessage.WORKSPACE_RESERVERD_NAME)
         }
     }
 
@@ -73,7 +73,7 @@ export class WorkspaceService {
         const workspaces = await queryRunner.manager.findBy(Workspace, { organizationId })
 
         const rolePersonalWorkspace = await this.roleService.readGeneralRoleByName(GeneralRole.PERSONAL_WORKSPACE, queryRunner)
-        if (!rolePersonalWorkspace) throw new InternalFlowiseError(StatusCodes.NOT_FOUND, RoleErrorMessage.ROLE_NOT_FOUND)
+        if (!rolePersonalWorkspace) throw new InternalOsmiError(StatusCodes.NOT_FOUND, RoleErrorMessage.ROLE_NOT_FOUND)
 
         const filteredWorkspaces = await Promise.all(
             workspaces.map(async (workspace) => {
@@ -113,9 +113,9 @@ export class WorkspaceService {
         await queryRunner.connect()
 
         const organization = await this.organizationService.readOrganizationById(data.organizationId, queryRunner)
-        if (!organization) throw new InternalFlowiseError(StatusCodes.NOT_FOUND, OrganizationErrorMessage.ORGANIZATION_NOT_FOUND)
+        if (!organization) throw new InternalOsmiError(StatusCodes.NOT_FOUND, OrganizationErrorMessage.ORGANIZATION_NOT_FOUND)
         const user = await this.userService.readUserById(data.createdBy, queryRunner)
-        if (!user) throw new InternalFlowiseError(StatusCodes.NOT_FOUND, UserErrorMessage.USER_NOT_FOUND)
+        if (!user) throw new InternalOsmiError(StatusCodes.NOT_FOUND, UserErrorMessage.USER_NOT_FOUND)
 
         let newWorkspace = this.createNewWorkspace(data, queryRunner)
         try {
@@ -137,9 +137,9 @@ export class WorkspaceService {
         await queryRunner.connect()
 
         const oldWorkspaceData = await this.readWorkspaceById(newWorkspaceData.id, queryRunner)
-        if (!oldWorkspaceData) throw new InternalFlowiseError(StatusCodes.NOT_FOUND, WorkspaceErrorMessage.WORKSPACE_NOT_FOUND)
+        if (!oldWorkspaceData) throw new InternalOsmiError(StatusCodes.NOT_FOUND, WorkspaceErrorMessage.WORKSPACE_NOT_FOUND)
         const user = await this.userService.readUserById(newWorkspaceData.updatedBy, queryRunner)
-        if (!user) throw new InternalFlowiseError(StatusCodes.NOT_FOUND, UserErrorMessage.USER_NOT_FOUND)
+        if (!user) throw new InternalOsmiError(StatusCodes.NOT_FOUND, UserErrorMessage.USER_NOT_FOUND)
         if (newWorkspaceData.name) {
             this.validateWorkspaceName(newWorkspaceData.name)
         }
@@ -163,7 +163,7 @@ export class WorkspaceService {
 
     public async deleteWorkspaceById(queryRunner: QueryRunner, workspaceId: string) {
         const workspace = await this.readWorkspaceById(workspaceId, queryRunner)
-        if (!workspace) throw new InternalFlowiseError(StatusCodes.NOT_FOUND, WorkspaceErrorMessage.WORKSPACE_NOT_FOUND)
+        if (!workspace) throw new InternalOsmiError(StatusCodes.NOT_FOUND, WorkspaceErrorMessage.WORKSPACE_NOT_FOUND)
 
         // First get all related entities that need to be deleted
         const chatflows = await queryRunner.manager.findBy(ChatFlow, { workspaceId })

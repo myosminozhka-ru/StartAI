@@ -1,4 +1,4 @@
-// TODO: Move this to a config file
+﻿// TODO: Move this to a config file
 export const evaluators = [
     {
         type: 'text',
@@ -70,7 +70,7 @@ export const evaluators = [
         type: 'numeric',
         label: 'Общая Задержка API',
         name: 'apiLatency',
-        description: 'Общее время, затраченное на вызов Flowise Prediction API (миллисекунды).'
+        description: 'Общее время, затраченное на вызов OSMI Prediction API (миллисекунды).'
     },
     {
         type: 'numeric',

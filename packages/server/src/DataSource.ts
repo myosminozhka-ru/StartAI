@@ -1,4 +1,4 @@
-import 'reflect-metadata'
+﻿import 'reflect-metadata'
 import path from 'path'
 import * as fs from 'fs'
 import { DataSource } from 'typeorm'
@@ -14,13 +14,13 @@ let appDataSource: DataSource
 
 export const init = async (): Promise<void> => {
     let homePath
-    let flowisePath = path.join(getUserHome(), '.flowise')
-    if (!fs.existsSync(flowisePath)) {
-        fs.mkdirSync(flowisePath)
+    let OSMIPath = path.join(getUserHome(), '.OSMI')
+    if (!fs.existsSync(OSMIPath)) {
+        fs.mkdirSync(OSMIPath)
     }
     switch (process.env.DATABASE_TYPE) {
         case 'sqlite':
-            homePath = process.env.DATABASE_PATH ?? flowisePath
+            homePath = process.env.DATABASE_PATH ?? OSMIPath
             appDataSource = new DataSource({
                 type: 'sqlite',
                 database: path.resolve(homePath, 'database.sqlite'),
@@ -84,11 +84,11 @@ export const init = async (): Promise<void> => {
                 poolErrorHandler: (err) => {
                     logger.error(`Database pool error: ${JSON.stringify(err)}`)
                 },
-                applicationName: 'Flowise'
+                applicationName: 'OSMI'
             })
             break
         default:
-            homePath = process.env.DATABASE_PATH ?? flowisePath
+            homePath = process.env.DATABASE_PATH ?? OSMIPath
             appDataSource = new DataSource({
                 type: 'sqlite',
                 database: path.resolve(homePath, 'database.sqlite'),

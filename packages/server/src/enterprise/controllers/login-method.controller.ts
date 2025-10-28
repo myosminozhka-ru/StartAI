@@ -1,9 +1,9 @@
-import { NextFunction, Request, Response } from 'express'
+﻿import { NextFunction, Request, Response } from 'express'
 import { StatusCodes } from 'http-status-codes'
 import { LoginMethodErrorMessage, LoginMethodService } from '../services/login-method.service'
 import { getRunningExpressApp } from '../../utils/getRunningExpressApp'
 import { LoginMethod, LoginMethodStatus } from '../database/entities/login-method.entity'
-import { InternalFlowiseError } from '../../errors/internalFlowiseError'
+import { InternalOsmiError } from '../../errors/InternalOsmiError'
 import { decrypt } from '../utils/encryption.util'
 import AzureSSO from '../sso/AzureSSO'
 import GoogleSSO from '../sso/GoogleSSO'
@@ -80,7 +80,7 @@ export class LoginMethodController {
             let loginMethod: any
             if (query.id) {
                 loginMethod = await loginMethodService.readLoginMethodById(query.id, queryRunner)
-                if (!loginMethod) throw new InternalFlowiseError(StatusCodes.NOT_FOUND, LoginMethodErrorMessage.LOGIN_METHOD_NOT_FOUND)
+                if (!loginMethod) throw new InternalOsmiError(StatusCodes.NOT_FOUND, LoginMethodErrorMessage.LOGIN_METHOD_NOT_FOUND)
                 loginMethod.config = JSON.parse(await decrypt(loginMethod.config))
             } else {
                 loginMethod = await loginMethodService.readLoginMethodByOrganizationId(query.organizationId, queryRunner)

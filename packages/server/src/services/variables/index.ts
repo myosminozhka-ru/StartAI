@@ -1,7 +1,7 @@
-import { StatusCodes } from 'http-status-codes'
+﻿import { StatusCodes } from 'http-status-codes'
 import { getRunningExpressApp } from '../../utils/getRunningExpressApp'
 import { Variable } from '../../database/entities/Variable'
-import { InternalFlowiseError } from '../../errors/internalFlowiseError'
+import { InternalOsmiError } from '../../errors/InternalOsmiError'
 import { getErrorMessage } from '../../errors/utils'
 import { getAppVersion } from '../../utils'
 import { QueryRunner } from 'typeorm'
@@ -11,7 +11,7 @@ import { Platform } from '../../Interface'
 const createVariable = async (newVariable: Variable, orgId: string) => {
     const appServer = getRunningExpressApp()
     if (appServer.identityManager.getPlatformType() === Platform.CLOUD && newVariable.type === 'runtime')
-        throw new InternalFlowiseError(StatusCodes.BAD_REQUEST, 'Cloud platform does not support runtime variables!')
+        throw new InternalOsmiError(StatusCodes.BAD_REQUEST, 'Cloud platform does not support runtime variables!')
     try {
         const variable = await appServer.AppDataSource.getRepository(Variable).create(newVariable)
         const dbResponse = await appServer.AppDataSource.getRepository(Variable).save(variable)
@@ -25,7 +25,7 @@ const createVariable = async (newVariable: Variable, orgId: string) => {
         )
         return dbResponse
     } catch (error) {
-        throw new InternalFlowiseError(
+        throw new InternalOsmiError(
             StatusCodes.INTERNAL_SERVER_ERROR,
             `Error: variablesServices.createVariable - ${getErrorMessage(error)}`
         )
@@ -38,7 +38,7 @@ const deleteVariable = async (variableId: string): Promise<any> => {
         const dbResponse = await appServer.AppDataSource.getRepository(Variable).delete({ id: variableId })
         return dbResponse
     } catch (error) {
-        throw new InternalFlowiseError(
+        throw new InternalOsmiError(
             StatusCodes.INTERNAL_SERVER_ERROR,
             `Error: variablesServices.deleteVariable - ${getErrorMessage(error)}`
         )
@@ -70,7 +70,7 @@ const getAllVariables = async (workspaceId?: string, page: number = -1, limit: n
             return data
         }
     } catch (error) {
-        throw new InternalFlowiseError(
+        throw new InternalOsmiError(
             StatusCodes.INTERNAL_SERVER_ERROR,
             `Error: variablesServices.getAllVariables - ${getErrorMessage(error)}`
         )
@@ -85,12 +85,12 @@ const getVariableById = async (variableId: string) => {
         })
 
         if (appServer.identityManager.getPlatformType() === Platform.CLOUD && dbResponse?.type === 'runtime') {
-            throw new InternalFlowiseError(StatusCodes.FORBIDDEN, 'Cloud platform does not support runtime variables!')
+            throw new InternalOsmiError(StatusCodes.FORBIDDEN, 'Cloud platform does not support runtime variables!')
         }
 
         return dbResponse
     } catch (error) {
-        throw new InternalFlowiseError(
+        throw new InternalOsmiError(
             StatusCodes.INTERNAL_SERVER_ERROR,
             `Error: variablesServices.getVariableById - ${getErrorMessage(error)}`
         )
@@ -100,13 +100,13 @@ const getVariableById = async (variableId: string) => {
 const updateVariable = async (variable: Variable, updatedVariable: Variable) => {
     const appServer = getRunningExpressApp()
     if (appServer.identityManager.getPlatformType() === Platform.CLOUD && updatedVariable.type === 'runtime')
-        throw new InternalFlowiseError(StatusCodes.BAD_REQUEST, 'Cloud platform does not support runtime variables!')
+        throw new InternalOsmiError(StatusCodes.BAD_REQUEST, 'Cloud platform does not support runtime variables!')
     try {
         const tmpUpdatedVariable = await appServer.AppDataSource.getRepository(Variable).merge(variable, updatedVariable)
         const dbResponse = await appServer.AppDataSource.getRepository(Variable).save(tmpUpdatedVariable)
         return dbResponse
     } catch (error) {
-        throw new InternalFlowiseError(
+        throw new InternalOsmiError(
             StatusCodes.INTERNAL_SERVER_ERROR,
             `Error: variablesServices.updateVariable - ${getErrorMessage(error)}`
         )
@@ -117,7 +117,7 @@ const importVariables = async (newVariables: Partial<Variable>[], queryRunner?: 
     try {
         for (const data of newVariables) {
             if (data.id && !validate(data.id)) {
-                throw new InternalFlowiseError(StatusCodes.PRECONDITION_FAILED, `Error: importVariables - invalid id!`)
+                throw new InternalOsmiError(StatusCodes.PRECONDITION_FAILED, `Error: importVariables - invalid id!`)
             }
         }
 
@@ -163,10 +163,7 @@ const importVariables = async (newVariables: Partial<Variable>[], queryRunner?: 
 
         return insertResponse
     } catch (error) {
-        throw new InternalFlowiseError(
-            StatusCodes.INTERNAL_SERVER_ERROR,
-            `Error: variableService.importVariables - ${getErrorMessage(error)}`
-        )
+        throw new InternalOsmiError(StatusCodes.INTERNAL_SERVER_ERROR, `Error: variableService.importVariables - ${getErrorMessage(error)}`)
     }
 }
 

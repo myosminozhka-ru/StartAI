@@ -1,7 +1,7 @@
-import { useEffect, useState, useRef } from 'react'
+﻿import { useEffect, useState, useRef } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useNavigate, useParams } from 'react-router-dom'
-import ReactJson from 'flowise-react-json-view'
+import ReactJson from 'react-json-view'
 import { cloneDeep } from 'lodash'
 import { v4 as uuidv4 } from 'uuid'
 
@@ -140,7 +140,7 @@ const VectorStoreQuery = () => {
             data.vectorStoreConfig = {}
             data.vectorStoreName = selectedVectorStoreProvider.name
             Object.keys(selectedVectorStoreProvider.inputs).map((key) => {
-                if (key === 'FLOWISE_CREDENTIAL_ID') {
+                if (key === 'OSMI_CREDENTIAL_ID') {
                     data.vectorStoreConfig['credential'] = selectedVectorStoreProvider.inputs[key]
                 } else {
                     data.vectorStoreConfig[key] = selectedVectorStoreProvider.inputs[key]

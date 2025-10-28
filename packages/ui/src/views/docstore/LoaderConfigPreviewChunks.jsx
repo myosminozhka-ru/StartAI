@@ -1,9 +1,9 @@
-import { cloneDeep } from 'lodash'
+﻿import { cloneDeep } from 'lodash'
 import { useEffect, useState } from 'react'
 import { validate as uuidValidate, v4 as uuidv4 } from 'uuid'
 import { useDispatch, useSelector } from 'react-redux'
 import { useNavigate, useParams } from 'react-router-dom'
-import ReactJson from 'flowise-react-json-view'
+import ReactJson from 'react-json-view'
 
 // Hooks
 import useApi from '@/hooks/useApi'
@@ -145,7 +145,7 @@ const LoaderConfigPreviewChunks = () => {
                 if (
                     inputParam.type === 'credential' &&
                     !selectedDocumentLoader.credential &&
-                    !selectedDocumentLoader.inputs['FLOWISE_CREDENTIAL_ID']
+                    !selectedDocumentLoader.inputs['OSMI_CREDENTIAL_ID']
                 ) {
                     canSubmit = false
                     missingFields.push(inputParam.label || inputParam.name)

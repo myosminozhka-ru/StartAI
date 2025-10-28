@@ -1,4 +1,4 @@
-import { ICommonObject } from 'flowise-components'
+﻿import { ICommonObject } from 'osmi-ai-components'
 import { DocumentStore } from './database/entities/DocumentStore'
 import { DataSource } from 'typeorm'
 import { IComponentNodes } from './Interface'

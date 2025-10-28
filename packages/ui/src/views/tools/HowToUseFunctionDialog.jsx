@@ -1,4 +1,4 @@
-import { createPortal } from 'react-dom'
+﻿import { createPortal } from 'react-dom'
 import PropTypes from 'prop-types'
 import { Dialog, DialogContent, DialogTitle } from '@mui/material'
 
@@ -19,7 +19,7 @@ const HowToUseFunctionDialog = ({ show, onCancel }) => {
             </DialogTitle>
             <DialogContent>
                 <ul>
-                    <li style={{ marginTop: 10 }}>You can use any libraries imported in Flowise</li>
+                    <li style={{ marginTop: 10 }}>You can use any libraries imported in OSMI</li>
                     <li style={{ marginTop: 10 }}>
                         You can use properties specified in Input Schema as variables with prefix $:
                         <ul style={{ marginTop: 10 }}>

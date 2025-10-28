@@ -1,4 +1,4 @@
-import PropTypes from 'prop-types'
+﻿import PropTypes from 'prop-types'
 import { useEffect, useRef, useState } from 'react'
 
 // material-ui
@@ -13,13 +13,13 @@ import CredentialListDialog from '@/views/credentials/CredentialListDialog'
 // API
 import credentialsApi from '@/api/credentials'
 import { useAuth } from '@/hooks/useAuth'
-import { FLOWISE_CREDENTIAL_ID } from '@/store/constant'
+import { OSMI_CREDENTIAL_ID } from '@/store/constant'
 
 // ===========================|| CredentialInputHandler ||=========================== //
 
 const CredentialInputHandler = ({ inputParam, data, onSelect, disabled = false }) => {
     const ref = useRef(null)
-    const [credentialId, setCredentialId] = useState(data?.credential || (data?.inputs && data.inputs[FLOWISE_CREDENTIAL_ID]) || '')
+    const [credentialId, setCredentialId] = useState(data?.credential || (data?.inputs && data.inputs[OSMI_CREDENTIAL_ID]) || '')
     const [showCredentialListDialog, setShowCredentialListDialog] = useState(false)
     const [credentialListDialogProps, setCredentialListDialogProps] = useState({})
     const [showSpecificCredentialDialog, setShowSpecificCredentialDialog] = useState(false)
@@ -92,7 +92,7 @@ const CredentialInputHandler = ({ inputParam, data, onSelect, disabled = false }
     }
 
     useEffect(() => {
-        setCredentialId(data?.credential || (data?.inputs && data.inputs[FLOWISE_CREDENTIAL_ID]) || '')
+        setCredentialId(data?.credential || (data?.inputs && data.inputs[OSMI_CREDENTIAL_ID]) || '')
     }, [data])
 
     return (

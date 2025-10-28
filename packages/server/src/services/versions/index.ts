@@ -1,7 +1,7 @@
-import path from 'path'
+﻿import path from 'path'
 import * as fs from 'fs'
 import { StatusCodes } from 'http-status-codes'
-import { InternalFlowiseError } from '../../errors/internalFlowiseError'
+import { InternalOsmiError } from '../../errors/InternalOsmiError'
 import { getErrorMessage } from '../../errors/utils'
 
 const getVersion = async () => {
@@ -23,7 +23,7 @@ const getVersion = async () => {
         }
         const packagejsonPath = getPackageJsonPath()
         if (!packagejsonPath) {
-            throw new InternalFlowiseError(StatusCodes.NOT_FOUND, `Version not found`)
+            throw new InternalOsmiError(StatusCodes.NOT_FOUND, `Version not found`)
         }
         try {
             const content = await fs.promises.readFile(packagejsonPath, 'utf8')
@@ -32,10 +32,10 @@ const getVersion = async () => {
                 version: parsedContent.version
             }
         } catch (error) {
-            throw new InternalFlowiseError(StatusCodes.NOT_FOUND, `Version not found- ${getErrorMessage(error)}`)
+            throw new InternalOsmiError(StatusCodes.NOT_FOUND, `Version not found- ${getErrorMessage(error)}`)
         }
     } catch (error) {
-        throw new InternalFlowiseError(StatusCodes.INTERNAL_SERVER_ERROR, `Error: versionService.getVersion - ${getErrorMessage(error)}`)
+        throw new InternalOsmiError(StatusCodes.INTERNAL_SERVER_ERROR, `Error: versionService.getVersion - ${getErrorMessage(error)}`)
     }
 }
 

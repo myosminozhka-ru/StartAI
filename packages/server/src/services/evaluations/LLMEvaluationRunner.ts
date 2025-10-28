@@ -1,4 +1,4 @@
-import { convertSchemaToZod, ICommonObject } from 'flowise-components'
+﻿import { convertSchemaToZod, ICommonObject } from 'osmi-ai-components'
 import { z } from 'zod'
 import { RunnableSequence } from '@langchain/core/runnables'
 import { PromptTemplate } from '@langchain/core/prompts'

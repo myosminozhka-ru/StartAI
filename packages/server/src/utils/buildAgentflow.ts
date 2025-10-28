@@ -1,4 +1,4 @@
-import { DataSource } from 'typeorm'
+﻿import { DataSource } from 'typeorm'
 import { v4 as uuidv4 } from 'uuid'
 import { cloneDeep, get } from 'lodash'
 import TurndownService from 'turndown'
@@ -12,7 +12,7 @@ import {
     IServerSideEventStreamer,
     convertChatHistoryToText,
     generateFollowUpPrompts
-} from 'flowise-components'
+} from 'osmi-ai-components'
 import {
     IncomingAgentflowInput,
     INodeData,

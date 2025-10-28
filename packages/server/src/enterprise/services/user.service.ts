@@ -1,6 +1,6 @@
-import { StatusCodes } from 'http-status-codes'
+﻿import { StatusCodes } from 'http-status-codes'
 import bcrypt from 'bcryptjs'
-import { InternalFlowiseError } from '../../errors/internalFlowiseError'
+import { InternalOsmiError } from '../../errors/InternalOsmiError'
 import { getRunningExpressApp } from '../../utils/getRunningExpressApp'
 import { Telemetry, TelemetryEventType } from '../../utils/telemetry'
 import { User, UserStatus } from '../database/entities/user.entity'
@@ -37,7 +37,7 @@ export class UserService {
     }
 
     public validateUserId(id: string | undefined) {
-        if (isInvalidUUID(id)) throw new InternalFlowiseError(StatusCodes.BAD_REQUEST, UserErrorMessage.INVALID_USER_ID)
+        if (isInvalidUUID(id)) throw new InternalOsmiError(StatusCodes.BAD_REQUEST, UserErrorMessage.INVALID_USER_ID)
     }
 
     public async readUserById(id: string | undefined, queryRunner: QueryRunner) {
@@ -46,15 +46,15 @@ export class UserService {
     }
 
     public validateUserName(name: string | undefined) {
-        if (isInvalidName(name)) throw new InternalFlowiseError(StatusCodes.BAD_REQUEST, UserErrorMessage.INVALID_USER_NAME)
+        if (isInvalidName(name)) throw new InternalOsmiError(StatusCodes.BAD_REQUEST, UserErrorMessage.INVALID_USER_NAME)
     }
 
     public validateUserEmail(email: string | undefined) {
-        if (isInvalidEmail(email)) throw new InternalFlowiseError(StatusCodes.BAD_REQUEST, UserErrorMessage.INVALID_USER_EMAIL)
+        if (isInvalidEmail(email)) throw new InternalOsmiError(StatusCodes.BAD_REQUEST, UserErrorMessage.INVALID_USER_EMAIL)
     }
 
     public async readUserByEmail(email: string | undefined, queryRunner: QueryRunner) {
-        if (!email) throw new InternalFlowiseError(StatusCodes.BAD_REQUEST, UserErrorMessage.INVALID_USER_EMAIL)
+        if (!email) throw new InternalOsmiError(StatusCodes.BAD_REQUEST, UserErrorMessage.INVALID_USER_EMAIL)
         this.validateUserEmail(email)
         return await queryRunner.manager.findOneBy(User, { email: ILike(email) })
     }
@@ -65,7 +65,7 @@ export class UserService {
 
     public validateUserStatus(status: string | undefined) {
         if (status && !Object.values(UserStatus).includes(status as UserStatus))
-            throw new InternalFlowiseError(StatusCodes.BAD_REQUEST, UserErrorMessage.INVALID_USER_STATUS)
+            throw new InternalOsmiError(StatusCodes.BAD_REQUEST, UserErrorMessage.INVALID_USER_STATUS)
     }
 
     public async readUser(queryRunner: QueryRunner) {
@@ -74,13 +74,13 @@ export class UserService {
 
     public encryptUserCredential(credential: string | undefined) {
         if (!credential || isInvalidPassword(credential))
-            throw new InternalFlowiseError(StatusCodes.BAD_REQUEST, GeneralErrorMessage.INVALID_PASSWORD)
+            throw new InternalOsmiError(StatusCodes.BAD_REQUEST, GeneralErrorMessage.INVALID_PASSWORD)
         return getHash(credential)
     }
 
     public async createNewUser(data: Partial<User>, queryRunner: QueryRunner) {
         const user = await this.readUserByEmail(data.email, queryRunner)
-        if (user) throw new InternalFlowiseError(StatusCodes.BAD_REQUEST, UserErrorMessage.USER_EMAIL_ALREADY_EXISTS)
+        if (user) throw new InternalOsmiError(StatusCodes.BAD_REQUEST, UserErrorMessage.USER_EMAIL_ALREADY_EXISTS)
         if (data.credential) data.credential = this.encryptUserCredential(data.credential)
         if (!data.name) data.name = data.email
         this.validateUserName(data.name)
@@ -89,7 +89,7 @@ export class UserService {
         data.id = generateId()
         if (data.createdBy) {
             const createdBy = await this.readUserById(data.createdBy, queryRunner)
-            if (!createdBy) throw new InternalFlowiseError(StatusCodes.NOT_FOUND, UserErrorMessage.USER_NOT_FOUND)
+            if (!createdBy) throw new InternalOsmiError(StatusCodes.NOT_FOUND, UserErrorMessage.USER_NOT_FOUND)
             data.createdBy = createdBy.id
             data.updatedBy = data.createdBy
         } else {
@@ -141,11 +141,11 @@ export class UserService {
             queryRunner = this.dataSource.createQueryRunner()
             await queryRunner.connect()
             const oldUserData = await this.readUserById(newUserData.id, queryRunner)
-            if (!oldUserData) throw new InternalFlowiseError(StatusCodes.NOT_FOUND, UserErrorMessage.USER_NOT_FOUND)
+            if (!oldUserData) throw new InternalOsmiError(StatusCodes.NOT_FOUND, UserErrorMessage.USER_NOT_FOUND)
 
             if (newUserData.updatedBy) {
                 const updateUserData = await this.readUserById(newUserData.updatedBy, queryRunner)
-                if (!updateUserData) throw new InternalFlowiseError(StatusCodes.NOT_FOUND, UserErrorMessage.USER_NOT_FOUND)
+                if (!updateUserData) throw new InternalOsmiError(StatusCodes.NOT_FOUND, UserErrorMessage.USER_NOT_FOUND)
             }
 
             newUserData.createdBy = oldUserData.createdBy

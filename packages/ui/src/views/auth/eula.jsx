@@ -1,4 +1,4 @@
-import { useEffect } from 'react'
+﻿import { useEffect } from 'react'
 import { useTheme, Typography, Box, Container } from '@mui/material'
 
 // project imports
@@ -11,7 +11,7 @@ const EulaPage = () => {
 
     useEffect(() => {
         // Здесь можно загрузить PDF или показать содержимое EULA
-        document.title = 'Лицензионное соглашение - StartAI'
+        document.title = 'Лицензионное соглашение - OSMI AI'
     }, [])
 
     return (

@@ -1,25 +1,22 @@
-import { Request, Response, NextFunction } from 'express'
+﻿import { Request, Response, NextFunction } from 'express'
 import variablesService from '../../services/variables'
 import { Variable } from '../../database/entities/Variable'
-import { InternalFlowiseError } from '../../errors/internalFlowiseError'
+import { InternalOsmiError } from '../../errors/InternalOsmiError'
 import { StatusCodes } from 'http-status-codes'
 import { getPageAndLimitParams } from '../../utils/pagination'
 
 const createVariable = async (req: Request, res: Response, next: NextFunction) => {
     try {
         if (typeof req.body === 'undefined') {
-            throw new InternalFlowiseError(
-                StatusCodes.PRECONDITION_FAILED,
-                `Error: variablesController.createVariable - body not provided!`
-            )
+            throw new InternalOsmiError(StatusCodes.PRECONDITION_FAILED, `Error: variablesController.createVariable - body not provided!`)
         }
         const orgId = req.user?.activeOrganizationId
         if (!orgId) {
-            throw new InternalFlowiseError(StatusCodes.NOT_FOUND, `Error: toolsController.createTool - organization ${orgId} not found!`)
+            throw new InternalOsmiError(StatusCodes.NOT_FOUND, `Error: toolsController.createTool - organization ${orgId} not found!`)
         }
         const workspaceId = req.user?.activeWorkspaceId
         if (!workspaceId) {
-            throw new InternalFlowiseError(StatusCodes.NOT_FOUND, `Error: toolsController.createTool - workspace ${workspaceId} not found!`)
+            throw new InternalOsmiError(StatusCodes.NOT_FOUND, `Error: toolsController.createTool - workspace ${workspaceId} not found!`)
         }
         const body = req.body
         body.workspaceId = workspaceId
@@ -35,7 +32,7 @@ const createVariable = async (req: Request, res: Response, next: NextFunction) =
 const deleteVariable = async (req: Request, res: Response, next: NextFunction) => {
     try {
         if (typeof req.params === 'undefined' || !req.params.id) {
-            throw new InternalFlowiseError(StatusCodes.PRECONDITION_FAILED, 'Error: variablesController.deleteVariable - id not provided!')
+            throw new InternalOsmiError(StatusCodes.PRECONDITION_FAILED, 'Error: variablesController.deleteVariable - id not provided!')
         }
         const apiResponse = await variablesService.deleteVariable(req.params.id)
         return res.json(apiResponse)
@@ -57,13 +54,10 @@ const getAllVariables = async (req: Request, res: Response, next: NextFunction) 
 const updateVariable = async (req: Request, res: Response, next: NextFunction) => {
     try {
         if (typeof req.params === 'undefined' || !req.params.id) {
-            throw new InternalFlowiseError(StatusCodes.PRECONDITION_FAILED, 'Error: variablesController.updateVariable - id not provided!')
+            throw new InternalOsmiError(StatusCodes.PRECONDITION_FAILED, 'Error: variablesController.updateVariable - id not provided!')
         }
         if (typeof req.body === 'undefined') {
-            throw new InternalFlowiseError(
-                StatusCodes.PRECONDITION_FAILED,
-                'Error: variablesController.updateVariable - body not provided!'
-            )
+            throw new InternalOsmiError(StatusCodes.PRECONDITION_FAILED, 'Error: variablesController.updateVariable - body not provided!')
         }
         const variable = await variablesService.getVariableById(req.params.id)
         if (!variable) {

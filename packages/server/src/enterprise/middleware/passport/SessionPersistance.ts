@@ -1,4 +1,4 @@
-import Redis from 'ioredis'
+﻿import Redis from 'ioredis'
 import { RedisStore } from 'connect-redis'
 import { getDatabaseSSLFromEnv } from '../../../DataSource'
 import path from 'path'
@@ -81,8 +81,8 @@ export const initializeDBClientAndStore: any = () => {
         case 'sqlite': {
             const expressSession = require('express-session')
             const sqlSession = require('connect-sqlite3')(expressSession)
-            let flowisePath = path.join(getUserHome(), '.flowise')
-            const homePath = process.env.DATABASE_PATH ?? flowisePath
+            let OSMIPath = path.join(getUserHome(), '.OSMI')
+            const homePath = process.env.DATABASE_PATH ?? OSMIPath
             return new sqlSession({
                 db: 'database.sqlite',
                 table: 'login_sessions',

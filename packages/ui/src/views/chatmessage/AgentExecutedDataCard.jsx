@@ -1,4 +1,4 @@
-import { useEffect, useState, useCallback, forwardRef, memo } from 'react'
+﻿import { useEffect, useState, useCallback, forwardRef, memo } from 'react'
 import PropTypes from 'prop-types'
 
 // MUI
@@ -37,7 +37,7 @@ import { IconArrowsMaximize, IconLoader, IconCircleXFilled, IconRelationOneToMan
 
 // Project imports
 import { useTheme } from '@mui/material/styles'
-import { FLOWISE_CREDENTIAL_ID, AGENTFLOW_ICONS } from '@/store/constant'
+import { OSMI_CREDENTIAL_ID, AGENTFLOW_ICONS } from '@/store/constant'
 import { NodeExecutionDetails } from '@/views/agentexecutions/NodeExecutionDetails'
 
 const getIconColor = (status) => {
@@ -336,19 +336,19 @@ const AgentExecutedDataCard = ({ status, execution, agentflowId, sessionId }) =>
 
     // Transform the execution data into a tree structure
     const buildTreeData = (nodes) => {
-        // for each node, loop through each and every nested key of node.data, and remove the key if it is equal to FLOWISE_CREDENTIAL_ID
+        // for each node, loop through each and every nested key of node.data, and remove the key if it is equal to OSMI_CREDENTIAL_ID
         nodes.forEach((node) => {
-            const removeFlowiseCredentialId = (data) => {
+            const removeOSMICredentialId = (data) => {
                 for (const key in data) {
-                    if (key === FLOWISE_CREDENTIAL_ID) {
+                    if (key === OSMI_CREDENTIAL_ID) {
                         delete data[key]
                     }
                     if (typeof data[key] === 'object') {
-                        removeFlowiseCredentialId(data[key])
+                        removeOSMICredentialId(data[key])
                     }
                 }
             }
-            removeFlowiseCredentialId(node.data)
+            removeOSMICredentialId(node.data)
         })
 
         // Create a map for quick node lookup

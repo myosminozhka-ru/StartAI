@@ -1,0 +1,207 @@
+﻿import { MongoClient } from 'mongodb'
+import { BufferMemory, BufferMemoryInput } from 'langchain/memory'
+import { mapStoredMessageToChatMessage, AIMessage, HumanMessage, BaseMessage } from '@langchain/core/messages'
+import {
+    convertBaseMessagetoIMessage,
+    getBaseClasses,
+    getCredentialData,
+    getCredentialParam,
+    getVersion,
+    mapChatMessageToBaseMessage
+} from '../../../src/utils'
+import { OsmiMemory, ICommonObject, IMessage, INode, INodeData, INodeParams, MemoryMethods, MessageType } from '../../../src/Interface'
+
+// TODO: Add ability to specify env variable and use singleton pattern (i.e initialize MongoDB on server and pass to component)
+
+class MongoDB_Memory implements INode {
+    label: string
+    name: string
+    version: number
+    description: string
+    type: string
+    icon: string
+    category: string
+    baseClasses: string[]
+    credential: INodeParams
+    inputs: INodeParams[]
+
+    constructor() {
+        this.label = 'MongoDB Atlas Память чата'
+        this.name = 'MongoDBAtlasChatMemory'
+        this.version = 1.0
+        this.type = 'MongoDBAtlasChatMemory'
+        this.icon = 'mongodb.svg'
+        this.category = 'Memory'
+        this.description = 'Сохраняет разговор в MongoDB Atlas'
+        this.baseClasses = [this.type, ...getBaseClasses(BufferMemory)]
+        this.credential = {
+            label: 'Подключите учетные данные',
+            name: 'credential',
+            type: 'credential',
+            credentialNames: ['mongoDBUrlApi']
+        }
+        this.inputs = [
+            {
+                label: 'База данных',
+                name: 'databaseName',
+                placeholder: '<DB_NAME>',
+                type: 'string'
+            },
+            {
+                label: 'Название коллекции',
+                name: 'collectionName',
+                placeholder: '<COLLECTION_NAME>',
+                type: 'string'
+            },
+            {
+                label: 'ID сессии',
+                name: 'sessionId',
+                type: 'string',
+                description:
+                    'Если не указан, будет использован случайный id. Узнайте <a target="_blank" href="https://docs.OSMIai.com/memory/long-term-memory#ui-and-embedded-chat">больше</a>',
+                default: '',
+                additionalParams: true,
+                optional: true
+            },
+            {
+                label: 'Ключ памяти',
+                name: 'memoryKey',
+                type: 'string',
+                default: 'chat_history',
+                additionalParams: true
+            }
+        ]
+    }
+
+    async init(nodeData: INodeData, _: string, options: ICommonObject): Promise<any> {
+        return initializeMongoDB(nodeData, options)
+    }
+}
+
+const initializeMongoDB = async (nodeData: INodeData, options: ICommonObject): Promise<BufferMemory> => {
+    const databaseName = nodeData.inputs?.databaseName as string
+    const collectionName = nodeData.inputs?.collectionName as string
+    const memoryKey = nodeData.inputs?.memoryKey as string
+    const sessionId = nodeData.inputs?.sessionId as string
+
+    const credentialData = await getCredentialData(nodeData.credential ?? '', options)
+    const mongoDBConnectUrl = getCredentialParam('mongoDBConnectUrl', credentialData, nodeData)
+    const driverInfo = { name: 'OSMI', version: (await getVersion()).version }
+
+    const orgId = options.orgId as string
+
+    return new BufferMemoryExtended({
+        memoryKey: memoryKey ?? 'chat_history',
+        sessionId,
+        orgId,
+        mongoConnection: {
+            databaseName,
+            collectionName,
+            mongoDBConnectUrl,
+            driverInfo
+        }
+    })
+}
+
+interface BufferMemoryExtendedInput {
+    sessionId: string
+    orgId: string
+    mongoConnection: {
+        databaseName: string
+        collectionName: string
+        mongoDBConnectUrl: string
+        driverInfo: { name: string; version: string }
+    }
+}
+
+class BufferMemoryExtended extends OsmiMemory implements MemoryMethods {
+    sessionId = ''
+    orgId = ''
+    mongoConnection: {
+        databaseName: string
+        collectionName: string
+        mongoDBConnectUrl: string
+        driverInfo: { name: string; version: string }
+    }
+
+    constructor(fields: BufferMemoryInput & BufferMemoryExtendedInput) {
+        super(fields)
+        this.sessionId = fields.sessionId
+        this.orgId = fields.orgId
+        this.mongoConnection = fields.mongoConnection
+    }
+
+    async getChatMessages(
+        overrideSessionId = '',
+        returnBaseMessages = false,
+        prependMessages?: IMessage[]
+    ): Promise<IMessage[] | BaseMessage[]> {
+        const client = new MongoClient(this.mongoConnection.mongoDBConnectUrl, { driverInfo: this.mongoConnection.driverInfo })
+        const collection = client.db(this.mongoConnection.databaseName).collection(this.mongoConnection.collectionName)
+
+        const id = overrideSessionId ? overrideSessionId : this.sessionId
+        const document = await collection.findOne({ sessionId: id })
+        const messages = document?.messages || []
+        const baseMessages = messages.map(mapStoredMessageToChatMessage)
+        if (prependMessages?.length) {
+            baseMessages.unshift(...(await mapChatMessageToBaseMessage(prependMessages, this.orgId)))
+        }
+
+        await client.close()
+        return returnBaseMessages ? baseMessages : convertBaseMessagetoIMessage(baseMessages)
+    }
+
+    async addChatMessages(msgArray: { text: string; type: MessageType }[], overrideSessionId = ''): Promise<void> {
+        const client = new MongoClient(this.mongoConnection.mongoDBConnectUrl, { driverInfo: this.mongoConnection.driverInfo })
+        const collection = client.db(this.mongoConnection.databaseName).collection(this.mongoConnection.collectionName)
+
+        const id = overrideSessionId ? overrideSessionId : this.sessionId
+        const input = msgArray.find((msg) => msg.type === 'userMessage')
+        const output = msgArray.find((msg) => msg.type === 'apiMessage')
+
+        if (input) {
+            const newInputMessage = new HumanMessage(input.text)
+            const messageToAdd = [newInputMessage].map((msg) => ({
+                ...msg.toDict(),
+                timestamp: new Date() // Add timestamp to the message
+            }))
+            await collection.updateOne(
+                { sessionId: id },
+                {
+                    $push: { messages: { $each: messageToAdd } }
+                },
+                { upsert: true }
+            )
+        }
+
+        if (output) {
+            const newOutputMessage = new AIMessage(output.text)
+            const messageToAdd = [newOutputMessage].map((msg) => ({
+                ...msg.toDict(),
+                timestamp: new Date() // Add timestamp to the message
+            }))
+            await collection.updateOne(
+                { sessionId: id },
+                {
+                    $push: { messages: { $each: messageToAdd } }
+                },
+                { upsert: true }
+            )
+        }
+
+        await client.close()
+    }
+
+    async clearChatMessages(overrideSessionId = ''): Promise<void> {
+        const client = new MongoClient(this.mongoConnection.mongoDBConnectUrl, { driverInfo: this.mongoConnection.driverInfo })
+        const collection = client.db(this.mongoConnection.databaseName).collection(this.mongoConnection.collectionName)
+
+        const id = overrideSessionId ? overrideSessionId : this.sessionId
+        await collection.deleteOne({ sessionId: id })
+        await this.clear()
+
+        await client.close()
+    }
+}
+
+module.exports = { nodeClass: MongoDB_Memory }

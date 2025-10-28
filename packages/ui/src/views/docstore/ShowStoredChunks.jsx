@@ -1,7 +1,7 @@
-import { useEffect, useState } from 'react'
+﻿import { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useNavigate, useParams } from 'react-router-dom'
-import ReactJson from 'flowise-react-json-view'
+import ReactJson from 'react-json-view'
 
 // material-ui
 import { Box, Card, Button, Grid, IconButton, Stack, Typography } from '@mui/material'

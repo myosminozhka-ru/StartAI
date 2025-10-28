@@ -1,8 +1,8 @@
-import { JwtFromRequestFunction, Strategy as JwtStrategy, VerifiedCallback } from 'passport-jwt'
+﻿import { JwtFromRequestFunction, Strategy as JwtStrategy, VerifiedCallback } from 'passport-jwt'
 import { decryptToken } from '../../utils/tempTokenUtils'
 import { Strategy } from 'passport'
 import { Request } from 'express'
-import { ICommonObject } from 'flowise-components'
+import { ICommonObject } from 'osmi-ai-components'
 
 const _cookieExtractor = (req: any) => {
     let jwt = null

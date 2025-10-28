@@ -4,11 +4,7 @@
     "private": true,
     "homepage": "https://osmi-ai.ru",
     "workspaces": [
-        "packages/*",
-        "flowise",
-        "ui",
-        "components",
-        "api-documentation"
+        "packages/*"
     ],
     "scripts": {
         "build": "turbo run build",

@@ -1,9 +1,9 @@
-import { StatusCodes } from 'http-status-codes'
+﻿import { StatusCodes } from 'http-status-codes'
 import { findAvailableConfigs } from '../../utils'
 import { IReactFlowObject } from '../../Interface'
 import { getRunningExpressApp } from '../../utils/getRunningExpressApp'
 import chatflowsService from '../chatflows'
-import { InternalFlowiseError } from '../../errors/internalFlowiseError'
+import { InternalOsmiError } from '../../errors/InternalOsmiError'
 import { getErrorMessage } from '../../errors/utils'
 
 const getSingleFlowConfig = async (chatflowId: string): Promise<any> => {
@@ -11,7 +11,7 @@ const getSingleFlowConfig = async (chatflowId: string): Promise<any> => {
         const appServer = getRunningExpressApp()
         const chatflow = await chatflowsService.getChatflowById(chatflowId)
         if (!chatflow) {
-            throw new InternalFlowiseError(StatusCodes.NOT_FOUND, `Chatflow ${chatflowId} not found in the database!`)
+            throw new InternalOsmiError(StatusCodes.NOT_FOUND, `Chatflow ${chatflowId} not found in the database!`)
         }
         const flowData = chatflow.flowData
         const parsedFlowData: IReactFlowObject = JSON.parse(flowData)
@@ -19,7 +19,7 @@ const getSingleFlowConfig = async (chatflowId: string): Promise<any> => {
         const dbResponse = findAvailableConfigs(nodes, appServer.nodesPool.componentCredentials)
         return dbResponse
     } catch (error) {
-        throw new InternalFlowiseError(
+        throw new InternalOsmiError(
             StatusCodes.INTERNAL_SERVER_ERROR,
             `Error: flowConfigService.getSingleFlowConfig - ${getErrorMessage(error)}`
         )

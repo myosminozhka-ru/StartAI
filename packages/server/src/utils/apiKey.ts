@@ -1,5 +1,5 @@
-import { randomBytes, scryptSync, timingSafeEqual } from 'crypto'
-import { ICommonObject } from 'flowise-components'
+﻿import { randomBytes, scryptSync, timingSafeEqual } from 'crypto'
+import { ICommonObject } from 'osmi-ai-components'
 import fs from 'fs'
 import path from 'path'
 import { DataSource } from 'typeorm'

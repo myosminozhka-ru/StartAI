@@ -1,11 +1,11 @@
 {
-    "name": "flowise",
+    "name": "osmi-ai-server",
     "version": "3.0.8",
-    "description": "Flowiseai Server",
+    "description": "OSMI AI Server",
     "main": "dist/index",
     "types": "dist/index.d.ts",
     "bin": {
-        "flowise": "./bin/run"
+        "osmi-ai": "./bin/run"
     },
     "files": [
         "bin",
@@ -16,7 +16,7 @@
         "oauth2.html"
     ],
     "oclif": {
-        "bin": "flowise",
+        "bin": "osmi-ai",
         "commands": "./dist/commands"
     },
     "scripts": {
@@ -50,10 +50,10 @@
         "test": "jest --runInBand --detectOpenHandles --forceExit"
     },
     "keywords": [],
-    "homepage": "https://flowiseai.com",
+    "homepage": "https://osmi-ai.ru",
     "author": {
-        "name": "Henry Heng",
-        "email": "henryheng@flowiseai.com"
+        "name": "OSMI Team",
+        "email": "info@osmi-ai.ru"
     },
     "engines": {
         "node": ">=18.15.0 <19.0.0 || ^20"
@@ -105,9 +105,10 @@
         "express-mysql-session": "^3.0.3",
         "express-rate-limit": "^6.9.0",
         "express-session": "^1.18.1",
-        "flowise-components": "workspace:^",
+        "osmi-ai-components": "workspace:^",
         "flowise-nim-container-manager": "^1.0.11",
-        "flowise-ui": "workspace:^",
+        "OSMI-nim-container-manager": "npm:flowise-nim-container-manager@^1.0.11",
+        "osmi-ai-ui": "workspace:^",
         "global-agent": "^3.0.0",
         "gulp": "^4.0.2",
         "handlebars": "^4.7.8",

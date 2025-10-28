@@ -1,4 +1,4 @@
-import logger from '../utils/logger'
+﻿import logger from '../utils/logger'
 import { QueueManager } from '../queue/QueueManager'
 import { BaseCommand } from './base'
 import { getDataSource } from '../DataSource'
@@ -18,7 +18,7 @@ export default class Worker extends BaseCommand {
     upsertionWorkerId: string
 
     async run(): Promise<void> {
-        logger.info('Starting Flowise Worker...')
+        logger.info('Starting OSMI Worker...')
 
         const { appDataSource, telemetry, componentNodes, cachePool, abortControllerPool, usageCacheManager } = await this.prepareData()
 
@@ -92,14 +92,14 @@ export default class Worker extends BaseCommand {
         try {
             const queueManager = QueueManager.getInstance()
             const predictionWorker = queueManager.getQueue('prediction').getWorker()
-            logger.info(`Shutting down Flowise Prediction Worker ${this.predictionWorkerId}...`)
+            logger.info(`Shutting down OSMI Prediction Worker ${this.predictionWorkerId}...`)
             await predictionWorker.close()
 
             const upsertWorker = queueManager.getQueue('upsert').getWorker()
-            logger.info(`Shutting down Flowise Upsertion Worker ${this.upsertionWorkerId}...`)
+            logger.info(`Shutting down OSMI Upsertion Worker ${this.upsertionWorkerId}...`)
             await upsertWorker.close()
         } catch (error) {
-            logger.error('There was an error shutting down Flowise Worker...', error)
+            logger.error('There was an error shutting down OSMI Worker...', error)
             await this.failExit()
         }
 

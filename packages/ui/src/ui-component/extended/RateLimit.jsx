@@ -1,4 +1,4 @@
-import { useState } from 'react'
+﻿import { useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { enqueueSnackbar as enqueueSnackbarAction, closeSnackbar as closeSnackbarAction, SET_CHATFLOW } from '@/store/actions'
 import PropTypes from 'prop-types'
@@ -153,7 +153,7 @@ const RateLimit = ({ dialogProps }) => {
                 <TooltipWithParser
                     style={{ marginLeft: 10 }}
                     title={
-                        'Посетите <a target="_blank" href="https://docs.flowiseai.com/configuration/rate-limit">Руководство по настройке ограничений</a> для правильной настройки ограничений в вашей среде хостинга.'
+                        'Посетите <a target="_blank" href="https://docs.OSMIai.com/configuration/rate-limit">Руководство по настройке ограничений</a> для правильной настройки ограничений в вашей среде хостинга.'
                     }
                 />
             </Typography>

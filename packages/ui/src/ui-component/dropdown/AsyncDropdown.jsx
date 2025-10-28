@@ -1,4 +1,4 @@
-import { useState, useEffect, useContext, Fragment } from 'react'
+﻿import { useState, useEffect, useContext, Fragment } from 'react'
 import { useSelector } from 'react-redux'
 import PropTypes from 'prop-types'
 import axios from 'axios'
@@ -33,8 +33,8 @@ const fetchList = async ({ name, nodeData, previousNodes, currentNode }) => {
     const loadMethod = selectedParam?.loadMethod
 
     let credentialId = nodeData.credential
-    if (!credentialId && (nodeData.inputs?.credential || nodeData.inputs?.['FLOWISE_CREDENTIAL_ID'])) {
-        credentialId = nodeData.inputs.credential || nodeData.inputs?.['FLOWISE_CREDENTIAL_ID']
+    if (!credentialId && (nodeData.inputs?.credential || nodeData.inputs?.['OSMI_CREDENTIAL_ID'])) {
+        credentialId = nodeData.inputs.credential || nodeData.inputs?.['OSMI_CREDENTIAL_ID']
     }
 
     let config = {

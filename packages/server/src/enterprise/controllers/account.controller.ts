@@ -1,4 +1,4 @@
-import { Request, Response, NextFunction } from 'express'
+﻿import { Request, Response, NextFunction } from 'express'
 import { StatusCodes } from 'http-status-codes'
 import { AccountService } from '../services/account.service'
 import { getRunningExpressApp } from '../../utils/getRunningExpressApp'
@@ -114,7 +114,7 @@ export class AccountController {
     }
 
     public async getBasicAuth(req: Request, res: Response) {
-        if (process.env.FLOWISE_USERNAME && process.env.FLOWISE_PASSWORD) {
+        if (process.env.OSMI_USERNAME && process.env.OSMI_PASSWORD) {
             return res.status(StatusCodes.OK).json({
                 isUsernamePasswordSet: true
             })
@@ -127,7 +127,7 @@ export class AccountController {
 
     public async checkBasicAuth(req: Request, res: Response) {
         const { username, password } = req.body
-        if (username === process.env.FLOWISE_USERNAME && password === process.env.FLOWISE_PASSWORD) {
+        if (username === process.env.OSMI_USERNAME && password === process.env.OSMI_PASSWORD) {
             return res.json({ message: 'Authentication successful' })
         } else {
             return res.json({ message: 'Authentication failed' })

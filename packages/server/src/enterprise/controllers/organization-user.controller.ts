@@ -1,6 +1,6 @@
-import { NextFunction, Request, Response } from 'express'
+﻿import { NextFunction, Request, Response } from 'express'
 import { StatusCodes } from 'http-status-codes'
-import { InternalFlowiseError } from '../../errors/internalFlowiseError'
+import { InternalOsmiError } from '../../errors/InternalOsmiError'
 import { GeneralErrorMessage } from '../../utils/constants'
 import { checkUsageLimit } from '../../utils/quotaUsage'
 import { OrganizationUser } from '../database/entities/organization-user.entity'
@@ -68,7 +68,7 @@ export class OrganizationUserController {
             } else if (query.userId) {
                 organizationUser = await organizationUserservice.readOrganizationUserByUserId(query.userId, queryRunner)
             } else {
-                throw new InternalFlowiseError(StatusCodes.BAD_REQUEST, GeneralErrorMessage.UNHANDLED_EDGE_CASE)
+                throw new InternalOsmiError(StatusCodes.BAD_REQUEST, GeneralErrorMessage.UNHANDLED_EDGE_CASE)
             }
 
             return res.status(StatusCodes.OK).json(organizationUser)
@@ -97,10 +97,10 @@ export class OrganizationUserController {
             await queryRunner.connect()
             const query = req.query as Partial<OrganizationUser>
             if (!query.organizationId) {
-                throw new InternalFlowiseError(StatusCodes.BAD_REQUEST, 'Organization ID is required')
+                throw new InternalOsmiError(StatusCodes.BAD_REQUEST, 'Organization ID is required')
             }
             if (!query.userId) {
-                throw new InternalFlowiseError(StatusCodes.BAD_REQUEST, 'User ID is required')
+                throw new InternalOsmiError(StatusCodes.BAD_REQUEST, 'User ID is required')
             }
 
             const organizationUserService = new OrganizationUserService()
@@ -122,9 +122,9 @@ export class OrganizationUserController {
                 organizationUser = await organizationUserService.deleteOrganizationUser(queryRunner, query.organizationId, query.userId)
                 // soft delete user because they might workspace might created by them
                 const deleteUser = await queryRunner.manager.findOneBy(User, { id: query.userId })
-                if (!deleteUser) throw new InternalFlowiseError(StatusCodes.INTERNAL_SERVER_ERROR, GeneralErrorMessage.UNHANDLED_EDGE_CASE)
+                if (!deleteUser) throw new InternalOsmiError(StatusCodes.INTERNAL_SERVER_ERROR, GeneralErrorMessage.UNHANDLED_EDGE_CASE)
                 deleteUser.name = UserStatus.DELETED
-                deleteUser.email = `deleted_${deleteUser.id}_${Date.now()}@deleted.flowise`
+                deleteUser.email = `deleted_${deleteUser.id}_${Date.now()}@deleted.OSMI`
                 deleteUser.status = UserStatus.DELETED
                 deleteUser.credential = null
                 deleteUser.tokenExpiry = null

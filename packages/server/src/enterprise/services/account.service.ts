@@ -1,8 +1,8 @@
-import bcrypt from 'bcryptjs'
+﻿import bcrypt from 'bcryptjs'
 import { StatusCodes } from 'http-status-codes'
 import moment from 'moment'
 import { DataSource, QueryRunner } from 'typeorm'
-import { InternalFlowiseError } from '../../errors/internalFlowiseError'
+import { InternalOsmiError } from '../../errors/InternalOsmiError'
 import { IdentityManager } from '../../IdentityManager'
 import { Platform, UserPlan } from '../../Interface'
 import { GeneralErrorMessage } from '../../utils/constants'
@@ -75,11 +75,11 @@ export class AccountService {
             await queryRunner.startTransaction()
 
             const user = await this.userService.readUserByEmail(email, queryRunner)
-            if (!user) throw new InternalFlowiseError(StatusCodes.NOT_FOUND, UserErrorMessage.USER_NOT_FOUND)
+            if (!user) throw new InternalOsmiError(StatusCodes.NOT_FOUND, UserErrorMessage.USER_NOT_FOUND)
             if (user && user.status === UserStatus.ACTIVE)
-                throw new InternalFlowiseError(StatusCodes.NOT_FOUND, UserErrorMessage.USER_EMAIL_ALREADY_EXISTS)
+                throw new InternalOsmiError(StatusCodes.NOT_FOUND, UserErrorMessage.USER_EMAIL_ALREADY_EXISTS)
 
-            if (!user.email) throw new InternalFlowiseError(StatusCodes.BAD_REQUEST, UserErrorMessage.INVALID_USER_EMAIL)
+            if (!user.email) throw new InternalOsmiError(StatusCodes.BAD_REQUEST, UserErrorMessage.INVALID_USER_EMAIL)
 
             const updateUserData: Partial<User> = {}
             updateUserData.tempToken = generateTempToken()
@@ -107,7 +107,7 @@ export class AccountService {
 
     private async ensureOneOrganizationOnly(queryRunner: QueryRunner) {
         const organizations = await this.organizationservice.readOrganization(queryRunner)
-        if (organizations.length > 0) throw new InternalFlowiseError(StatusCodes.BAD_REQUEST, 'You can only have one organization')
+        if (organizations.length > 0) throw new InternalOsmiError(StatusCodes.BAD_REQUEST, 'You can only have one organization')
     }
 
     private async createRegisterAccount(data: AccountDTO, queryRunner: QueryRunner) {
@@ -128,9 +128,9 @@ export class AccountService {
             case Platform.CLOUD: {
                 const user = await this.userService.readUserByEmail(data.user.email, queryRunner)
                 if (user && (user.status === UserStatus.ACTIVE || user.status === UserStatus.UNVERIFIED))
-                    throw new InternalFlowiseError(StatusCodes.NOT_FOUND, UserErrorMessage.USER_EMAIL_ALREADY_EXISTS)
+                    throw new InternalOsmiError(StatusCodes.NOT_FOUND, UserErrorMessage.USER_EMAIL_ALREADY_EXISTS)
 
-                if (!data.user.email) throw new InternalFlowiseError(StatusCodes.BAD_REQUEST, UserErrorMessage.INVALID_USER_EMAIL)
+                if (!data.user.email) throw new InternalOsmiError(StatusCodes.BAD_REQUEST, UserErrorMessage.INVALID_USER_EMAIL)
                 const { customerId, subscriptionId } = await this.identityManager.createStripeUserAndSubscribe({
                     email: data.user.email,
                     userPlan: UserPlan.FREE,
@@ -175,25 +175,25 @@ export class AccountService {
             case Platform.ENTERPRISE: {
                 if (data.user.tempToken) {
                     const user = await this.userService.readUserByToken(data.user.tempToken, queryRunner)
-                    if (!user) throw new InternalFlowiseError(StatusCodes.NOT_FOUND, UserErrorMessage.USER_NOT_FOUND)
+                    if (!user) throw new InternalOsmiError(StatusCodes.NOT_FOUND, UserErrorMessage.USER_NOT_FOUND)
                     if (user.email.toLowerCase() !== data.user.email?.toLowerCase())
-                        throw new InternalFlowiseError(StatusCodes.BAD_REQUEST, UserErrorMessage.INVALID_USER_EMAIL)
+                        throw new InternalOsmiError(StatusCodes.BAD_REQUEST, UserErrorMessage.INVALID_USER_EMAIL)
                     const name = data.user.name
                     if (data.user.credential) user.credential = this.userService.encryptUserCredential(data.user.credential)
                     data.user = user
                     const organizationUser = await this.organizationUserService.readOrganizationUserByUserId(user.id, queryRunner)
                     if (!organizationUser)
-                        throw new InternalFlowiseError(StatusCodes.NOT_FOUND, OrganizationUserErrorMessage.ORGANIZATION_USER_NOT_FOUND)
+                        throw new InternalOsmiError(StatusCodes.NOT_FOUND, OrganizationUserErrorMessage.ORGANIZATION_USER_NOT_FOUND)
                     const assignedOrganization = await this.organizationservice.readOrganizationById(
                         organizationUser[0].organizationId,
                         queryRunner
                     )
                     if (!assignedOrganization)
-                        throw new InternalFlowiseError(StatusCodes.NOT_FOUND, OrganizationErrorMessage.ORGANIZATION_NOT_FOUND)
+                        throw new InternalOsmiError(StatusCodes.NOT_FOUND, OrganizationErrorMessage.ORGANIZATION_NOT_FOUND)
                     data.organization = assignedOrganization
                     const tokenExpiry = new Date(user.tokenExpiry!)
                     const today = new Date()
-                    if (today > tokenExpiry) throw new InternalFlowiseError(StatusCodes.BAD_REQUEST, UserErrorMessage.EXPIRED_TEMP_TOKEN)
+                    if (today > tokenExpiry) throw new InternalOsmiError(StatusCodes.BAD_REQUEST, UserErrorMessage.EXPIRED_TEMP_TOKEN)
                     data.user.tempToken = ''
                     data.user.tokenExpiry = null
                     data.user.name = name
@@ -213,7 +213,7 @@ export class AccountService {
                 break
             }
             default:
-                throw new InternalFlowiseError(StatusCodes.BAD_REQUEST, GeneralErrorMessage.UNHANDLED_EDGE_CASE)
+                throw new InternalOsmiError(StatusCodes.BAD_REQUEST, GeneralErrorMessage.UNHANDLED_EDGE_CASE)
         }
 
         if (!data.organization.id) {
@@ -284,14 +284,14 @@ export class AccountService {
 
         try {
             const workspace = await this.workspaceService.readWorkspaceById(data.workspace.id, queryRunner)
-            if (!workspace) throw new InternalFlowiseError(StatusCodes.NOT_FOUND, WorkspaceErrorMessage.WORKSPACE_NOT_FOUND)
+            if (!workspace) throw new InternalOsmiError(StatusCodes.NOT_FOUND, WorkspaceErrorMessage.WORKSPACE_NOT_FOUND)
             data.workspace = workspace
 
             const totalOrgUsers = await this.organizationUserService.readOrgUsersCountByOrgId(data.workspace.organizationId || '')
             const subscriptionId = currentUser?.activeOrganizationSubscriptionId || ''
 
             const role = await this.roleService.readRoleByRoleIdOrganizationId(data.role.id, data.workspace.organizationId, queryRunner)
-            if (!role) throw new InternalFlowiseError(StatusCodes.NOT_FOUND, RoleErrorMessage.ROLE_NOT_FOUND)
+            if (!role) throw new InternalOsmiError(StatusCodes.NOT_FOUND, RoleErrorMessage.ROLE_NOT_FOUND)
             data.role = role
             const user = await this.userService.readUserByEmail(data.user.email, queryRunner)
             if (!user) {
@@ -451,24 +451,24 @@ export class AccountService {
         try {
             if (!data.user.credential) {
                 await auditService.recordLoginActivity(data.user.email || '', LoginActivityCode.INCORRECT_CREDENTIAL, 'Login Failed')
-                throw new InternalFlowiseError(StatusCodes.BAD_REQUEST, UserErrorMessage.INVALID_USER_CREDENTIAL)
+                throw new InternalOsmiError(StatusCodes.BAD_REQUEST, UserErrorMessage.INVALID_USER_CREDENTIAL)
             }
             const user = await this.userService.readUserByEmail(data.user.email, queryRunner)
             if (!user) {
                 await auditService.recordLoginActivity(data.user.email || '', LoginActivityCode.UNKNOWN_USER, 'Login Failed')
-                throw new InternalFlowiseError(StatusCodes.NOT_FOUND, UserErrorMessage.USER_NOT_FOUND)
+                throw new InternalOsmiError(StatusCodes.NOT_FOUND, UserErrorMessage.USER_NOT_FOUND)
             }
             if (!user.credential) {
                 await auditService.recordLoginActivity(user.email || '', LoginActivityCode.INCORRECT_CREDENTIAL, 'Login Failed')
-                throw new InternalFlowiseError(StatusCodes.BAD_REQUEST, UserErrorMessage.INVALID_USER_CREDENTIAL)
+                throw new InternalOsmiError(StatusCodes.BAD_REQUEST, UserErrorMessage.INVALID_USER_CREDENTIAL)
             }
             if (!compareHash(data.user.credential, user.credential)) {
                 await auditService.recordLoginActivity(user.email || '', LoginActivityCode.INCORRECT_CREDENTIAL, 'Login Failed')
-                throw new InternalFlowiseError(StatusCodes.UNAUTHORIZED, UserErrorMessage.INCORRECT_USER_EMAIL_OR_CREDENTIALS)
+                throw new InternalOsmiError(StatusCodes.UNAUTHORIZED, UserErrorMessage.INCORRECT_USER_EMAIL_OR_CREDENTIALS)
             }
             if (user.status === UserStatus.UNVERIFIED) {
                 await auditService.recordLoginActivity(data.user.email || '', LoginActivityCode.REGISTRATION_PENDING, 'Login Failed')
-                throw new InternalFlowiseError(StatusCodes.UNAUTHORIZED, UserErrorMessage.USER_EMAIL_UNVERIFIED)
+                throw new InternalOsmiError(StatusCodes.UNAUTHORIZED, UserErrorMessage.USER_EMAIL_UNVERIFIED)
             }
             let wsUserOrUsers = await this.workspaceUserService.readWorkspaceUserByLastLogin(user.id, queryRunner)
             if (Array.isArray(wsUserOrUsers)) {
@@ -476,7 +476,7 @@ export class AccountService {
                     wsUserOrUsers = wsUserOrUsers[0]
                 } else {
                     await auditService.recordLoginActivity(user.email || '', LoginActivityCode.NO_ASSIGNED_WORKSPACE, 'Login Failed')
-                    throw new InternalFlowiseError(StatusCodes.NOT_FOUND, WorkspaceUserErrorMessage.WORKSPACE_USER_NOT_FOUND)
+                    throw new InternalOsmiError(StatusCodes.NOT_FOUND, WorkspaceUserErrorMessage.WORKSPACE_USER_NOT_FOUND)
                 }
             }
             if (platform === Platform.ENTERPRISE) {
@@ -494,9 +494,9 @@ export class AccountService {
         await queryRunner.connect()
         try {
             await queryRunner.startTransaction()
-            if (!data.user.tempToken) throw new InternalFlowiseError(StatusCodes.BAD_REQUEST, UserErrorMessage.INVALID_TEMP_TOKEN)
+            if (!data.user.tempToken) throw new InternalOsmiError(StatusCodes.BAD_REQUEST, UserErrorMessage.INVALID_TEMP_TOKEN)
             const user = await this.userService.readUserByToken(data.user.tempToken, queryRunner)
-            if (!user) throw new InternalFlowiseError(StatusCodes.NOT_FOUND, UserErrorMessage.USER_NOT_FOUND)
+            if (!user) throw new InternalOsmiError(StatusCodes.NOT_FOUND, UserErrorMessage.USER_NOT_FOUND)
             data.user = user
             data.user.tempToken = ''
             data.user.tokenExpiry = null
@@ -520,7 +520,7 @@ export class AccountService {
         try {
             await queryRunner.startTransaction()
             const user = await this.userService.readUserByEmail(data.user.email, queryRunner)
-            if (!user) throw new InternalFlowiseError(StatusCodes.NOT_FOUND, UserErrorMessage.USER_NOT_FOUND)
+            if (!user) throw new InternalOsmiError(StatusCodes.NOT_FOUND, UserErrorMessage.USER_NOT_FOUND)
 
             data.user = user
             data.user.tempToken = generateTempToken()
@@ -550,9 +550,9 @@ export class AccountService {
         await queryRunner.connect()
         try {
             const user = await this.userService.readUserByEmail(data.user.email, queryRunner)
-            if (!user) throw new InternalFlowiseError(StatusCodes.NOT_FOUND, UserErrorMessage.USER_NOT_FOUND)
+            if (!user) throw new InternalOsmiError(StatusCodes.NOT_FOUND, UserErrorMessage.USER_NOT_FOUND)
             if (user.tempToken !== data.user.tempToken)
-                throw new InternalFlowiseError(StatusCodes.BAD_REQUEST, UserErrorMessage.INVALID_TEMP_TOKEN)
+                throw new InternalOsmiError(StatusCodes.BAD_REQUEST, UserErrorMessage.INVALID_TEMP_TOKEN)
 
             const tokenExpiry = user.tokenExpiry
             const now = moment()
@@ -560,7 +560,7 @@ export class AccountService {
                 ? parseInt(process.env.PASSWORD_RESET_TOKEN_EXPIRY_IN_MINUTES)
                 : 15
             const diff = now.diff(tokenExpiry, 'minutes')
-            if (Math.abs(diff) > expiryInMins) throw new InternalFlowiseError(StatusCodes.BAD_REQUEST, UserErrorMessage.EXPIRED_TEMP_TOKEN)
+            if (Math.abs(diff) > expiryInMins) throw new InternalOsmiError(StatusCodes.BAD_REQUEST, UserErrorMessage.EXPIRED_TEMP_TOKEN)
 
             // all checks are done, now update the user password, don't forget to hash it and do not forget to clear the temp token
             // leave the user status and other details as is

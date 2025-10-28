@@ -1,4 +1,4 @@
-import { useDispatch } from 'react-redux'
+﻿import { useDispatch } from 'react-redux'
 import { useState, useEffect } from 'react'
 import PropTypes from 'prop-types'
 import { enqueueSnackbar as enqueueSnackbarAction, closeSnackbar as closeSnackbarAction, SET_CHATFLOW } from '@/store/actions'
@@ -20,7 +20,7 @@ import chatflowsApi from '@/api/chatflows'
 
 const message = `Загруженные файлы будут преобразованы в строки и отправлены в LLM. Если загрузка файлов также включена в Vector Store, этот параметр будет иметь приоритет.
 <br />
-Смотрите <a href='https://docs.flowiseai.com/using-flowise/uploads#files' target='_blank'>документацию</a> для получения подробностей.`
+Смотрите <a href='https://docs.OSMIai.com/using-OSMI/uploads#files' target='_blank'>документацию</a> для получения подробностей.`
 
 const availableFileTypes = [
     { name: 'CSS', ext: 'text/css' },

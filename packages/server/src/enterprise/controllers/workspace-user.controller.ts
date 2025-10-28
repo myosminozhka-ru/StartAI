@@ -1,7 +1,7 @@
-import { NextFunction, Request, Response } from 'express'
+﻿import { NextFunction, Request, Response } from 'express'
 import { StatusCodes } from 'http-status-codes'
 import { QueryRunner } from 'typeorm'
-import { InternalFlowiseError } from '../../errors/internalFlowiseError'
+import { InternalOsmiError } from '../../errors/InternalOsmiError'
 import { GeneralErrorMessage } from '../../utils/constants'
 import { getRunningExpressApp } from '../../utils/getRunningExpressApp'
 import { WorkspaceUser } from '../database/entities/workspace-user.entity'
@@ -46,7 +46,7 @@ export class WorkspaceUserController {
             } else if (query.roleId) {
                 workspaceUser = await workspaceUserService.readWorkspaceUserByRoleId(query.roleId, queryRunner)
             } else {
-                throw new InternalFlowiseError(StatusCodes.BAD_REQUEST, GeneralErrorMessage.UNHANDLED_EDGE_CASE)
+                throw new InternalOsmiError(StatusCodes.BAD_REQUEST, GeneralErrorMessage.UNHANDLED_EDGE_CASE)
             }
 
             return res.status(StatusCodes.OK).json(workspaceUser)

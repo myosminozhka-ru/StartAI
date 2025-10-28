@@ -1,7 +1,7 @@
-import { FLOWISE_METRIC_COUNTERS, IMetricsProvider } from '../Interface.Metrics'
+﻿import { OSMI_METRIC_COUNTERS, IMetricsProvider } from '../Interface.Metrics'
 import express from 'express'
 import promClient, { Counter, Histogram, Registry } from 'prom-client'
-import { getVersion } from 'flowise-components'
+import { getVersion } from 'osmi-ai-components'
 
 export class Prometheus implements IMetricsProvider {
     private app: express.Application
@@ -23,15 +23,15 @@ export class Prometheus implements IMetricsProvider {
     }
 
     async initializeCounters(): Promise<void> {
-        const serviceName: string = process.env.METRICS_SERVICE_NAME || 'FlowiseAI'
+        const serviceName: string = process.env.METRICS_SERVICE_NAME || 'OSMIAI'
         this.register.setDefaultLabels({
             app: serviceName
         })
 
-        // look at the FLOWISE_COUNTER enum in Interface.Metrics.ts and get all values
+        // look at the OSMI_COUNTER enum in Interface.Metrics.ts and get all values
         // for each counter in the enum, create a new promClient.Counter and add it to the registry
         this.counters = new Map<string, promClient.Counter<string> | promClient.Gauge<string> | promClient.Histogram<string>>()
-        const enumEntries = Object.entries(FLOWISE_METRIC_COUNTERS)
+        const enumEntries = Object.entries(OSMI_METRIC_COUNTERS)
         enumEntries.forEach(([name, value]) => {
             // derive proper counter name from the enum value (chatflow_created = Chatflow Created)
             const properCounterName: string = name.replace(/_/g, ' ').replace(/\b\w/g, (l) => l.toUpperCase())
@@ -58,20 +58,20 @@ export class Prometheus implements IMetricsProvider {
         // version, http_request_duration_ms, http_requests_total
         try {
             const versionGaugeCounter = new promClient.Gauge({
-                name: 'flowise_version_info',
-                help: 'Flowise version info.',
+                name: 'OSMI_version_info',
+                help: 'OSMI version info.',
                 labelNames: ['version'],
                 registers: [this.register] // Explicitly set the registry
             })
 
             const { version } = await getVersion()
             versionGaugeCounter.set({ version: 'v' + version }, 1)
-            this.counters.set('flowise_version', versionGaugeCounter)
+            this.counters.set('OSMI_version', versionGaugeCounter)
         } catch (error) {
             // If metric already exists, get it from the registry
-            const existingMetric = this.register.getSingleMetric('flowise_version')
+            const existingMetric = this.register.getSingleMetric('OSMI_version')
             if (existingMetric) {
-                this.counters.set('flowise_version', existingMetric as promClient.Gauge<string>)
+                this.counters.set('OSMI_version', existingMetric as promClient.Gauge<string>)
             }
         }
 
@@ -144,7 +144,7 @@ export class Prometheus implements IMetricsProvider {
         })
     }
 
-    public incrementCounter(counter: FLOWISE_METRIC_COUNTERS, payload: any) {
+    public incrementCounter(counter: OSMI_METRIC_COUNTERS, payload: any) {
         // increment the counter with the payload
         if (this.counters.has(counter)) {
             ;(this.counters.get(counter) as Counter<string>).labels(payload).inc()
@@ -159,7 +159,7 @@ export class Prometheus implements IMetricsProvider {
             // and ensure they're only registered with our custom registry
             promClient.collectDefaultMetrics({
                 register: this.register,
-                prefix: 'flowise_' // Add a prefix to avoid conflicts
+                prefix: 'OSMI_' // Add a prefix to avoid conflicts
             })
         }
 
