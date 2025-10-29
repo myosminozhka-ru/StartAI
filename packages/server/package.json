@@ -52,8 +52,21 @@
         "test:api": "cross-env NODE_OPTIONS=\"--experimental-vm-modules\" jest --runInBand --detectOpenHandles --forceExit test/routes/v1/user.route.test.ts test/routes/v1/organization-user.route.test.ts",
         "test:coverage": "cross-env NODE_OPTIONS=\"--experimental-vm-modules\" jest --runInBand --detectOpenHandles --forceExit --coverage"
     },
-    "keywords": [],
+    "keywords": [
+        "ai",
+        "chatbot",
+        "llm",
+        "osmi",
+        "automation"
+    ],
     "homepage": "https://osmi-ai.ru",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/myosminozhka-ru/StartAI.git"
+    },
+    "bugs": {
+        "url": "https://github.com/myosminozhka-ru/StartAI/issues"
+    },
     "author": {
         "name": "OSMI Team",
         "email": "info@osmi-ai.ru"

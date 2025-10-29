@@ -1,4 +1,4 @@
-name: OSMI AI Docker Build
+name: 🐳 OSMI AI Docker Build
 
 on:
     workflow_dispatch:

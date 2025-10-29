@@ -1,4 +1,4 @@
-name: OSMI AI CI
+name: 🚀 OSMI AI CI
 on:
     push:
         branches:

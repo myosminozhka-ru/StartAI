@@ -224,14 +224,14 @@ jobs:
       - name: 🏗️ Build project
         run: pnpm build
 
-      - name: 🚀 Test OSMI AI Embed Fork
+      - name: 🚀 Test OSMI AI Embed Components
         run: |
-          # Test that our fork is properly installed
+          # Test that OSMI AI embed components are properly installed
           cd packages/ui
           node -e "
             try {
               const embed = require('osmi-ai-embed-react');
-              console.log('✅ OSMI AI Embed fork loaded successfully');
+              console.log('✅ OSMI AI Embed components loaded successfully');
               console.log('Available components:', Object.keys(embed));
               if (embed.BubbleChat && embed.FullPageChat) {
                 console.log('✅ All required components available');
@@ -241,7 +241,7 @@ jobs:
                 process.exit(1);
               }
             } catch (error) {
-              console.log('❌ Failed to load OSMI AI Embed fork:', error.message);
+              console.log('❌ Failed to load OSMI AI Embed components:', error.message);
               process.exit(1);
             }
           "

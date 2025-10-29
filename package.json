@@ -3,6 +3,13 @@
     "version": "3.0.8",
     "private": true,
     "homepage": "https://osmi-ai.ru",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/myosminozhka-ru/StartAI.git"
+    },
+    "bugs": {
+        "url": "https://github.com/myosminozhka-ru/StartAI/issues"
+    },
     "workspaces": [
         "packages/*"
     ],

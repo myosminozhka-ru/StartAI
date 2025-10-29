@@ -1,8 +1,8 @@
-# Build local monorepo image
-# docker build --no-cache -t osmi-ai .
+# Build OSMI AI production image
+# docker build --no-cache -t osmi-ai/osmi-ai:latest .
 
-# Run image
-# docker run -d -p 3000:3000 osmi-ai
+# Run OSMI AI container
+# docker run -d -p 3000:3000 osmi-ai/osmi-ai:latest
 
 FROM node:20-alpine
 RUN apk add --update libc6-compat python3 make g++

@@ -7,9 +7,9 @@
 
 <div align="center">
 
-[![Release Notes](https://img.shields.io/github/release/myosminozhka-ru/OSMI-AI)](https://github.com/myosminozhka-ru/OSMI-AI/releases)
-[![GitHub star chart](https://img.shields.io/github/stars/myosminozhka-ru/OSMI-AI?style=social)](https://star-history.com/#myosminozhka-ru/OSMI-AI)
-[![GitHub fork](https://img.shields.io/github/forks/myosminozhka-ru/OSMI-AI?style=social)](https://github.com/myosminozhka-ru/OSMI-AI/fork)
+[![Release Notes](https://img.shields.io/github/release/myosminozhka-ru/StartAI)](https://github.com/myosminozhka-ru/StartAI/releases)
+[![GitHub star chart](https://img.shields.io/github/stars/myosminozhka-ru/StartAI?style=social)](https://star-history.com/#myosminozhka-ru/StartAI)
+[![GitHub repository](https://img.shields.io/github/forks/myosminozhka-ru/StartAI?style=social)](https://github.com/myosminozhka-ru/StartAI)
 
 </div>
 <h3>Build AI Agents, Visually</h3>
