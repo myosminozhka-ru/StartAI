@@ -38,6 +38,8 @@ jobs:
         with:
           node-version: ${{ matrix.node-version }}
           cache: 'pnpm'
+        env:
+          NODE_OPTIONS: '--experimental-vm-modules'
 
       - name: 📥 Install dependencies
         run: pnpm install --frozen-lockfile
@@ -48,6 +50,14 @@ jobs:
           pnpm test --coverage --watchAll=false
         env:
           CI: true
+
+      - name: 🔧 Run unit tests (Server)
+        run: |
+          cd packages/server
+          pnpm test:unit
+        env:
+          CI: true
+          NODE_OPTIONS: '--experimental-vm-modules'
 
       - name: 📊 Upload coverage to Codecov
         uses: codecov/codecov-action@v3
@@ -110,10 +120,11 @@ jobs:
       - name: 🔌 Run API tests
         run: |
           cd packages/server
-          pnpm test --coverage --watchAll=false
+          pnpm test:api --coverage --watchAll=false
         env:
           CI: true
           NODE_ENV: test
+          NODE_OPTIONS: '--experimental-vm-modules'
           DATABASE_TYPE: postgres
           DATABASE_HOST: localhost
           DATABASE_PORT: 5432

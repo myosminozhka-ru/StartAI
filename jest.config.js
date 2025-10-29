@@ -80,26 +80,31 @@ module.exports = {
     maxConcurrency: 5,
     verbose: true,
 
-    // Настройки для TypeScript
+    // Настройки трансформации для современного Jest
     transform: {
-        '^.+\\.tsx?$': 'ts-jest'
+        '^.+\\.tsx?$': [
+            'ts-jest',
+            {
+                tsconfig: {
+                    compilerOptions: {
+                        module: 'commonjs',
+                        target: 'es2020',
+                        lib: ['es2020'],
+                        skipLibCheck: true,
+                        strict: false
+                    }
+                }
+            }
+        ]
     },
 
     // Расширения файлов
     moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx', 'json'],
 
-    // Глобальные переменные для тестов
-    globals: {
-        'ts-jest': {
-            tsconfig: {
-                compilerOptions: {
-                    module: 'commonjs',
-                    target: 'es2020',
-                    lib: ['es2020'],
-                    skipLibCheck: true,
-                    strict: false
-                }
-            }
-        }
-    }
+    // Настройки для Node.js 22
+    extensionsToTreatAsEsm: ['.ts'],
+    testEnvironment: 'node',
+
+    // Дополнительные настройки для совместимости
+    setupFiles: ['<rootDir>/jest.setup.js']
 }

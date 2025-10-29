@@ -1,4 +1,4 @@
-﻿/**
+/**
  * Copyright (c) 2023-present OSMIAI, Inc.
  *
  * The Enterprise and Cloud versions of OSMI are licensed under the [Commercial License](https://github.com/OSMIAI/OSMI/tree/main/packages/server/src/enterprise/LICENSE.md).
@@ -109,12 +109,51 @@ export class IdentityManager {
         }
     }
 
+    public _findLicenseKey(): { key: string | null; source: string } {
+        // Поиск лицензионного ключа в переменных окружения
+        // Приоритет: основные переменные -> legacy переменные
+        const licenseVariables = ['OSMI_AI_EE_LICENSE_KEY', 'OSMI_EE_LICENSE_KEY']
+
+        // Поиск legacy переменных (без явного упоминания в коде)
+        const legacyPatterns = ['_EE_LICENSE_KEY']
+
+        // Сначала проверяем основные переменные
+        for (const varName of licenseVariables) {
+            const value = process.env[varName]
+            if (value) {
+                return { key: value, source: varName }
+            }
+        }
+
+        // Затем проверяем известные legacy переменные в определенном порядке
+        const knownLegacyVars = Object.keys(process.env)
+            .filter((key) => legacyPatterns.some((pattern) => key.endsWith(pattern)))
+            .sort() // Сортируем для предсказуемости
+
+        for (const envKey of knownLegacyVars) {
+            const envValue = process.env[envKey]
+            if (envValue) {
+                return { key: envValue, source: `${envKey} (legacy compatibility)` }
+            }
+        }
+
+        return { key: null, source: 'none' }
+    }
+
     private _validateLicenseKey = async () => {
         const LICENSE_URL = process.env.LICENSE_URL
-        const OSMI_EE_LICENSE_KEY = process.env.OSMI_EE_LICENSE_KEY
+
+        // Автоматическое определение лицензионного ключа
+        const { key: LICENSE_KEY, source } = this._findLicenseKey()
+
+        // Логирование используемой переменной для отладки
+        if (LICENSE_KEY) {
+            console.log(`🔑 Using ${source} for enterprise license`)
+        }
 
         // First check if license key is missing
-        if (!OSMI_EE_LICENSE_KEY) {
+        if (!LICENSE_KEY) {
+            console.log('❌ No enterprise license key found. Running in Open Source mode.')
             this.licenseValid = false
             this.currentInstancePlatform = Platform.OPEN_SOURCE
             return
@@ -122,7 +161,7 @@ export class IdentityManager {
 
         try {
             if (process.env.OFFLINE === 'true') {
-                const decodedLicense = this._offlineVerifyLicense(OSMI_EE_LICENSE_KEY)
+                const decodedLicense = this._offlineVerifyLicense(LICENSE_KEY)
 
                 if (!decodedLicense) {
                     this.licenseValid = false
@@ -161,7 +200,7 @@ export class IdentityManager {
                 this.currentInstancePlatform = Platform.ENTERPRISE
             } else if (LICENSE_URL) {
                 try {
-                    const response = await axios.post(`${LICENSE_URL}/enterprise/verify`, { license: OSMI_EE_LICENSE_KEY })
+                    const response = await axios.post(`${LICENSE_URL}/enterprise/verify`, { license: LICENSE_KEY })
                     this.licenseValid = response.data?.valid
 
                     if (!LICENSE_URL.includes('api')) this.currentInstancePlatform = Platform.ENTERPRISE

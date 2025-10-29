@@ -43,9 +43,12 @@ pnpm test
 pnpm test:watch
 pnpm test:coverage
 
-# Server utils
+# Server unit тесты (без зависимости от сервера)
 cd packages/server
-pnpm test
+pnpm test:unit
+
+# Все тесты с покрытием
+pnpm test:coverage
 ```
 
 ### E2E тесты
@@ -67,7 +70,12 @@ pnpm e2e
 
 ```bash
 cd packages/server
+
+# API тесты (требуют запущенный сервер)
 pnpm test:api
+
+# Простые unit тесты (без сервера)
+pnpm test:unit
 ```
 
 ## ⚙️ CI/CD (GitHub Actions)
@@ -153,6 +161,17 @@ pnpm cypress:open --config video=true
 ## 🚨 Troubleshooting
 
 ### Частые проблемы
+
+**Node.js 22 - динамические импорты:**
+
+```bash
+# Для локального запуска с Node.js 22
+export NODE_OPTIONS="--experimental-vm-modules"
+pnpm test
+
+# Или для Windows
+set NODE_OPTIONS=--experimental-vm-modules && pnpm test
+```
 
 **Тесты падают локально:**
 
