@@ -21,40 +21,40 @@ const App = () => {
     const useYandexMetrika = () => {
         let ymID
         switch (window.location.hostname) {
-            case 'u1.start-ai.ru':
+            case 'u1.osmi-ai.ru':
                 ymID = 95948128
                 break
-            case 'u2.start-ai.ru':
+            case 'u2.osmi-ai.ru':
                 ymID = 95948132
                 break
-            case 'u3.start-ai.ru':
+            case 'u3.osmi-ai.ru':
                 ymID = 95948136
                 break
-            case 'u4.start-ai.ru':
+            case 'u4.osmi-ai.ru':
                 ymID = 95948139
                 break
-            case 'u5.start-ai.ru':
+            case 'u5.osmi-ai.ru':
                 ymID = 95948140
                 break
-            case 'u6.start-ai.ru':
+            case 'u6.osmi-ai.ru':
                 ymID = 96465123
                 break
-            case 'u7.start-ai.ru':
+            case 'u7.osmi-ai.ru':
                 ymID = 96465137
                 break
-            case 'u8.start-ai.ru':
+            case 'u8.osmi-ai.ru':
                 ymID = 96465147
                 break
-            case 'u9.start-ai.ru':
+            case 'u9.osmi-ai.ru':
                 ymID = 96465152
                 break
-            case 'u10.start-ai.ru':
+            case 'u10.osmi-ai.ru':
                 ymID = 96465160
                 break
-            case 'u11.start-ai.ru':
+            case 'u11.osmi-ai.ru':
                 ymID = 96465177
                 break
-            case 'u12.start-ai.ru':
+            case 'u12.osmi-ai.ru':
                 ymID = 96465190
                 break
             default:

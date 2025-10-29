@@ -9,7 +9,7 @@ import {
     IServerSideEventStreamer
 } from '../../../src/Interface'
 import { availableDependencies, defaultAllowBuiltInDep, getVars, prepareSandboxVars } from '../../../src/utils'
-import { NodeVM } from '@flowiseai/nodevm'
+import { NodeVM } from '@osmi-ai/nodevm'
 import { updateFlowState } from '../utils'
 
 interface ICustomFunctionInputVariables {

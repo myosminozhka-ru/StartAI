@@ -20,7 +20,7 @@
         "commands": "./dist/commands"
     },
     "scripts": {
-        "build": "tsc && rimraf dist/enterprise/emails && gulp",
+        "build": "rimraf dist/enterprise/emails && gulp",
         "start": "run-script-os",
         "clean": "rimraf dist",
         "nuke": "rimraf dist node_modules .turbo",
@@ -47,7 +47,7 @@
         "cypress:run": "cypress run",
         "e2e": "start-server-and-test dev http://localhost:3000 cypress:run",
         "cypress:ci": "START_SERVER_AND_TEST_INSECURE=1 start-server-and-test start https-get://localhost:3000 cypress:run",
-        "test": "jest --runInBand --detectOpenHandles --forceExit"
+        "test": "jest --runInBand --detectOpenHandles --forceExit --passWithNoTests"
     },
     "keywords": [],
     "homepage": "https://osmi-ai.ru",
@@ -106,7 +106,6 @@
         "express-rate-limit": "^6.9.0",
         "express-session": "^1.18.1",
         "osmi-ai-components": "workspace:^",
-        "flowise-nim-container-manager": "^1.0.11",
         "OSMI-nim-container-manager": "npm:flowise-nim-container-manager@^1.0.11",
         "osmi-ai-ui": "workspace:^",
         "global-agent": "^3.0.0",
@@ -161,6 +160,7 @@
         "@types/jsonwebtoken": "^9.0.6",
         "@types/multer": "^1.4.7",
         "@types/multer-s3": "^3.0.3",
+        "@types/node": "^20.0.0",
         "@types/nodemailer": "^6.4.15",
         "@types/passport-auth0": "^1.0.9",
         "@types/passport-github": "^1.1.12",

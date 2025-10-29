@@ -1,4 +1,4 @@
-﻿import { useState } from 'react'
+import { useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { enqueueSnackbar as enqueueSnackbarAction, closeSnackbar as closeSnackbarAction, SET_CHATFLOW } from '@/store/actions'
 import { SketchPicker } from 'react-color'
@@ -477,7 +477,7 @@ const ShareChatbot = ({ isSessionMemory, isAgentCanvas }) => {
                     'titleAvatarSrc',
                     'Ссылка на аватар заголовка',
                     'string',
-                    `https://raw.githubusercontent.com/OSMIAI/OSMI/main/assets/OSMIAI_dark.png`
+                    `https://raw.githubusercontent.com/myosminozhka-ru/StartAI/main/assets/OSMIAI_dark.png`
                 )}
                 {colorField(titleBackgroundColor, 'titleBackgroundColor', 'Цвет фона заголовка')}
                 {colorField(titleTextColor, 'titleTextColor', 'Цвет текста заголовка')}

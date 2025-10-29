@@ -7,9 +7,9 @@
 
 <div align="center">
 
-[![Release Notes](https://img.shields.io/github/release/myosminozhka-ru/StartAI)](https://github.com/myosminozhka-ru/StartAI/releases)
-[![GitHub star chart](https://img.shields.io/github/stars/myosminozhka-ru/StartAI?style=social)](https://star-history.com/#myosminozhka-ru/StartAI)
-[![GitHub fork](https://img.shields.io/github/forks/myosminozhka-ru/StartAI?style=social)](https://github.com/myosminozhka-ru/StartAI/fork)
+[![Release Notes](https://img.shields.io/github/release/myosminozhka-ru/OSMI-AI)](https://github.com/myosminozhka-ru/OSMI-AI/releases)
+[![GitHub star chart](https://img.shields.io/github/stars/myosminozhka-ru/OSMI-AI?style=social)](https://star-history.com/#myosminozhka-ru/OSMI-AI)
+[![GitHub fork](https://img.shields.io/github/forks/myosminozhka-ru/OSMI-AI?style=social)](https://github.com/myosminozhka-ru/OSMI-AI/fork)
 
 </div>
 <h3>Build AI Agents, Visually</h3>
@@ -61,19 +61,19 @@ Download and Install [NodeJS](https://nodejs.org/en/download) >= 18.15.0
 1. Build the image locally:
 
     ```bash
-    docker build --no-cache -t startai .
+    docker build --no-cache -t osmi-ai .
     ```
 
 2. Run image:
 
     ```bash
-    docker run -d --name startai -p 3000:3000 startai
+    docker run -d --name osmi-ai -p 3000:3000 osmi-ai
     ```
 
 3. Stop image:
 
     ```bash
-    docker stop startai
+    docker stop osmi-ai
     ```
 
 ## 👨‍💻 Developers
@@ -97,13 +97,13 @@ OSMI AI has 3 different modules in a single mono repository.
 1.  Clone the repository:
 
     ```bash
-    git clone https://github.com/myosminozhka-ru/StartAI.git
+    git clone https://github.com/myosminozhka-ru/OSMI-AI.git
     ```
 
 2.  Go into repository folder:
 
     ```bash
-    cd StartAI
+    cd OSMI-AI
     ```
 
 3.  Install all dependencies of all modules:
@@ -179,19 +179,19 @@ Get Started with [OSMI IT Cloud](https://app.osmi-ai.ru).
 
 ## 🙋 Support
 
-Feel free to ask any questions, raise problems, and request new features in [Discussion](https://github.com/myosminozhka-ru/StartAI/discussions).
+Feel free to ask any questions, raise problems, and request new features in [Discussion](https://github.com/myosminozhka-ru/OSMI-AI/discussions).
 
 ## 🙌 Contributing
 
 Thanks go to these awesome contributors
 
-<a href="https://github.com/myosminozhka-ru/StartAI/graphs/contributors">
-<img src="https://contrib.rocks/image?repo=myosminozhka-ru/StartAI" />
+<a href="https://github.com/myosminozhka-ru/OSMI-AI/graphs/contributors">
+<img src="https://contrib.rocks/image?repo=myosminozhka-ru/OSMI-AI" />
 </a><br><br>
 
 See [Contributing Guide](CONTRIBUTING.md). For questions or issues, please create an issue in our repository.
 
-[![Star History Chart](https://api.star-history.com/svg?repos=myosminozhka-ru/StartAI&type=Timeline)](https://star-history.com/#myosminozhka-ru/StartAI&Date)
+[![Star History Chart](https://api.star-history.com/svg?repos=myosminozhka-ru/OSMI-AI&type=Timeline)](https://star-history.com/#myosminozhka-ru/OSMI-AI&Date)
 
 ## 📄 License
 

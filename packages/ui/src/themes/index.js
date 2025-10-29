@@ -2,7 +2,7 @@ import { createTheme } from '@mui/material/styles'
 
 // assets
 import colors from '@/assets/scss/_themes-vars.module.scss'
-import colorsOSMI_AI from '@/assets/scss/_themes-startai.module.scss'
+import colorsOSMI_AI from '@/assets/scss/_themes-osmi-ai.module.scss'
 
 // project imports
 import componentStyleOverrides from './compStyleOverride'

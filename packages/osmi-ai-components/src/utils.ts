@@ -16,7 +16,7 @@ import { GetSecretValueCommand, SecretsManagerClient, SecretsManagerClientConfig
 import { customGet } from '../nodes/sequentialagents/commonUtils'
 import { TextSplitter } from 'langchain/text_splitter'
 import { DocumentLoader } from 'langchain/document_loaders/base'
-import { NodeVM } from '@flowiseai/nodevm'
+import { NodeVM } from '@osmi-ai/nodevm'
 import { Sandbox } from '@e2b/code-interpreter'
 import { secureFetch, checkDenyList, secureAxiosRequest } from './httpSecurity'
 import JSON5 from 'json5'
@@ -47,7 +47,7 @@ if (USE_AWS_SECRETS_MANAGER) {
 }
 
 /*
- * List of dependencies allowed to be import in @flowiseai/nodevm
+ * List of dependencies allowed to be import in @osmi-ai/nodevm
  */
 export const availableDependencies = [
     '@aws-sdk/client-bedrock-runtime',
