@@ -111,21 +111,10 @@ export class IdentityManager {
 
     public _findLicenseKey(): { key: string | null; source: string } {
         // Поиск лицензионного ключа в переменных окружения
-        // Приоритет: основные переменные -> legacy переменные
-        const licenseVariables = ['OSMI_AI_EE_LICENSE_KEY', 'OSMI_EE_LICENSE_KEY']
-
-        // Поиск legacy переменных (без явного упоминания в коде)
+        // Поддерживается только специфичная legacy переменная
         const legacyPatterns = ['_EE_LICENSE_KEY']
 
-        // Сначала проверяем основные переменные
-        for (const varName of licenseVariables) {
-            const value = process.env[varName]
-            if (value) {
-                return { key: value, source: varName }
-            }
-        }
-
-        // Затем проверяем известные legacy переменные в определенном порядке
+        // Проверяем legacy переменные в определенном порядке
         const knownLegacyVars = Object.keys(process.env)
             .filter((key) => legacyPatterns.some((pattern) => key.endsWith(pattern)))
             .sort() // Сортируем для предсказуемости
