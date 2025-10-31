@@ -16,6 +16,9 @@
 
 ## build
 **/dist
+!**/dist/credentials/MWSApi.credential.*
+!**/dist/nodes/**/ChatMWS/**
+!**/dist/nodes/**/MWSEmbedding/**
 **/build
 
 ## temp
