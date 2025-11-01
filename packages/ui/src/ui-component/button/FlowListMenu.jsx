@@ -268,6 +268,16 @@ export default function FlowListMenu({ chatflow, isAgentCanvas, isAgentflowV2, s
 
     const handleDuplicate = () => {
         setAnchorEl(null)
+        
+        // Проверяем лимит чатфлоу (максимум 2) для обычных чатфлоу
+        if (!isAgentCanvas && !isAgentflowV2) {
+            const currentCount = updateFlowsApi.data?.total || 0
+            if (currentCount >= 2) {
+                setError('Достигнут лимит чатфлоу. Максимально можно создать 2 чатфлоу. Удалите существующий чатфлоу, чтобы создать новый.')
+                return
+            }
+        }
+        
         try {
             localStorage.setItem('duplicatedFlowData', chatflow.flowData)
             if (isAgentflowV2) {

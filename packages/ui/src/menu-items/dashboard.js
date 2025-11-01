@@ -3,11 +3,9 @@ import {
     IconList,
     IconUsersGroup,
     IconHierarchy,
-    IconBuildingStore,
     IconKey,
     IconTool,
     IconLock,
-    IconRobot,
     IconSettings,
     IconVariable,
     IconFiles,
@@ -17,12 +15,7 @@ import {
     IconChartHistogram,
     IconUserEdit,
     IconFileUpload,
-    IconClipboardList,
-    IconStack2,
-    IconUsers,
-    IconLockCheck,
     IconFileDatabase,
-    IconShieldLock,
     IconListCheck
 } from '@tabler/icons-react'
 
@@ -30,12 +23,10 @@ import {
 const icons = {
     IconHierarchy,
     IconUsersGroup,
-    IconBuildingStore,
     IconList,
     IconKey,
     IconTool,
     IconLock,
-    IconRobot,
     IconSettings,
     IconVariable,
     IconFiles,
@@ -45,12 +36,7 @@ const icons = {
     IconUserEdit,
     IconChartHistogram,
     IconFileUpload,
-    IconClipboardList,
-    IconStack2,
-    IconUsers,
-    IconLockCheck,
     IconFileDatabase,
-    IconShieldLock,
     IconListCheck
 }
 
@@ -92,24 +78,6 @@ const dashboard = {
                     icon: icons.IconListCheck,
                     breadcrumbs: true,
                     permission: 'executions:view'
-                },
-                {
-                    id: 'assistants',
-                    title: 'Ассистенты',
-                    type: 'item',
-                    url: '/assistants',
-                    icon: icons.IconRobot,
-                    breadcrumbs: true,
-                    permission: 'assistants:view'
-                },
-                {
-                    id: 'marketplaces',
-                    title: 'Маркетплейсы',
-                    type: 'item',
-                    url: '/marketplaces',
-                    icon: icons.IconBuildingStore,
-                    breadcrumbs: true,
-                    permission: 'templates:marketplace,templates:custom'
                 },
                 {
                     id: 'tools',
@@ -192,63 +160,6 @@ const dashboard = {
                     breadcrumbs: true,
                     display: 'feat:evaluations',
                     permission: 'evaluations:view'
-                }
-            ]
-        },
-        {
-            id: 'management',
-            title: 'Управление пользователями и рабочими пространствами',
-            type: 'group',
-            children: [
-                {
-                    id: 'sso',
-                    title: 'Настройка SSO',
-                    type: 'item',
-                    url: '/sso-config',
-                    icon: icons.IconShieldLock,
-                    breadcrumbs: true,
-                    display: 'feat:sso-config',
-                    permission: 'sso:manage'
-                },
-                {
-                    id: 'roles',
-                    title: 'Роли',
-                    type: 'item',
-                    url: '/roles',
-                    icon: icons.IconLockCheck,
-                    breadcrumbs: true,
-                    display: 'feat:roles',
-                    permission: 'roles:manage'
-                },
-                {
-                    id: 'users',
-                    title: 'Пользователи',
-                    type: 'item',
-                    url: '/users',
-                    icon: icons.IconUsers,
-                    breadcrumbs: true,
-                    display: 'feat:users',
-                    permission: 'users:manage'
-                },
-                {
-                    id: 'workspaces',
-                    title: 'Рабочие пространства',
-                    type: 'item',
-                    url: '/workspaces',
-                    icon: icons.IconStack2,
-                    breadcrumbs: true,
-                    display: 'feat:workspaces',
-                    permission: 'workspace:view'
-                },
-                {
-                    id: 'login-activity',
-                    title: 'Активность входа',
-                    type: 'item',
-                    url: '/login-activity',
-                    icon: icons.IconClipboardList,
-                    breadcrumbs: true,
-                    display: 'feat:login-activity',
-                    permission: 'loginActivity:view'
                 }
             ]
         },

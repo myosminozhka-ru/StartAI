@@ -12,8 +12,6 @@ const Chatflows = Loadable(lazy(() => import('@/views/chatflows')))
 // agents routing
 const Agentflows = Loadable(lazy(() => import('@/views/agentflows')))
 
-// marketplaces routing
-const Marketplaces = Loadable(lazy(() => import('@/views/marketplaces')))
 
 // apikey routing
 const APIKey = Loadable(lazy(() => import('@/views/apikey')))
@@ -21,11 +19,6 @@ const APIKey = Loadable(lazy(() => import('@/views/apikey')))
 // tools routing
 const Tools = Loadable(lazy(() => import('@/views/tools')))
 
-// assistants routing
-const Assistants = Loadable(lazy(() => import('@/views/assistants')))
-const OpenAIAssistantLayout = Loadable(lazy(() => import('@/views/assistants/openai/OpenAIAssistantLayout')))
-const CustomAssistantLayout = Loadable(lazy(() => import('@/views/assistants/custom/CustomAssistantLayout')))
-const CustomAssistantConfigurePreview = Loadable(lazy(() => import('@/views/assistants/custom/CustomAssistantConfigurePreview')))
 
 // credentials routing
 const Credentials = Loadable(lazy(() => import('@/views/credentials')))
@@ -61,14 +54,6 @@ const Logs = Loadable(lazy(() => import('@/views/serverlogs')))
 // executions routing
 const Executions = Loadable(lazy(() => import('@/views/agentexecutions')))
 
-// enterprise features
-const UsersPage = Loadable(lazy(() => import('@/views/users')))
-const RolesPage = Loadable(lazy(() => import('@/views/roles')))
-const LoginActivityPage = Loadable(lazy(() => import('@/views/auth/loginActivity')))
-const Workspaces = Loadable(lazy(() => import('@/views/workspace')))
-const WorkspaceDetails = Loadable(lazy(() => import('@/views/workspace/WorkspaceUsers')))
-const SSOConfig = Loadable(lazy(() => import('@/views/auth/ssoConfig')))
-const SSOSuccess = Loadable(lazy(() => import('@/views/auth/ssoSuccess')))
 
 // ==============================|| MAIN ROUTING ||============================== //
 
@@ -113,14 +98,6 @@ const MainRoutes = {
             element: <Executions />
         },
         {
-            path: '/marketplaces',
-            element: (
-                <RequireAuth permission={'templates:marketplace,templates:custom'}>
-                    <Marketplaces />
-                </RequireAuth>
-            )
-        },
-        {
             path: '/apikey',
             element: (
                 <RequireAuth permission={'apikeys:view'}>
@@ -135,50 +112,6 @@ const MainRoutes = {
                     <Tools />
                 </RequireAuth>
             )
-        },
-        {
-            path: '/assistants',
-            element: (
-                <RequireAuth permission={'assistants:view'}>
-                    <Assistants />
-                </RequireAuth>
-            )
-        },
-        {
-            path: '/assistants/custom',
-            element: (
-                <RequireAuth permission={'assistants:view'}>
-                    <CustomAssistantLayout />
-                </RequireAuth>
-            )
-        },
-        {
-            path: '/assistants/custom/:id',
-            element: (
-                <RequireAuth permission={'assistants:view'}>
-                    <CustomAssistantConfigurePreview />
-                </RequireAuth>
-            )
-        },
-        {
-            path: '/assistants/openai',
-            element: (
-                <RequireAuth permission={'assistants:view'}>
-                    <OpenAIAssistantLayout />
-                </RequireAuth>
-            )
-        },
-        {
-            path: '/assistants/custom',
-            element: <CustomAssistantLayout />
-        },
-        {
-            path: '/assistants/custom/:id',
-            element: <CustomAssistantConfigurePreview />
-        },
-        {
-            path: '/assistants/openai',
-            element: <OpenAIAssistantLayout />
         },
         {
             path: '/credentials',
@@ -317,61 +250,9 @@ const MainRoutes = {
             )
         },
         {
-            path: '/users',
-            element: (
-                <RequireAuth permission={'users:manage'} display={'feat:users'}>
-                    <UsersPage />
-                </RequireAuth>
-            )
-        },
-        {
             path: '/user-profile',
             element: <UserProfile />
         },
-        {
-            path: '/roles',
-            element: (
-                <RequireAuth permission={'roles:manage'} display={'feat:roles'}>
-                    <RolesPage />
-                </RequireAuth>
-            )
-        },
-        {
-            path: '/login-activity',
-            element: (
-                <RequireAuth permission={'loginActivity:view'} display={'feat:login-activity'}>
-                    <LoginActivityPage />
-                </RequireAuth>
-            )
-        },
-        {
-            path: '/workspaces',
-            element: (
-                <RequireAuth permission={'workspace:view'} display={'feat:workspaces'}>
-                    <Workspaces />
-                </RequireAuth>
-            )
-        },
-        {
-            path: '/workspace-users/:id',
-            element: (
-                <RequireAuth permission={'workspace:view'} display={'feat:workspaces'}>
-                    <WorkspaceDetails />
-                </RequireAuth>
-            )
-        },
-        {
-            path: '/sso-config',
-            element: (
-                <RequireAuth permission={'sso:manage'} display={'feat:sso-config'}>
-                    <SSOConfig />
-                </RequireAuth>
-            )
-        },
-        {
-            path: '/sso-success',
-            element: <SSOSuccess />
-        }
     ]
 }
 
