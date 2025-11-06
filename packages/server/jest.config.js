@@ -9,25 +9,28 @@ module.exports = {
 
     // Use ts-jest to transform TypeScript files
     transform: {
-        '^.+\\.tsx?$': [
-            'ts-jest',
-            {
-                tsconfig: {
-                    compilerOptions: {
-                        module: 'commonjs',
-                        target: 'es2020',
-                        lib: ['es2020'],
-                        skipLibCheck: true,
-                        strict: false,
-                        noImplicitAny: false,
-                        strictNullChecks: false
-                    }
-                },
-                // Игнорируем TypeScript ошибки в тестах
-                isolatedModules: true,
-                diagnostics: false
-            }
-        ]
+        '^.+\\.tsx?$': 'ts-jest'
+    },
+
+    // TypeScript configuration for tests
+    globals: {
+        'ts-jest': {
+            tsconfig: {
+                compilerOptions: {
+                    module: 'commonjs',
+                    target: 'es2020',
+                    lib: ['es2020'],
+                    skipLibCheck: true,
+                    strict: false,
+                    noImplicitAny: false,
+                    strictNullChecks: false,
+                    esModuleInterop: true
+                }
+            },
+            // Игнорируем TypeScript ошибки в тестах
+            isolatedModules: true,
+            diagnostics: false
+        }
     },
 
     // Regular expression to find test files

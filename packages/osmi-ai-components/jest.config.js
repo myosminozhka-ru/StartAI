@@ -3,20 +3,21 @@ module.exports = {
     testEnvironment: 'node',
     roots: ['<rootDir>/src', '<rootDir>/nodes'],
     transform: {
-        '^.+\\.tsx?$': [
-            'ts-jest',
-            {
-                tsconfig: {
-                    compilerOptions: {
-                        module: 'commonjs',
-                        target: 'es2020',
-                        lib: ['es2020'],
-                        skipLibCheck: true,
-                        strict: false
-                    }
+        '^.+\\.tsx?$': 'ts-jest'
+    },
+    globals: {
+        'ts-jest': {
+            tsconfig: {
+                compilerOptions: {
+                    module: 'commonjs',
+                    target: 'es2020',
+                    lib: ['es2020'],
+                    skipLibCheck: true,
+                    strict: false,
+                    esModuleInterop: true
                 }
             }
-        ]
+        }
     },
     testRegex: '(/__tests__/.*|(\\.|/)(test|spec))\\.tsx?$',
     moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx', 'json', 'node'],

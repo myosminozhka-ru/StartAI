@@ -4,8 +4,8 @@ module.exports = {
         {
             displayName: 'OSMI AI Components',
             testMatch: [
-                '<rootDir>/packages/osmi-ai-components/src/**/*.test.{js,ts}',
-                '<rootDir>/packages/osmi-ai-components/nodes/**/*.test.{js,ts}'
+                '<rootDir>/packages/osmi-ai-components/src/**/*.test.js',
+                '<rootDir>/packages/osmi-ai-components/nodes/**/*.test.js'
             ],
             preset: 'ts-jest',
             testEnvironment: 'node',
@@ -21,20 +21,21 @@ module.exports = {
             coverageReporters: ['text', 'lcov', 'html', 'json'],
             testTimeout: 30000,
             transform: {
-                '^.+\\.tsx?$': [
-                    'ts-jest',
-                    {
-                        tsconfig: {
-                            compilerOptions: {
-                                module: 'commonjs',
-                                target: 'es2020',
-                                lib: ['es2020'],
-                                skipLibCheck: true,
-                                strict: false
-                            }
+                '^.+\\.tsx?$': 'ts-jest'
+            },
+            globals: {
+                'ts-jest': {
+                    tsconfig: {
+                        compilerOptions: {
+                            module: 'commonjs',
+                            target: 'es2020',
+                            lib: ['es2020'],
+                            skipLibCheck: true,
+                            strict: false,
+                            esModuleInterop: true
                         }
                     }
-                ]
+                }
             },
             coverageThreshold: {
                 global: {
@@ -47,7 +48,10 @@ module.exports = {
         },
         {
             displayName: 'OSMI AI Server',
-            testMatch: ['<rootDir>/packages/server/test/**/*.test.{js,ts}'],
+            testMatch: [
+                '<rootDir>/packages/server/test/**/*.test.js',
+                '<rootDir>/packages/server/test/utils/simple.test.ts'
+            ],
             preset: 'ts-jest',
             testEnvironment: 'node',
             setupFilesAfterEnv: ['<rootDir>/packages/server/jest.setup.js'],
@@ -61,24 +65,25 @@ module.exports = {
             testTimeout: 30000,
             maxWorkers: 1, // Для стабильности API тестов
             transform: {
-                '^.+\\.tsx?$': [
-                    'ts-jest',
-                    {
-                        tsconfig: {
-                            compilerOptions: {
-                                module: 'commonjs',
-                                target: 'es2020',
-                                lib: ['es2020'],
-                                skipLibCheck: true,
-                                strict: false,
-                                noImplicitAny: false,
-                                strictNullChecks: false
-                            }
-                        },
-                        isolatedModules: true,
-                        diagnostics: false
-                    }
-                ]
+                '^.+\\.tsx?$': 'ts-jest'
+            },
+            globals: {
+                'ts-jest': {
+                    tsconfig: {
+                        compilerOptions: {
+                            module: 'commonjs',
+                            target: 'es2020',
+                            lib: ['es2020'],
+                            skipLibCheck: true,
+                            strict: false,
+                            noImplicitAny: false,
+                            strictNullChecks: false,
+                            esModuleInterop: true
+                        }
+                    },
+                    isolatedModules: true,
+                    diagnostics: false
+                }
             },
             coverageThreshold: {
                 global: {
