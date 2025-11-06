@@ -1,13 +1,15 @@
 services:
   osmi-ai-app:
     container_name: osmi-ai-app
-    image: osmi-ai-app:latest
+    image: osmi-ai:latest
     build:
       context: .
-      dockerfile: Dockerfile.dev
+      dockerfile: Dockerfile
     depends_on:
       - promtail
     restart: unless-stopped
+    ports:
+      - "3020:3020"
     environment:
       - PORT=3020
       - ENABLE_METRICS=true
@@ -16,8 +18,7 @@ services:
       - METRICS_SERVICE_NAME=OSMI_AI
       - METRICS_INCLUDE_NODE_METRICS=true
     volumes:
-      - /root/.osmi-ai_app/:/root/.osmi-ai/
-    network_mode: host
+      - osmi-data:/root/.osmi-ai/
 
   promtail:
     image: grafana/promtail:latest
@@ -54,6 +55,8 @@ services:
       - osmi-ai-app
 
 volumes:
+  osmi-data:
+    driver: local
   prometheus_data:
     driver: local
   promtail_positions:
