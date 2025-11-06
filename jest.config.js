@@ -106,7 +106,6 @@ module.exports = {
 
     // Настройки для CI
     ci: true,
-    reporters: ['default'],
 
     // Глобальные моки
     moduleNameMapper: {
