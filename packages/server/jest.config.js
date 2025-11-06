@@ -5,11 +5,29 @@ module.exports = {
     testEnvironment: 'node',
 
     // Define the root directory for tests and modules
-    roots: ['<rootDir>/test'],
+    roots: ['<rootDir>/test', '<rootDir>/src'],
 
     // Use ts-jest to transform TypeScript files
     transform: {
-        '^.+\\.tsx?$': 'ts-jest'
+        '^.+\\.tsx?$': [
+            'ts-jest',
+            {
+                tsconfig: {
+                    compilerOptions: {
+                        module: 'commonjs',
+                        target: 'es2020',
+                        lib: ['es2020'],
+                        skipLibCheck: true,
+                        strict: false,
+                        noImplicitAny: false,
+                        strictNullChecks: false
+                    }
+                },
+                // Игнорируем TypeScript ошибки в тестах
+                isolatedModules: true,
+                diagnostics: false
+            }
+        ]
     },
 
     // Regular expression to find test files
@@ -21,25 +39,14 @@ module.exports = {
     // Display individual test results with the test suite hierarchy.
     verbose: true,
 
-    // TypeScript configuration for tests
-    globals: {
-        'ts-jest': {
-            tsconfig: {
-                compilerOptions: {
-                    module: 'commonjs',
-                    target: 'es2020',
-                    lib: ['es2020'],
-                    skipLibCheck: true,
-                    strict: false,
-                    noImplicitAny: false,
-                    strictNullChecks: false
-                }
-            },
-            // Игнорируем TypeScript ошибки в тестах
-            isolatedModules: true,
-            diagnostics: false
-        }
-    },
+    // Coverage settings
+    collectCoverageFrom: [
+        'src/**/*.{js,ts}',
+        '!src/**/*.d.ts',
+        '!src/**/*.test.{js,ts}'
+    ],
+    coverageDirectory: '<rootDir>/coverage',
+    coverageReporters: ['text', 'lcov', 'html', 'json'],
 
     // Настройки для стабильности
     testTimeout: 30000,
