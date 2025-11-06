@@ -102,7 +102,7 @@ services:
 
             # ENTERPRISE
             - LICENSE_URL=${LICENSE_URL}
-            - osmi-ai_EE_LICENSE_KEY=${osmi-ai_EE_LICENSE_KEY}
+            - OSMI_AI_EE_LICENSE_KEY=${OSMI_AI_EE_LICENSE_KEY}
             - OFFLINE=${OFFLINE}
             - INVITE_TOKEN_EXPIRY_IN_HOURS=${INVITE_TOKEN_EXPIRY_IN_HOURS}
             - WORKSPACE_INVITE_TEMPLATE_PATH=${WORKSPACE_INVITE_TEMPLATE_PATH}
@@ -159,7 +159,7 @@ services:
             - osmi-ai-net
 
     osmi-ai-worker:
-        image: osmi-aiai/osmi-ai-worker:latest
+        image: osmi-ai/osmi-ai-worker:latest
         container_name: osmi-ai-worker
         restart: always
         volumes:
@@ -246,7 +246,7 @@ services:
 
             # ENTERPRISE
             - LICENSE_URL=${LICENSE_URL}
-            - osmi-ai_EE_LICENSE_KEY=${osmi-ai_EE_LICENSE_KEY}
+            - OSMI_AI_EE_LICENSE_KEY=${OSMI_AI_EE_LICENSE_KEY}
             - OFFLINE=${OFFLINE}
             - INVITE_TOKEN_EXPIRY_IN_HOURS=${INVITE_TOKEN_EXPIRY_IN_HOURS}
             - WORKSPACE_INVITE_TEMPLATE_PATH=${WORKSPACE_INVITE_TEMPLATE_PATH}

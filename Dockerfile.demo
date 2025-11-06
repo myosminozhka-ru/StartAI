@@ -1,10 +1,9 @@
-# Build OSMI AI production image
-# docker build --no-cache -t osmi-ai/osmi-ai:latest .
-
-# Run OSMI AI container
-# docker run -d -p 3000:3000 osmi-ai/osmi-ai:latest
+# Demo Dockerfile for OSMI AI
+# docker build --no-cache -f Dockerfile.demo -t osmiai-demo-app .
 
 FROM node:20-alpine
+
+# Install system dependencies
 RUN apk add --update libc6-compat python3 make g++
 # needed for pdfjs-dist
 RUN apk add --no-cache build-base cairo-dev pango-dev
@@ -12,11 +11,10 @@ RUN apk add --no-cache build-base cairo-dev pango-dev
 # Install Chromium
 RUN apk add --no-cache chromium
 
+RUN apk add --no-cache curl git
 
-RUN apk add --no-cache curl
-
-#install PNPM globaly
-RUN npm install -g pnpm
+# Install PNPM globally
+RUN npm install -g pnpm@10.11.0
 
 ENV PUPPETEER_SKIP_DOWNLOAD=true
 ENV PUPPETEER_EXECUTABLE_PATH=/usr/bin/chromium-browser
@@ -33,12 +31,20 @@ COPY turbo.json ./
 COPY packages/*/package.json ./packages/*/
 
 # Install dependencies
-RUN pnpm install --no-frozen-lockfile
+RUN pnpm install --no-frozen-lockfile --ignore-scripts
 
-# Copy app source
+# Copy source code
 COPY . .
 
+# Build the application
 RUN pnpm build
+
+# Fix: add demouser and fix runtime permissions
+RUN addgroup -g 1001 -S demouser && \
+    adduser -S demouser -u 1001 -G demouser && \
+    chown -R demouser:demouser /usr/src
+
+USER demouser
 
 EXPOSE 3000
 
