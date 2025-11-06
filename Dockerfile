@@ -12,6 +12,8 @@ RUN apk add --no-cache build-base cairo-dev pango-dev
 # Install Chromium
 RUN apk add --no-cache chromium
 
+# Install git for GitHub dependencies
+RUN apk add --no-cache git
 
 RUN apk add --no-cache curl
 
