@@ -1,64 +1,19 @@
 services:
-  osmi-ai-app:
-    container_name: osmi-ai-app
-    image: osmi-ai:latest
+  osmi-ai-develop:
+    container_name: osmi-ai-develop
+    image: osmi-ai-develop:latest
     build:
       context: .
       dockerfile: Dockerfile
-    depends_on:
-      - promtail
     restart: unless-stopped
     ports:
-      - "3020:3020"
+      - "3001:3000"
     environment:
-      - PORT=3020
-      - ENABLE_METRICS=true
-      - METRICS_PROVIDER=prometheus
-      # Настройки метрик
-      - METRICS_SERVICE_NAME=OSMI_AI
-      - METRICS_INCLUDE_NODE_METRICS=true
+      - PORT=3000
     volumes:
-      - osmi-data:/root/.osmi-ai/
-
-  promtail:
-    image: grafana/promtail:latest
-    container_name: promtail
-    ports:
-      - "9080:9080"
-    volumes:
-      - /var/lib/docker/containers:/var/lib/docker/containers:ro
-      - /var/run/docker.sock:/var/run/docker.sock
-      - ./metrics/promtail/promtail.yaml:/etc/promtail/config.yml
-      - promtail_positions:/tmp/positions
-    command: -config.file=/etc/promtail/config.yml
-    privileged: true
-    restart: unless-stopped
-
-  prometheus:
-    image: prom/prometheus:latest
-    container_name: osmi-ai-prometheus
-    command:
-      - '--config.file=/etc/prometheus/prometheus.yml'
-      - '--storage.tsdb.path=/prometheus'
-      - '--web.console.libraries=/etc/prometheus/console_libraries'
-      - '--web.console.templates=/etc/prometheus/consoles'
-      - '--web.enable-lifecycle'
-      - '--storage.tsdb.retention.time=24h'  # Локальное хранение на сутки
-      - '--web.external-url=http://localhost:9090'
-    ports:
-      - "9090:9090"
-    volumes:
-      - ./metrics/prometheus/prometheus.config.yml:/etc/prometheus/prometheus.yml:ro
-      - prometheus_data:/prometheus
-    restart: unless-stopped
-    depends_on:
-      - osmi-ai-app
+      - osmi-develop-data:/root/.osmi-ai/
 
 volumes:
-  osmi-data:
-    driver: local
-  prometheus_data:
-    driver: local
-  promtail_positions:
+  osmi-develop-data:
     driver: local
 

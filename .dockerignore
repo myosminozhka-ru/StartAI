@@ -1,32 +1,11 @@
 node_modules
 dist
 build
-.git
-.github
-.turbo
-.husky
-.vscode
-.idea
-*.log
-*.md
-!README.md
+.git*
 
 **/node_modules
 **/build
 **/dist
-**/.env
-**/.env.local
-**/.env.example
-**/coverage
-**/cypress
-**/test
-**/*.test.ts
-**/*.test.js
-**/*.spec.ts
-**/*.spec.js
 
-# Keep necessary files
-!package.json
-!pnpm-lock.yaml
-!pnpm-workspace.yaml
-!turbo.json
+# packages/server/.env
+# packages/ui/.env

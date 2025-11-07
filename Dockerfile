@@ -1,63 +1,37 @@
-# Production Dockerfile for OSMI AI (Minimal Single Agent Version)
-# docker build --no-cache -t osmi-ai:latest .
+# Build local monorepo image
+# docker build --no-cache -t osmi-ai .
+
+# Run image
+# docker run -d -p 3000:3000 osmi-ai
 
 FROM node:20-alpine
+RUN apk add --update libc6-compat python3 make g++
+# needed for pdfjs-dist
+RUN apk add --no-cache build-base cairo-dev pango-dev
 
-# Устанавливаем системные зависимости
-RUN apk add --no-cache \
-    libc6-compat \
-    python3 \
-    make \
-    g++ \
-    build-base \
-    cairo-dev \
-    pango-dev \
-    chromium \
-    nss \
-    freetype \
-    freetype-dev \
-    harfbuzz \
-    ca-certificates \
-    ttf-freefont \
-    git \
-    curl \
-    bash
+# Install Chromium
+RUN apk add --no-cache chromium
 
-# === Проверка сети и установка pnpm ===
-RUN set -eux; \
-    echo "Проверяем подключение к registry.npmjs.org..."; \
-    if ! curl -s --head https://registry.npmjs.org/ | grep "200 OK" > /dev/null; then \
-        echo "⚠️  NPM registry недоступен. Переключаемся на зеркало npmmirror.com..."; \
-        npm config set registry https://registry.npmmirror.com/; \
-    else \
-        echo "✅ Доступ к npm registry подтверждён."; \
-    fi; \
-    npm install -g pnpm@10.11.0 --unsafe-perm=true; \
-    pnpm -v
 
-# Настройки окружения Puppeteer
+RUN apk add --no-cache curl git
+
+#install PNPM globaly
+RUN npm install -g pnpm
+
 ENV PUPPETEER_SKIP_DOWNLOAD=true
 ENV PUPPETEER_EXECUTABLE_PATH=/usr/bin/chromium-browser
 
-# Увеличиваем лимит памяти для Node.js
 ENV NODE_OPTIONS=--max-old-space-size=8192
+ENV OFFLINE=true
 
 WORKDIR /usr/src
 
-# Копируем весь код
+# Copy app source
 COPY . .
 
-# Устанавливаем зависимости
-RUN pnpm install --no-frozen-lockfile --shamefully-hoist
+RUN pnpm install
 
-# Сборка компонентов (TypeScript + Gulp, игнорируем ошибки типов)
-RUN cd packages/osmi-ai-components && (pnpm tsc || true) && pnpm gulp
-
-# Сборка остальных пакетов (игнорируем ошибки типов)
-RUN pnpm build || (echo "Build had type errors but continuing..." && exit 0)
-
-# Создаём симлинк для фронтенда (сервер ищет OSMI-ui в node_modules)
-RUN ln -s /usr/src/packages/ui /usr/src/node_modules/OSMI-ui
+RUN pnpm build
 
 EXPOSE 3000
 
