@@ -1,16 +1,16 @@
-import path from 'path'
 import * as fs from 'fs'
 import { StatusCodes } from 'http-status-codes'
+import path from 'path'
+import { DeleteResult } from 'typeorm'
+import { v4 as uuidv4 } from 'uuid'
+import { CustomTemplate } from '../../database/entities/CustomTemplate'
+import { WorkspaceService } from '../../enterprise/services/workspace.service'
+import { getWorkspaceSearchOptions } from '../../enterprise/utils/ControllerServiceUtils'
 import { InternalFlowiseError } from '../../errors/internalFlowiseError'
 import { getErrorMessage } from '../../errors/utils'
 import { IReactFlowEdge, IReactFlowNode } from '../../Interface'
 import { getRunningExpressApp } from '../../utils/getRunningExpressApp'
-import { DeleteResult } from 'typeorm'
-import { CustomTemplate } from '../../database/entities/CustomTemplate'
-import { v4 as uuidv4 } from 'uuid'
 import chatflowsService from '../chatflows'
-import { getWorkspaceSearchOptions } from '../../enterprise/utils/ControllerServiceUtils'
-import { WorkspaceService } from '../../enterprise/services/workspace.service'
 
 type ITemplate = {
     badge: string
@@ -69,6 +69,8 @@ const getAllTemplates = async () => {
             templates.push(template)
         })
 
+        /*
+        * Agentflow is deprecated
         marketplaceDir = path.join(__dirname, '..', '..', '..', 'marketplaces', 'agentflows')
         jsonsInDir = fs.readdirSync(marketplaceDir).filter((file) => path.extname(file) === '.json')
         jsonsInDir.forEach((file) => {
@@ -87,7 +89,7 @@ const getAllTemplates = async () => {
                 description: fileDataObj?.description || ''
             }
             templates.push(template)
-        })
+        })*/
 
         marketplaceDir = path.join(__dirname, '..', '..', '..', 'marketplaces', 'agentflowsv2')
         jsonsInDir = fs.readdirSync(marketplaceDir).filter((file) => path.extname(file) === '.json')
@@ -108,11 +110,24 @@ const getAllTemplates = async () => {
             }
             templates.push(template)
         })
-        const sortedTemplates = templates.sort((a, b) => a.templateName.localeCompare(b.templateName))
-        const FlowiseDocsQnAIndex = sortedTemplates.findIndex((tmp) => tmp.templateName === 'Docs QnA')
-        if (FlowiseDocsQnAIndex > 0) {
-            sortedTemplates.unshift(sortedTemplates.splice(FlowiseDocsQnAIndex, 1)[0])
-        }
+        const sortedTemplates = templates.sort((a, b) => {
+            // Prioritize AgentflowV2 templates first
+            if (a.type === 'AgentflowV2' && b.type !== 'AgentflowV2') {
+                return -1
+            }
+            if (b.type === 'AgentflowV2' && a.type !== 'AgentflowV2') {
+                return 1
+            }
+            // Put Tool templates last
+            if (a.type === 'Tool' && b.type !== 'Tool') {
+                return 1
+            }
+            if (b.type === 'Tool' && a.type !== 'Tool') {
+                return -1
+            }
+            // For same types, sort alphabetically by templateName
+            return a.templateName.localeCompare(b.templateName)
+        })
         const dbResponse = sortedTemplates
         return dbResponse
     } catch (error) {
@@ -123,10 +138,10 @@ const getAllTemplates = async () => {
     }
 }
 
-const deleteCustomTemplate = async (templateId: string): Promise<DeleteResult> => {
+const deleteCustomTemplate = async (templateId: string, workspaceId: string): Promise<DeleteResult> => {
     try {
         const appServer = getRunningExpressApp()
-        return await appServer.AppDataSource.getRepository(CustomTemplate).delete({ id: templateId })
+        return await appServer.AppDataSource.getRepository(CustomTemplate).delete({ id: templateId, workspaceId: workspaceId })
     } catch (error) {
         throw new InternalFlowiseError(
             StatusCodes.INTERNAL_SERVER_ERROR,
@@ -196,7 +211,7 @@ const saveCustomTemplate = async (body: any): Promise<any> => {
         Object.assign(customTemplate, body)
 
         if (body.chatflowId) {
-            const chatflow = await chatflowsService.getChatflowById(body.chatflowId)
+            const chatflow = await chatflowsService.getChatflowById(body.chatflowId, body.workspaceId)
             const flowData = JSON.parse(chatflow.flowData)
             const { framework, exportJson } = _generateExportFlowData(flowData)
             flowDataStr = JSON.stringify(exportJson)

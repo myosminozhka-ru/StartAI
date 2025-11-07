@@ -15,6 +15,7 @@ class BabyAGI_Agents implements INode {
     category: string
     baseClasses: string[]
     inputs: INodeParams[]
+    badge: string
 
     constructor() {
         this.label = 'BabyAGI'
@@ -23,30 +24,29 @@ class BabyAGI_Agents implements INode {
         this.type = 'BabyAGI'
         this.category = 'Agents'
         this.icon = 'babyagi.svg'
-        this.description =
-            'Автономный агент, управляемый задачами, который создает новые задачи и переприоритизирует список задач на основе цели'
+        this.badge = 'DEPRECATING'
+        this.description = 'Task Driven Autonomous Agent which creates new task and reprioritizes task list based on objective'
         this.baseClasses = ['BabyAGI']
         this.inputs = [
             {
-                label: 'Модель чата',
+                label: 'Chat Model',
                 name: 'model',
                 type: 'BaseChatModel'
             },
             {
-                label: 'Векторное хранилище',
+                label: 'Vector Store',
                 name: 'vectorStore',
                 type: 'VectorStore'
             },
             {
-                label: 'Цикл задач',
+                label: 'Task Loop',
                 name: 'taskLoop',
                 type: 'number',
                 default: 3
             },
             {
-                label: 'Модерация ввода',
-                description:
-                    'Обнаруживает текст, который может привести к созданию вредоносного вывода, и предотвращает его отправку в языковую модель',
+                label: 'Input Moderation',
+                description: 'Detect text that could generate harmful output and prevent it from being sent to the language model',
                 name: 'inputModeration',
                 type: 'Moderation',
                 optional: true,
@@ -71,7 +71,7 @@ class BabyAGI_Agents implements INode {
 
         if (moderations && moderations.length > 0) {
             try {
-                // Использовать результат цепочки модерации в качестве входных данных для агента BabyAGI
+                // Use the output of the moderation chain as input for the BabyAGI agent
                 input = await checkInputs(moderations, input)
             } catch (e) {
                 await new Promise((resolve) => setTimeout(resolve, 500))

@@ -1,8 +1,7 @@
 {
-    "description": "Базовый пример цепочки разговоров со встроенной памятью - работает точно так же, как ChatGPT",
-    "usecases": ["Чат-бот"],
+    "description": "Basic example of Conversation Chain with built-in memory - works exactly like ChatGPT",
+    "usecases": ["Basic"],
     "framework": ["Langchain"],
-    "badge": "POPULAR",
     "nodes": [
         {
             "width": 300,
@@ -24,7 +23,7 @@
                 "description": "Wrapper around OpenAI large language models that use the Chat endpoint",
                 "inputParams": [
                     {
-                        "label": "Подключите учетные данные",
+                        "label": "Connect Credential",
                         "name": "credential",
                         "type": "credential",
                         "credentialNames": ["openAIApi"],

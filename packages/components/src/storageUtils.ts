@@ -1,18 +1,19 @@
-import path from 'path'
-import fs from 'fs'
 import {
     DeleteObjectsCommand,
     GetObjectCommand,
+    ListObjectsCommand,
     ListObjectsV2Command,
     PutObjectCommand,
-    ListObjectsCommand,
     S3Client,
     S3ClientConfig
 } from '@aws-sdk/client-s3'
 import { Storage } from '@google-cloud/storage'
+import fs from 'fs'
 import { Readable } from 'node:stream'
-import { getUserHome } from './utils'
+import path from 'path'
 import sanitize from 'sanitize-filename'
+import { getUserHome } from './utils'
+import { isPathTraversal, isValidUUID } from './validator'
 
 const dirSize = async (directoryPath: string) => {
     let totalSize = 0
@@ -40,6 +41,16 @@ export const addBase64FilesToStorage = async (
     fileNames: string[],
     orgId: string
 ): Promise<{ path: string; totalSize: number }> => {
+    // Validate chatflowid
+    if (!chatflowid || !isValidUUID(chatflowid)) {
+        throw new Error('Invalid chatflowId format - must be a valid UUID')
+    }
+
+    // Check for path traversal attempts
+    if (isPathTraversal(chatflowid)) {
+        throw new Error('Invalid path characters detected in chatflowId')
+    }
+
     const storageType = getStorageType()
     if (storageType === 's3') {
         const { s3Client, Bucket } = getS3Config()
@@ -520,7 +531,13 @@ function getFilePaths(dir: string): FileInfo[] {
  * Prepare storage path
  */
 export const getStoragePath = (): string => {
-    return process.env.BLOB_STORAGE_PATH ? path.join(process.env.BLOB_STORAGE_PATH) : path.join(getUserHome(), '.flowise', 'storage')
+    const storagePath = process.env.BLOB_STORAGE_PATH
+        ? path.join(process.env.BLOB_STORAGE_PATH)
+        : path.join(getUserHome(), '.flowise', 'storage')
+    if (!fs.existsSync(storagePath)) {
+        fs.mkdirSync(storagePath, { recursive: true })
+    }
+    return storagePath
 }
 
 /**
@@ -730,6 +747,16 @@ export const streamStorageFile = async (
     fileName: string,
     orgId: string
 ): Promise<fs.ReadStream | Buffer | undefined> => {
+    // Validate chatflowId
+    if (!chatflowId || !isValidUUID(chatflowId)) {
+        throw new Error('Invalid chatflowId format - must be a valid UUID')
+    }
+
+    // Check for path traversal attempts
+    if (isPathTraversal(chatflowId) || isPathTraversal(chatId)) {
+        throw new Error('Invalid path characters detected in chatflowId or chatId')
+    }
+
     const storageType = getStorageType()
     const sanitizedFilename = sanitize(fileName)
     if (storageType === 's3') {
@@ -1009,15 +1036,12 @@ export const getGcsClient = () => {
     const projectId = process.env.GOOGLE_CLOUD_STORAGE_PROJ_ID
     const bucketName = process.env.GOOGLE_CLOUD_STORAGE_BUCKET_NAME
 
-    if (!pathToGcsCredential) {
-        throw new Error('GOOGLE_CLOUD_STORAGE_CREDENTIAL env variable is required')
-    }
     if (!bucketName) {
         throw new Error('GOOGLE_CLOUD_STORAGE_BUCKET_NAME env variable is required')
     }
 
     const storageConfig = {
-        keyFilename: pathToGcsCredential,
+        ...(pathToGcsCredential ? { keyFilename: pathToGcsCredential } : {}),
         ...(projectId ? { projectId } : {})
     }
 
@@ -1048,17 +1072,21 @@ export const getS3Config = () => {
     const customURL = process.env.S3_ENDPOINT_URL
     const forcePathStyle = process.env.S3_FORCE_PATH_STYLE === 'true' ? true : false
 
-    if (!region || !Bucket) {
+    if (!region || region.trim() === '' || !Bucket || Bucket.trim() === '') {
         throw new Error('S3 storage configuration is missing')
     }
 
     const s3Config: S3ClientConfig = {
         region: region,
-        endpoint: customURL,
         forcePathStyle: forcePathStyle
     }
 
-    if (accessKeyId && secretAccessKey) {
+    // Only include endpoint if customURL is not empty
+    if (customURL && customURL.trim() !== '') {
+        s3Config.endpoint = customURL
+    }
+
+    if (accessKeyId && accessKeyId.trim() !== '' && secretAccessKey && secretAccessKey.trim() !== '') {
         s3Config.credentials = {
             accessKeyId: accessKeyId,
             secretAccessKey: secretAccessKey

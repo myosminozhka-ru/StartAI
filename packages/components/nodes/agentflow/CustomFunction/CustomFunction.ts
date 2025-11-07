@@ -8,8 +8,7 @@ import {
     INodeParams,
     IServerSideEventStreamer
 } from '../../../src/Interface'
-import { availableDependencies, defaultAllowBuiltInDep, getVars, prepareSandboxVars } from '../../../src/utils'
-import { NodeVM } from '@flowiseai/nodevm'
+import { getVars, executeJavaScriptCode, createCodeExecutionSandbox, processTemplateVariables } from '../../../src/utils'
 import { updateFlowState } from '../utils'
 
 interface ICustomFunctionInputVariables {
@@ -18,11 +17,11 @@ interface ICustomFunctionInputVariables {
 }
 
 const exampleFunc = `/*
-* Вы можете использовать любые библиотеки, импортированные в OsmiAI
-* Вы можете использовать свойства, указанные в схеме ввода, как переменные. Например: Свойство = userid, Переменная = $userid
-* Вы можете получить конфигурацию потока по умолчанию: $flow.sessionId, $flow.chatId, $flow.chatflowId, $flow.input, $flow.state
-* Вы можете получить пользовательские переменные: $vars.<имя-переменной>
-* В конце функции должно возвращаться строковое значение
+* You can use any libraries imported in Flowise
+* You can use properties specified in Input Variables with the prefix $. For example: $foo
+* You can get default flow config: $flow.sessionId, $flow.chatId, $flow.chatflowId, $flow.input, $flow.state
+* You can get global variables: $vars.<variable-name>
+* Must return a string value at the end of function
 */
 
 const fetch = require('node-fetch');
@@ -59,30 +58,30 @@ class CustomFunction_Agentflow implements INode {
     inputs: INodeParams[]
 
     constructor() {
-        this.label = 'Пользовательская функция'
+        this.label = 'Custom Function'
         this.name = 'customFunctionAgentflow'
         this.version = 1.0
         this.type = 'CustomFunction'
         this.category = 'Agent Flows'
-        this.description = 'Выполнить пользовательскую функцию'
+        this.description = 'Execute custom function'
         this.baseClasses = [this.type]
         this.color = '#E4B7FF'
         this.inputs = [
             {
-                label: 'Входные переменные',
+                label: 'Input Variables',
                 name: 'customFunctionInputVariables',
-                description: 'Входные переменные могут использоваться в функции с префиксом $. Например: $foo',
+                description: 'Input variables can be used in the function with prefix $. For example: $foo',
                 type: 'array',
                 optional: true,
                 acceptVariable: true,
                 array: [
                     {
-                        label: 'Имя переменной',
+                        label: 'Variable Name',
                         name: 'variableName',
                         type: 'string'
                     },
                     {
-                        label: 'Значение переменной',
+                        label: 'Variable Value',
                         name: 'variableValue',
                         type: 'string',
                         acceptVariable: true
@@ -90,29 +89,29 @@ class CustomFunction_Agentflow implements INode {
                 ]
             },
             {
-                label: 'JavaScript функция',
+                label: 'Javascript Function',
                 name: 'customFunctionJavascriptFunction',
                 type: 'code',
                 codeExample: exampleFunc,
-                description: 'Функция для выполнения. Должна возвращать строку или объект, который может быть преобразован в строку.'
+                description: 'The function to execute. Must return a string or an object that can be converted to a string.'
             },
             {
-                label: 'Обновить состояние потока',
+                label: 'Update Flow State',
                 name: 'customFunctionUpdateState',
-                description: 'Обновить состояние выполнения во время выполнения рабочего процесса',
+                description: 'Update runtime state during the execution of the workflow',
                 type: 'array',
                 optional: true,
                 acceptVariable: true,
                 array: [
                     {
-                        label: 'Ключ',
+                        label: 'Key',
                         name: 'key',
                         type: 'asyncOptions',
                         loadMethod: 'listRuntimeStateKeys',
                         freeSolo: true
                     },
                     {
-                        label: 'Значение',
+                        label: 'Value',
                         name: 'value',
                         type: 'string',
                         acceptVariable: true,
@@ -146,78 +145,51 @@ class CustomFunction_Agentflow implements INode {
         const appDataSource = options.appDataSource as DataSource
         const databaseEntities = options.databaseEntities as IDatabaseEntity
 
-        // Update flow state if needed
-        let newState = { ...state }
-        if (_customFunctionUpdateState && Array.isArray(_customFunctionUpdateState) && _customFunctionUpdateState.length > 0) {
-            newState = updateFlowState(state, _customFunctionUpdateState)
-        }
-
         const variables = await getVars(appDataSource, databaseEntities, nodeData, options)
         const flow = {
             chatflowId: options.chatflowid,
             sessionId: options.sessionId,
             chatId: options.chatId,
             input,
-            state: newState
+            state
         }
 
-        let sandbox: any = {
-            $input: input,
-            util: undefined,
-            Symbol: undefined,
-            child_process: undefined,
-            fs: undefined,
-            process: undefined
-        }
-        sandbox['$vars'] = prepareSandboxVars(variables)
-        sandbox['$flow'] = flow
-
+        // Create additional sandbox variables for custom function inputs
+        const additionalSandbox: ICommonObject = {}
         for (const item of functionInputVariables) {
             const variableName = item.variableName
             const variableValue = item.variableValue
-            sandbox[`$${variableName}`] = variableValue
+            additionalSandbox[`$${variableName}`] = variableValue
         }
 
-        const builtinDeps = process.env.TOOL_FUNCTION_BUILTIN_DEP
-            ? defaultAllowBuiltInDep.concat(process.env.TOOL_FUNCTION_BUILTIN_DEP.split(','))
-            : defaultAllowBuiltInDep
-        const externalDeps = process.env.TOOL_FUNCTION_EXTERNAL_DEP ? process.env.TOOL_FUNCTION_EXTERNAL_DEP.split(',') : []
-        const deps = availableDependencies.concat(externalDeps)
+        const sandbox = createCodeExecutionSandbox(input, variables, flow, additionalSandbox)
 
-        const nodeVMOptions = {
-            console: 'inherit',
-            sandbox,
-            require: {
-                external: { modules: deps },
-                builtin: builtinDeps
-            },
-            eval: false,
-            wasm: false,
-            timeout: 10000
-        } as any
+        // Setup streaming function if needed
+        const streamOutput = isStreamable
+            ? (output: string) => {
+                  const sseStreamer: IServerSideEventStreamer = options.sseStreamer
+                  sseStreamer.streamTokenEvent(chatId, output)
+              }
+            : undefined
 
-        const vm = new NodeVM(nodeVMOptions)
         try {
-            const response = await vm.run(`module.exports = async function() {${javascriptFunction}}()`, __dirname)
+            const response = await executeJavaScriptCode(javascriptFunction, sandbox, {
+                libraries: ['axios'],
+                streamOutput
+            })
 
             let finalOutput = response
             if (typeof response === 'object') {
                 finalOutput = JSON.stringify(response, null, 2)
             }
 
-            if (isStreamable) {
-                const sseStreamer: IServerSideEventStreamer = options.sseStreamer
-                sseStreamer.streamTokenEvent(chatId, finalOutput)
+            // Update flow state if needed
+            let newState = { ...state }
+            if (_customFunctionUpdateState && Array.isArray(_customFunctionUpdateState) && _customFunctionUpdateState.length > 0) {
+                newState = updateFlowState(state, _customFunctionUpdateState)
             }
 
-            // Process template variables in state
-            if (newState && Object.keys(newState).length > 0) {
-                for (const key in newState) {
-                    if (newState[key].toString().includes('{{ output }}')) {
-                        newState[key] = finalOutput
-                    }
-                }
-            }
+            newState = processTemplateVariables(newState, finalOutput)
 
             const returnOutput = {
                 id: nodeData.id,

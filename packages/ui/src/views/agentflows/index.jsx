@@ -1,8 +1,9 @@
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { useSelector } from 'react-redux'
 
 // material-ui
-import { Chip, Box, Skeleton, Stack, ToggleButton, ToggleButtonGroup } from '@mui/material'
+import { Chip, Box, Stack, ToggleButton, ToggleButtonGroup, IconButton } from '@mui/material'
 import { useTheme } from '@mui/material/styles'
 
 // project imports
@@ -15,6 +16,7 @@ import { FlowListTable } from '@/ui-component/table/FlowListTable'
 import ViewHeader from '@/layout/MainLayout/ViewHeader'
 import ErrorBoundary from '@/ErrorBoundary'
 import { StyledPermissionButton } from '@/ui-component/button/RBACButtons'
+import TablePagination, { DEFAULT_ITEMS_PER_PAGE } from '@/ui-component/pagination/TablePagination'
 
 // API
 import chatflowsApi from '@/api/chatflows'
@@ -27,13 +29,14 @@ import { baseURL, AGENTFLOW_ICONS } from '@/store/constant'
 import { useError } from '@/store/context/ErrorContext'
 
 // icons
-import { IconPlus, IconLayoutGrid, IconList } from '@tabler/icons-react'
+import { IconPlus, IconLayoutGrid, IconList, IconX, IconAlertTriangle } from '@tabler/icons-react'
 
 // ==============================|| AGENTS ||============================== //
 
 const Agentflows = () => {
     const navigate = useNavigate()
     const theme = useTheme()
+    const customization = useSelector((state) => state.customization)
 
     const [isLoading, setLoading] = useState(true)
     const [images, setImages] = useState({})
@@ -44,6 +47,26 @@ const Agentflows = () => {
     const getAllAgentflows = useApi(chatflowsApi.getAllAgentflows)
     const [view, setView] = useState(localStorage.getItem('flowDisplayStyle') || 'card')
     const [agentflowVersion, setAgentflowVersion] = useState(localStorage.getItem('agentFlowVersion') || 'v2')
+    const [showDeprecationNotice, setShowDeprecationNotice] = useState(true)
+
+    /* Table Pagination */
+    const [currentPage, setCurrentPage] = useState(1)
+    const [pageLimit, setPageLimit] = useState(DEFAULT_ITEMS_PER_PAGE)
+    const [total, setTotal] = useState(0)
+
+    const onChange = (page, pageLimit) => {
+        setCurrentPage(page)
+        setPageLimit(pageLimit)
+        refresh(page, pageLimit, agentflowVersion)
+    }
+
+    const refresh = (page, limit, nextView) => {
+        const params = {
+            page: page || currentPage,
+            limit: limit || pageLimit
+        }
+        getAllAgentflows.request(nextView === 'v2' ? 'AGENTFLOW' : 'MULTIAGENT', params)
+    }
 
     const handleChange = (event, nextView) => {
         if (nextView === null) return
@@ -55,7 +78,7 @@ const Agentflows = () => {
         if (nextView === null) return
         localStorage.setItem('agentFlowVersion', nextView)
         setAgentflowVersion(nextView)
-        getAllAgentflows.request(nextView === 'v2' ? 'AGENTFLOW' : 'MULTIAGENT')
+        refresh(1, pageLimit, nextView)
     }
 
     const onSearchChange = (event) => {
@@ -86,8 +109,12 @@ const Agentflows = () => {
         }
     }
 
+    const handleDismissDeprecationNotice = () => {
+        setShowDeprecationNotice(false)
+    }
+
     useEffect(() => {
-        getAllAgentflows.request(agentflowVersion === 'v2' ? 'AGENTFLOW' : 'MULTIAGENT')
+        refresh(currentPage, pageLimit, agentflowVersion)
 
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
@@ -107,7 +134,8 @@ const Agentflows = () => {
     useEffect(() => {
         if (getAllAgentflows.data) {
             try {
-                const agentflows = getAllAgentflows.data
+                const agentflows = getAllAgentflows.data?.data
+                setTotal(getAllAgentflows.data?.total)
                 const images = {}
                 const icons = {}
                 for (let i = 0; i < agentflows.length; i += 1) {
@@ -164,7 +192,7 @@ const Agentflows = () => {
                                 sx={{
                                     borderColor: theme.palette.grey[900] + 25,
                                     borderRadius: 2,
-                                    color: theme?.customization?.isDarkMode ? 'white' : 'inherit'
+                                    color: customization.isDarkMode ? 'white' : 'inherit'
                                 }}
                                 variant='contained'
                                 value='v2'
@@ -177,7 +205,7 @@ const Agentflows = () => {
                                 sx={{
                                     borderColor: theme.palette.grey[900] + 25,
                                     borderRadius: 2,
-                                    color: theme?.customization?.isDarkMode ? 'white' : 'inherit'
+                                    color: customization.isDarkMode ? 'white' : 'inherit'
                                 }}
                                 variant='contained'
                                 value='v1'
@@ -189,6 +217,7 @@ const Agentflows = () => {
                         <ToggleButtonGroup
                             sx={{ borderRadius: 2, maxHeight: 40 }}
                             value={view}
+                            disabled={total === 0}
                             color='primary'
                             exclusive
                             onChange={handleChange}
@@ -197,7 +226,7 @@ const Agentflows = () => {
                                 sx={{
                                     borderColor: theme.palette.grey[900] + 25,
                                     borderRadius: 2,
-                                    color: theme?.customization?.isDarkMode ? 'white' : 'inherit'
+                                    color: customization.isDarkMode ? 'white' : 'inherit'
                                 }}
                                 variant='contained'
                                 value='card'
@@ -209,7 +238,7 @@ const Agentflows = () => {
                                 sx={{
                                     borderColor: theme.palette.grey[900] + 25,
                                     borderRadius: 2,
-                                    color: theme?.customization?.isDarkMode ? 'white' : 'inherit'
+                                    color: customization.isDarkMode ? 'white' : 'inherit'
                                 }}
                                 variant='contained'
                                 value='list'
@@ -228,17 +257,54 @@ const Agentflows = () => {
                             Добавить
                         </StyledPermissionButton>
                     </ViewHeader>
-                    {!view || view === 'card' ? (
+
+                    {/* Deprecation Notice For V1 */}
+                    {agentflowVersion === 'v1' && showDeprecationNotice && (
+                        <Box
+                            sx={{
+                                display: 'flex',
+                                alignItems: 'center',
+                                padding: 2,
+                                background: customization.isDarkMode
+                                    ? 'linear-gradient(135deg,rgba(165, 128, 6, 0.31) 0%, #ffcc802f 100%)'
+                                    : 'linear-gradient(135deg, #fff8e17a 0%, #ffcc804a 100%)',
+                                color: customization.isDarkMode ? 'white' : '#333333',
+                                fontWeight: 400,
+                                borderRadius: 2,
+                                gap: 1.5
+                            }}
+                        >
+                            <IconAlertTriangle
+                                size={20}
+                                style={{
+                                    color: customization.isDarkMode ? '#ffcc80' : '#f57c00',
+                                    flexShrink: 0
+                                }}
+                            />
+                            <Box sx={{ flex: 1 }}>
+                                <strong>V1 Agentflows are deprecated.</strong> We recommend migrating to V2 for improved performance and
+                                continued support.
+                            </Box>
+                            <IconButton
+                                aria-label='dismiss'
+                                size='small'
+                                onClick={handleDismissDeprecationNotice}
+                                sx={{
+                                    color: customization.isDarkMode ? '#ffcc80' : '#f57c00',
+                                    '&:hover': {
+                                        backgroundColor: 'rgba(255, 204, 128, 0.1)'
+                                    }
+                                }}
+                            >
+                                <IconX size={16} />
+                            </IconButton>
+                        </Box>
+                    )}
+                    {!isLoading && total > 0 && (
                         <>
-                            {isLoading && !getAllAgentflows.data ? (
+                            {!view || view === 'card' ? (
                                 <Box display='grid' gridTemplateColumns='repeat(3, 1fr)' gap={gridSpacing}>
-                                    <Skeleton variant='rounded' height={160} />
-                                    <Skeleton variant='rounded' height={160} />
-                                    <Skeleton variant='rounded' height={160} />
-                                </Box>
-                            ) : (
-                                <Box display='grid' gridTemplateColumns='repeat(3, 1fr)' gap={gridSpacing}>
-                                    {getAllAgentflows.data?.filter(filterFlows).map((data, index) => (
+                                    {getAllAgentflows.data?.data.filter(filterFlows).map((data, index) => (
                                         <ItemCard
                                             key={index}
                                             onClick={() => goToCanvas(data)}
@@ -248,22 +314,25 @@ const Agentflows = () => {
                                         />
                                     ))}
                                 </Box>
+                            ) : (
+                                <FlowListTable
+                                    isAgentCanvas={true}
+                                    isAgentflowV2={agentflowVersion === 'v2'}
+                                    data={getAllAgentflows.data?.data}
+                                    images={images}
+                                    icons={icons}
+                                    isLoading={isLoading}
+                                    filterFunction={filterFlows}
+                                    updateFlowsApi={getAllAgentflows}
+                                    setError={setError}
+                                />
                             )}
+                            {/* Pagination and Page Size Controls */}
+                            <TablePagination currentPage={currentPage} limit={pageLimit} total={total} onChange={onChange} />
                         </>
-                    ) : (
-                        <FlowListTable
-                            isAgentCanvas={true}
-                            isAgentflowV2={agentflowVersion === 'v2'}
-                            data={getAllAgentflows.data}
-                            images={images}
-                            icons={icons}
-                            isLoading={isLoading}
-                            filterFunction={filterFlows}
-                            updateFlowsApi={getAllAgentflows}
-                            setError={setError}
-                        />
                     )}
-                    {!isLoading && (!getAllAgentflows.data || getAllAgentflows.data.length === 0) && (
+
+                    {!isLoading && total === 0 && (
                         <Stack sx={{ alignItems: 'center', justifyContent: 'center' }} flexDirection='column'>
                             <Box sx={{ p: 2, height: 'auto' }}>
                                 <img

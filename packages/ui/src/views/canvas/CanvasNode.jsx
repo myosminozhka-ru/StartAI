@@ -82,6 +82,8 @@ const CanvasNode = ({ data }) => {
                     componentNode?.deprecateMessage ??
                         'Этот узел будет устаревшим в следующем выпуске. Перейдите на новый узел с меткой NEW'
                 )
+            } else if (componentNode.warning) {
+                setWarningMessage(componentNode.warning)
             } else {
                 setWarningMessage('')
             }

@@ -52,7 +52,6 @@ import exportImportApi from '@/api/exportimport'
 
 // Hooks
 import useApi from '@/hooks/useApi'
-import { useConfig } from '@/store/context/ConfigContext'
 import { getErrorMessage } from '@/utils/errorHandler'
 
 const dataToExport = [
@@ -97,11 +96,18 @@ const ExportDialog = ({ show, onCancel, onExport }) => {
             aria-describedby='export-dialog-description'
         >
             <DialogTitle sx={{ fontSize: '1rem' }} id='export-dialog-title'>
-                {!isExporting ? 'Выберите данные для экспорта' : 'Экспорт...'}
+                {!isExporting ? 'Select Data to Export' : 'Exporting..'}
             </DialogTitle>
             <DialogContent>
                 {!isExporting && (
-                    <Stack direction='row' sx={{ gap: 1, flexWrap: 'wrap' }}>
+                    <Stack
+                        direction='row'
+                        sx={{
+                            display: 'grid',
+                            gridTemplateColumns: 'repeat(2, 1fr)',
+                            gap: 1
+                        }}
+                    >
                         {dataToExport.map((data, index) => (
                             <FormControlLabel
                                 key={index}
@@ -136,14 +142,14 @@ const ExportDialog = ({ show, onCancel, onExport }) => {
                                 src={ExportingGIF}
                                 alt='ExportingGIF'
                             />
-                            <span>Экспорт данных может занять некоторое время</span>
+                            <span>Exporting data might takes a while</span>
                         </div>
                     </Box>
                 )}
             </DialogContent>
             {!isExporting && (
                 <DialogActions>
-                    <Button onClick={onCancel}>Отмена</Button>
+                    <Button onClick={onCancel}>Cancel</Button>
                     <Button
                         disabled={selectedData.length === 0}
                         variant='contained'
@@ -152,7 +158,7 @@ const ExportDialog = ({ show, onCancel, onExport }) => {
                             onExport(selectedData)
                         }}
                     >
-                        Экспорт
+                        Export
                     </Button>
                 </DialogActions>
             )}
@@ -174,7 +180,7 @@ const ImportDialog = ({ show }) => {
     const component = show ? (
         <Dialog open={show} fullWidth maxWidth='sm' aria-labelledby='import-dialog-title' aria-describedby='import-dialog-description'>
             <DialogTitle sx={{ fontSize: '1rem' }} id='import-dialog-title'>
-                Импорт...
+                Importing...
             </DialogTitle>
             <DialogContent>
                 <Box sx={{ height: 'auto', display: 'flex', justifyContent: 'center', mb: 3 }}>
@@ -188,7 +194,7 @@ const ImportDialog = ({ show }) => {
                             src={ExportingGIF}
                             alt='ImportingGIF'
                         />
-                        <span>Импорт данных может занять некоторое время</span>
+                        <span>Importing data might takes a while</span>
                     </div>
                 </Box>
             </DialogContent>
@@ -208,7 +214,6 @@ const ProfileSection = ({ handleLogout }) => {
     const theme = useTheme()
 
     const customization = useSelector((state) => state.customization)
-    const { isCloud } = useConfig()
 
     const [open, setOpen] = useState(false)
     const [aboutDialogOpen, setAboutDialogOpen] = useState(false)
@@ -282,7 +287,7 @@ const ProfileSection = ({ handleLogout }) => {
         setImportDialogOpen(false)
         dispatch({ type: REMOVE_DIRTY })
         enqueueSnackbar({
-            message: `Импорт всех данных успешно завершён`,
+            message: `Import All successful`,
             options: {
                 key: new Date().getTime() + Math.random(),
                 variant: 'success',
@@ -329,12 +334,12 @@ const ProfileSection = ({ handleLogout }) => {
     useEffect(() => {
         if (importAllApi.error) {
             setImportDialogOpen(false)
-            let errMsg = 'Неверный импортируемый файл'
+            let errMsg = 'Invalid Imported File'
             let error = importAllApi.error
             if (error?.response?.data) {
                 errMsg = typeof error.response.data === 'object' ? error.response.data.message : error.response.data
             }
-            errorFailed(`Не удалось импортировать: ${errMsg}`)
+            errorFailed(`Failed to import: ${errMsg}`)
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [importAllApi.error])
@@ -353,7 +358,7 @@ const ProfileSection = ({ handleLogout }) => {
                 linkElement.setAttribute('download', exportAllApi.data.FileDefaultName)
                 linkElement.click()
             } catch (error) {
-                errorFailed(`Не удалось экспортировать все: ${getErrorMessage(error)}`)
+                errorFailed(`Failed to export all: ${getErrorMessage(error)}`)
             }
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -362,12 +367,12 @@ const ProfileSection = ({ handleLogout }) => {
     useEffect(() => {
         if (exportAllApi.error) {
             setExportDialogOpen(false)
-            let errMsg = 'Внутренняя ошибка сервера'
+            let errMsg = 'Internal Server Error'
             let error = exportAllApi.error
             if (error?.response?.data) {
                 errMsg = typeof error.response.data === 'object' ? error.response.data.message : error.response.data
             }
-            errorFailed(`Не удалось экспортировать: ${errMsg}`)
+            errorFailed(`Failed to export: ${errMsg}`)
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [exportAllApi.error])
@@ -433,7 +438,7 @@ const ProfileSection = ({ handleLogout }) => {
                                     ) : (
                                         <Box sx={{ p: 2 }}>
                                             <Typography component='span' variant='h4'>
-                                                Пользователь
+                                                User
                                             </Typography>
                                         </Box>
                                     )}
@@ -466,7 +471,7 @@ const ProfileSection = ({ handleLogout }) => {
                                                     <ListItemIcon>
                                                         <IconFileExport stroke={1.5} size='1.3rem' />
                                                     </ListItemIcon>
-                                                    <ListItemText primary={<Typography variant='body2'>Экспорт</Typography>} />
+                                                    <ListItemText primary={<Typography variant='body2'>Export</Typography>} />
                                                 </PermissionListItemButton>
                                                 <PermissionListItemButton
                                                     permissionId='workspace:import'
@@ -478,7 +483,7 @@ const ProfileSection = ({ handleLogout }) => {
                                                     <ListItemIcon>
                                                         <IconFileUpload stroke={1.5} size='1.3rem' />
                                                     </ListItemIcon>
-                                                    <ListItemText primary={<Typography variant='body2'>Импорт</Typography>} />
+                                                    <ListItemText primary={<Typography variant='body2'>Import</Typography>} />
                                                 </PermissionListItemButton>
                                                 <input ref={inputRef} type='file' hidden onChange={fileChange} accept='.json' />
                                                 <ListItemButton
@@ -491,20 +496,20 @@ const ProfileSection = ({ handleLogout }) => {
                                                     <ListItemIcon>
                                                         <IconInfoCircle stroke={1.5} size='1.3rem' />
                                                     </ListItemIcon>
-                                                    <ListItemText primary={<Typography variant='body2'>Версия</Typography>} />
+                                                    <ListItemText primary={<Typography variant='body2'>Version</Typography>} />
                                                 </ListItemButton>
-                                                {isAuthenticated && !currentUser.isSSO && !isCloud && (
+                                                {isAuthenticated && !currentUser.isSSO && (
                                                     <ListItemButton
                                                         sx={{ borderRadius: `${customization.borderRadius}px` }}
                                                         onClick={() => {
                                                             setOpen(false)
-                                                            navigate('/user-profile')
+                                                            navigate('/account')
                                                         }}
                                                     >
                                                         <ListItemIcon>
                                                             <IconUserEdit stroke={1.5} size='1.3rem' />
                                                         </ListItemIcon>
-                                                        <ListItemText primary={<Typography variant='body2'>Обновить профиль</Typography>} />
+                                                        <ListItemText primary={<Typography variant='body2'>Account Settings</Typography>} />
                                                     </ListItemButton>
                                                 )}
                                                 <ListItemButton
@@ -514,7 +519,7 @@ const ProfileSection = ({ handleLogout }) => {
                                                     <ListItemIcon>
                                                         <IconLogout stroke={1.5} size='1.3rem' />
                                                     </ListItemIcon>
-                                                    <ListItemText primary={<Typography variant='body2'>Выйти</Typography>} />
+                                                    <ListItemText primary={<Typography variant='body2'>Logout</Typography>} />
                                                 </ListItemButton>
                                             </List>
                                         </Box>

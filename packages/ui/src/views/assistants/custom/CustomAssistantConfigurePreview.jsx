@@ -41,6 +41,7 @@ import ConfirmDialog from '@/ui-component/dialog/ConfirmDialog'
 import PromptGeneratorDialog from '@/ui-component/dialog/PromptGeneratorDialog'
 import { Available } from '@/ui-component/rbac/available'
 import ExpandTextDialog from '@/ui-component/dialog/ExpandTextDialog'
+import { SwitchInput } from '@/ui-component/switch/Switch'
 
 // API
 import assistantsApi from '@/api/assistants'
@@ -93,7 +94,7 @@ const CustomAssistantConfigurePreview = () => {
     const [chatModelsOptions, setChatModelsOptions] = useState([])
     const [selectedChatModel, setSelectedChatModel] = useState({})
     const [selectedCustomAssistant, setSelectedCustomAssistant] = useState({})
-    const [customAssistantInstruction, setCustomAssistantInstruction] = useState('Вы очень полезный помощник')
+    const [customAssistantInstruction, setCustomAssistantInstruction] = useState('You are helpful assistant')
     const [customAssistantFlowId, setCustomAssistantFlowId] = useState()
     const [documentStoreOptions, setDocumentStoreOptions] = useState([])
     const [selectedDocumentStores, setSelectedDocumentStores] = useState([])
@@ -151,7 +152,7 @@ const CustomAssistantConfigurePreview = () => {
 
     const displayWarning = () => {
         enqueueSnackbar({
-            message: 'Пожалуйста, заполните все обязательные поля.',
+            message: 'Please fill in all mandatory fields.',
             options: {
                 key: new Date().getTime() + Math.random(),
                 variant: 'warning',
@@ -166,9 +167,10 @@ const CustomAssistantConfigurePreview = () => {
 
     const checkInputParamsMandatory = () => {
         let canSubmit = true
-
-        const inputParams = (selectedChatModel.inputParams ?? []).filter((inputParam) => !inputParam.hidden)
-        for (const inputParam of inputParams) {
+        const visibleInputParams = showHideInputParams(selectedChatModel).filter(
+            (inputParam) => !inputParam.hidden && inputParam.display !== false
+        )
+        for (const inputParam of visibleInputParams) {
             if (!inputParam.optional && (!selectedChatModel.inputs[inputParam.name] || !selectedChatModel.credential)) {
                 if (inputParam.type === 'credential' && !selectedChatModel.credential) {
                     canSubmit = false
@@ -183,8 +185,10 @@ const CustomAssistantConfigurePreview = () => {
         if (selectedTools.length > 0) {
             for (let i = 0; i < selectedTools.length; i++) {
                 const tool = selectedTools[i]
-                const inputParams = (tool.inputParams ?? []).filter((inputParam) => !inputParam.hidden)
-                for (const inputParam of inputParams) {
+                const visibleInputParams = showHideInputParams(tool).filter(
+                    (inputParam) => !inputParam.hidden && inputParam.display !== false
+                )
+                for (const inputParam of visibleInputParams) {
                     if (!inputParam.optional && (!tool.inputs[inputParam.name] || !tool.credential)) {
                         if (inputParam.type === 'credential' && !tool.credential) {
                             canSubmit = false
@@ -265,7 +269,7 @@ const CustomAssistantConfigurePreview = () => {
                     if (saveAssistantResp.data) {
                         setLoading(false)
                         enqueueSnackbar({
-                            message: 'Ассистент успешно сохранен',
+                            message: 'Assistant saved successfully',
                             options: {
                                 key: new Date().getTime() + Math.random(),
                                 variant: 'success',
@@ -281,7 +285,7 @@ const CustomAssistantConfigurePreview = () => {
             } catch (error) {
                 setLoading(false)
                 enqueueSnackbar({
-                    message: `Не удалось сохранить ассистента: ${
+                    message: `Failed to save assistant: ${
                         typeof error.response.data === 'object' ? error.response.data.message : error.response.data
                     }`,
                     options: {
@@ -351,6 +355,7 @@ const CustomAssistantConfigurePreview = () => {
                 const retrieverToolNodeData = cloneDeep(initNode(retrieverToolNode.data, retrieverToolId))
 
                 set(docStoreVSNodeData, 'inputs.selectedStore', selectedDocumentStores[i].id)
+                set(docStoreVSNodeData, 'outputs.output', 'retriever')
 
                 const docStoreOption = documentStoreOptions.find((ds) => ds.name === selectedDocumentStores[i].id)
                 // convert to small case and replace space with underscore
@@ -364,7 +369,7 @@ const CustomAssistantConfigurePreview = () => {
                     name,
                     description: desc,
                     retriever: `{{${docStoreVSId}.data.instance}}`,
-                    returnSourceDocuments: true
+                    returnSourceDocuments: selectedDocumentStores[i].returnSourceDocuments ?? false
                 })
 
                 const docStoreVS = {
@@ -483,7 +488,7 @@ const CustomAssistantConfigurePreview = () => {
         } catch (error) {
             console.error('Error preparing config', error)
             enqueueSnackbar({
-                message: `Не удалось сохранить ассистента: ${
+                message: `Failed to save assistant: ${
                     typeof error.response.data === 'object' ? error.response.data.message : error.response.data
                 }`,
                 options: {
@@ -507,19 +512,20 @@ const CustomAssistantConfigurePreview = () => {
             handleDeleteFlow()
         } else if (setting === 'viewMessages') {
             setViewMessagesDialogProps({
-                title: 'Просмотр сообщений',
-                chatflow: canvas.chatflow
+                title: 'View Messages',
+                chatflow: canvas.chatflow,
+                isChatflow: false
             })
             setViewMessagesDialogOpen(true)
         } else if (setting === 'viewLeads') {
             setViewLeadsDialogProps({
-                title: 'Просмотр лидов',
+                title: 'View Leads',
                 chatflow: canvas.chatflow
             })
             setViewLeadsDialogOpen(true)
         } else if (setting === 'chatflowConfiguration') {
             setChatflowConfigurationDialogProps({
-                title: `Конфигурация ассистента`,
+                title: `Assistant Configuration`,
                 chatflow: canvas.chatflow
             })
             setChatflowConfigurationDialogOpen(true)
@@ -528,10 +534,10 @@ const CustomAssistantConfigurePreview = () => {
 
     const handleDeleteFlow = async () => {
         const confirmPayload = {
-            title: `Удалить`,
-            description: `Удалить ${selectedCustomAssistant.name}?`,
-            confirmButtonName: 'Удалить',
-            cancelButtonName: 'Отмена'
+            title: `Delete`,
+            description: `Delete ${selectedCustomAssistant.name}?`,
+            confirmButtonName: 'Delete',
+            cancelButtonName: 'Cancel'
         }
         const isConfirmed = await confirm(confirmPayload)
 
@@ -564,12 +570,12 @@ const CustomAssistantConfigurePreview = () => {
         const dialogProps = {
             value,
             inputParam: {
-                label: 'Инструкции',
+                label: 'Instructions',
                 name: 'instructions',
                 type: 'string'
             },
-            confirmButtonName: 'Сохранить',
-            cancelButtonName: 'Отмена'
+            confirmButtonName: 'Save',
+            cancelButtonName: 'Cancel'
         }
         setExpandDialogProps(dialogProps)
         setShowExpandDialog(true)
@@ -605,7 +611,7 @@ const CustomAssistantConfigurePreview = () => {
                 })
                 setSelectedDocumentStores(newSelectedDocumentStores)
                 enqueueSnackbar({
-                    message: 'Описание инструмента хранилища документов успешно сгенерировано',
+                    message: 'Document Store Tool Description generated successfully',
                     options: {
                         key: new Date().getTime() + Math.random(),
                         variant: 'success',
@@ -644,8 +650,8 @@ const CustomAssistantConfigurePreview = () => {
         }
 
         setAssistantPromptGeneratorDialogProps({
-            title: 'Сгенерировать инструкции',
-            description: 'Вы можете сгенерировать шаблон промпта, поделившись основными деталями о вашей задаче.',
+            title: 'Generate Instructions',
+            description: 'You can generate a prompt template by sharing basic details about your task.',
             data: { selectedChatModel }
         })
         setAssistantPromptGeneratorDialogOpen(true)
@@ -653,7 +659,7 @@ const CustomAssistantConfigurePreview = () => {
 
     const onAPIDialogClick = () => {
         setAPIDialogProps({
-            title: 'Встроить на веб-сайт или использовать как API',
+            title: 'Embed in website or use as API',
             chatflowid: customAssistantFlowId,
             chatflowApiKeyId: canvas.chatflow.apikeyid,
             isSessionMemory: true
@@ -671,7 +677,8 @@ const CustomAssistantConfigurePreview = () => {
             const newDocStore = {
                 id: docStoreId,
                 name: foundDocumentStoreOption?.label || '',
-                description: foundSelectedDocumentStore?.description || foundDocumentStoreOption?.description || ''
+                description: foundSelectedDocumentStore?.description || foundDocumentStoreOption?.description || '',
+                returnSourceDocuments: foundSelectedDocumentStore?.returnSourceDocuments ?? false
             }
 
             newSelectedDocumentStores.push(newDocStore)
@@ -857,7 +864,7 @@ const CustomAssistantConfigurePreview = () => {
                                                         size='small'
                                                         color='secondary'
                                                         aria-label='back'
-                                                        title='Назад'
+                                                        title='Back'
                                                         onClick={() => navigate(-1)}
                                                     >
                                                         <IconArrowLeft />
@@ -890,7 +897,7 @@ const CustomAssistantConfigurePreview = () => {
                                                     </ButtonBase>
                                                 )}
                                                 <Available permission={'assistants:create'}>
-                                                    <ButtonBase title={`Сохранить`} sx={{ borderRadius: '50%', mr: 2 }}>
+                                                    <ButtonBase title={`Save`} sx={{ borderRadius: '50%', mr: 2 }}>
                                                         <Avatar
                                                             variant='rounded'
                                                             sx={{
@@ -912,7 +919,7 @@ const CustomAssistantConfigurePreview = () => {
                                                     </ButtonBase>
                                                 </Available>
                                                 {customAssistantFlowId && !loadingAssistant && (
-                                                    <ButtonBase ref={settingsRef} title='Настройки' sx={{ borderRadius: '50%' }}>
+                                                    <ButtonBase ref={settingsRef} title='Settings' sx={{ borderRadius: '50%' }}>
                                                         <Avatar
                                                             variant='rounded'
                                                             sx={{
@@ -934,11 +941,7 @@ const CustomAssistantConfigurePreview = () => {
                                                 )}
                                                 {!customAssistantFlowId && !loadingAssistant && (
                                                     <Available permission={'assistants:delete'}>
-                                                        <ButtonBase
-                                                            ref={settingsRef}
-                                                            title='Удалить ассистента'
-                                                            sx={{ borderRadius: '50%' }}
-                                                        >
+                                                        <ButtonBase ref={settingsRef} title='Delete Assistant' sx={{ borderRadius: '50%' }}>
                                                             <Avatar
                                                                 variant='rounded'
                                                                 sx={{
@@ -973,7 +976,7 @@ const CustomAssistantConfigurePreview = () => {
                                         >
                                             <div style={{ display: 'flex', flexDirection: 'row' }}>
                                                 <Typography>
-                                                    Выбрать модель<span style={{ color: 'red' }}>&nbsp;*</span>
+                                                    Select Model<span style={{ color: 'red' }}>&nbsp;*</span>
                                                 </Typography>
                                             </div>
                                             <Dropdown
@@ -995,7 +998,7 @@ const CustomAssistantConfigurePreview = () => {
                                                         }
                                                     }
                                                 }}
-                                                value={selectedChatModel ? selectedChatModel?.name : 'выберите опцию'}
+                                                value={selectedChatModel ? selectedChatModel?.name : 'choose an option'}
                                             />
                                         </Box>
                                         <Box
@@ -1010,7 +1013,7 @@ const CustomAssistantConfigurePreview = () => {
                                         >
                                             <Stack sx={{ position: 'relative', alignItems: 'center' }} direction='row'>
                                                 <Typography>
-                                                    Инструкции<span style={{ color: 'red' }}>&nbsp;*</span>
+                                                    Instructions<span style={{ color: 'red' }}>&nbsp;*</span>
                                                 </Typography>
                                                 <div style={{ flex: 1 }}></div>
                                                 <IconButton
@@ -1019,7 +1022,7 @@ const CustomAssistantConfigurePreview = () => {
                                                         height: 25,
                                                         width: 25
                                                     }}
-                                                    title='Развернуть'
+                                                    title='Expand'
                                                     color='secondary'
                                                     onClick={() => onExpandDialogClicked(customAssistantInstruction)}
                                                 >
@@ -1027,14 +1030,14 @@ const CustomAssistantConfigurePreview = () => {
                                                 </IconButton>
                                                 {selectedChatModel?.name && (
                                                     <Button
-                                                        title='Сгенерировать инструкции с помощью модели'
+                                                        title='Generate instructions using model'
                                                         sx={{ borderRadius: 20 }}
                                                         size='small'
                                                         variant='text'
                                                         onClick={() => generateInstruction()}
                                                         startIcon={<IconWand size={20} />}
                                                     >
-                                                        Сгенерировать
+                                                        Generate
                                                     </Button>
                                                 )}
                                             </Stack>
@@ -1058,8 +1061,8 @@ const CustomAssistantConfigurePreview = () => {
                                             }}
                                         >
                                             <Stack sx={{ position: 'relative', alignItems: 'center' }} direction='row'>
-                                                <Typography>Знания (Хранилища документов)</Typography>
-                                                <TooltipWithParser title='Дайте вашему ассистенту контекст о различных источниках документов. Хранилища документов должны быть предварительно загружены.' />
+                                                <Typography>Knowledge (Document Stores)</Typography>
+                                                <TooltipWithParser title='Give your assistant context about different document sources. Document stores must be upserted in advance.' />
                                             </Stack>
                                             <MultiDropdown
                                                 key={JSON.stringify(selectedDocumentStores)}
@@ -1072,14 +1075,14 @@ const CustomAssistantConfigurePreview = () => {
                                                         onDocStoreItemSelected(newValue)
                                                     }
                                                 }}
-                                                value={selectedDocumentStores.map((ds) => ds.id) ?? 'выберите опцию'}
+                                                value={selectedDocumentStores.map((ds) => ds.id) ?? 'choose an option'}
                                             />
                                             {selectedDocumentStores.length > 0 && (
                                                 <Stack sx={{ mt: 3, position: 'relative', alignItems: 'center' }} direction='row'>
                                                     <Typography>
-                                                        Описать знания<span style={{ color: 'red' }}>&nbsp;*</span>
+                                                        Describe Knowledge<span style={{ color: 'red' }}>&nbsp;*</span>
                                                     </Typography>
-                                                    <TooltipWithParser title='Опишите, о чем база знаний, это полезно для ИИ, чтобы знать, когда и как искать правильную информацию' />
+                                                    <TooltipWithParser title='Describe what the knowledge base is about, this is useful for the AI to know when and how to search for correct information' />
                                                 </Stack>
                                             )}
                                             {selectedDocumentStores.map((ds, index) => {
@@ -1114,14 +1117,14 @@ const CustomAssistantConfigurePreview = () => {
                                                             <div style={{ flex: 1 }}></div>
                                                             {selectedChatModel?.name && (
                                                                 <Button
-                                                                    title='Сгенерировать описание с помощью модели'
+                                                                    title='Generate description using model'
                                                                     sx={{ borderRadius: 20 }}
                                                                     size='small'
                                                                     variant='text'
                                                                     onClick={() => generateDocStoreToolDesc(ds.id)}
                                                                     startIcon={<IconWand size={20} />}
                                                                 >
-                                                                    Сгенерировать
+                                                                    Generate
                                                                 </Button>
                                                             )}
                                                         </Stack>
@@ -1134,6 +1137,18 @@ const CustomAssistantConfigurePreview = () => {
                                                             onChange={(event) => {
                                                                 const newSelectedDocumentStores = [...selectedDocumentStores]
                                                                 newSelectedDocumentStores[index].description = event.target.value
+                                                                setSelectedDocumentStores(newSelectedDocumentStores)
+                                                            }}
+                                                        />
+                                                        <Stack sx={{ mt: 2, position: 'relative', alignItems: 'center' }} direction='row'>
+                                                            <Typography>Return Source Documents</Typography>
+                                                            <TooltipWithParser title='Return the actual source documents that were used to answer the question' />
+                                                        </Stack>
+                                                        <SwitchInput
+                                                            value={ds.returnSourceDocuments ?? false}
+                                                            onChange={(newValue) => {
+                                                                const newSelectedDocumentStores = [...selectedDocumentStores]
+                                                                newSelectedDocumentStores[index].returnSourceDocuments = newValue
                                                                 setSelectedDocumentStores(newSelectedDocumentStores)
                                                             }}
                                                         />
@@ -1175,8 +1190,8 @@ const CustomAssistantConfigurePreview = () => {
                                             }}
                                         >
                                             <Stack sx={{ position: 'relative', alignItems: 'center' }} direction='row'>
-                                                <Typography>Инструменты</Typography>
-                                                <TooltipWithParser title='Инструменты - это действия, которые может выполнять ваш ассистент' />
+                                                <Typography>Tools</Typography>
+                                                <TooltipWithParser title='Tools are actions that your assistant can perform' />
                                             </Stack>
                                             {selectedTools.map((tool, index) => {
                                                 return (
@@ -1193,7 +1208,7 @@ const CustomAssistantConfigurePreview = () => {
                                                         <Box sx={{ pl: 2, pr: 2, pt: 2, pb: 0 }}>
                                                             <div style={{ display: 'flex', flexDirection: 'row' }}>
                                                                 <Typography>
-                                                                    Инструмент<span style={{ color: 'red' }}>&nbsp;*</span>
+                                                                    Tool<span style={{ color: 'red' }}>&nbsp;*</span>
                                                                 </Typography>
                                                                 <div style={{ flex: 1 }}></div>
                                                                 <IconButton
@@ -1230,7 +1245,7 @@ const CustomAssistantConfigurePreview = () => {
                                                                         }
                                                                     }
                                                                 }}
-                                                                value={tool?.name || 'выберите опцию'}
+                                                                value={tool?.name || 'choose an option'}
                                                             />
                                                         </Box>
                                                         {tool && Object.keys(tool).length === 0 && (
@@ -1263,19 +1278,19 @@ const CustomAssistantConfigurePreview = () => {
                                             })}
                                             <Button
                                                 fullWidth
-                                                title='Добавить инструмент'
+                                                title='Add Tool'
                                                 sx={{ mt: 1, mb: 1, borderRadius: 20 }}
                                                 variant='outlined'
                                                 onClick={() => setSelectedTools([...selectedTools, {}])}
                                             >
-                                                Добавить инструмент
+                                                Add Tool
                                             </Button>
                                         </Box>
                                         {selectedChatModel && Object.keys(selectedChatModel).length > 0 && (
                                             <Available permission={'assistants:create'}>
                                                 <Button
                                                     fullWidth
-                                                    title='Сохранить ассистента'
+                                                    title='Save Assistant'
                                                     sx={{
                                                         mt: 1,
                                                         mb: 1,
@@ -1285,7 +1300,7 @@ const CustomAssistantConfigurePreview = () => {
                                                     variant='contained'
                                                     onClick={onSaveAndProcess}
                                                 >
-                                                    Сохранить ассистента
+                                                    Save Assistant
                                                 </Button>
                                             </Available>
                                         )}

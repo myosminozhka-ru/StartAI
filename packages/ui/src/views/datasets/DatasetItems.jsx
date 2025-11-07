@@ -26,9 +26,11 @@ import ConfirmDialog from '@/ui-component/dialog/ConfirmDialog'
 import AddEditDatasetRowDialog from './AddEditDatasetRowDialog'
 import UploadCSVFileDialog from '@/views/datasets/UploadCSVFileDialog'
 import ErrorBoundary from '@/ErrorBoundary'
+import { useError } from '@/store/context/ErrorContext'
 import ViewHeader from '@/layout/MainLayout/ViewHeader'
 import { PermissionButton, StyledPermissionButton } from '@/ui-component/button/RBACButtons'
 import AddEditDatasetDialog from '@/views/datasets/AddEditDatasetDialog'
+import TablePagination, { DEFAULT_ITEMS_PER_PAGE } from '@/ui-component/pagination/TablePagination'
 
 // API
 import datasetsApi from '@/api/dataset'
@@ -44,8 +46,6 @@ import { useAuth } from '@/hooks/useAuth'
 import empty_datasetSVG from '@/assets/images/empty_datasets.svg'
 import { IconTrash, IconPlus, IconX, IconUpload, IconArrowsDownUp } from '@tabler/icons-react'
 import DragIndicatorIcon from '@mui/icons-material/DragIndicator'
-
-import { useError } from '@/store/context/ErrorContext'
 
 // ==============================|| Dataset Items ||============================== //
 
@@ -84,6 +84,25 @@ const EvalDatasetRows = () => {
     const [Draggable, setDraggable] = useState(false)
     const [startDragPos, setStartDragPos] = useState(-1)
     const [endDragPos, setEndDragPos] = useState(-1)
+
+    /* Table Pagination */
+    const [currentPage, setCurrentPage] = useState(1)
+    const [pageLimit, setPageLimit] = useState(DEFAULT_ITEMS_PER_PAGE)
+    const [total, setTotal] = useState(0)
+    const onChange = (page, pageLimit) => {
+        setCurrentPage(page)
+        setPageLimit(pageLimit)
+        refresh(page, pageLimit)
+    }
+
+    const refresh = (page, limit) => {
+        setLoading(true)
+        const params = {
+            page: page || currentPage,
+            limit: limit || pageLimit
+        }
+        getDatasetRows.request(datasetId, params)
+    }
 
     const handleDragStart = (e, position) => {
         draggingItem.current = position
@@ -140,8 +159,8 @@ const EvalDatasetRows = () => {
     const addNew = () => {
         const dialogProp = {
             type: 'ADD',
-            cancelButtonName: 'Отмена',
-            confirmButtonName: 'Добавить',
+            cancelButtonName: 'Cancel',
+            confirmButtonName: 'Add',
             data: {
                 datasetId: datasetId,
                 datasetName: dataset.name
@@ -154,8 +173,8 @@ const EvalDatasetRows = () => {
     const uploadCSV = () => {
         const dialogProp = {
             type: 'ADD',
-            cancelButtonName: 'Отмена',
-            confirmButtonName: 'Загрузить',
+            cancelButtonName: 'Cancel',
+            confirmButtonName: 'Upload',
             data: {
                 datasetId: datasetId,
                 datasetName: dataset.name
@@ -168,8 +187,8 @@ const EvalDatasetRows = () => {
     const editDs = () => {
         const dialogProp = {
             type: 'EDIT',
-            cancelButtonName: 'Отмена',
-            confirmButtonName: 'Сохранить',
+            cancelButtonName: 'Cancel',
+            confirmButtonName: 'Save',
             data: dataset
         }
         setDatasetDialogProps(dialogProp)
@@ -179,8 +198,8 @@ const EvalDatasetRows = () => {
     const edit = (item) => {
         const dialogProp = {
             type: 'EDIT',
-            cancelButtonName: 'Отмена',
-            confirmButtonName: 'Сохранить',
+            cancelButtonName: 'Cancel',
+            confirmButtonName: 'Save',
             data: {
                 datasetName: dataset.name,
                 ...item
@@ -192,10 +211,10 @@ const EvalDatasetRows = () => {
 
     const deleteDatasetItems = async () => {
         const confirmPayload = {
-            title: `Удалить`,
-            description: `Удалить ${selected.length} элементов набора данных?`,
-            confirmButtonName: 'Удалить',
-            cancelButtonName: 'Отмена'
+            title: `Delete`,
+            description: `Delete ${selected.length} dataset items?`,
+            confirmButtonName: 'Delete',
+            cancelButtonName: 'Cancel'
         }
         const isConfirmed = await confirm(confirmPayload)
 
@@ -204,7 +223,7 @@ const EvalDatasetRows = () => {
                 const deleteResp = await datasetsApi.deleteDatasetItems(selected)
                 if (deleteResp.data) {
                     enqueueSnackbar({
-                        message: 'Элементы набора данных удалены',
+                        message: 'Dataset Items deleted',
                         options: {
                             key: new Date().getTime() + Math.random(),
                             variant: 'success',
@@ -219,7 +238,7 @@ const EvalDatasetRows = () => {
                 }
             } catch (error) {
                 enqueueSnackbar({
-                    message: `Не удалось удалить элементы набора данных: ${
+                    message: `Failed to delete dataset items: ${
                         typeof error.response.data === 'object' ? error.response.data.message : error.response.data
                     }`,
                     options: {
@@ -242,11 +261,11 @@ const EvalDatasetRows = () => {
         setShowRowDialog(false)
         setShowUploadDialog(false)
         setShowDatasetDialog(false)
-        getDatasetRows.request(datasetId)
+        refresh(currentPage, pageLimit)
     }
 
     useEffect(() => {
-        getDatasetRows.request(datasetId)
+        refresh(currentPage, pageLimit)
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
 
@@ -254,6 +273,7 @@ const EvalDatasetRows = () => {
         if (getDatasetRows.data) {
             const dataset = getDatasetRows.data
             setDataset(dataset)
+            setTotal(dataset.total)
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [getDatasetRows.data])
@@ -275,7 +295,7 @@ const EvalDatasetRows = () => {
                             onEdit={editDs}
                             onBack={() => window.history.back()}
                             search={false}
-                            title={`Набор данных : ${dataset?.name || ''}`}
+                            title={`Dataset : ${dataset?.name || ''}`}
                             description={dataset?.description}
                         >
                             <StyledPermissionButton
@@ -286,7 +306,7 @@ const EvalDatasetRows = () => {
                                 onClick={uploadCSV}
                                 startIcon={<IconUpload />}
                             >
-                                Загрузить CSV
+                                Upload CSV
                             </StyledPermissionButton>
                             <StyledPermissionButton
                                 permissionId={'datasets:create,datasets:update'}
@@ -295,7 +315,7 @@ const EvalDatasetRows = () => {
                                 onClick={addNew}
                                 startIcon={<IconPlus />}
                             >
-                                Новый элемент
+                                New Item
                             </StyledPermissionButton>
                         </ViewHeader>
                         {selected.length > 0 && (
@@ -307,8 +327,7 @@ const EvalDatasetRows = () => {
                                 color='error'
                                 startIcon={<IconTrash />}
                             >
-                                Удалить {selected.length}{' '}
-                                {selected.length === 1 ? 'элемент' : selected.length < 5 ? 'элемента' : 'элементов'}
+                                Delete {selected.length} {selected.length === 1 ? 'item' : 'items'}
                             </PermissionButton>
                         )}
                         {!isLoading && dataset?.rows?.length <= 0 ? (
@@ -320,7 +339,7 @@ const EvalDatasetRows = () => {
                                         alt='empty_datasetSVG'
                                     />
                                 </Box>
-                                <div>Пока нет элементов набора данных</div>
+                                <div>No Dataset Items Yet</div>
                                 <StyledPermissionButton
                                     permissionId={'datasets:create,datasets:update'}
                                     variant='contained'
@@ -328,7 +347,7 @@ const EvalDatasetRows = () => {
                                     startIcon={<IconPlus />}
                                     onClick={addNew}
                                 >
-                                    Новый элемент
+                                    New Item
                                 </StyledPermissionButton>
                             </Stack>
                         ) : (
@@ -357,8 +376,8 @@ const EvalDatasetRows = () => {
                                                         }}
                                                     />
                                                 </StyledTableCell>
-                                                <StyledTableCell>Входные данные</StyledTableCell>
-                                                <StyledTableCell>Ожидаемый результат</StyledTableCell>
+                                                <StyledTableCell>Input</StyledTableCell>
+                                                <StyledTableCell>Expected Output</StyledTableCell>
                                                 <StyledTableCell style={{ width: '1%' }}>
                                                     <IconArrowsDownUp />
                                                 </StyledTableCell>
@@ -450,9 +469,11 @@ const EvalDatasetRows = () => {
                                         </TableBody>
                                     </Table>
                                 </TableContainer>
-                                <Typography sx={{ color: theme.palette.grey[600] }} variant='subtitle2'>
-                                    <i>Используйте значок перетаскивания (справа) для изменения порядка элементов набора данных</i>
+                                <Typography sx={{ color: theme.palette.grey[600], marginTop: -2 }} variant='subtitle2'>
+                                    <i>Use the drag icon at (extreme right) to reorder the dataset items</i>
                                 </Typography>
+                                {/* Pagination and Page Size Controls */}
+                                <TablePagination currentPage={currentPage} limit={pageLimit} total={total} onChange={onChange} />
                             </React.Fragment>
                         )}
                     </Stack>

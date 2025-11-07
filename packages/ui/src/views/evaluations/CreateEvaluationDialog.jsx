@@ -21,7 +21,8 @@ import {
     Switch,
     StepLabel,
     IconButton,
-    FormControlLabel
+    FormControlLabel,
+    Checkbox
 } from '@mui/material'
 import { useTheme } from '@mui/material/styles'
 
@@ -42,6 +43,7 @@ import useApi from '@/hooks/useApi'
 import datasetsApi from '@/api/dataset'
 import evaluatorsApi from '@/api/evaluators'
 import nodesApi from '@/api/nodes'
+import assistantsApi from '@/api/assistants'
 
 // utils
 import useNotifier from '@/utils/useNotifier'
@@ -49,7 +51,7 @@ import useNotifier from '@/utils/useNotifier'
 // const
 import { evaluators as evaluatorsOptions } from '../evaluators/evaluatorConstant'
 
-const steps = ['Наборы данных', 'Оценщики', 'LLM метрики']
+const steps = ['Datasets', 'Evaluators', 'LLM Graded Metrics']
 
 const CreateEvaluationDialog = ({ show, dialogProps, onCancel, onConfirm }) => {
     const portalElement = document.getElementById('portal')
@@ -57,14 +59,18 @@ const CreateEvaluationDialog = ({ show, dialogProps, onCancel, onConfirm }) => {
     useNotifier()
 
     const getAllChatflowsApi = useApi(chatflowsApi.getAllChatflows)
+    const getAllAgentflowsApi = useApi(chatflowsApi.getAllAgentflows)
+
     const getAllDatasetsApi = useApi(datasetsApi.getAllDatasets)
     const getAllEvaluatorsApi = useApi(evaluatorsApi.getAllEvaluators)
     const getNodesByCategoryApi = useApi(nodesApi.getNodesByCategory)
     const getModelsApi = useApi(nodesApi.executeNodeLoadMethod)
+    const getAssistantsApi = useApi(assistantsApi.getAllAssistants)
 
     const [chatflow, setChatflow] = useState([])
     const [dataset, setDataset] = useState('')
     const [datasetAsOneConversation, setDatasetAsOneConversation] = useState(false)
+    const [flowTypes, setFlowTypes] = useState([])
 
     const [flows, setFlows] = useState([])
     const [datasets, setDatasets] = useState([])
@@ -163,6 +169,10 @@ const CreateEvaluationDialog = ({ show, dialogProps, onCancel, onConfirm }) => {
         for (let i = 0; i < selectedChatflows.length; i += 1) {
             selectedChatflowNames.push(flows.find((f) => f.name === selectedChatflows[i])?.label)
         }
+        const selectedChatflowTypes = []
+        for (let i = 0; i < selectedChatflows.length; i += 1) {
+            selectedChatflowTypes.push(flows.find((f) => f.name === selectedChatflows[i])?.type)
+        }
         const chatflowName = JSON.stringify(selectedChatflowNames)
         const datasetName = datasets.find((f) => f.name === dataset)?.label
         const obj = {
@@ -173,6 +183,7 @@ const CreateEvaluationDialog = ({ show, dialogProps, onCancel, onConfirm }) => {
             datasetName: datasetName,
             chatflowId: chatflow,
             chatflowName: chatflowName,
+            chatflowType: JSON.stringify(selectedChatflowTypes),
             selectedSimpleEvaluators: selectedSimpleEvaluators,
             selectedLLMEvaluators: selectedLLMEvaluators,
             model: selectedModel,
@@ -216,6 +227,8 @@ const CreateEvaluationDialog = ({ show, dialogProps, onCancel, onConfirm }) => {
         getNodesByCategoryApi.request('Chat Models')
         if (flows.length === 0) {
             getAllChatflowsApi.request()
+            getAssistantsApi.request('CUSTOM')
+            getAllAgentflowsApi.request('AGENTFLOW')
         }
         if (datasets.length === 0) {
             getAllDatasetsApi.request()
@@ -225,23 +238,18 @@ const CreateEvaluationDialog = ({ show, dialogProps, onCancel, onConfirm }) => {
     }, [])
 
     useEffect(() => {
-        if (getAllChatflowsApi.data) {
+        if (getAllAgentflowsApi.data && getAllChatflowsApi.data && getAssistantsApi.data) {
             try {
-                const chatflows = getAllChatflowsApi.data
-                let flowNames = []
-                for (let i = 0; i < chatflows.length; i += 1) {
-                    const flow = chatflows[i]
-                    flowNames.push({
-                        label: flow.name,
-                        name: flow.id
-                    })
-                }
-                setFlows(flowNames)
+                const agentFlows = populateFlowNames(getAllAgentflowsApi.data, 'Agentflow v2')
+                const chatFlows = populateFlowNames(getAllChatflowsApi.data, 'Chatflow')
+                const assistants = populateAssistants(getAssistantsApi.data)
+                setFlows([...agentFlows, ...chatFlows, ...assistants])
+                setFlowTypes(['Agentflow v2', 'Chatflow', 'Custom Assistant'])
             } catch (e) {
                 console.error(e)
             }
         }
-    }, [getAllChatflowsApi.data])
+    }, [getAllAgentflowsApi.data, getAllChatflowsApi.data, getAssistantsApi.data])
 
     useEffect(() => {
         if (getNodesByCategoryApi.data) {
@@ -249,7 +257,7 @@ const CreateEvaluationDialog = ({ show, dialogProps, onCancel, onConfirm }) => {
             try {
                 const nodes = getNodesByCategoryApi.data
                 llmNodes.push({
-                    label: 'Без оценки',
+                    label: 'No Grading',
                     name: 'no_grading',
                     credential: {}
                 })
@@ -337,6 +345,44 @@ const CreateEvaluationDialog = ({ show, dialogProps, onCancel, onConfirm }) => {
         if (llm !== 'no_grading') getModelsApi.request(llm, { loadMethod: 'listModels' })
     }
 
+    const onChangeFlowType = (flowType) => {
+        const selected = flowType.target.checked
+        const flowTypeValue = flowType.target.value
+        if (selected) {
+            setFlowTypes([...flowTypes, flowTypeValue])
+        } else {
+            setFlowTypes(flowTypes.filter((f) => f !== flowTypeValue))
+        }
+    }
+
+    const populateFlowNames = (data, type) => {
+        let flowNames = []
+        for (let i = 0; i < data.length; i += 1) {
+            const flow = data[i]
+            flowNames.push({
+                label: flow.name,
+                name: flow.id,
+                type: type,
+                description: type
+            })
+        }
+        return flowNames
+    }
+
+    const populateAssistants = (assistants) => {
+        let assistantNames = []
+        for (let i = 0; i < assistants.length; i += 1) {
+            const assistant = assistants[i]
+            assistantNames.push({
+                label: JSON.parse(assistant.details).name || '',
+                name: assistant.id,
+                type: 'Custom Assistant',
+                description: 'Custom Assistant'
+            })
+        }
+        return assistantNames
+    }
+
     const component = show ? (
         <Dialog
             fullWidth
@@ -349,7 +395,7 @@ const CreateEvaluationDialog = ({ show, dialogProps, onCancel, onConfirm }) => {
             <DialogTitle sx={{ fontSize: '1rem' }} id='alert-dialog-title'>
                 <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
                     <IconTestPipe2 style={{ marginRight: '10px' }} />
-                    {'Запустить новую оценку'}
+                    {'Start New Evaluation'}
                 </div>
             </DialogTitle>
             <DialogContent>
@@ -384,7 +430,7 @@ const CreateEvaluationDialog = ({ show, dialogProps, onCancel, onConfirm }) => {
                                     }}
                                 />
                             </div>
-                            Заполните все обязательные поля
+                            Fill all the mandatory fields
                         </div>
                     )}
                     <EvalWizard />
@@ -392,13 +438,13 @@ const CreateEvaluationDialog = ({ show, dialogProps, onCancel, onConfirm }) => {
                         {activeStep === 0 && (
                             <>
                                 <Typography sx={{ mt: 2 }} variant='h4'>
-                                    Выберите набор данных для тестирования на потоках
+                                    Select dataset to be tested on flows
                                 </Typography>
                                 <Typography sx={{ mt: 2 }} variant='body2'>
-                                    Использует столбец <span style={{ fontStyle: 'italic' }}>input</span> из набора данных для выполнения
-                                    выбранных чатфлоу(ов) и сравнивает результаты со столбцом output.
+                                    Uses the <span style={{ fontStyle: 'italic' }}>input</span> column from the dataset to execute selected
+                                    Chatflow(s), and compares the results with the output column.
                                 </Typography>
-                                <Typography variant='body2'>Будут вычислены следующие метрики:</Typography>
+                                <Typography variant='body2'>The following metrics will be computed:</Typography>
                                 <Stack
                                     flexDirection='row'
                                     sx={{ mt: 2, gap: 1, alignItems: 'center', justifyContent: 'center', flexWrap: 'wrap' }}
@@ -414,29 +460,29 @@ const CreateEvaluationDialog = ({ show, dialogProps, onCancel, onConfirm }) => {
                         {activeStep === 1 && (
                             <>
                                 <Typography sx={{ mt: 2 }} variant='h4'>
-                                    Модульное тестирование потоков с помощью пользовательских оценщиков
+                                    Unit Test your flows by adding custom evaluators
                                 </Typography>
                                 <Typography sx={{ mt: 2, mb: 2 }} variant='body2'>
-                                    После выполнения все выбранные оценщики будут выполнены на результатах. Каждый оценщик будет оценивать
-                                    результаты на основе определенных критериев и возвращать индикатор прохождения/непрохождения.
+                                    Post execution, all the chosen evaluators will be executed on the results. Each evaluator will grade the
+                                    results based on the criteria defined and return a pass/fail indicator.
                                 </Typography>
                                 <Chip
                                     variant='contained'
                                     color='success'
                                     sx={{ background: theme.palette.teal.main, color: 'white' }}
-                                    label={'прохождение'}
+                                    label={'pass'}
                                 />
-                                <Chip variant='contained' color='error' style={{ margin: 5 }} label={'непрохождение'} />
+                                <Chip variant='contained' color='error' style={{ margin: 5 }} label={'fail'} />
                             </>
                         )}
                         {activeStep === 2 && (
                             <>
                                 <Typography sx={{ mt: 2 }} variant='h4'>
-                                    Оценка потоков с помощью LLM
+                                    Grade flows using an LLM
                                 </Typography>
                                 <Typography sx={{ mt: 2 }} variant='body2'>
-                                    После выполнения оценивает ответы с помощью LLM. Используется для генерации сравнительных оценок,
-                                    рассуждений или других пользовательских критериев.
+                                    Post execution, grades the answers by using an LLM. Used to generate comparative scores or reasoning or
+                                    other custom defined criteria.
                                 </Typography>
                             </>
                         )}
@@ -445,15 +491,15 @@ const CreateEvaluationDialog = ({ show, dialogProps, onCancel, onConfirm }) => {
                         <>
                             <Box>
                                 <Typography variant='overline'>
-                                    Название<span style={{ color: 'red' }}>&nbsp;*</span>
+                                    Name<span style={{ color: 'red' }}>&nbsp;*</span>
                                 </Typography>
-                                <TooltipWithParser style={{ marginLeft: 10 }} title={'Дружественное имя для маркировки этого запуска.'} />
+                                <TooltipWithParser style={{ marginLeft: 10 }} title={'Friendly name to tag this run.'} />
                                 <OutlinedInput
                                     id='evaluationName'
                                     type='string'
                                     size='small'
                                     fullWidth
-                                    placeholder='Оценка'
+                                    placeholder='Evaluation'
                                     value={evaluationName}
                                     name='evaluationName'
                                     onChange={(e) => setEvaluationName(e.target.value)}
@@ -461,11 +507,11 @@ const CreateEvaluationDialog = ({ show, dialogProps, onCancel, onConfirm }) => {
                             </Box>
                             <Box>
                                 <Typography variant='overline'>
-                                    Набор данных для использования<span style={{ color: 'red' }}>&nbsp;*</span>
+                                    Dataset to use<span style={{ color: 'red' }}>&nbsp;*</span>
                                 </Typography>
                                 <Dropdown
                                     name='dataset'
-                                    defaultOption='Выберите набор данных'
+                                    defaultOption='Select Dataset'
                                     options={datasets}
                                     onSelect={(newValue) => setDataset(newValue)}
                                     value={dataset}
@@ -473,23 +519,47 @@ const CreateEvaluationDialog = ({ show, dialogProps, onCancel, onConfirm }) => {
                             </Box>
                             <Box>
                                 <Typography variant='overline' sx={{ mr: 2 }}>
-                                    Обрабатывать все строки набора данных как один разговор ?
+                                    Treat all dataset rows as one conversation ?
                                 </Typography>
                                 <FormControlLabel
+                                    label=''
                                     control={<Switch />}
                                     value={datasetAsOneConversation}
                                     onChange={() => setDatasetAsOneConversation(!datasetAsOneConversation)}
                                 />
                             </Box>
                             <Box>
-                                <Typography variant='overline'>
-                                    Чатфлоу(ы) для оценки<span style={{ color: 'red' }}>&nbsp;*</span>
-                                </Typography>
+                                <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                                    <Typography variant='overline'>
+                                        Select your flows to Evaluate
+                                        <span style={{ color: 'red' }}>&nbsp;*</span>
+                                    </Typography>
+                                    <Typography variant='overline'>
+                                        <Checkbox defaultChecked size='small' label='All' value='Chatflow' onChange={onChangeFlowType} />{' '}
+                                        Chatflows
+                                        <Checkbox
+                                            defaultChecked
+                                            size='small'
+                                            label='All'
+                                            value='Agentflow v2'
+                                            onChange={onChangeFlowType}
+                                        />{' '}
+                                        Agentflows (v2)
+                                        <Checkbox
+                                            defaultChecked
+                                            size='small'
+                                            label='All'
+                                            value='Custom Assistant'
+                                            onChange={onChangeFlowType}
+                                        />{' '}
+                                        Custom Assistants
+                                    </Typography>
+                                </div>
                                 <MultiDropdown
                                     name={'chatflow1'}
-                                    options={flows}
+                                    options={flows.filter((f) => flowTypes.includes(f.type))}
                                     onSelect={(newValue) => setChatflow(newValue)}
-                                    value={chatflow ?? chatflow ?? 'выберите опцию'}
+                                    value={chatflow ?? chatflow ?? 'choose an option'}
                                 />
                             </Box>
                         </>
@@ -497,7 +567,7 @@ const CreateEvaluationDialog = ({ show, dialogProps, onCancel, onConfirm }) => {
                     {activeStep === 1 && (
                         <>
                             <Box>
-                                <Typography variant='overline'>Выберите оценщики</Typography>
+                                <Typography variant='overline'>Select the Evaluators</Typography>
                                 <MultiDropdown
                                     name={'selectEvals'}
                                     options={availableSimpleEvaluators}
@@ -511,7 +581,7 @@ const CreateEvaluationDialog = ({ show, dialogProps, onCancel, onConfirm }) => {
                         <>
                             <Box>
                                 <Typography variant='overline' sx={{ mr: 2 }}>
-                                    Использовать LLM для оценки результатов ?
+                                    Use an LLM to grade the results ?
                                 </Typography>
                                 <Dropdown
                                     name='chatLLM'
@@ -523,7 +593,7 @@ const CreateEvaluationDialog = ({ show, dialogProps, onCancel, onConfirm }) => {
                             </Box>
                             {useLLM && availableModels.length > 0 && (
                                 <Box>
-                                    <Typography variant='overline'>Выберите модель</Typography>
+                                    <Typography variant='overline'>Select Model</Typography>
                                     <Dropdown
                                         name='selectedModel'
                                         defaultOption=''
@@ -535,13 +605,13 @@ const CreateEvaluationDialog = ({ show, dialogProps, onCancel, onConfirm }) => {
                             )}
                             {useLLM && availableModels.length === 0 && (
                                 <Box>
-                                    <Typography variant='overline'>Введите название модели</Typography>
+                                    <Typography variant='overline'>Enter the Model Name</Typography>
                                     <OutlinedInput
                                         id='selectedModel'
                                         type='string'
                                         size='small'
                                         fullWidth
-                                        placeholder='Название модели'
+                                        placeholder='Model Name'
                                         value={selectedModel}
                                         name='selectedModel'
                                         onChange={(e) => setSelectedModel(e.target.value)}
@@ -550,14 +620,14 @@ const CreateEvaluationDialog = ({ show, dialogProps, onCancel, onConfirm }) => {
                             )}
                             {useLLM && chatLLMs.find((llm) => llm.name === selectedLLM)?.credential && (
                                 <Box>
-                                    <Typography variant='overline'>Выберите учетные данные</Typography>
+                                    <Typography variant='overline'>Select Credential</Typography>
                                     <CredentialInputHandler
                                         key={selectedLLM}
                                         size='small'
                                         sx={{ flexGrow: 1, marginBottom: 3 }}
                                         data={credentialId ? { credential: credentialId } : {}}
                                         inputParam={{
-                                            label: 'Подключить учетные данные',
+                                            label: 'Connect Credential',
                                             name: 'credential',
                                             type: 'credential',
                                             credentialNames: [
@@ -572,7 +642,7 @@ const CreateEvaluationDialog = ({ show, dialogProps, onCancel, onConfirm }) => {
                             )}
                             {useLLM && (
                                 <Box>
-                                    <Typography variant='overline'>Выберите оценщики</Typography>
+                                    <Typography variant='overline'>Select Evaluators</Typography>
                                     <MultiDropdown
                                         name={'selectLLMEvals'}
                                         options={availableLLMEvaluators}
@@ -588,25 +658,25 @@ const CreateEvaluationDialog = ({ show, dialogProps, onCancel, onConfirm }) => {
             </DialogContent>
             <DialogActions style={{ justifyContent: 'space-between', marginBottom: 10 }}>
                 {activeStep > 0 && (
-                    <IconButton sx={{ ml: 2 }} color='secondary' title='Предыдущий шаг' onClick={() => goPrev(activeStep)}>
+                    <IconButton sx={{ ml: 2 }} color='secondary' title='Previous Step' onClick={() => goPrev(activeStep)}>
                         <IconArrowLeft />
                     </IconButton>
                 )}
                 <div style={{ flex: 1 }}></div>
                 {activeStep === 1 && selectedSimpleEvaluators.length === 0 && (
                     <Button
-                        title='Пропустить оценщики'
+                        title='Skip Evaluators'
                         color='primary'
                         sx={{ mr: 2, borderRadius: 25 }}
                         variant='outlined'
                         onClick={() => goNext(activeStep)}
                     >
-                        {'Пропустить'}
+                        {'Skip'}
                     </Button>
                 )}
                 {activeStep === 1 && selectedSimpleEvaluators.length > 0 && (
                     <Button color='primary' sx={{ mr: 2, borderRadius: 25 }} variant='contained' onClick={() => goNext(activeStep)}>
-                        {'Далее'}
+                        {'Next'}
                     </Button>
                 )}
                 {activeStep !== 1 && (
@@ -616,7 +686,7 @@ const CreateEvaluationDialog = ({ show, dialogProps, onCancel, onConfirm }) => {
                         variant='contained'
                         onClick={() => goNext(activeStep)}
                     >
-                        {activeStep === steps.length - 1 ? 'Запустить оценку' : 'Далее'}
+                        {activeStep === steps.length - 1 ? 'Start Evaluation' : 'Next'}
                     </StyledButton>
                 )}
             </DialogActions>

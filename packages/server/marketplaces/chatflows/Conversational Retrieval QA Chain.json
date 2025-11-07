@@ -1,7 +1,6 @@
 {
-    "description": "Вопросно-ответная система для документов с использованием Retrieval Augmented Generation (RAG) с Mistral и FAISS для поиска по сходству",
-    "badge": "NEW",
-    "usecases": ["Вопросно-ответная система для документов"],
+    "description": "Documents QnA using Retrieval Augmented Generation (RAG) with Mistral and FAISS for similarity search",
+    "usecases": ["Documents QnA"],
     "framework": ["Langchain"],
     "nodes": [
         {
@@ -15,23 +14,23 @@
             "type": "customNode",
             "data": {
                 "id": "openAIEmbeddings_0",
-                "label": "Встраивания OpenAI",
+                "label": "OpenAI Embeddings",
                 "version": 4,
                 "name": "openAIEmbeddings",
                 "type": "OpenAIEmbeddings",
                 "baseClasses": ["OpenAIEmbeddings", "Embeddings"],
-                "category": "Встраивания",
-                "description": "API OpenAI для генерации встраиваний для заданного текста",
+                "category": "Embeddings",
+                "description": "OpenAI API to generate embeddings for a given text",
                 "inputParams": [
                     {
-                        "label": "Подключить учетные данные",
+                        "label": "Connect Credential",
                         "name": "credential",
                         "type": "credential",
                         "credentialNames": ["openAIApi"],
                         "id": "openAIEmbeddings_0-input-credential-credential"
                     },
                     {
-                        "label": "Название модели",
+                        "label": "Model Name",
                         "name": "modelName",
                         "type": "asyncOptions",
                         "loadMethod": "listModels",
@@ -39,7 +38,7 @@
                         "id": "openAIEmbeddings_0-input-modelName-asyncOptions"
                     },
                     {
-                        "label": "Удалить переносы строк",
+                        "label": "Strip New Lines",
                         "name": "stripNewLines",
                         "type": "boolean",
                         "optional": true,
@@ -47,7 +46,7 @@
                         "id": "openAIEmbeddings_0-input-stripNewLines-boolean"
                     },
                     {
-                        "label": "Размер пакета",
+                        "label": "Batch Size",
                         "name": "batchSize",
                         "type": "number",
                         "optional": true,
@@ -55,7 +54,7 @@
                         "id": "openAIEmbeddings_0-input-batchSize-number"
                     },
                     {
-                        "label": "Таймаут",
+                        "label": "Timeout",
                         "name": "timeout",
                         "type": "number",
                         "optional": true,
@@ -63,7 +62,7 @@
                         "id": "openAIEmbeddings_0-input-timeout-number"
                     },
                     {
-                        "label": "Базовый путь",
+                        "label": "BasePath",
                         "name": "basepath",
                         "type": "string",
                         "optional": true,
@@ -71,7 +70,7 @@
                         "id": "openAIEmbeddings_0-input-basepath-string"
                     },
                     {
-                        "label": "Размерность",
+                        "label": "Dimensions",
                         "name": "dimensions",
                         "type": "number",
                         "optional": true,
@@ -118,16 +117,16 @@
             "type": "customNode",
             "data": {
                 "id": "recursiveCharacterTextSplitter_0",
-                "label": "Рекурсивный разделитель текста",
+                "label": "Recursive Character Text Splitter",
                 "version": 2,
                 "name": "recursiveCharacterTextSplitter",
                 "type": "RecursiveCharacterTextSplitter",
                 "baseClasses": ["RecursiveCharacterTextSplitter", "TextSplitter"],
-                "category": "Разделители текста",
-                "description": "Разделяет документы рекурсивно по разным символам - начиная с \"\\n\\n\", затем \"\\n\", затем \" \"",
+                "category": "Text Splitters",
+                "description": "Split documents recursively by different characters - starting with \"\\n\\n\", then \"\\n\", then \" \"",
                 "inputParams": [
                     {
-                        "label": "Размер фрагмента",
+                        "label": "Chunk Size",
                         "name": "chunkSize",
                         "type": "number",
                         "default": 1000,
@@ -135,18 +134,18 @@
                         "id": "recursiveCharacterTextSplitter_0-input-chunkSize-number"
                     },
                     {
-                        "label": "Перекрытие фрагментов",
+                        "label": "Chunk Overlap",
                         "name": "chunkOverlap",
                         "type": "number",
                         "optional": true,
                         "id": "recursiveCharacterTextSplitter_0-input-chunkOverlap-number"
                     },
                     {
-                        "label": "Пользовательские разделители",
+                        "label": "Custom Separators",
                         "name": "separators",
                         "type": "string",
                         "rows": 4,
-                        "description": "Массив пользовательских разделителей для определения места разделения текста, переопределит стандартные разделители",
+                        "description": "Array of custom separators to determine when to split the text, will override the default separators",
                         "placeholder": "[\"|\", \"##\", \">\", \"-\"]",
                         "additionalParams": true,
                         "optional": true,
@@ -187,23 +186,23 @@
             "type": "customNode",
             "data": {
                 "id": "textFile_0",
-                "label": "Текстовый файл",
+                "label": "Text File",
                 "version": 3,
                 "name": "textFile",
                 "type": "Document",
                 "baseClasses": ["Document"],
                 "category": "Document Loaders",
-                "description": "Загрузка данных из текстовых файлов",
+                "description": "Load data from text files",
                 "inputParams": [
                     {
-                        "label": "Текстовый файл",
+                        "label": "Txt File",
                         "name": "txtFile",
                         "type": "file",
                         "fileType": ".txt, .html, .aspx, .asp, .cpp, .c, .cs, .css, .go, .h, .java, .js, .less, .ts, .php, .proto, .python, .py, .rst, .ruby, .rb, .rs, .scala, .sc, .scss, .sol, .sql, .swift, .markdown, .md, .tex, .ltx, .vb, .xml",
                         "id": "textFile_0-input-txtFile-file"
                     },
                     {
-                        "label": "Метаданные",
+                        "label": "Metadata",
                         "name": "metadata",
                         "type": "json",
                         "optional": true,
@@ -213,7 +212,7 @@
                 ],
                 "inputAnchors": [
                     {
-                        "label": "Разделитель текста",
+                        "label": "Text Splitter",
                         "name": "textSplitter",
                         "type": "TextSplitter",
                         "optional": true,
@@ -269,70 +268,70 @@
             "type": "customNode",
             "data": {
                 "id": "conversationalRetrievalQAChain_0",
-                "label": "Цепь вопросно-ответной системы с контекстом",
+                "label": "Conversational Retrieval QA Chain",
                 "version": 3,
                 "name": "conversationalRetrievalQAChain",
                 "type": "ConversationalRetrievalQAChain",
                 "baseClasses": ["ConversationalRetrievalQAChain", "BaseChain", "Runnable"],
-                "category": "Цепи",
-                "description": "Вопросно-ответная система для документов - построена на основе RetrievalQAChain с добавлением компонента истории чата",
+                "category": "Chains",
+                "description": "Document QA - built on RetrievalQAChain to provide a chat history component",
                 "inputParams": [
                     {
-                        "label": "Возвращать исходные документы",
+                        "label": "Return Source Documents",
                         "name": "returnSourceDocuments",
                         "type": "boolean",
                         "optional": true,
                         "id": "conversationalRetrievalQAChain_0-input-returnSourceDocuments-boolean"
                     },
                     {
-                        "label": "Шаблон перефразировки",
+                        "label": "Rephrase Prompt",
                         "name": "rephrasePrompt",
                         "type": "string",
-                        "description": "Используя предыдущую историю чата, перефразируйте вопрос в самостоятельный вопрос",
-                        "warning": "Шаблон должен включать входные переменные: {chat_history} и {question}",
+                        "description": "Using previous chat history, rephrase question into a standalone question",
+                        "warning": "Prompt must include input variables: {chat_history} and {question}",
                         "rows": 4,
                         "additionalParams": true,
                         "optional": true,
-                        "default": "Учитывая следующий диалог и последующий вопрос, перефразируйте последующий вопрос в самостоятельный вопрос.\n\nИстория чата:\n{chat_history}\nПоследующий вопрос: {question}\nСамостоятельный вопрос:",
+                        "default": "Given the following conversation and a follow up question, rephrase the follow up question to be a standalone question.\n\nChat History:\n{chat_history}\nFollow Up Input: {question}\nStandalone Question:",
                         "id": "conversationalRetrievalQAChain_0-input-rephrasePrompt-string"
                     },
                     {
-                        "label": "Шаблон ответа",
+                        "label": "Response Prompt",
                         "name": "responsePrompt",
                         "type": "string",
-                        "description": "Используя перефразированный вопрос, найдите ответ в предоставленном контексте",
-                        "warning": "Шаблон должен включать входную переменную: {context}",
+                        "description": "Taking the rephrased question, search for answer from the provided context",
+                        "warning": "Prompt must include input variable: {context}",
                         "rows": 4,
                         "additionalParams": true,
                         "optional": true,
-                        "default": "Вы - полезный ассистент. Используя предоставленный контекст, ответьте на вопрос пользователя наилучшим образом, используя предоставленные ресурсы.\nЕсли в контексте нет ничего, относящегося к заданному вопросу, просто скажите \"Хм, я не уверен.\" Не пытайтесь придумать ответ.\n------------\n{context}\n------------\nПОМНИТЕ: Если в контексте нет релевантной информации, просто скажите \"Хм, я не уверен.\" Не пытайтесь придумать ответ.",
+                        "default": "You are a helpful assistant. Using the provided context, answer the user's question to the best of your ability using the resources provided.\nIf there is nothing in the context relevant to the question at hand, just say \"Hmm, I'm not sure.\" Don't try to make up an answer.\n------------\n{context}\n------------\nREMEMBER: If there is no relevant information within the context, just say \"Hmm, I'm not sure.\" Don't try to make up an answer.",
                         "id": "conversationalRetrievalQAChain_0-input-responsePrompt-string"
                     }
                 ],
                 "inputAnchors": [
                     {
-                        "label": "Модель чата",
+                        "label": "Chat Model",
                         "name": "model",
                         "type": "BaseChatModel",
                         "id": "conversationalRetrievalQAChain_0-input-model-BaseChatModel"
                     },
                     {
-                        "label": "Извлекатель векторного хранилища",
+                        "label": "Vector Store Retriever",
                         "name": "vectorStoreRetriever",
                         "type": "BaseRetriever",
                         "id": "conversationalRetrievalQAChain_0-input-vectorStoreRetriever-BaseRetriever"
                     },
                     {
-                        "label": "Память",
+                        "label": "Memory",
                         "name": "memory",
                         "type": "BaseMemory",
                         "optional": true,
-                        "description": "Если оставить пустым, будет использоваться BufferMemory по умолчанию",
+                        "description": "If left empty, a default BufferMemory will be used",
                         "id": "conversationalRetrievalQAChain_0-input-memory-BaseMemory"
                     },
                     {
-                        "label": "Модерация ввода",
-                        "description": "Обнаружение текста, который может генерировать вредоносный вывод, и предотвращение его отправки в языковую модель",
+                        "label": "Input Moderation",
+                        "description": "Detect text that could generate harmful output and prevent it from being sent to the language model",
                         "name": "inputModeration",
                         "type": "Moderation",
                         "optional": true,
@@ -345,8 +344,8 @@
                     "model": "{{chatMistralAI_0.data.instance}}",
                     "vectorStoreRetriever": "{{faiss_0.data.instance}}",
                     "memory": "",
-                    "rephrasePrompt": "Учитывая следующий диалог и последующий вопрос, перефразируйте последующий вопрос в самостоятельный вопрос.\n\nИстория чата:\n{chat_history}\nПоследующий вопрос: {question}\nСамостоятельный вопрос:",
-                    "responsePrompt": "Вы - полезный ассистент. Используя предоставленный контекст, ответьте на вопрос пользователя наилучшим образом, используя предоставленные ресурсы.\nЕсли в контексте нет ничего, относящегося к заданному вопросу, просто скажите \"Хм, я не уверен.\" Не пытайтесь придумать ответ.\n------------\n{context}\n------------\nПОМНИТЕ: Если в контексте нет релевантной информации, просто скажите \"Хм, я не уверен.\" Не пытайтесь придумать ответ."
+                    "rephrasePrompt": "Given the following conversation and a follow up question, rephrase the follow up question to be a standalone question.\n\nChat History:\n{chat_history}\nFollow Up Input: {question}\nStandalone Question:",
+                    "responsePrompt": "You are a helpful assistant. Using the provided context, answer the user's question to the best of your ability using the resources provided.\nIf there is nothing in the context relevant to the question at hand, just say \"Hmm, I'm not sure.\" Don't try to make up an answer.\n------------\n{context}\n------------\nREMEMBER: If there is no relevant information within the context, just say \"Hmm, I'm not sure.\" Don't try to make up an answer."
                 },
                 "outputAnchors": [
                     {
@@ -380,21 +379,21 @@
                 "name": "faiss",
                 "type": "Faiss",
                 "baseClasses": ["Faiss", "VectorStoreRetriever", "BaseRetriever"],
-                "category": "Векторные хранилища",
-                "description": "Загружает встроенные данные и выполняет поиск по сходству при запросе с использованием библиотеки Faiss от Meta",
+                "category": "Vector Stores",
+                "description": "Upsert embedded data and perform similarity search upon query using Faiss library from Meta",
                 "inputParams": [
                     {
-                        "label": "Базовый путь для загрузки",
+                        "label": "Base Path to load",
                         "name": "basePath",
-                        "description": "Путь для загрузки файла faiss.index",
+                        "description": "Path to load faiss.index file",
                         "placeholder": "C:\\Users\\User\\Desktop",
                         "type": "string",
                         "id": "faiss_0-input-basePath-string"
                     },
                     {
-                        "label": "Топ K",
+                        "label": "Top K",
                         "name": "topK",
-                        "description": "Количество лучших результатов для получения. По умолчанию 4",
+                        "description": "Number of top results to fetch. Default to 4",
                         "placeholder": "4",
                         "type": "number",
                         "additionalParams": true,
@@ -404,7 +403,7 @@
                 ],
                 "inputAnchors": [
                     {
-                        "label": "Документ",
+                        "label": "Document",
                         "name": "document",
                         "type": "Document",
                         "list": true,
@@ -412,7 +411,7 @@
                         "id": "faiss_0-input-document-Document"
                     },
                     {
-                        "label": "Встраивания",
+                        "label": "Embeddings",
                         "name": "embeddings",
                         "type": "Embeddings",
                         "id": "faiss_0-input-embeddings-Embeddings"
@@ -472,16 +471,16 @@
             "type": "customNode",
             "data": {
                 "id": "documentStore_0",
-                "label": "Хранилище документов",
+                "label": "Document Store",
                 "version": 1,
                 "name": "documentStore",
                 "type": "Document",
                 "baseClasses": ["Document"],
                 "category": "Document Loaders",
-                "description": "Загрузка данных из предварительно настроенных хранилищ документов",
+                "description": "Load data from pre-configured document stores",
                 "inputParams": [
                     {
-                        "label": "Выбрать хранилище",
+                        "label": "Select Store",
                         "name": "selectedStore",
                         "type": "asyncOptions",
                         "loadMethod": "listStores",
@@ -540,28 +539,28 @@
             "type": "stickyNote",
             "data": {
                 "id": "stickyNote_0",
-                "label": "Стикер",
+                "label": "Sticky Note",
                 "version": 2,
                 "name": "stickyNote",
                 "type": "StickyNote",
                 "baseClasses": ["StickyNote"],
-                "tags": ["Утилиты"],
-                "category": "Утилиты",
-                "description": "Добавить стикер",
+                "tags": ["Utilities"],
+                "category": "Utilities",
+                "description": "Add a sticky note",
                 "inputParams": [
                     {
                         "label": "",
                         "name": "note",
                         "type": "string",
                         "rows": 1,
-                        "placeholder": "Введите что-нибудь здесь",
+                        "placeholder": "Type something here",
                         "optional": true,
                         "id": "stickyNote_0-input-note-string"
                     }
                 ],
                 "inputAnchors": [],
                 "inputs": {
-                    "note": "Цепь вопросно-ответной системы с контекстом состоит из 2 цепей:\n\n1. Цепь для перефразировки вопроса пользователя с использованием предыдущих диалогов\n2. Цепь для предоставления ответа на основе контекста, полученного из векторного хранилища.\n\nЗачем нужна перефразировка вопроса?\nЭто необходимо для обеспечения возможности задавать уточняющие вопросы. Например:\n\n- Какой адрес пекарни?\n- А часы работы?\n\nПерефразированный вопрос будет:\n- Какие часы работы пекарни?\n\nЭто обеспечивает лучший поиск в векторном хранилище, а значит, и лучшее качество вывода.\n"
+                    "note": "Conversational Retrieval QA Chain composes of 2 chains:\n\n1. A chain to rephrase user question using previous conversations\n2. A chain to provide response based on the context fetched from vector store.\n\nWhy is the need for rephrasing question?\nThis is to ensure that a follow-up question can be asked. For example:\n\n- What is the address of the Bakery shop?\n- What about the opening time?\n\nA rephrased question will be:\n- What is the opening time of the Bakery shop?\n\nThis ensure a better search to vector store, hence better output quality.\n"
                 },
                 "outputAnchors": [
                     {
@@ -598,18 +597,18 @@
                 "name": "chatMistralAI",
                 "type": "ChatMistralAI",
                 "baseClasses": ["ChatMistralAI", "BaseChatModel", "BaseLanguageModel", "Runnable"],
-                "category": "Модели чата",
-                "description": "Обертка вокруг больших языковых моделей Mistral, использующих конечную точку Chat",
+                "category": "Chat Models",
+                "description": "Wrapper around Mistral large language models that use the Chat endpoint",
                 "inputParams": [
                     {
-                        "label": "Подключить учетные данные",
+                        "label": "Connect Credential",
                         "name": "credential",
                         "type": "credential",
                         "credentialNames": ["mistralAIApi"],
                         "id": "chatMistralAI_0-input-credential-credential"
                     },
                     {
-                        "label": "Название модели",
+                        "label": "Model Name",
                         "name": "modelName",
                         "type": "asyncOptions",
                         "loadMethod": "listModels",
@@ -617,56 +616,56 @@
                         "id": "chatMistralAI_0-input-modelName-asyncOptions"
                     },
                     {
-                        "label": "Температура",
+                        "label": "Temperature",
                         "name": "temperature",
                         "type": "number",
-                        "description": "Какую температуру выборки использовать, от 0.0 до 1.0. Более высокие значения, такие как 0.8, сделают вывод более случайным, а более низкие значения, такие как 0.2, сделают его более сфокусированным и детерминированным.",
+                        "description": "What sampling temperature to use, between 0.0 and 1.0. Higher values like 0.8 will make the output more random, while lower values like 0.2 will make it more focused and deterministic.",
                         "step": 0.1,
                         "default": 0.9,
                         "optional": true,
                         "id": "chatMistralAI_0-input-temperature-number"
                     },
                     {
-                        "label": "Максимум выходных токенов",
+                        "label": "Max Output Tokens",
                         "name": "maxOutputTokens",
                         "type": "number",
-                        "description": "Максимальное количество токенов для генерации в завершении.",
+                        "description": "The maximum number of tokens to generate in the completion.",
                         "step": 1,
                         "optional": true,
                         "additionalParams": true,
                         "id": "chatMistralAI_0-input-maxOutputTokens-number"
                     },
                     {
-                        "label": "Вероятность топ",
+                        "label": "Top Probability",
                         "name": "topP",
                         "type": "number",
-                        "description": "Ядерная выборка, где модель рассматривает результаты токенов с вероятностью top_p. Так, 0.1 означает, что рассматриваются только токены, составляющие верхние 10% вероятностной массы.",
+                        "description": "Nucleus sampling, where the model considers the results of the tokens with top_p probability mass. So 0.1 means only the tokens comprising the top 10% probability mass are considered.",
                         "step": 0.1,
                         "optional": true,
                         "additionalParams": true,
                         "id": "chatMistralAI_0-input-topP-number"
                     },
                     {
-                        "label": "Случайное зерно",
+                        "label": "Random Seed",
                         "name": "randomSeed",
                         "type": "number",
-                        "description": "Зерно для использования при случайной выборке. Если установлено, разные вызовы будут генерировать детерминированные результаты.",
+                        "description": "The seed to use for random sampling. If set, different calls will generate deterministic results.",
                         "step": 1,
                         "optional": true,
                         "additionalParams": true,
                         "id": "chatMistralAI_0-input-randomSeed-number"
                     },
                     {
-                        "label": "Безопасный режим",
+                        "label": "Safe Mode",
                         "name": "safeMode",
                         "type": "boolean",
-                        "description": "Внедрять ли приглашение безопасности перед всеми диалогами.",
+                        "description": "Whether to inject a safety prompt before all conversations.",
                         "optional": true,
                         "additionalParams": true,
                         "id": "chatMistralAI_0-input-safeMode-boolean"
                     },
                     {
-                        "label": "Переопределить конечную точку",
+                        "label": "Override Endpoint",
                         "name": "overrideEndpoint",
                         "type": "string",
                         "optional": true,
@@ -676,7 +675,7 @@
                 ],
                 "inputAnchors": [
                     {
-                        "label": "Кэш",
+                        "label": "Cache",
                         "name": "cache",
                         "type": "BaseCache",
                         "optional": true,

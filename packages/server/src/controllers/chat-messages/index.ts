@@ -9,6 +9,7 @@ import { ChatMessage } from '../../database/entities/ChatMessage'
 import { InternalFlowiseError } from '../../errors/internalFlowiseError'
 import { StatusCodes } from 'http-status-codes'
 import { utilGetChatMessage } from '../../utils/getChatMessage'
+import { getPageAndLimitParams } from '../../utils/pagination'
 
 const getFeedbackTypeFilters = (_feedbackTypeFilters: ChatMessageRatingType[]): ChatMessageRatingType[] | undefined => {
     try {
@@ -71,6 +72,9 @@ const getAllChatMessages = async (req: Request, res: Response, next: NextFunctio
         const startDate = req.query?.startDate as string | undefined
         const endDate = req.query?.endDate as string | undefined
         const feedback = req.query?.feedback as boolean | undefined
+
+        const { page, limit } = getPageAndLimitParams(req)
+
         let feedbackTypeFilters = req.query?.feedbackType as ChatMessageRatingType[] | undefined
         if (feedbackTypeFilters) {
             feedbackTypeFilters = getFeedbackTypeFilters(feedbackTypeFilters)
@@ -93,7 +97,9 @@ const getAllChatMessages = async (req: Request, res: Response, next: NextFunctio
             messageId,
             feedback,
             feedbackTypeFilters,
-            activeWorkspaceId
+            activeWorkspaceId,
+            page,
+            limit
         )
         return res.json(parseAPIResponse(apiResponse))
     } catch (error) {
@@ -160,7 +166,7 @@ const removeAllChatMessages = async (req: Request, res: Response, next: NextFunc
             )
         }
         const chatflowid = req.params.id
-        const chatflow = await chatflowsService.getChatflowById(req.params.id)
+        const chatflow = await chatflowsService.getChatflowById(req.params.id, workspaceId)
         if (!chatflow) {
             return res.status(404).send(`Chatflow ${req.params.id} not found`)
         }
@@ -202,7 +208,8 @@ const removeAllChatMessages = async (req: Request, res: Response, next: NextFunc
                 startDate,
                 endDate,
                 feedback: isFeedback,
-                feedbackTypes: feedbackTypeFilters
+                feedbackTypes: feedbackTypeFilters,
+                activeWorkspaceId: workspaceId
             })
             const messageIds = messages.map((message) => message.id)
 

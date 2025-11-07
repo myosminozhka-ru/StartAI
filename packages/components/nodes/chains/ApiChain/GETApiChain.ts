@@ -26,52 +26,54 @@ class GETApiChain_Chains implements INode {
     baseClasses: string[]
     description: string
     inputs: INodeParams[]
+    badge: string
 
     constructor() {
-        this.label = 'Цепочка GET API'
+        this.label = 'GET API Chain'
         this.name = 'getApiChain'
         this.version = 1.0
         this.type = 'GETApiChain'
         this.icon = 'get.svg'
         this.category = 'Chains'
-        this.description = 'Цепочка для выполнения запросов к GET API'
+        this.badge = 'DEPRECATING'
+        this.description = 'Chain to run queries against GET API'
         this.baseClasses = [this.type, ...getBaseClasses(APIChain)]
         this.inputs = [
             {
-                label: 'Языковая модель',
+                label: 'Language Model',
                 name: 'model',
                 type: 'BaseLanguageModel'
             },
             {
-                label: 'Документация API',
+                label: 'API Documentation',
                 name: 'apiDocs',
                 type: 'string',
                 description:
-                    'Описание работы API. Подробнее смотрите <a target="_blank" href="https://github.com/langchain-ai/langchain/blob/master/libs/langchain/langchain/chains/api/open_meteo_docs.py">примеры</a>',
+                    'Description of how API works. Please refer to more <a target="_blank" href="https://github.com/langchain-ai/langchain/blob/master/libs/langchain/langchain/chains/api/open_meteo_docs.py">examples</a>',
                 rows: 4
             },
             {
-                label: 'Заголовки',
+                label: 'Headers',
                 name: 'headers',
                 type: 'json',
                 additionalParams: true,
                 optional: true
             },
             {
-                label: 'Промпт URL',
+                label: 'URL Prompt',
                 name: 'urlPrompt',
                 type: 'string',
-                description: 'Промпт, используемый для указания LLM как построить URL. Должен содержать {api_docs} и {question}',
+                description: 'Prompt used to tell LLMs how to construct the URL. Must contains {api_docs} and {question}',
                 default: API_URL_RAW_PROMPT_TEMPLATE,
                 rows: 4,
                 additionalParams: true
             },
             {
-                label: 'Промпт ответа',
+                label: 'Answer Prompt',
                 name: 'ansPrompt',
                 type: 'string',
                 description:
-                    'Промпт, используемый для указания LLM как вернуть ответ API. Должен содержать {api_response}, {api_url} и {question}',
+                    'Prompt used to tell LLMs how to return the API response. Must contains {api_response}, {api_url}, and {question}',
                 default: API_RESPONSE_RAW_PROMPT_TEMPLATE,
                 rows: 4,
                 additionalParams: true
@@ -129,7 +131,7 @@ const getAPIChain = async (documents: string, llm: BaseLanguageModel, headers: s
     const chain = APIChain.fromLLMAndAPIDocs(llm, documents, {
         apiUrlPrompt,
         apiResponsePrompt,
-        verbose: process.env.DEBUG === 'true',
+        verbose: process.env.DEBUG === 'true' ? true : false,
         headers: typeof headers === 'object' ? headers : headers ? JSON.parse(headers) : {}
     })
     return chain

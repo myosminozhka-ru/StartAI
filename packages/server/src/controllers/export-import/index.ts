@@ -5,10 +5,14 @@ import exportImportService from '../../services/export-import'
 
 const exportData = async (req: Request, res: Response, next: NextFunction) => {
     try {
-        const apiResponse = await exportImportService.exportData(
-            exportImportService.convertExportInput(req.body),
-            req.user?.activeWorkspaceId
-        )
+        const workspaceId = req.user?.activeWorkspaceId
+        if (!workspaceId) {
+            throw new InternalFlowiseError(
+                StatusCodes.NOT_FOUND,
+                `Error: exportImportController.exportData - workspace ${workspaceId} not found!`
+            )
+        }
+        const apiResponse = await exportImportService.exportData(exportImportService.convertExportInput(req.body), workspaceId)
         return res.json(apiResponse)
     } catch (error) {
         next(error)
@@ -39,7 +43,7 @@ const importData = async (req: Request, res: Response, next: NextFunction) => {
         }
 
         await exportImportService.importData(importData, orgId, workspaceId, subscriptionId)
-        return res.json({ message: 'success' })
+        return res.status(StatusCodes.OK).json({ message: 'success' })
     } catch (error) {
         next(error)
     }

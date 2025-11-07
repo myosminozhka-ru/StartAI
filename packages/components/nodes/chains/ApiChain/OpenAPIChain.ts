@@ -17,49 +17,48 @@ class OpenApiChain_Chains implements INode {
     baseClasses: string[]
     description: string
     inputs: INodeParams[]
+    badge: string
 
     constructor() {
-        this.label = 'Цепочка OpenAPI'
+        this.label = 'OpenAPI Chain'
         this.name = 'openApiChain'
         this.version = 2.0
         this.type = 'OpenAPIChain'
         this.icon = 'openapi.svg'
         this.category = 'Chains'
-        this.description = 'Цепочка, которая автоматически выбирает и вызывает API на основе только спецификации OpenAPI'
+        this.badge = 'DEPRECATING'
+        this.description = 'Chain that automatically select and call APIs based only on an OpenAPI spec'
         this.baseClasses = [this.type, ...getBaseClasses(APIChain)]
         this.inputs = [
             {
-                label: 'Чат-модель',
+                label: 'Chat Model',
                 name: 'model',
                 type: 'BaseChatModel'
             },
             {
-                label: 'Ссылка на YAML',
+                label: 'YAML Link',
                 name: 'yamlLink',
                 type: 'string',
                 placeholder: 'https://api.speak.com/openapi.yaml',
-                description:
-                    'Если предоставлена ссылка на YAML, загруженный YAML файл будет проигнорирован и будет использована ссылка на YAML'
+                description: 'If YAML link is provided, uploaded YAML File will be ignored and YAML link will be used instead'
             },
             {
-                label: 'YAML файл',
+                label: 'YAML File',
                 name: 'yamlFile',
                 type: 'file',
                 fileType: '.yaml',
-                description:
-                    'Если предоставлена ссылка на YAML, загруженный YAML файл будет проигнорирован и будет использована ссылка на YAML'
+                description: 'If YAML link is provided, uploaded YAML File will be ignored and YAML link will be used instead'
             },
             {
-                label: 'Заголовки',
+                label: 'Headers',
                 name: 'headers',
                 type: 'json',
                 additionalParams: true,
                 optional: true
             },
             {
-                label: 'Модерация ввода',
-                description:
-                    'Обнаружение текста, который может генерировать вредоносный вывод, и предотвращение его отправки в языковую модель',
+                label: 'Input Moderation',
+                description: 'Detect text that could generate harmful output and prevent it from being sent to the language model',
                 name: 'inputModeration',
                 type: 'Moderation',
                 optional: true,
@@ -132,7 +131,7 @@ const initChain = async (nodeData: INodeData, options: ICommonObject) => {
     return await createOpenAPIChain(yamlString, {
         llm: model,
         headers: typeof headers === 'object' ? headers : headers ? JSON.parse(headers) : {},
-        verbose: process.env.DEBUG === 'true'
+        verbose: process.env.DEBUG === 'true' ? true : false
     })
 }
 

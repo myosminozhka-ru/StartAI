@@ -1,10 +1,11 @@
-import { omit } from 'lodash'
-import { ICommonObject, IDocument, INode, INodeData, INodeParams } from '../../../src/Interface'
-import { TextSplitter } from 'langchain/text_splitter'
 import { Browser, Page, PuppeteerWebBaseLoader, PuppeteerWebBaseLoaderOptions } from '@langchain/community/document_loaders/web/puppeteer'
+import { Document } from '@langchain/core/documents'
+import { TextSplitter } from 'langchain/text_splitter'
 import { test } from 'linkifyjs'
-import { handleEscapeCharacters, INodeOutputsValue, webCrawl, xmlScrape } from '../../../src'
+import { omit } from 'lodash'
 import { PuppeteerLifeCycleEvent } from 'puppeteer'
+import { handleEscapeCharacters, INodeOutputsValue, webCrawl, xmlScrape } from '../../../src'
+import { ICommonObject, INode, INodeData, INodeParams } from '../../../src/Interface'
 
 class Puppeteer_DocumentLoaders implements INode {
     label: string
@@ -19,13 +20,13 @@ class Puppeteer_DocumentLoaders implements INode {
     outputs: INodeOutputsValue[]
 
     constructor() {
-        this.label = 'Веб-скрапер Puppeteer'
+        this.label = 'Puppeteer Web Scraper'
         this.name = 'puppeteerWebScraper'
         this.version = 2.0
         this.type = 'Document'
         this.icon = 'puppeteer.svg'
         this.category = 'Document Loaders'
-        this.description = `Загрузка данных с веб-страниц`
+        this.description = `Load data from webpages`
         this.baseClasses = [this.type]
         this.inputs = [
             {
@@ -34,26 +35,26 @@ class Puppeteer_DocumentLoaders implements INode {
                 type: 'string'
             },
             {
-                label: 'Разделитель текста',
+                label: 'Text Splitter',
                 name: 'textSplitter',
                 type: 'TextSplitter',
                 optional: true
             },
             {
-                label: 'Метод получения относительных ссылок',
+                label: 'Get Relative Links Method',
                 name: 'relativeLinksMethod',
                 type: 'options',
-                description: 'Выберите метод получения относительных ссылок',
+                description: 'Select a method to retrieve relative links',
                 options: [
                     {
-                        label: 'Веб-краулинг',
+                        label: 'Web Crawl',
                         name: 'webCrawl',
-                        description: 'Получение относительных ссылок из HTML URL'
+                        description: 'Crawl relative links from HTML URL'
                     },
                     {
-                        label: 'Скрапинг XML карты сайта',
+                        label: 'Scrape XML Sitemap',
                         name: 'scrapeXMLSitemap',
-                        description: 'Получение относительных ссылок из URL XML карты сайта'
+                        description: 'Scrape relative links from XML sitemap URL'
                     }
                 ],
                 default: 'webCrawl',
@@ -61,69 +62,77 @@ class Puppeteer_DocumentLoaders implements INode {
                 additionalParams: true
             },
             {
-                label: 'Лимит получения относительных ссылок',
+                label: 'Get Relative Links Limit',
                 name: 'limit',
                 type: 'number',
                 optional: true,
                 default: '10',
                 additionalParams: true,
                 description:
-                    'Используется только когда выбран "Метод получения относительных ссылок". Установите 0 для получения всех относительных ссылок, лимит по умолчанию - 10.',
-                warning: `Получение всех ссылок может занять много времени, и все ссылки будут повторно добавлены, если состояние потока изменилось (например: другой URL, размер чанка и т.д.)`
+                    'Only used when "Get Relative Links Method" is selected. Set 0 to retrieve all relative links, default limit is 10.',
+                warning: `Retrieving all links might take long time, and all links will be upserted again if the flow's state changed (eg: different URL, chunk size, etc)`
             },
             {
-                label: 'Ожидание до',
+                label: 'Wait Until',
                 name: 'waitUntilGoToOption',
                 type: 'options',
-                description: 'Выберите опцию ожидания перехода',
+                description: 'Select a go to wait until option',
                 options: [
                     {
-                        label: 'Загрузка',
+                        label: 'Load',
                         name: 'load',
-                        description: 'Когда DOM начального HTML документа был загружен и обработан'
+                        description: `When the initial HTML document's DOM has been loaded and parsed`
                     },
                     {
-                        label: 'Загрузка DOM',
+                        label: 'DOM Content Loaded',
                         name: 'domcontentloaded',
-                        description: 'Когда DOM полного HTML документа был загружен и обработан'
+                        description: `When the complete HTML document's DOM has been loaded and parsed`
                     },
                     {
-                        label: 'Сеть простаивает 0',
+                        label: 'Network Idle 0',
                         name: 'networkidle0',
-                        description: 'Навигация завершена, когда нет более 0 сетевых соединений в течение как минимум 500 мс'
+                        description: 'Navigation is finished when there are no more than 0 network connections for at least 500 ms'
                     },
                     {
-                        label: 'Сеть простаивает 2',
+                        label: 'Network Idle 2',
                         name: 'networkidle2',
-                        description: 'Навигация завершена, когда нет более 2 сетевых соединений в течение как минимум 500 мс'
+                        description: 'Navigation is finished when there are no more than 2 network connections for at least 500 ms'
                     }
                 ],
                 optional: true,
                 additionalParams: true
             },
             {
-                label: 'Ожидание загрузки селектора',
+                label: 'Wait for selector to load',
                 name: 'waitForSelector',
                 type: 'string',
                 optional: true,
                 additionalParams: true,
-                description: 'CSS селекторы, например .div или #div'
+                description: 'CSS selectors like .div or #div'
             },
             {
-                label: 'Дополнительные метаданные',
-                name: 'metadata',
-                type: 'json',
-                description: 'Дополнительные метаданные для добавления к извлеченным документам',
+                label: 'CSS Selector (Optional)',
+                name: 'cssSelector',
+                type: 'string',
+                description: 'Only content inside this selector will be extracted. Leave empty to use the entire page body.',
                 optional: true,
                 additionalParams: true
             },
             {
-                label: 'Исключить ключи метаданных',
+                label: 'Additional Metadata',
+                name: 'metadata',
+                type: 'json',
+                description: 'Additional metadata to be added to the extracted documents',
+                optional: true,
+                additionalParams: true
+            },
+            {
+                label: 'Omit Metadata Keys',
                 name: 'omitMetadataKeys',
                 type: 'string',
                 rows: 4,
                 description:
-                    'Каждый загрузчик документов поставляется с набором метаданных по умолчанию, которые извлекаются из документа. Вы можете использовать это поле для исключения некоторых ключей метаданных по умолчанию. Значение должно быть списком ключей, разделенных запятыми. Используйте * для исключения всех ключей метаданных, кроме тех, которые вы указали в поле Дополнительные метаданные',
+                    'Each document loader comes with a default set of metadata keys that are extracted from the document. You can use this field to omit some of the default metadata keys. The value should be a list of keys, seperated by comma. Use * to omit all metadata keys execept the ones you specify in the Additional Metadata field',
                 placeholder: 'key1, key2, key3.nestedKey1',
                 optional: true,
                 additionalParams: true
@@ -131,15 +140,15 @@ class Puppeteer_DocumentLoaders implements INode {
         ]
         this.outputs = [
             {
-                label: 'Документ',
+                label: 'Document',
                 name: 'document',
-                description: 'Массив объектов документов, содержащих метаданные и содержимое страницы',
+                description: 'Array of document objects containing metadata and pageContent',
                 baseClasses: [...this.baseClasses, 'json']
             },
             {
-                label: 'Текст',
+                label: 'Text',
                 name: 'text',
-                description: 'Объединенная строка из содержимого страниц документов',
+                description: 'Concatenated string from pageContent of documents',
                 baseClasses: ['string', 'json']
             }
         ]
@@ -151,8 +160,9 @@ class Puppeteer_DocumentLoaders implements INode {
         const relativeLinksMethod = nodeData.inputs?.relativeLinksMethod as string
         const selectedLinks = nodeData.inputs?.selectedLinks as string[]
         let limit = parseInt(nodeData.inputs?.limit as string)
-        let waitUntilGoToOption = nodeData.inputs?.waitUntilGoToOption as PuppeteerLifeCycleEvent
-        let waitForSelector = nodeData.inputs?.waitForSelector as string
+        const waitUntilGoToOption = nodeData.inputs?.waitUntilGoToOption as PuppeteerLifeCycleEvent
+        const waitForSelector = nodeData.inputs?.waitForSelector as string
+        const cssSelector = nodeData.inputs?.cssSelector as string
         const _omitMetadataKeys = nodeData.inputs?.omitMetadataKeys as string
         const output = nodeData.outputs?.output as string
         const orgId = options.orgId
@@ -168,13 +178,14 @@ class Puppeteer_DocumentLoaders implements INode {
             throw new Error('Invalid URL')
         }
 
-        async function puppeteerLoader(url: string): Promise<any> {
+        async function puppeteerLoader(url: string): Promise<Document[] | undefined> {
             try {
-                let docs = []
+                let docs: Document[] = []
                 const config: PuppeteerWebBaseLoaderOptions = {
                     launchOptions: {
                         args: ['--no-sandbox'],
-                        headless: 'new'
+                        headless: 'new',
+                        executablePath: process.env.PUPPETEER_EXECUTABLE_FILE_PATH
                     }
                 }
                 if (waitUntilGoToOption) {
@@ -182,12 +193,22 @@ class Puppeteer_DocumentLoaders implements INode {
                         waitUntil: waitUntilGoToOption
                     }
                 }
-                if (waitForSelector) {
+                if (cssSelector || waitForSelector) {
                     config['evaluate'] = async (page: Page, _: Browser): Promise<string> => {
-                        await page.waitForSelector(waitForSelector)
+                        if (waitForSelector) {
+                            await page.waitForSelector(waitForSelector)
+                        }
 
-                        const result = await page.evaluate(() => document.body.innerHTML)
-                        return result
+                        if (cssSelector) {
+                            const selectorHandle = await page.$(cssSelector)
+                            const result = await page.evaluate(
+                                (htmlSelection) => htmlSelection?.innerHTML ?? document.body.innerHTML,
+                                selectorHandle
+                            )
+                            return result
+                        } else {
+                            return await page.evaluate(() => document.body.innerHTML)
+                        }
                     }
                 }
                 const loader = new PuppeteerWebBaseLoader(url, config)
@@ -204,7 +225,7 @@ class Puppeteer_DocumentLoaders implements INode {
             }
         }
 
-        let docs: IDocument[] = []
+        let docs: Document[] = []
         if (relativeLinksMethod) {
             if (process.env.DEBUG === 'true') options.logger.info(`[${orgId}]: Start PuppeteerWebBaseLoader ${relativeLinksMethod}`)
             // if limit is 0 we don't want it to default to 10 so we check explicitly for null or undefined
@@ -221,7 +242,10 @@ class Puppeteer_DocumentLoaders implements INode {
                 options.logger.info(`[${orgId}]: PuppeteerWebBaseLoader pages: ${JSON.stringify(pages)}, length: ${pages.length}`)
             if (!pages || pages.length === 0) throw new Error('No relative links found')
             for (const page of pages) {
-                docs.push(...(await puppeteerLoader(page)))
+                const result = await puppeteerLoader(page)
+                if (result) {
+                    docs.push(...result)
+                }
             }
             if (process.env.DEBUG === 'true') options.logger.info(`[${orgId}]: Finish PuppeteerWebBaseLoader ${relativeLinksMethod}`)
         } else if (selectedLinks && selectedLinks.length > 0) {
@@ -230,10 +254,16 @@ class Puppeteer_DocumentLoaders implements INode {
                     `[${orgId}]: PuppeteerWebBaseLoader pages: ${JSON.stringify(selectedLinks)}, length: ${selectedLinks.length}`
                 )
             for (const page of selectedLinks.slice(0, limit)) {
-                docs.push(...(await puppeteerLoader(page)))
+                const result = await puppeteerLoader(page)
+                if (result) {
+                    docs.push(...result)
+                }
             }
         } else {
-            docs = await puppeteerLoader(url)
+            const result = await puppeteerLoader(url)
+            if (result) {
+                docs.push(...result)
+            }
         }
 
         if (metadata) {

@@ -1,9 +1,10 @@
-import { AzureOpenAIInput, AzureChatOpenAI as LangchainAzureChatOpenAI, ChatOpenAIFields, OpenAIClient } from '@langchain/openai'
+import { AzureOpenAIInput, AzureChatOpenAI as LangchainAzureChatOpenAI, ChatOpenAIFields } from '@langchain/openai'
 import { BaseCache } from '@langchain/core/caches'
 import { ICommonObject, IMultiModalOption, INode, INodeData, INodeOptionsValue, INodeParams } from '../../../src/Interface'
 import { getBaseClasses, getCredentialData, getCredentialParam } from '../../../src/utils'
 import { getModels, MODEL_TYPE } from '../../../src/modelLoader'
 import { AzureChatOpenAI } from './FlowiseAzureChatOpenAI'
+import { OpenAI as OpenAIClient } from 'openai'
 
 const serverCredentialsExists =
     !!process.env.AZURE_OPENAI_API_KEY &&
@@ -26,14 +27,14 @@ class AzureChatOpenAI_ChatModels implements INode {
     constructor() {
         this.label = 'Azure ChatOpenAI'
         this.name = 'azureChatOpenAI'
-        this.version = 7.0
+        this.version = 7.1
         this.type = 'AzureChatOpenAI'
         this.icon = 'Azure.svg'
         this.category = 'Chat Models'
-        this.description = 'Обертка вокруг больших языковых моделей Azure OpenAI, использующих Chat endpoint'
+        this.description = 'Wrapper around Azure OpenAI large language models that use the Chat endpoint'
         this.baseClasses = [this.type, ...getBaseClasses(LangchainAzureChatOpenAI)]
         this.credential = {
-            label: 'Подключите учетные данные',
+            label: 'Connect Credential',
             name: 'credential',
             type: 'credential',
             credentialNames: ['azureOpenAIApi'],
@@ -41,19 +42,19 @@ class AzureChatOpenAI_ChatModels implements INode {
         }
         this.inputs = [
             {
-                label: 'Кэш',
+                label: 'Cache',
                 name: 'cache',
                 type: 'BaseCache',
                 optional: true
             },
             {
-                label: 'Название модели',
+                label: 'Model Name',
                 name: 'modelName',
                 type: 'asyncOptions',
                 loadMethod: 'listModels'
             },
             {
-                label: 'Температура',
+                label: 'Temperature',
                 name: 'temperature',
                 type: 'number',
                 step: 0.1,
@@ -61,7 +62,7 @@ class AzureChatOpenAI_ChatModels implements INode {
                 optional: true
             },
             {
-                label: 'Максимум токенов',
+                label: 'Max Tokens',
                 name: 'maxTokens',
                 type: 'number',
                 step: 1,
@@ -69,7 +70,7 @@ class AzureChatOpenAI_ChatModels implements INode {
                 additionalParams: true
             },
             {
-                label: 'Потоковая передача',
+                label: 'Streaming',
                 name: 'streaming',
                 type: 'boolean',
                 default: true,
@@ -77,7 +78,7 @@ class AzureChatOpenAI_ChatModels implements INode {
                 additionalParams: true
             },
             {
-                label: 'Вероятность Top P',
+                label: 'Top Probability',
                 name: 'topP',
                 type: 'number',
                 step: 0.1,
@@ -85,7 +86,7 @@ class AzureChatOpenAI_ChatModels implements INode {
                 additionalParams: true
             },
             {
-                label: 'Штраф частоты',
+                label: 'Frequency Penalty',
                 name: 'frequencyPenalty',
                 type: 'number',
                 step: 0.1,
@@ -93,7 +94,7 @@ class AzureChatOpenAI_ChatModels implements INode {
                 additionalParams: true
             },
             {
-                label: 'Штраф присутствия',
+                label: 'Presence Penalty',
                 name: 'presencePenalty',
                 type: 'number',
                 step: 0.1,
@@ -101,7 +102,7 @@ class AzureChatOpenAI_ChatModels implements INode {
                 additionalParams: true
             },
             {
-                label: 'Таймаут',
+                label: 'Timeout',
                 name: 'timeout',
                 type: 'number',
                 step: 1,
@@ -109,44 +110,44 @@ class AzureChatOpenAI_ChatModels implements INode {
                 additionalParams: true
             },
             {
-                label: 'Базовый путь',
+                label: 'BasePath',
                 name: 'basepath',
                 type: 'string',
                 optional: true,
                 additionalParams: true
             },
             {
-                label: 'Базовые опции',
+                label: 'BaseOptions',
                 name: 'baseOptions',
                 type: 'json',
                 optional: true,
                 additionalParams: true
             },
             {
-                label: 'Разрешить загрузку изображений',
+                label: 'Allow Image Uploads',
                 name: 'allowImageUploads',
                 type: 'boolean',
                 description:
-                    'Разрешить ввод изображений. См. <a href="https://docs.flowiseai.com/using-flowise/uploads#image" target="_blank">документацию</a> для получения дополнительной информации.',
+                    'Allow image input. Refer to the <a href="https://docs.flowiseai.com/using-flowise/uploads#image" target="_blank">docs</a> for more details.',
                 default: false,
                 optional: true
             },
             {
-                label: 'Разрешение изображения',
-                description: 'Этот параметр контролирует разрешение, в котором модель просматривает изображение.',
+                label: 'Image Resolution',
+                description: 'This parameter controls the resolution in which the model views the image.',
                 name: 'imageResolution',
                 type: 'options',
                 options: [
                     {
-                        label: 'Низкое',
+                        label: 'Low',
                         name: 'low'
                     },
                     {
-                        label: 'Высокое',
+                        label: 'High',
                         name: 'high'
                     },
                     {
-                        label: 'Авто',
+                        label: 'Auto',
                         name: 'auto'
                     }
                 ],
@@ -155,27 +156,61 @@ class AzureChatOpenAI_ChatModels implements INode {
                 additionalParams: true
             },
             {
-                label: 'Усилие рассуждения',
-                description: 'Ограничивает усилия на рассуждения для моделей рассуждений. Применимо только для моделей o1 и o3.',
+                label: 'Reasoning',
+                description: 'Whether the model supports reasoning. Only applicable for reasoning models.',
+                name: 'reasoning',
+                type: 'boolean',
+                default: false,
+                optional: true,
+                additionalParams: true
+            },
+            {
+                label: 'Reasoning Effort',
+                description: 'Constrains effort on reasoning for reasoning models. Only applicable for o1 and o3 models.',
                 name: 'reasoningEffort',
                 type: 'options',
                 options: [
                     {
-                        label: 'Низкое',
+                        label: 'Low',
                         name: 'low'
                     },
                     {
-                        label: 'Среднее',
+                        label: 'Medium',
                         name: 'medium'
                     },
                     {
-                        label: 'Высокое',
+                        label: 'High',
                         name: 'high'
                     }
                 ],
-                default: 'medium',
-                optional: false,
-                additionalParams: true
+                additionalParams: true,
+                show: {
+                    reasoning: true
+                }
+            },
+            {
+                label: 'Reasoning Summary',
+                description: `A summary of the reasoning performed by the model. This can be useful for debugging and understanding the model's reasoning process`,
+                name: 'reasoningSummary',
+                type: 'options',
+                options: [
+                    {
+                        label: 'Auto',
+                        name: 'auto'
+                    },
+                    {
+                        label: 'Concise',
+                        name: 'concise'
+                    },
+                    {
+                        label: 'Detailed',
+                        name: 'detailed'
+                    }
+                ],
+                additionalParams: true,
+                show: {
+                    reasoning: true
+                }
             }
         ]
     }
@@ -199,7 +234,8 @@ class AzureChatOpenAI_ChatModels implements INode {
         const topP = nodeData.inputs?.topP as string
         const basePath = nodeData.inputs?.basepath as string
         const baseOptions = nodeData.inputs?.baseOptions
-        const reasoningEffort = nodeData.inputs?.reasoningEffort as OpenAIClient.Chat.ChatCompletionReasoningEffort
+        const reasoningEffort = nodeData.inputs?.reasoningEffort as OpenAIClient.Chat.ChatCompletionReasoningEffort | null
+        const reasoningSummary = nodeData.inputs?.reasoningSummary as 'auto' | 'concise' | 'detailed' | null
 
         const credentialData = await getCredentialData(nodeData.credential ?? '', options)
         const azureOpenAIApiKey = getCredentialParam('azureOpenAIApiKey', credentialData, nodeData)
@@ -237,11 +273,22 @@ class AzureChatOpenAI_ChatModels implements INode {
                 console.error('Error parsing base options', exception)
             }
         }
-        if (modelName === 'o3-mini' || modelName.includes('o1')) {
+        if (modelName.includes('o1') || modelName.includes('o3') || modelName.includes('gpt-5')) {
             delete obj.temperature
-        }
-        if ((modelName.includes('o1') || modelName.includes('o3')) && reasoningEffort) {
-            obj.reasoningEffort = reasoningEffort
+            delete obj.stop
+            const reasoning: OpenAIClient.Reasoning = {}
+            if (reasoningEffort) {
+                reasoning.effort = reasoningEffort
+            }
+            if (reasoningSummary) {
+                reasoning.summary = reasoningSummary
+            }
+            obj.reasoning = reasoning
+
+            if (maxTokens) {
+                delete obj.maxTokens
+                obj.maxCompletionTokens = parseInt(maxTokens, 10)
+            }
         }
 
         const multiModalOption: IMultiModalOption = {

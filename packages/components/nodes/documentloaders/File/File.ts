@@ -7,6 +7,8 @@ import { CSVLoader } from '@langchain/community/document_loaders/fs/csv'
 import { PDFLoader } from '@langchain/community/document_loaders/fs/pdf'
 import { DocxLoader } from '@langchain/community/document_loaders/fs/docx'
 import { BaseDocumentLoader } from 'langchain/document_loaders/base'
+import { LoadOfSheet } from '../MicrosoftExcel/ExcelLoader'
+import { PowerpointLoader } from '../MicrosoftPowerpoint/PowerpointLoader'
 import { Document } from '@langchain/core/documents'
 import { getFileFromStorage } from '../../../src/storageUtils'
 import { handleEscapeCharacters, mapMimeTypeToExt } from '../../../src/utils'
@@ -24,39 +26,39 @@ class File_DocumentLoaders implements INode {
     outputs: INodeOutputsValue[]
 
     constructor() {
-        this.label = 'Загрузчик файлов'
+        this.label = 'File Loader'
         this.name = 'fileLoader'
         this.version = 2.0
         this.type = 'Document'
         this.icon = 'file.svg'
         this.category = 'Document Loaders'
-        this.description = `Универсальный загрузчик файлов, который может загружать txt, json, csv, docx, pdf и другие файлы`
+        this.description = `A generic file loader that can load different file types`
         this.baseClasses = [this.type]
         this.inputs = [
             {
-                label: 'Файл',
+                label: 'File',
                 name: 'file',
                 type: 'file',
                 fileType: '*'
             },
             {
-                label: 'Разделитель текста',
+                label: 'Text Splitter',
                 name: 'textSplitter',
                 type: 'TextSplitter',
                 optional: true
             },
             {
-                label: 'Использование PDF',
+                label: 'Pdf Usage',
                 name: 'usage',
                 type: 'options',
-                description: 'Только при загрузке PDF файлов',
+                description: 'Only when loading PDF files',
                 options: [
                     {
-                        label: 'Один документ на страницу',
+                        label: 'One document per page',
                         name: 'perPage'
                     },
                     {
-                        label: 'Один документ на файл',
+                        label: 'One document per file',
                         name: 'perFile'
                     }
                 ],
@@ -65,37 +67,37 @@ class File_DocumentLoaders implements INode {
                 additionalParams: true
             },
             {
-                label: 'Использовать устаревшую сборку',
+                label: 'Use Legacy Build',
                 name: 'legacyBuild',
                 type: 'boolean',
-                description: 'Использовать устаревшую сборку для решения проблем совместимости с PDF',
+                description: 'Use legacy build for PDF compatibility issues',
                 optional: true,
                 additionalParams: true
             },
             {
-                label: 'Извлечение указателя JSONL',
+                label: 'JSONL Pointer Extraction',
                 name: 'pointerName',
                 type: 'string',
-                description: 'Только при загрузке JSONL файлов',
+                description: 'Only when loading JSONL files',
                 placeholder: '<pointerName>',
                 optional: true,
                 additionalParams: true
             },
             {
-                label: 'Дополнительные метаданные',
+                label: 'Additional Metadata',
                 name: 'metadata',
                 type: 'json',
-                description: 'Дополнительные метаданные для добавления к извлеченным документам',
+                description: 'Additional metadata to be added to the extracted documents',
                 optional: true,
                 additionalParams: true
             },
             {
-                label: 'Исключить ключи метаданных',
+                label: 'Omit Metadata Keys',
                 name: 'omitMetadataKeys',
                 type: 'string',
                 rows: 4,
                 description:
-                    'Каждый загрузчик документов поставляется с набором метаданных по умолчанию, которые извлекаются из документа. Вы можете использовать это поле для исключения некоторых ключей метаданных по умолчанию. Значение должно быть списком ключей, разделенных запятыми. Используйте * для исключения всех ключей метаданных, кроме тех, которые вы указали в поле Дополнительные метаданные',
+                    'Each document loader comes with a default set of metadata keys that are extracted from the document. You can use this field to omit some of the default metadata keys. The value should be a list of keys, seperated by comma. Use * to omit all metadata keys execept the ones you specify in the Additional Metadata field',
                 placeholder: 'key1, key2, key3.nestedKey1',
                 optional: true,
                 additionalParams: true
@@ -103,15 +105,15 @@ class File_DocumentLoaders implements INode {
         ]
         this.outputs = [
             {
-                label: 'Документ',
+                label: 'Document',
                 name: 'document',
-                description: 'Массив объектов документов, содержащих метаданные и содержимое страницы',
+                description: 'Array of document objects containing metadata and pageContent',
                 baseClasses: [...this.baseClasses, 'json']
             },
             {
-                label: 'Текст',
+                label: 'Text',
                 name: 'text',
-                description: 'Объединенная строка из содержимого страниц документов',
+                description: 'Concatenated string from pageContent of documents',
                 baseClasses: ['string', 'json']
             }
         ]
@@ -134,9 +136,10 @@ class File_DocumentLoaders implements INode {
 
         let files: string[] = []
         const fileBlobs: { blob: Blob; ext: string }[] = []
+        const processRaw = options.processRaw
 
         //FILE-STORAGE::["CONTRIBUTING.md","LICENSE.md","README.md"]
-        const totalFiles = getOverrideFileInputs(nodeData) || fileBase64
+        const totalFiles = getOverrideFileInputs(nodeData, processRaw) || fileBase64
         if (totalFiles.startsWith('FILE-STORAGE::')) {
             const fileName = totalFiles.replace('FILE-STORAGE::', '')
             if (fileName.startsWith('[') && fileName.endsWith(']')) {
@@ -212,11 +215,20 @@ class File_DocumentLoaders implements INode {
             json: (blob) => new JSONLoader(blob),
             jsonl: (blob) => new JSONLinesLoader(blob, '/' + pointerName.trim()),
             txt: (blob) => new TextLoader(blob),
+            html: (blob) => new TextLoader(blob),
+            css: (blob) => new TextLoader(blob),
+            js: (blob) => new TextLoader(blob),
+            xml: (blob) => new TextLoader(blob),
+            md: (blob) => new TextLoader(blob),
             csv: (blob) => new CSVLoader(blob),
-            xls: (blob) => new CSVLoader(blob),
-            xlsx: (blob) => new CSVLoader(blob),
+            xls: (blob) => new LoadOfSheet(blob),
+            xlsx: (blob) => new LoadOfSheet(blob),
+            xlsm: (blob) => new LoadOfSheet(blob),
+            xlsb: (blob) => new LoadOfSheet(blob),
             docx: (blob) => new DocxLoader(blob),
             doc: (blob) => new DocxLoader(blob),
+            ppt: (blob) => new PowerpointLoader(blob),
+            pptx: (blob) => new PowerpointLoader(blob),
             pdf: (blob) =>
                 pdfUsage === 'perFile'
                     ? // @ts-ignore
@@ -287,7 +299,7 @@ class File_DocumentLoaders implements INode {
     }
 }
 
-const getOverrideFileInputs = (nodeData: INodeData) => {
+const getOverrideFileInputs = (nodeData: INodeData, processRaw: boolean) => {
     const txtFileBase64 = nodeData.inputs?.txtFile as string
     const pdfFileBase64 = nodeData.inputs?.pdfFile as string
     const jsonFileBase64 = nodeData.inputs?.jsonFile as string
@@ -295,6 +307,8 @@ const getOverrideFileInputs = (nodeData: INodeData) => {
     const jsonlinesFileBase64 = nodeData.inputs?.jsonlinesFile as string
     const docxFileBase64 = nodeData.inputs?.docxFile as string
     const yamlFileBase64 = nodeData.inputs?.yamlFile as string
+    const excelFileBase64 = nodeData.inputs?.excelFile as string
+    const powerpointFileBase64 = nodeData.inputs?.powerpointFile as string
 
     const removePrefix = (storageFile: string): string[] => {
         const fileName = storageFile.replace('FILE-STORAGE::', '')
@@ -326,6 +340,16 @@ const getOverrideFileInputs = (nodeData: INodeData) => {
     }
     if (yamlFileBase64) {
         files.push(...removePrefix(yamlFileBase64))
+    }
+    if (excelFileBase64) {
+        files.push(...removePrefix(excelFileBase64))
+    }
+    if (powerpointFileBase64) {
+        files.push(...removePrefix(powerpointFileBase64))
+    }
+
+    if (processRaw) {
+        return files.length ? JSON.stringify(files) : ''
     }
 
     return files.length ? `FILE-STORAGE::${JSON.stringify(files)}` : ''

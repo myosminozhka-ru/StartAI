@@ -167,7 +167,7 @@ export default function FlowListMenu({ chatflow, isAgentCanvas, isAgentflowV2, s
         }
         try {
             await updateChatflowApi.request(chatflow.id, updateBody)
-            if (isAgentCanvas && localStorage.getItem('agentFlowVersion') === 'v2') {
+            if (isAgentCanvas && isAgentflowV2) {
                 await updateFlowsApi.request('AGENTFLOW')
             } else {
                 await updateFlowsApi.request(isAgentCanvas ? 'MULTIAGENT' : undefined)
@@ -242,7 +242,7 @@ export default function FlowListMenu({ chatflow, isAgentCanvas, isAgentflowV2, s
         if (isConfirmed) {
             try {
                 await chatflowsApi.deleteChatflow(chatflow.id)
-                if (isAgentCanvas && localStorage.getItem('agentFlowVersion') === 'v2') {
+                if (isAgentCanvas && isAgentflowV2) {
                     await updateFlowsApi.request('AGENTFLOW')
                 } else {
                     await updateFlowsApi.request(isAgentCanvas ? 'MULTIAGENT' : undefined)

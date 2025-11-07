@@ -23,7 +23,7 @@ class AWSBedrockEmbedding_Embeddings implements INode {
         this.type = 'AWSBedrockEmbeddings'
         this.icon = 'aws.svg'
         this.category = 'Embeddings'
-        this.description = 'Модели эмбеддингов AWSBedrock для генерации эмбеддингов для заданного текста'
+        this.description = 'AWSBedrock embedding models to generate embeddings for a given text'
         this.baseClasses = [this.type, ...getBaseClasses(BedrockEmbeddings)]
         this.credential = {
             label: 'AWS Credential',
@@ -34,72 +34,69 @@ class AWSBedrockEmbedding_Embeddings implements INode {
         }
         this.inputs = [
             {
-                label: 'Регион',
+                label: 'Region',
                 name: 'region',
                 type: 'asyncOptions',
                 loadMethod: 'listRegions',
                 default: 'us-east-1'
             },
             {
-                label: 'Название модели',
+                label: 'Model Name',
                 name: 'model',
                 type: 'asyncOptions',
                 loadMethod: 'listModels',
                 default: 'amazon.titan-embed-text-v1'
             },
             {
-                label: 'Пользовательское название модели',
+                label: 'Custom Model Name',
                 name: 'customModel',
-                description: 'Если указано, переопределит модель, выбранную из опции Название модели',
+                description: 'If provided, will override model selected from Model Name option',
                 type: 'string',
                 optional: true
             },
             {
-                label: 'Тип ввода Cohere',
+                label: 'Cohere Input Type',
                 name: 'inputType',
                 type: 'options',
                 description:
-                    'Указывает тип ввода, передаваемого в модель. Требуется для моделей эмбеддингов cohere v3 и выше. <a target="_blank" href="https://docs.cohere.com/reference/embed">Официальная документация</a>',
+                    'Specifies the type of input passed to the model. Required for cohere embedding models v3 and higher. <a target="_blank" href="https://docs.cohere.com/reference/embed">Official Docs</a>',
                 options: [
                     {
                         label: 'search_document',
                         name: 'search_document',
-                        description:
-                            'Используйте это для кодирования документов для эмбеддингов, которые вы храните в векторной базе данных для случаев поиска'
+                        description: 'Use this to encode documents for embeddings that you store in a vector database for search use-cases'
                     },
                     {
                         label: 'search_query',
                         name: 'search_query',
-                        description: 'Используйте это, когда вы запрашиваете вашу векторную БД для поиска соответствующих документов.'
+                        description: 'Use this when you query your vector DB to find relevant documents.'
                     },
                     {
                         label: 'classification',
                         name: 'classification',
-                        description: 'Используйте это, когда вы используете эмбеддинги как вход для текстового классификатора'
+                        description: 'Use this when you use the embeddings as an input to a text classifier'
                     },
                     {
                         label: 'clustering',
                         name: 'clustering',
-                        description: 'Используйте это, когда вы хотите кластеризовать эмбеддинги.'
+                        description: 'Use this when you want to cluster the embeddings.'
                     }
                 ],
                 optional: true
             },
             {
-                label: 'Размер пакета',
+                label: 'Batch Size',
                 name: 'batchSize',
-                description:
-                    'Размер пакета документов для отправки в AWS API для эмбеддингов модели Titan. Используется для избежания ограничений.',
+                description: 'Documents batch size to send to AWS API for Titan model embeddings. Used to avoid throttling.',
                 type: 'number',
                 optional: true,
                 default: 50,
                 additionalParams: true
             },
             {
-                label: 'Максимум повторных попыток AWS API',
+                label: 'Max AWS API retries',
                 name: 'maxRetries',
-                description:
-                    'Это ограничит количество повторных попыток вызова AWS API для эмбеддингов модели Titan. Используется для избежания ограничений.',
+                description: 'This will limit the number of AWS API for Titan model embeddings call retries. Used to avoid throttling.',
                 type: 'number',
                 optional: true,
                 default: 5,

@@ -1,8 +1,9 @@
 import { Tool } from '@langchain/core/tools'
 import { ICommonObject, IDatabaseEntity, INode, INodeData, INodeOptionsValue, INodeParams } from '../../../../src/Interface'
-import { MCPToolkit } from '../core'
-import { getVars, prepareSandboxVars } from '../../../../src/utils'
+import { MCPToolkit, validateMCPServerConfig } from '../core'
+import { getVars, prepareSandboxVars, parseJsonBody } from '../../../../src/utils'
 import { DataSource } from 'typeorm'
+import hash from 'object-hash'
 
 const mcpServerConfig = `{
     "command": "npx",
@@ -24,6 +25,16 @@ For example, you have a variable called "var1":
     ],
     "env": {
         "API_TOKEN": "{{$vars.var1}}"
+    }
+}
+\`\`\`
+
+For example, when using SSE, you can use the variable "var1" in the headers:
+\`\`\`json
+{
+    "url": "https://api.example.com/endpoint/sse",
+    "headers": {
+        "Authorization": "Bearer {{$vars.var1}}"
     }
 }
 \`\`\`
@@ -61,7 +72,11 @@ class Custom_MCP implements INode {
                     label: 'How to use',
                     value: howToUseCode
                 },
-                placeholder: mcpServerConfig
+                placeholder: mcpServerConfig,
+                warning:
+                    process.env.CUSTOM_MCP_PROTOCOL === 'sse'
+                        ? 'Only Remote MCP with url is supported. Read more <a href="https://docs.flowiseai.com/tutorials/tools-and-mcp#streamable-http-recommended" target="_blank">here</a>'
+                        : undefined
             },
             {
                 label: 'Доступные действия',
@@ -130,6 +145,24 @@ class Custom_MCP implements INode {
             sandbox['$vars'] = prepareSandboxVars(variables)
         }
 
+        const workspaceId = options?.searchOptions?.workspaceId?._value || options?.workspaceId
+
+        let canonicalConfig
+        try {
+            canonicalConfig = JSON.parse(mcpServerConfig)
+        } catch (e) {
+            canonicalConfig = mcpServerConfig
+        }
+
+        const cacheKey = hash({ workspaceId, canonicalConfig, sandbox })
+
+        if (options.cachePool) {
+            const cachedResult = await options.cachePool.getMCPCache(cacheKey)
+            if (cachedResult) {
+                return cachedResult.tools
+            }
+        }
+
         try {
             let serverParams
             if (typeof mcpServerConfig === 'object') {
@@ -140,9 +173,19 @@ class Custom_MCP implements INode {
                 serverParams = JSON.parse(serverParamsString)
             }
 
+            if (process.env.CUSTOM_MCP_SECURITY_CHECK !== 'false') {
+                try {
+                    validateMCPServerConfig(serverParams)
+                } catch (error) {
+                    throw new Error(`Security validation failed: ${error.message}`)
+                }
+            }
+
             // Compatible with stdio and SSE
             let toolkit: MCPToolkit
-            if (serverParams?.command === undefined) {
+            if (process.env.CUSTOM_MCP_PROTOCOL === 'sse') {
+                toolkit = new MCPToolkit(serverParams, 'sse')
+            } else if (serverParams?.command === undefined) {
                 toolkit = new MCPToolkit(serverParams, 'sse')
             } else {
                 toolkit = new MCPToolkit(serverParams, 'stdio')
@@ -151,6 +194,10 @@ class Custom_MCP implements INode {
             await toolkit.initialize()
 
             const tools = toolkit.tools ?? []
+
+            if (options.cachePool) {
+                await options.cachePool.addMCPCache(cacheKey, { toolkit, tools })
+            }
 
             return tools as Tool[]
         } catch (error) {
@@ -222,7 +269,7 @@ function substituteVariablesInString(str: string, sandbox: any): string {
 
 function convertToValidJSONString(inputString: string) {
     try {
-        const jsObject = Function('return ' + inputString)()
+        const jsObject = parseJsonBody(inputString)
         return JSON.stringify(jsObject, null, 2)
     } catch (error) {
         console.error('Error converting to JSON:', error)

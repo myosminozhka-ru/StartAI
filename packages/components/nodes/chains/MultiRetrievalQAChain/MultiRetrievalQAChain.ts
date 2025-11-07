@@ -15,12 +15,14 @@ class MultiRetrievalQAChain_Chains implements INode {
     category: string
     baseClasses: string[]
     description: string
+    badge: string
     inputs: INodeParams[]
 
     constructor() {
         this.label = 'Цепочка множественного поиска вопросов-ответов'
         this.name = 'multiRetrievalQAChain'
         this.version = 2.0
+        this.badge = 'DEPRECATING'
         this.type = 'MultiRetrievalQAChain'
         this.icon = 'qa.svg'
         this.category = 'Chains'

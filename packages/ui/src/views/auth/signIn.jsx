@@ -43,13 +43,13 @@ const SignInPage = () => {
     const { isEnterpriseLicensed, isCloud, isOpenSource } = useConfig()
 
     const usernameInput = {
-        label: 'Email',
+        label: 'Username',
         name: 'username',
         type: 'email',
         placeholder: 'user@company.com'
     }
     const passwordInput = {
-        label: 'Пароль',
+        label: 'Password',
         name: 'password',
         type: 'password',
         placeholder: '********'
@@ -112,7 +112,7 @@ const SignInPage = () => {
         if (loginApi.data) {
             setLoading(false)
             store.dispatch(loginSuccess(loginApi.data))
-            navigate(location.state?.path || '/chatflows')
+            navigate(location.state?.path || '/')
             //navigate(0)
         }
 
@@ -122,7 +122,7 @@ const SignInPage = () => {
     useEffect(() => {
         if (ssoLoginApi.data) {
             store.dispatch(loginSuccess(ssoLoginApi.data))
-            navigate(location.state?.path || '/chatflows')
+            navigate(location.state?.path || '/')
         }
 
         // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -163,10 +163,10 @@ const SignInPage = () => {
         try {
             await resendVerificationApi.request({ email: usernameVal })
             setAuthError(undefined)
-            setSuccessMessage('Письмо с подтверждением было успешно отправлено.')
+            setSuccessMessage('Verification email has been sent successfully.')
             setShowResendButton(false)
         } catch (error) {
-            setAuthError(error.response?.data?.message || 'Не удалось отправить письмо с подтверждением.')
+            setAuthError(error.response?.data?.message || 'Failed to send verification email.')
         }
     }
 
@@ -187,26 +187,26 @@ const SignInPage = () => {
                     {showResendButton && (
                         <Stack sx={{ gap: 1 }}>
                             <Button variant='text' onClick={handleResendVerification}>
-                                Отправить письмо с подтверждением повторно
+                                Resend Verification Email
                             </Button>
                         </Stack>
                     )}
                     <Stack sx={{ gap: 1 }}>
-                        <Typography variant='h1'>Вход в систему</Typography>
+                        <Typography variant='h1'>Sign In</Typography>
                         {isCloud && (
                             <Typography variant='body2' sx={{ color: theme.palette.grey[600] }}>
-                                Нет аккаунта?{' '}
+                                Don&apos;t have an account?{' '}
                                 <Link style={{ color: `${theme.palette.primary.main}` }} to='/register'>
-                                    Зарегистрируйтесь бесплатно
+                                    Sign up for free
                                 </Link>
                                 .
                             </Typography>
                         )}
                         {isEnterpriseLicensed && (
                             <Typography variant='body2' sx={{ color: theme.palette.grey[600] }}>
-                                Есть код приглашения?{' '}
+                                Have an invite code?{' '}
                                 <Link style={{ color: `${theme.palette.primary.main}` }} to='/register'>
-                                    Зарегистрируйтесь для получения аккаунта
+                                    Sign up for an account
                                 </Link>
                                 .
                             </Typography>
@@ -231,28 +231,16 @@ const SignInPage = () => {
                             <Box sx={{ p: 0 }}>
                                 <div style={{ display: 'flex', flexDirection: 'row' }}>
                                     <Typography>
-                                        Пароль<span style={{ color: 'red' }}>&nbsp;*</span>
+                                        Password<span style={{ color: 'red' }}>&nbsp;*</span>
                                     </Typography>
                                     <div style={{ flexGrow: 1 }}></div>
                                 </div>
                                 <Input inputParam={passwordInput} onChange={(newValue) => setPasswordVal(newValue)} value={passwordVal} />
                                 <Typography variant='body2' sx={{ color: theme.palette.grey[600], mt: 1, textAlign: 'right' }}>
                                     <Link style={{ color: theme.palette.primary.main }} to='/forgot-password'>
-                                        Забыли пароль?
+                                        Forgot password?
                                     </Link>
                                 </Typography>
-                                {isCloud && (
-                                    <Typography variant='body2' sx={{ color: theme.palette.grey[600], mt: 1, textAlign: 'right' }}>
-                                        <a
-                                            href='https://docs.flowiseai.com/migration-guide/cloud-migration'
-                                            target='_blank'
-                                            rel='noopener noreferrer'
-                                            style={{ color: theme.palette.primary.main }}
-                                        >
-                                            Мигрировать с существующего аккаунта?
-                                        </a>
-                                    </Typography>
-                                )}
                             </Box>
                             <LoadingButton
                                 loading={loading}
@@ -260,9 +248,9 @@ const SignInPage = () => {
                                 style={{ borderRadius: 12, height: 40, marginRight: 5 }}
                                 type='submit'
                             >
-                                Войти
+                                Login
                             </LoadingButton>
-                            {configuredSsoProviders && configuredSsoProviders.length > 0 && <Divider sx={{ width: '100%' }}>ИЛИ</Divider>}
+                            {configuredSsoProviders && configuredSsoProviders.length > 0 && <Divider sx={{ width: '100%' }}>OR</Divider>}
                             {configuredSsoProviders &&
                                 configuredSsoProviders.map(
                                     (ssoProvider) =>
@@ -279,7 +267,7 @@ const SignInPage = () => {
                                                     </Icon>
                                                 }
                                             >
-                                                Войти через Microsoft
+                                                Sign In With Microsoft
                                             </Button>
                                         )
                                 )}
@@ -298,7 +286,7 @@ const SignInPage = () => {
                                                     </Icon>
                                                 }
                                             >
-                                                Войти через Google
+                                                Sign In With Google
                                             </Button>
                                         )
                                 )}
@@ -317,7 +305,7 @@ const SignInPage = () => {
                                                     </Icon>
                                                 }
                                             >
-                                                Войти через Auth0 от Okta
+                                                Sign In With Auth0 by Okta
                                             </Button>
                                         )
                                 )}
@@ -336,7 +324,7 @@ const SignInPage = () => {
                                                     </Icon>
                                                 }
                                             >
-                                                Войти через Github
+                                                Sign In With Github
                                             </Button>
                                         )
                                 )}

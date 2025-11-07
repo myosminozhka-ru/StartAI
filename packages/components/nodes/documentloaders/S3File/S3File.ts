@@ -14,12 +14,21 @@ import {
     handleDocumentLoaderMetadata,
     handleDocumentLoaderOutput
 } from '../../../src/utils'
-import { S3Client, GetObjectCommand, S3ClientConfig } from '@aws-sdk/client-s3'
+import { S3Client, GetObjectCommand, HeadObjectCommand, S3ClientConfig } from '@aws-sdk/client-s3'
 import { getRegions, MODEL_TYPE } from '../../../src/modelLoader'
 import { Readable } from 'node:stream'
 import * as fsDefault from 'node:fs'
 import * as path from 'node:path'
 import * as os from 'node:os'
+import { PDFLoader } from '@langchain/community/document_loaders/fs/pdf'
+import { DocxLoader } from '@langchain/community/document_loaders/fs/docx'
+import { CSVLoader } from '@langchain/community/document_loaders/fs/csv'
+import { LoadOfSheet } from '../MicrosoftExcel/ExcelLoader'
+import { PowerpointLoader } from '../MicrosoftPowerpoint/PowerpointLoader'
+import { TextSplitter } from 'langchain/text_splitter'
+import { IDocument } from '../../../src/Interface'
+import { omit } from 'lodash'
+import { handleEscapeCharacters } from '../../../src'
 
 class S3_DocumentLoaders implements INode {
     label: string
@@ -37,14 +46,14 @@ class S3_DocumentLoaders implements INode {
     constructor() {
         this.label = 'S3'
         this.name = 'S3'
-        this.version = 4.0
+        this.version = 5.0
         this.type = 'Document'
         this.icon = 's3.svg'
         this.category = 'Document Loaders'
-        this.description = 'Загрузка данных из S3 бакетов'
+        this.description = 'Load Data from S3 Buckets'
         this.baseClasses = [this.type]
         this.credential = {
-            label: 'Учетные данные AWS',
+            label: 'AWS Credential',
             name: 'credential',
             type: 'credential',
             credentialNames: ['awsApi'],
@@ -52,79 +61,139 @@ class S3_DocumentLoaders implements INode {
         }
         this.inputs = [
             {
-                label: 'Бакет',
+                label: 'Bucket',
                 name: 'bucketName',
                 type: 'string'
             },
             {
-                label: 'Ключ объекта',
+                label: 'Object Key',
                 name: 'keyName',
                 type: 'string',
-                description: 'Ключ объекта (или имя ключа), который уникально идентифицирует объект в бакете Amazon S3',
+                description: 'The object key (or key name) that uniquely identifies object in an Amazon S3 bucket',
                 placeholder: 'AI-Paper.pdf'
             },
             {
-                label: 'Регион',
+                label: 'Region',
                 name: 'region',
                 type: 'asyncOptions',
                 loadMethod: 'listRegions',
                 default: 'us-east-1'
             },
             {
-                label: 'URL API Unstructured',
-                name: 'unstructuredAPIUrl',
-                description:
-                    'Ваш URL Unstructured.io. Прочитайте <a target="_blank" href="https://unstructured-io.github.io/unstructured/introduction.html#getting-started">подробнее</a> о том, как начать работу',
-                type: 'string',
-                placeholder: process.env.UNSTRUCTURED_API_URL || 'http://localhost:8000/general/v0/general',
-                optional: !!process.env.UNSTRUCTURED_API_URL
-            },
-            {
-                label: 'Ключ API Unstructured',
-                name: 'unstructuredAPIKey',
-                type: 'password',
-                optional: true
-            },
-            {
-                label: 'Стратегия',
-                name: 'strategy',
-                description: 'Стратегия для разделения PDF/изображения. Варианты: fast, hi_res, auto. По умолчанию: auto.',
+                label: 'File Processing Method',
+                name: 'fileProcessingMethod',
                 type: 'options',
                 options: [
                     {
-                        label: 'Высокое разрешение',
+                        label: 'Built In Loaders',
+                        name: 'builtIn',
+                        description: 'Use the built in loaders to process the file.'
+                    },
+                    {
+                        label: 'Unstructured',
+                        name: 'unstructured',
+                        description: 'Use the Unstructured API to process the file.'
+                    }
+                ],
+                default: 'builtIn'
+            },
+            {
+                label: 'Text Splitter',
+                name: 'textSplitter',
+                type: 'TextSplitter',
+                optional: true,
+                show: {
+                    fileProcessingMethod: 'builtIn'
+                }
+            },
+            {
+                label: 'Additional Metadata',
+                name: 'metadata',
+                type: 'json',
+                description: 'Additional metadata to be added to the extracted documents',
+                optional: true,
+                additionalParams: true
+            },
+            {
+                label: 'Omit Metadata Keys',
+                name: 'omitMetadataKeys',
+                type: 'string',
+                rows: 4,
+                description:
+                    'Each document loader comes with a default set of metadata keys that are extracted from the document. You can use this field to omit some of the default metadata keys. The value should be a list of keys, seperated by comma. Use * to omit all metadata keys execept the ones you specify in the Additional Metadata field',
+                placeholder: 'key1, key2, key3.nestedKey1',
+                optional: true,
+                additionalParams: true
+            },
+            {
+                label: 'Unstructured API URL',
+                name: 'unstructuredAPIUrl',
+                description:
+                    'Your Unstructured.io URL. Read <a target="_blank" href="https://unstructured-io.github.io/unstructured/introduction.html#getting-started">more</a> on how to get started',
+                type: 'string',
+                placeholder: process.env.UNSTRUCTURED_API_URL || 'http://localhost:8000/general/v0/general',
+                optional: !!process.env.UNSTRUCTURED_API_URL,
+                additionalParams: true,
+                show: {
+                    fileProcessingMethod: 'unstructured'
+                }
+            },
+            {
+                label: 'Unstructured API KEY',
+                name: 'unstructuredAPIKey',
+                type: 'password',
+                optional: true,
+                additionalParams: true,
+                show: {
+                    fileProcessingMethod: 'unstructured'
+                }
+            },
+            {
+                label: 'Strategy',
+                name: 'strategy',
+                description: 'The strategy to use for partitioning PDF/image. Options are fast, hi_res, auto. Default: auto.',
+                type: 'options',
+                options: [
+                    {
+                        label: 'Hi-Res',
                         name: 'hi_res'
                     },
                     {
-                        label: 'Быстрая',
+                        label: 'Fast',
                         name: 'fast'
                     },
                     {
-                        label: 'Только OCR',
+                        label: 'OCR Only',
                         name: 'ocr_only'
                     },
                     {
-                        label: 'Авто',
+                        label: 'Auto',
                         name: 'auto'
                     }
                 ],
                 optional: true,
                 additionalParams: true,
-                default: 'auto'
+                default: 'auto',
+                show: {
+                    fileProcessingMethod: 'unstructured'
+                }
             },
             {
-                label: 'Кодировка',
+                label: 'Encoding',
                 name: 'encoding',
-                description: 'Метод кодировки, используемый для декодирования текстового ввода. По умолчанию: utf-8.',
+                description: 'The encoding method used to decode the text input. Default: utf-8.',
                 type: 'string',
                 optional: true,
                 additionalParams: true,
-                default: 'utf-8'
+                default: 'utf-8',
+                show: {
+                    fileProcessingMethod: 'unstructured'
+                }
             },
             {
-                label: 'Пропустить типы таблиц',
+                label: 'Skip Infer Table Types',
                 name: 'skipInferTableTypes',
-                description: 'Типы документов, для которых вы хотите пропустить извлечение таблиц. По умолчанию: pdf, jpg, png.',
+                description: 'The document types that you want to skip table extraction with. Default: pdf, jpg, png.',
                 type: 'multiOptions',
                 options: [
                     {
@@ -214,236 +283,277 @@ class S3_DocumentLoaders implements INode {
                 ],
                 optional: true,
                 additionalParams: true,
-                default: '["pdf", "jpg", "png"]'
+                default: '["pdf", "jpg", "png"]',
+                show: {
+                    fileProcessingMethod: 'unstructured'
+                }
             },
             {
-                label: 'Имя модели высокого разрешения',
+                label: 'Hi-Res Model Name',
                 name: 'hiResModelName',
-                description: 'Название модели вывода, используемой при стратегии hi_res. По умолчанию: detectron2_onnx.',
+                description: 'The name of the inference model used when strategy is hi_res. Default: detectron2_onnx.',
                 type: 'options',
                 options: [
                     {
                         label: 'chipper',
                         name: 'chipper',
                         description:
-                            'Эксклюзивно для Unstructured hosted API. Модель Chipper - это внутренняя модель преобразования изображения в текст Unstructured, основанная на моделях Visual Document Understanding (VDU) на базе трансформеров.'
+                            'Exlusive to Unstructured hosted API. The Chipper model is Unstructured in-house image-to-text model based on transformer-based Visual Document Understanding (VDU) models.'
                     },
                     {
                         label: 'detectron2_onnx',
                         name: 'detectron2_onnx',
                         description:
-                            'Модель компьютерного зрения от Facebook AI, которая предоставляет алгоритмы обнаружения и сегментации объектов с ONNX Runtime. Это самая быстрая модель со стратегией hi_res.'
+                            'A Computer Vision model by Facebook AI that provides object detection and segmentation algorithms with ONNX Runtime. It is the fastest model with the hi_res strategy.'
                     },
                     {
                         label: 'yolox',
                         name: 'yolox',
-                        description: 'Детектор объектов в реальном времени в один этап, который модифицирует YOLOv3 с бэкбоном DarkNet53.'
+                        description: 'A single-stage real-time object detector that modifies YOLOv3 with a DarkNet53 backbone.'
                     },
                     {
                         label: 'yolox_quantized',
                         name: 'yolox_quantized',
-                        description: 'Работает быстрее, чем YoloX, и его скорость ближе к Detectron2.'
+                        description: 'Runs faster than YoloX and its speed is closer to Detectron2.'
                     }
                 ],
                 optional: true,
                 additionalParams: true,
-                default: 'detectron2_onnx'
+                default: 'detectron2_onnx',
+                show: {
+                    fileProcessingMethod: 'unstructured'
+                }
             },
             {
-                label: 'Стратегия разбиения',
+                label: 'Chunking Strategy',
                 name: 'chunkingStrategy',
                 description:
-                    'Используйте одну из поддерживаемых стратегий для разбиения возвращаемых элементов. Если опущено, разбиение не выполняется, и любые другие предоставленные параметры разбиения игнорируются. По умолчанию: by_title',
+                    'Use one of the supported strategies to chunk the returned elements. When omitted, no chunking is performed and any other chunking parameters provided are ignored. Default: by_title',
                 type: 'options',
                 options: [
                     {
-                        label: 'Нет',
+                        label: 'None',
                         name: 'None'
                     },
                     {
-                        label: 'По заголовку',
+                        label: 'By Title',
                         name: 'by_title'
                     }
                 ],
                 optional: true,
                 additionalParams: true,
-                default: 'by_title'
+                default: 'by_title',
+                show: {
+                    fileProcessingMethod: 'unstructured'
+                }
             },
             {
-                label: 'Языки OCR',
+                label: 'OCR Languages',
                 name: 'ocrLanguages',
-                description:
-                    'Языки для использования в OCR. Примечание: Устаревает, так как languages - это новый тип. Ожидает обновления langchain.',
+                description: 'The languages to use for OCR. Note: Being depricated as languages is the new type. Pending langchain update.',
                 type: 'multiOptions',
                 options: [
                     {
-                        label: 'Английский',
+                        label: 'English',
                         name: 'eng'
                     },
                     {
-                        label: 'Испанский (Español)',
+                        label: 'Spanish (Español)',
                         name: 'spa'
                     },
                     {
-                        label: 'Китайский (普通话)',
+                        label: 'Mandarin Chinese (普通话)',
                         name: 'cmn'
                     },
                     {
-                        label: 'Хинди (हिन्दी)',
+                        label: 'Hindi (हिन्दी)',
                         name: 'hin'
                     },
                     {
-                        label: 'Арабский (اَلْعَرَبِيَّةُ)',
+                        label: 'Arabic (اَلْعَرَبِيَّةُ)',
                         name: 'ara'
                     },
                     {
-                        label: 'Португальский (Português)',
+                        label: 'Portuguese (Português)',
                         name: 'por'
                     },
                     {
-                        label: 'Бенгальский (বাংলা)',
+                        label: 'Bengali (বাংলা)',
                         name: 'ben'
                     },
                     {
-                        label: 'Русский (Русский)',
+                        label: 'Russian (Русский)',
                         name: 'rus'
                     },
                     {
-                        label: 'Японский (日本語)',
+                        label: 'Japanese (日本語)',
                         name: 'jpn'
                     },
                     {
-                        label: 'Панджаби (ਪੰਜਾਬੀ)',
+                        label: 'Punjabi (ਪੰਜਾਬੀ)',
                         name: 'pan'
                     },
                     {
-                        label: 'Немецкий (Deutsch)',
+                        label: 'German (Deutsch)',
                         name: 'deu'
                     },
                     {
-                        label: 'Корейский (한국어)',
+                        label: 'Korean (한국어)',
                         name: 'kor'
                     },
                     {
-                        label: 'Французский (Français)',
+                        label: 'French (Français)',
                         name: 'fra'
                     },
                     {
-                        label: 'Итальянский (Italiano)',
+                        label: 'Italian (Italiano)',
                         name: 'ita'
                     },
                     {
-                        label: 'Вьетнамский (Tiếng Việt)',
+                        label: 'Vietnamese (Tiếng Việt)',
                         name: 'vie'
                     }
                 ],
                 optional: true,
-                additionalParams: true
+                additionalParams: true,
+                show: {
+                    fileProcessingMethod: 'unstructured'
+                }
             },
             {
-                label: 'Ключ ID источника',
+                label: 'Source ID Key',
                 name: 'sourceIdKey',
                 type: 'string',
                 description:
-                    'Ключ, используемый для получения истинного источника документа, для сравнения с записью. Метаданные документа должны содержать ключ ID источника.',
+                    'Key used to get the true source of document, to be compared against the record. Document metadata must contain the Source ID Key.',
                 default: 'source',
                 placeholder: 'source',
                 optional: true,
-                additionalParams: true
+                additionalParams: true,
+                show: {
+                    fileProcessingMethod: 'unstructured'
+                }
             },
             {
-                label: 'Координаты',
+                label: 'Coordinates',
                 name: 'coordinates',
                 type: 'boolean',
-                description: 'Если true, возвращает координаты для каждого элемента. По умолчанию: false.',
+                description: 'If true, return coordinates for each element. Default: false.',
                 optional: true,
                 additionalParams: true,
-                default: false
+                default: false,
+                show: {
+                    fileProcessingMethod: 'unstructured'
+                }
             },
             {
-                label: 'Сохранять XML теги',
+                label: 'XML Keep Tags',
                 name: 'xmlKeepTags',
                 description:
-                    'Если True, сохранит XML теги в выводе. В противном случае просто извлечет текст из тегов. Применяется только к partition_xml.',
+                    'If True, will retain the XML tags in the output. Otherwise it will simply extract the text from within the tags. Only applies to partition_xml.',
                 type: 'boolean',
                 optional: true,
-                additionalParams: true
+                additionalParams: true,
+                show: {
+                    fileProcessingMethod: 'unstructured'
+                }
             },
             {
-                label: 'Включать разрывы страниц',
+                label: 'Include Page Breaks',
                 name: 'includePageBreaks',
-                description: 'Когда true, вывод будет включать элементы разрыва страницы, когда тип файла это поддерживает.',
+                description: 'When true, the output will include page break elements when the filetype supports it.',
                 type: 'boolean',
                 optional: true,
-                additionalParams: true
+                additionalParams: true,
+                show: {
+                    fileProcessingMethod: 'unstructured'
+                }
             },
             {
-                label: 'Многостраничные разделы',
+                label: 'Multi-Page Sections',
                 name: 'multiPageSections',
-                description: 'Обрабатывать ли многостраничные документы как отдельные разделы.',
+                description: 'Whether to treat multi-page documents as separate sections.',
                 type: 'boolean',
                 optional: true,
-                additionalParams: true
+                additionalParams: true,
+                show: {
+                    fileProcessingMethod: 'unstructured'
+                }
             },
             {
-                label: 'Объединять до N символов',
+                label: 'Combine Under N Chars',
                 name: 'combineUnderNChars',
                 description:
-                    'Если установлена стратегия разбиения, объединять элементы, пока раздел не достигнет длины n символов. По умолчанию: значение max_characters. Не может превышать значение max_characters.',
-                type: 'number',
-                optional: true,
-                additionalParams: true
-            },
-            {
-                label: 'Новый после N символов',
-                name: 'newAfterNChars',
-                description:
-                    'Если установлена стратегия разбиения, обрезать новые разделы после достижения длины n символов (мягкий максимум). Значение max_characters. Не может превышать значение max_characters.',
-                type: 'number',
-                optional: true,
-                additionalParams: true
-            },
-            {
-                label: 'Максимум символов',
-                name: 'maxCharacters',
-                description:
-                    'Если установлена стратегия разбиения, обрезать новые разделы после достижения длины n символов (жесткий максимум). По умолчанию: 500',
+                    "If chunking strategy is set, combine elements until a section reaches a length of n chars. Default: value of max_characters. Can't exceed value of max_characters.",
                 type: 'number',
                 optional: true,
                 additionalParams: true,
-                default: '500'
+                show: {
+                    fileProcessingMethod: 'unstructured'
+                }
             },
             {
-                label: 'Дополнительные метаданные',
+                label: 'New After N Chars',
+                name: 'newAfterNChars',
+                description:
+                    "If chunking strategy is set, cut off new sections after reaching a length of n chars (soft max). value of max_characters. Can't exceed value of max_characters.",
+                type: 'number',
+                optional: true,
+                additionalParams: true,
+                show: {
+                    fileProcessingMethod: 'unstructured'
+                }
+            },
+            {
+                label: 'Max Characters',
+                name: 'maxCharacters',
+                description:
+                    'If chunking strategy is set, cut off new sections after reaching a length of n chars (hard max). Default: 500',
+                type: 'number',
+                optional: true,
+                additionalParams: true,
+                default: '500',
+                show: {
+                    fileProcessingMethod: 'unstructured'
+                }
+            },
+            {
+                label: 'Additional Metadata',
                 name: 'metadata',
                 type: 'json',
-                description: 'Дополнительные метаданные для добавления к извлеченным документам',
+                description: 'Additional metadata to be added to the extracted documents',
                 optional: true,
-                additionalParams: true
+                additionalParams: true,
+                show: {
+                    fileProcessingMethod: 'unstructured'
+                }
             },
             {
-                label: 'Исключить ключи метаданных',
+                label: 'Omit Metadata Keys',
                 name: 'omitMetadataKeys',
                 type: 'string',
                 rows: 4,
                 description:
-                    'Каждый загрузчик документов поставляется с набором метаданных по умолчанию, которые извлекаются из документа. Вы можете использовать это поле для исключения некоторых ключей метаданных по умолчанию. Значение должно быть списком ключей, разделенных запятыми. Используйте * для исключения всех ключей метаданных, кроме тех, которые вы указали в поле Дополнительные метаданные',
+                    'Each document loader comes with a default set of metadata keys that are extracted from the document. You can use this field to omit some of the default metadata keys. The value should be a list of keys, seperated by comma. Use * to omit all metadata keys execept the ones you specify in the Additional Metadata field',
                 placeholder: 'key1, key2, key3.nestedKey1',
                 optional: true,
-                additionalParams: true
+                additionalParams: true,
+                show: {
+                    fileProcessingMethod: 'unstructured'
+                }
             }
         ]
         this.outputs = [
             {
-                label: 'Документ',
+                label: 'Document',
                 name: 'document',
-                description: 'Массив объектов документов, содержащих метаданные и содержимое страницы',
+                description: 'Array of document objects containing metadata and pageContent',
                 baseClasses: [...this.baseClasses, 'json']
             },
             {
-                label: 'Текст',
+                label: 'Text',
                 name: 'text',
-                description: 'Объединенная строка из содержимого страниц документов',
+                description: 'Concatenated string from pageContent of documents',
                 baseClasses: ['string', 'json']
             }
         ]
@@ -459,6 +569,171 @@ class S3_DocumentLoaders implements INode {
         const bucketName = nodeData.inputs?.bucketName as string
         const keyName = nodeData.inputs?.keyName as string
         const region = nodeData.inputs?.region as string
+        const fileProcessingMethod = nodeData.inputs?.fileProcessingMethod as string
+        const textSplitter = nodeData.inputs?.textSplitter as TextSplitter
+        const metadata = nodeData.inputs?.metadata
+        const _omitMetadataKeys = nodeData.inputs?.omitMetadataKeys as string
+        const output = nodeData.outputs?.output as string
+
+        let omitMetadataKeys: string[] = []
+        if (_omitMetadataKeys) {
+            omitMetadataKeys = _omitMetadataKeys.split(',').map((key) => key.trim())
+        }
+
+        let credentials: S3ClientConfig['credentials'] | undefined
+
+        if (nodeData.credential) {
+            const credentialData = await getCredentialData(nodeData.credential, options)
+            const accessKeyId = getCredentialParam('awsKey', credentialData, nodeData)
+            const secretAccessKey = getCredentialParam('awsSecret', credentialData, nodeData)
+
+            if (accessKeyId && secretAccessKey) {
+                credentials = {
+                    accessKeyId,
+                    secretAccessKey
+                }
+            }
+        }
+
+        const s3Config: S3ClientConfig = {
+            region,
+            credentials
+        }
+
+        if (fileProcessingMethod === 'builtIn') {
+            return await this.processWithBuiltInLoaders(
+                bucketName,
+                keyName,
+                s3Config,
+                textSplitter,
+                metadata,
+                omitMetadataKeys,
+                _omitMetadataKeys,
+                output
+            )
+        } else {
+            return await this.processWithUnstructured(nodeData, options, bucketName, keyName, s3Config)
+        }
+    }
+
+    private async processWithBuiltInLoaders(
+        bucketName: string,
+        keyName: string,
+        s3Config: S3ClientConfig,
+        textSplitter: TextSplitter,
+        metadata: any,
+        omitMetadataKeys: string[],
+        _omitMetadataKeys: string,
+        output: string
+    ): Promise<any> {
+        let docs: IDocument[] = []
+
+        try {
+            const s3Client = new S3Client(s3Config)
+
+            // Get file metadata to determine content type
+            const headCommand = new HeadObjectCommand({
+                Bucket: bucketName,
+                Key: keyName
+            })
+
+            const headResponse = await s3Client.send(headCommand)
+            const contentType = headResponse.ContentType || this.getMimeTypeFromExtension(keyName)
+
+            // Download the file
+            const getObjectCommand = new GetObjectCommand({
+                Bucket: bucketName,
+                Key: keyName
+            })
+
+            const response = await s3Client.send(getObjectCommand)
+
+            const objectData = await new Promise<Buffer>((resolve, reject) => {
+                const chunks: Buffer[] = []
+
+                if (response.Body instanceof Readable) {
+                    response.Body.on('data', (chunk: Buffer) => chunks.push(chunk))
+                    response.Body.on('end', () => resolve(Buffer.concat(chunks)))
+                    response.Body.on('error', reject)
+                } else {
+                    reject(new Error('Response body is not a readable stream.'))
+                }
+            })
+
+            // Process the file based on content type
+            const fileInfo = {
+                id: keyName,
+                name: path.basename(keyName),
+                mimeType: contentType,
+                size: objectData.length,
+                webViewLink: `s3://${bucketName}/${keyName}`,
+                bucketName: bucketName,
+                key: keyName,
+                lastModified: headResponse.LastModified,
+                etag: headResponse.ETag
+            }
+
+            docs = await this.processFile(fileInfo, objectData)
+
+            // Apply text splitter if provided
+            if (textSplitter && docs.length > 0) {
+                docs = await textSplitter.splitDocuments(docs)
+            }
+
+            // Apply metadata transformations
+            if (metadata) {
+                const parsedMetadata = typeof metadata === 'object' ? metadata : JSON.parse(metadata)
+                docs = docs.map((doc) => ({
+                    ...doc,
+                    metadata:
+                        _omitMetadataKeys === '*'
+                            ? {
+                                  ...parsedMetadata
+                              }
+                            : omit(
+                                  {
+                                      ...doc.metadata,
+                                      ...parsedMetadata
+                                  },
+                                  omitMetadataKeys
+                              )
+                }))
+            } else {
+                docs = docs.map((doc) => ({
+                    ...doc,
+                    metadata:
+                        _omitMetadataKeys === '*'
+                            ? {}
+                            : omit(
+                                  {
+                                      ...doc.metadata
+                                  },
+                                  omitMetadataKeys
+                              )
+                }))
+            }
+        } catch (error) {
+            throw new Error(`Failed to load S3 document: ${error.message}`)
+        }
+
+        if (output === 'document') {
+            return docs
+        } else {
+            let finaltext = ''
+            for (const doc of docs) {
+                finaltext += `${doc.pageContent}\n`
+            }
+            return handleEscapeCharacters(finaltext, false)
+        }
+    }
+
+    private async processWithUnstructured(
+        nodeData: INodeData,
+        options: ICommonObject,
+        bucketName: string,
+        keyName: string,
+        s3Config: S3ClientConfig
+    ): Promise<any> {
         const unstructuredAPIUrl = nodeData.inputs?.unstructuredAPIUrl as string
         const unstructuredAPIKey = nodeData.inputs?.unstructuredAPIKey as string
         const strategy = nodeData.inputs?.strategy as UnstructuredLoaderStrategy
@@ -480,26 +755,6 @@ class S3_DocumentLoaders implements INode {
         const maxCharacters = nodeData.inputs?.maxCharacters as number
         const _omitMetadataKeys = nodeData.inputs?.omitMetadataKeys as string
         const output = nodeData.outputs?.output as string
-
-        let credentials: S3ClientConfig['credentials'] | undefined
-
-        if (nodeData.credential) {
-            const credentialData = await getCredentialData(nodeData.credential, options)
-            const accessKeyId = getCredentialParam('awsKey', credentialData, nodeData)
-            const secretAccessKey = getCredentialParam('awsSecret', credentialData, nodeData)
-
-            if (accessKeyId && secretAccessKey) {
-                credentials = {
-                    accessKeyId,
-                    secretAccessKey
-                }
-            }
-        }
-
-        const s3Config: S3ClientConfig = {
-            region,
-            credentials
-        }
 
         const loader = new S3Loader({
             bucket: bucketName,
@@ -578,6 +833,203 @@ class S3_DocumentLoaders implements INode {
         }
 
         return loader.load()
+    }
+
+    private getMimeTypeFromExtension(fileName: string): string {
+        const extension = path.extname(fileName).toLowerCase()
+        const mimeTypeMap: { [key: string]: string } = {
+            '.pdf': 'application/pdf',
+            '.docx': 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+            '.doc': 'application/msword',
+            '.xlsx': 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+            '.xls': 'application/vnd.ms-excel',
+            '.pptx': 'application/vnd.openxmlformats-officedocument.presentationml.presentation',
+            '.ppt': 'application/vnd.ms-powerpoint',
+            '.txt': 'text/plain',
+            '.csv': 'text/csv',
+            '.html': 'text/html',
+            '.htm': 'text/html',
+            '.json': 'application/json',
+            '.xml': 'application/xml',
+            '.md': 'text/markdown'
+        }
+        return mimeTypeMap[extension] || 'application/octet-stream'
+    }
+
+    private async processFile(fileInfo: any, buffer: Buffer): Promise<IDocument[]> {
+        try {
+            // Handle different file types
+            if (this.isTextBasedFile(fileInfo.mimeType)) {
+                // Process text files directly from buffer
+                const content = buffer.toString('utf-8')
+
+                // Create document with metadata
+                return [
+                    {
+                        pageContent: content,
+                        metadata: {
+                            source: fileInfo.webViewLink,
+                            fileId: fileInfo.key,
+                            fileName: fileInfo.name,
+                            mimeType: fileInfo.mimeType,
+                            size: fileInfo.size,
+                            lastModified: fileInfo.lastModified,
+                            etag: fileInfo.etag,
+                            bucketName: fileInfo.bucketName
+                        }
+                    }
+                ]
+            } else if (this.isSupportedBinaryFile(fileInfo.mimeType)) {
+                // Process binary files using loaders
+                return await this.processBinaryFile(fileInfo, buffer)
+            } else {
+                console.warn(`Unsupported file type ${fileInfo.mimeType} for file ${fileInfo.name}`)
+                return []
+            }
+        } catch (error) {
+            console.warn(`Failed to process file ${fileInfo.name}: ${error.message}`)
+            return []
+        }
+    }
+
+    private isTextBasedFile(mimeType: string): boolean {
+        const textBasedMimeTypes = [
+            'text/plain',
+            'text/html',
+            'text/css',
+            'text/javascript',
+            'text/csv',
+            'text/xml',
+            'application/json',
+            'application/xml',
+            'text/markdown',
+            'text/x-markdown'
+        ]
+        return textBasedMimeTypes.includes(mimeType)
+    }
+
+    private isSupportedBinaryFile(mimeType: string): boolean {
+        const supportedBinaryTypes = [
+            'application/pdf',
+            'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+            'application/msword',
+            'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+            'application/vnd.ms-excel',
+            'application/vnd.openxmlformats-officedocument.presentationml.presentation',
+            'application/vnd.ms-powerpoint'
+        ]
+        return supportedBinaryTypes.includes(mimeType)
+    }
+
+    private async processBinaryFile(fileInfo: any, buffer: Buffer): Promise<IDocument[]> {
+        let tempFilePath: string | null = null
+
+        try {
+            // Create temporary file
+            tempFilePath = await this.createTempFile(buffer, fileInfo.name, fileInfo.mimeType)
+
+            let docs: IDocument[] = []
+            const mimeType = fileInfo.mimeType.toLowerCase()
+
+            switch (mimeType) {
+                case 'application/pdf': {
+                    const pdfLoader = new PDFLoader(tempFilePath, {
+                        // @ts-ignore
+                        pdfjs: () => import('pdf-parse/lib/pdf.js/v1.10.100/build/pdf.js')
+                    })
+                    docs = await pdfLoader.load()
+                    break
+                }
+                case 'application/vnd.openxmlformats-officedocument.wordprocessingml.document':
+                case 'application/msword': {
+                    const docxLoader = new DocxLoader(tempFilePath)
+                    docs = await docxLoader.load()
+                    break
+                }
+                case 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet':
+                case 'application/vnd.ms-excel': {
+                    const excelLoader = new LoadOfSheet(tempFilePath)
+                    docs = await excelLoader.load()
+                    break
+                }
+                case 'application/vnd.openxmlformats-officedocument.presentationml.presentation':
+                case 'application/vnd.ms-powerpoint': {
+                    const pptxLoader = new PowerpointLoader(tempFilePath)
+                    docs = await pptxLoader.load()
+                    break
+                }
+                case 'text/csv': {
+                    const csvLoader = new CSVLoader(tempFilePath)
+                    docs = await csvLoader.load()
+                    break
+                }
+                default:
+                    throw new Error(`Unsupported binary file type: ${mimeType}`)
+            }
+
+            // Add S3 metadata to each document
+            if (docs.length > 0) {
+                const s3Metadata = {
+                    source: fileInfo.webViewLink,
+                    fileId: fileInfo.key,
+                    fileName: fileInfo.name,
+                    mimeType: fileInfo.mimeType,
+                    size: fileInfo.size,
+                    lastModified: fileInfo.lastModified,
+                    etag: fileInfo.etag,
+                    bucketName: fileInfo.bucketName,
+                    totalPages: docs.length // Total number of pages/sheets in the file
+                }
+
+                return docs.map((doc, index) => ({
+                    ...doc,
+                    metadata: {
+                        ...doc.metadata, // Keep original loader metadata (page numbers, etc.)
+                        ...s3Metadata, // Add S3 metadata
+                        pageIndex: index // Add page/sheet index
+                    }
+                }))
+            }
+
+            return []
+        } catch (error) {
+            throw new Error(`Failed to process binary file: ${error.message}`)
+        } finally {
+            // Clean up temporary file
+            if (tempFilePath && fsDefault.existsSync(tempFilePath)) {
+                try {
+                    fsDefault.unlinkSync(tempFilePath)
+                } catch (e) {
+                    console.warn(`Failed to delete temporary file: ${tempFilePath}`)
+                }
+            }
+        }
+    }
+
+    private async createTempFile(buffer: Buffer, fileName: string, mimeType: string): Promise<string> {
+        // Get appropriate file extension
+        let extension = path.extname(fileName)
+        if (!extension) {
+            const extensionMap: { [key: string]: string } = {
+                'application/pdf': '.pdf',
+                'application/vnd.openxmlformats-officedocument.wordprocessingml.document': '.docx',
+                'application/msword': '.doc',
+                'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet': '.xlsx',
+                'application/vnd.ms-excel': '.xls',
+                'application/vnd.openxmlformats-officedocument.presentationml.presentation': '.pptx',
+                'application/vnd.ms-powerpoint': '.ppt',
+                'text/csv': '.csv'
+            }
+            extension = extensionMap[mimeType] || '.tmp'
+        }
+
+        // Create temporary file
+        const tempDir = os.tmpdir()
+        const tempFileName = `s3_${Date.now()}_${Math.random().toString(36).substring(7)}${extension}`
+        const tempFilePath = path.join(tempDir, tempFileName)
+
+        fsDefault.writeFileSync(tempFilePath, buffer)
+        return tempFilePath
     }
 }
 module.exports = { nodeClass: S3_DocumentLoaders }

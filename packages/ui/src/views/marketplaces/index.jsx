@@ -20,7 +20,11 @@ import {
     ToggleButtonGroup,
     MenuItem,
     Button,
-    Tabs
+    Tabs,
+    Autocomplete,
+    TextField,
+    Chip,
+    Tooltip
 } from '@mui/material'
 import { useTheme } from '@mui/material/styles'
 import { IconLayoutGrid, IconList, IconX } from '@tabler/icons-react'
@@ -57,7 +61,7 @@ import { gridSpacing } from '@/store/constant'
 import { useError } from '@/store/context/ErrorContext'
 
 const badges = ['POPULAR', 'NEW']
-const types = ['Chatflow', 'Agentflow', 'AgentflowV2', 'Tool']
+const types = ['Chatflow', 'AgentflowV2', 'Tool']
 const framework = ['Langchain', 'LlamaIndex']
 const MenuProps = {
     PaperProps: {
@@ -113,12 +117,12 @@ const Marketplace = () => {
     const share = (template) => {
         const dialogProps = {
             type: 'EDIT',
-            cancelButtonName: 'Отмена',
-            confirmButtonName: 'Поделиться',
+            cancelButtonName: 'Cancel',
+            confirmButtonName: 'Share',
             data: {
                 id: template.id,
                 name: template.name,
-                title: 'Поделиться пользовательским шаблоном',
+                title: 'Share Custom Template',
                 itemType: 'custom_template'
             }
         }
@@ -152,7 +156,10 @@ const Marketplace = () => {
         const {
             target: { value }
         } = event
-        setBadgeFilter(typeof value === 'string' ? value.split(',') : value)
+        setBadgeFilter(
+            // On autofill we get a stringified value.
+            typeof value === 'string' ? value.split(',') : value
+        )
         const data = activeTabValue === 0 ? getAllTemplatesMarketplacesApi.data : getAllCustomTemplatesApi.data
         getEligibleUsecases(data, {
             typeFilter,
@@ -166,7 +173,10 @@ const Marketplace = () => {
         const {
             target: { value }
         } = event
-        setTypeFilter(typeof value === 'string' ? value.split(',') : value)
+        setTypeFilter(
+            // On autofill we get a stringified value.
+            typeof value === 'string' ? value.split(',') : value
+        )
         const data = activeTabValue === 0 ? getAllTemplatesMarketplacesApi.data : getAllCustomTemplatesApi.data
         getEligibleUsecases(data, {
             typeFilter: typeof value === 'string' ? value.split(',') : value,
@@ -180,7 +190,10 @@ const Marketplace = () => {
         const {
             target: { value }
         } = event
-        setFrameworkFilter(typeof value === 'string' ? value.split(',') : value)
+        setFrameworkFilter(
+            // On autofill we get a stringified value.
+            typeof value === 'string' ? value.split(',') : value
+        )
         const data = activeTabValue === 0 ? getAllTemplatesMarketplacesApi.data : getAllCustomTemplatesApi.data
         getEligibleUsecases(data, {
             typeFilter,
@@ -205,10 +218,10 @@ const Marketplace = () => {
 
     const onDeleteCustomTemplate = async (template) => {
         const confirmPayload = {
-            title: `Удалить`,
-            description: `Удалить пользовательский шаблон ${template.name}?`,
-            confirmButtonName: 'Удалить',
-            cancelButtonName: 'Отмена'
+            title: `Delete`,
+            description: `Delete Custom Template ${template.name}?`,
+            confirmButtonName: 'Delete',
+            cancelButtonName: 'Cancel'
         }
         const isConfirmed = await confirm(confirmPayload)
 
@@ -217,7 +230,7 @@ const Marketplace = () => {
                 const deleteResp = await marketplacesApi.deleteCustomTemplate(template.id)
                 if (deleteResp.data) {
                     enqueueSnackbar({
-                        message: 'Пользовательский шаблон успешно удалён!',
+                        message: 'Custom Template deleted successfully!',
                         options: {
                             key: new Date().getTime() + Math.random(),
                             variant: 'success',
@@ -232,7 +245,7 @@ const Marketplace = () => {
                 }
             } catch (error) {
                 enqueueSnackbar({
-                    message: `Не удалось удалить пользовательский шаблон: ${
+                    message: `Failed to delete custom template: ${
                         typeof error.response.data === 'object' ? error.response.data.message : error.response.data
                     }`,
                     options: {
@@ -308,10 +321,10 @@ const Marketplace = () => {
 
     const onUseTemplate = (selectedTool) => {
         const dialogProp = {
-            title: 'Добавить новый инструмент',
+            title: 'Add New Tool',
             type: 'IMPORT',
-            cancelButtonName: 'Отмена',
-            confirmButtonName: 'Добавить',
+            cancelButtonName: 'Cancel',
+            confirmButtonName: 'Add',
             data: selectedTool
         }
         setToolDialogProps(dialogProp)
@@ -472,7 +485,7 @@ const Marketplace = () => {
                                         }}
                                     >
                                         <InputLabel size='small' id='filter-badge-label'>
-                                            Тег
+                                            Tag
                                         </InputLabel>
                                         <Select
                                             labelId='filter-badge-label'
@@ -481,7 +494,7 @@ const Marketplace = () => {
                                             multiple
                                             value={badgeFilter}
                                             onChange={handleBadgeFilterChange}
-                                            input={<OutlinedInput label='Тег' />}
+                                            input={<OutlinedInput label='Tag' />}
                                             renderValue={(selected) => selected.join(', ')}
                                             MenuProps={MenuProps}
                                             sx={getSelectStyles(theme.palette.grey[900] + 25, theme?.customization?.isDarkMode)}
@@ -508,7 +521,7 @@ const Marketplace = () => {
                                         }}
                                     >
                                         <InputLabel size='small' id='type-badge-label'>
-                                            Тип
+                                            Type
                                         </InputLabel>
                                         <Select
                                             size='small'
@@ -517,7 +530,7 @@ const Marketplace = () => {
                                             multiple
                                             value={typeFilter}
                                             onChange={handleTypeFilterChange}
-                                            input={<OutlinedInput label='Тип' />}
+                                            input={<OutlinedInput label='Type' />}
                                             renderValue={(selected) => selected.join(', ')}
                                             MenuProps={MenuProps}
                                             sx={getSelectStyles(theme.palette.grey[900] + 25, theme?.customization?.isDarkMode)}
@@ -544,7 +557,7 @@ const Marketplace = () => {
                                         }}
                                     >
                                         <InputLabel size='small' id='type-fw-label'>
-                                            Фреймворк
+                                            Framework
                                         </InputLabel>
                                         <Select
                                             size='small'
@@ -553,7 +566,7 @@ const Marketplace = () => {
                                             multiple
                                             value={frameworkFilter}
                                             onChange={handleFrameworkFilterChange}
-                                            input={<OutlinedInput label='Фреймворк' />}
+                                            input={<OutlinedInput label='Framework' />}
                                             renderValue={(selected) => selected.join(', ')}
                                             MenuProps={MenuProps}
                                             sx={getSelectStyles(theme.palette.grey[900] + 25, theme?.customization?.isDarkMode)}
@@ -574,9 +587,9 @@ const Marketplace = () => {
                             }
                             onSearchChange={onSearchChange}
                             search={true}
-                            searchPlaceholder='Поиск по названию/описанию/узлу'
-                            title='Маркетплейс'
-                            description='Изучайте и используйте готовые шаблоны'
+                            searchPlaceholder='Search Name/Description/Node'
+                            title='Marketplace'
+                            description='Explore and use pre-built templates'
                         >
                             <ToggleButtonGroup
                                 sx={{ borderRadius: 2, height: '100%' }}
@@ -593,7 +606,7 @@ const Marketplace = () => {
                                     }}
                                     variant='contained'
                                     value='card'
-                                    title='Вид карточками'
+                                    title='Card View'
                                 >
                                     <IconLayoutGrid />
                                 </ToggleButton>
@@ -605,54 +618,93 @@ const Marketplace = () => {
                                     }}
                                     variant='contained'
                                     value='list'
-                                    title='Вид списком'
+                                    title='List View'
                                 >
                                     <IconList />
                                 </ToggleButton>
                             </ToggleButtonGroup>
                         </ViewHeader>
                         {hasPermission('templates:marketplace') && hasPermission('templates:custom') && (
-                            <Tabs value={activeTabValue} onChange={handleTabChange} textColor='primary' aria-label='tabs' centered>
-                                <PermissionTab permissionId='templates:marketplace' value={0} label='Шаблоны сообщества' />
-                                <PermissionTab permissionId='templates:custom' value={1} label='Мои шаблоны' />
-                            </Tabs>
+                            <Stack direction='row' justifyContent='space-between' sx={{ mb: 2 }}>
+                                <Tabs value={activeTabValue} onChange={handleTabChange} textColor='primary' aria-label='tabs'>
+                                    <PermissionTab permissionId='templates:marketplace' value={0} label='Community Templates' />
+                                    <PermissionTab permissionId='templates:custom' value={1} label='My Templates' />
+                                </Tabs>
+                                <Autocomplete
+                                    id='useCases'
+                                    multiple
+                                    size='small'
+                                    options={usecases}
+                                    value={selectedUsecases}
+                                    onChange={(_, newValue) => setSelectedUsecases(newValue)}
+                                    disableCloseOnSelect
+                                    getOptionLabel={(option) => option}
+                                    isOptionEqualToValue={(option, value) => option === value}
+                                    renderOption={(props, option, { selected }) => {
+                                        const isDisabled = eligibleUsecases.length > 0 && !eligibleUsecases.includes(option)
+
+                                        return (
+                                            <li {...props} style={{ pointerEvents: isDisabled ? 'none' : 'auto' }}>
+                                                <Checkbox checked={selected} color='success' disabled={isDisabled} />
+                                                <ListItemText primary={option} />
+                                            </li>
+                                        )
+                                    }}
+                                    renderInput={(params) => <TextField {...params} label='Usecases' />}
+                                    sx={{
+                                        width: 300
+                                    }}
+                                    limitTags={2}
+                                    renderTags={(value, getTagProps) => {
+                                        const totalTags = value.length
+                                        const limitTags = 2
+
+                                        return (
+                                            <>
+                                                {value.slice(0, limitTags).map((option, index) => (
+                                                    <Chip
+                                                        {...getTagProps({ index })}
+                                                        key={index}
+                                                        label={option}
+                                                        sx={{
+                                                            height: 24,
+                                                            '& .MuiSvgIcon-root': {
+                                                                fontSize: 16,
+                                                                background: 'None'
+                                                            }
+                                                        }}
+                                                    />
+                                                ))}
+
+                                                {totalTags > limitTags && (
+                                                    <Tooltip
+                                                        title={
+                                                            <ol style={{ paddingLeft: '20px' }}>
+                                                                {value.slice(limitTags).map((item, i) => (
+                                                                    <li key={i}>{item}</li>
+                                                                ))}
+                                                            </ol>
+                                                        }
+                                                        placement='top'
+                                                    >
+                                                        +{totalTags - limitTags}
+                                                    </Tooltip>
+                                                )}
+                                            </>
+                                        )
+                                    }}
+                                    slotProps={{
+                                        paper: {
+                                            sx: {
+                                                boxShadow: '0 4px 12px rgba(0, 0, 0, 0.2)'
+                                            }
+                                        }
+                                    }}
+                                />
+                            </Stack>
                         )}
                         <Available permission='templates:marketplace'>
                             <TabPanel value={activeTabValue} index={0}>
-                                <Stack direction='row' sx={{ gap: 2, my: 2, alignItems: 'center', flexWrap: 'wrap' }}>
-                                    {usecases.map((usecase, index) => (
-                                        <FormControlLabel
-                                            key={index}
-                                            size='small'
-                                            control={
-                                                <Checkbox
-                                                    disabled={eligibleUsecases.length === 0 ? true : !eligibleUsecases.includes(usecase)}
-                                                    color='success'
-                                                    checked={selectedUsecases.includes(usecase)}
-                                                    onChange={(event) => {
-                                                        setSelectedUsecases(
-                                                            event.target.checked
-                                                                ? [...selectedUsecases, usecase]
-                                                                : selectedUsecases.filter((item) => item !== usecase)
-                                                        )
-                                                    }}
-                                                />
-                                            }
-                                            label={usecase}
-                                        />
-                                    ))}
-                                </Stack>
-                                {selectedUsecases.length > 0 && (
-                                    <Button
-                                        sx={{ width: 'max-content', mb: 2, borderRadius: '20px' }}
-                                        variant='outlined'
-                                        onClick={() => clearAllUsecases()}
-                                        startIcon={<IconX />}
-                                    >
-                                        Очистить всё
-                                    </Button>
-                                )}
-
                                 {!view || view === 'card' ? (
                                     <>
                                         {isLoading ? (
@@ -742,7 +794,7 @@ const Marketplace = () => {
                                                     alt='WorkflowEmptySVG'
                                                 />
                                             </Box>
-                                            <div>Маркетплейс пока пуст</div>
+                                            <div>No Marketplace Yet</div>
                                         </Stack>
                                     )}
                             </TabPanel>
@@ -783,7 +835,7 @@ const Marketplace = () => {
                                         onClick={() => clearAllUsecases()}
                                         startIcon={<IconX />}
                                     >
-                                        Очистить всё
+                                        Clear All
                                     </Button>
                                 )}
                                 {!view || view === 'card' ? (
@@ -875,7 +927,7 @@ const Marketplace = () => {
                                                 alt='WorkflowEmptySVG'
                                             />
                                         </Box>
-                                        <div>Нет сохранённых пользовательских шаблонов</div>
+                                        <div>No Saved Custom Templates</div>
                                     </Stack>
                                 )}
                             </TabPanel>

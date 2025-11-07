@@ -1,8 +1,10 @@
-import axios, { AxiosRequestConfig } from 'axios'
-import { omit } from 'lodash'
 import { Document } from '@langchain/core/documents'
-import { TextSplitter } from 'langchain/text_splitter'
+import axios, { AxiosRequestConfig } from 'axios'
+import * as https from 'https'
 import { BaseDocumentLoader } from 'langchain/document_loaders/base'
+import { TextSplitter } from 'langchain/text_splitter'
+import { omit } from 'lodash'
+import { getFileFromStorage } from '../../../src'
 import { ICommonObject, IDocument, INode, INodeData, INodeOutputsValue, INodeParams } from '../../../src/Interface'
 import { handleEscapeCharacters } from '../../../src/utils'
 
@@ -19,23 +21,23 @@ class API_DocumentLoaders implements INode {
     outputs: INodeOutputsValue[]
 
     constructor() {
-        this.label = 'API Загрузчик'
+        this.label = 'API Loader'
         this.name = 'apiLoader'
-        this.version = 2.0
+        this.version = 2.1
         this.type = 'Document'
         this.icon = 'api.svg'
         this.category = 'Document Loaders'
-        this.description = `Загрузка данных из API`
+        this.description = `Load data from an API`
         this.baseClasses = [this.type]
         this.inputs = [
             {
-                label: 'Разделитель текста',
+                label: 'Text Splitter',
                 name: 'textSplitter',
                 type: 'TextSplitter',
                 optional: true
             },
             {
-                label: 'Метод',
+                label: 'Method',
                 name: 'method',
                 type: 'options',
                 options: [
@@ -55,36 +57,45 @@ class API_DocumentLoaders implements INode {
                 type: 'string'
             },
             {
-                label: 'Заголовки',
+                label: 'Headers',
                 name: 'headers',
                 type: 'json',
                 additionalParams: true,
                 optional: true
             },
             {
-                label: 'Тело запроса',
-                name: 'body',
-                type: 'json',
-                description:
-                    'JSON тело для POST запроса. Если не указано, агент попытается определить его самостоятельно из AIPlugin, если он предоставлен',
+                label: 'SSL Certificate',
+                description: 'Please upload a SSL certificate file in either .pem or .crt',
+                name: 'caFile',
+                type: 'file',
+                fileType: '.pem, .crt',
                 additionalParams: true,
                 optional: true
             },
             {
-                label: 'Дополнительные метаданные',
+                label: 'Body',
+                name: 'body',
+                type: 'json',
+                description:
+                    'JSON body for the POST request. If not specified, agent will try to figure out itself from AIPlugin if provided',
+                additionalParams: true,
+                optional: true
+            },
+            {
+                label: 'Additional Metadata',
                 name: 'metadata',
                 type: 'json',
-                description: 'Дополнительные метаданные, которые будут добавлены к извлеченным документам',
+                description: 'Additional metadata to be added to the extracted documents',
                 optional: true,
                 additionalParams: true
             },
             {
-                label: 'Исключить ключи метаданных',
+                label: 'Omit Metadata Keys',
                 name: 'omitMetadataKeys',
                 type: 'string',
                 rows: 4,
                 description:
-                    'Каждый загрузчик документов поставляется с набором ключей метаданных по умолчанию, которые извлекаются из документа. Вы можете использовать это поле, чтобы исключить некоторые ключи метаданных по умолчанию. Значение должно быть списком ключей, разделенных запятыми. Используйте * для исключения всех ключей метаданных, кроме тех, которые вы указываете в поле Дополнительные метаданные',
+                    'Each document loader comes with a default set of metadata keys that are extracted from the document. You can use this field to omit some of the default metadata keys. The value should be a list of keys, separated by comma. Use * to omit all metadata keys except the ones you specify in the Additional Metadata field',
                 placeholder: 'key1, key2, key3.nestedKey1',
                 optional: true,
                 additionalParams: true
@@ -92,21 +103,23 @@ class API_DocumentLoaders implements INode {
         ]
         this.outputs = [
             {
-                label: 'Документ',
+                label: 'Document',
                 name: 'document',
-                description: 'Массив объектов документа, содержащих метаданные и содержимое страницы',
+                description: 'Array of document objects containing metadata and pageContent',
                 baseClasses: [...this.baseClasses, 'json']
             },
             {
-                label: 'Текст',
+                label: 'Text',
                 name: 'text',
-                description: 'Объединенная строка из содержимого страниц документов',
+                description: 'Concatenated string from pageContent of documents',
                 baseClasses: ['string', 'json']
             }
         ]
     }
-    async init(nodeData: INodeData): Promise<any> {
+
+    async init(nodeData: INodeData, _: string, options: ICommonObject): Promise<any> {
         const headers = nodeData.inputs?.headers as string
+        const caFileBase64 = nodeData.inputs?.caFile as string
         const url = nodeData.inputs?.url as string
         const body = nodeData.inputs?.body as string
         const method = nodeData.inputs?.method as string
@@ -120,22 +133,37 @@ class API_DocumentLoaders implements INode {
             omitMetadataKeys = _omitMetadataKeys.split(',').map((key) => key.trim())
         }
 
-        const options: ApiLoaderParams = {
+        const apiLoaderParam: ApiLoaderParams = {
             url,
             method
         }
 
         if (headers) {
             const parsedHeaders = typeof headers === 'object' ? headers : JSON.parse(headers)
-            options.headers = parsedHeaders
+            apiLoaderParam.headers = parsedHeaders
+        }
+
+        if (caFileBase64.startsWith('FILE-STORAGE::')) {
+            let file = caFileBase64.replace('FILE-STORAGE::', '')
+            file = file.replace('[', '')
+            file = file.replace(']', '')
+            const orgId = options.orgId
+            const chatflowid = options.chatflowid
+            const fileData = await getFileFromStorage(file, orgId, chatflowid)
+            apiLoaderParam.ca = fileData.toString()
+        } else {
+            const splitDataURI = caFileBase64.split(',')
+            splitDataURI.pop()
+            const bf = Buffer.from(splitDataURI.pop() || '', 'base64')
+            apiLoaderParam.ca = bf.toString('utf-8')
         }
 
         if (body) {
             const parsedBody = typeof body === 'object' ? body : JSON.parse(body)
-            options.body = parsedBody
+            apiLoaderParam.body = parsedBody
         }
 
-        const loader = new ApiLoader(options)
+        const loader = new ApiLoader(apiLoaderParam)
 
         let docs: IDocument[] = []
 
@@ -195,6 +223,7 @@ interface ApiLoaderParams {
     method: string
     headers?: ICommonObject
     body?: ICommonObject
+    ca?: string
 }
 
 class ApiLoader extends BaseDocumentLoader {
@@ -206,27 +235,35 @@ class ApiLoader extends BaseDocumentLoader {
 
     public readonly method: string
 
-    constructor({ url, headers, body, method }: ApiLoaderParams) {
+    public readonly ca?: string
+
+    constructor({ url, headers, body, method, ca }: ApiLoaderParams) {
         super()
         this.url = url
         this.headers = headers
         this.body = body
         this.method = method
+        this.ca = ca
     }
 
     public async load(): Promise<IDocument[]> {
         if (this.method === 'POST') {
-            return this.executePostRequest(this.url, this.headers, this.body)
+            return this.executePostRequest(this.url, this.headers, this.body, this.ca)
         } else {
-            return this.executeGetRequest(this.url, this.headers)
+            return this.executeGetRequest(this.url, this.headers, this.ca)
         }
     }
 
-    protected async executeGetRequest(url: string, headers?: ICommonObject): Promise<IDocument[]> {
+    protected async executeGetRequest(url: string, headers?: ICommonObject, ca?: string): Promise<IDocument[]> {
         try {
             const config: AxiosRequestConfig = {}
             if (headers) {
                 config.headers = headers
+            }
+            if (ca) {
+                config.httpsAgent = new https.Agent({
+                    ca: ca
+                })
             }
             const response = await axios.get(url, config)
             const responseJsonString = JSON.stringify(response.data, null, 2)
@@ -238,15 +275,20 @@ class ApiLoader extends BaseDocumentLoader {
             })
             return [doc]
         } catch (error) {
-            throw new Error(`Не удалось получить данные с ${url}: ${error}`)
+            throw new Error(`Failed to fetch ${url}: ${error}`)
         }
     }
 
-    protected async executePostRequest(url: string, headers?: ICommonObject, body?: ICommonObject): Promise<IDocument[]> {
+    protected async executePostRequest(url: string, headers?: ICommonObject, body?: ICommonObject, ca?: string): Promise<IDocument[]> {
         try {
             const config: AxiosRequestConfig = {}
             if (headers) {
                 config.headers = headers
+            }
+            if (ca) {
+                config.httpsAgent = new https.Agent({
+                    ca: ca
+                })
             }
             const response = await axios.post(url, body ?? {}, config)
             const responseJsonString = JSON.stringify(response.data, null, 2)
@@ -258,7 +300,7 @@ class ApiLoader extends BaseDocumentLoader {
             })
             return [doc]
         } catch (error) {
-            throw new Error(`Не удалось отправить данные на ${url}: ${error}`)
+            throw new Error(`Failed to post ${url}: ${error}`)
         }
     }
 }

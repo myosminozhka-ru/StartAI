@@ -1,7 +1,6 @@
 {
-    "description": "Цепочка вопросов и ответов с использованием локальной языковой модели Ollama, локальной модели эмбеддингов LocalAI и локального векторного хранилища Faiss",
-    "badge": "POPULAR",
-    "usecases": ["Документы QnA"],
+    "description": "QnA chain using Ollama local LLM, LocalAI embedding model, and Faiss local vector store",
+    "usecases": ["Documents QnA"],
     "framework": ["Langchain"],
     "nodes": [
         {

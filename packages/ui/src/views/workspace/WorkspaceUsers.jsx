@@ -29,7 +29,7 @@ import ErrorBoundary from '@/ErrorBoundary'
 import ViewHeader from '@/layout/MainLayout/ViewHeader'
 import { PermissionButton, StyledPermissionButton } from '@/ui-component/button/RBACButtons'
 import InviteUsersDialog from '@/ui-component/dialog/InviteUsersDialog'
-import EditUserDialog from '@/views/users/EditUserDialog'
+import EditWorkspaceUserRoleDialog from '@/views/workspace/EditWorkspaceUserRoleDialog'
 
 // API
 import userApi from '@/api/user'
@@ -66,8 +66,8 @@ const WorkspaceDetails = () => {
 
     const [showAddUserDialog, setShowAddUserDialog] = useState(false)
     const [dialogProps, setDialogProps] = useState({})
-    const [showEditDialog, setShowEditDialog] = useState(false)
-    const [editDialogProps, setEditDialogProps] = useState({})
+    const [showWorkspaceUserRoleDialog, setShowWorkspaceUserRoleDialog] = useState(false)
+    const [workspaceUserRoleDialogProps, setWorkspaceUserRoleDialogProps] = useState({})
 
     const enqueueSnackbar = (...args) => dispatch(enqueueSnackbarAction(...args))
     const closeSnackbar = (...args) => dispatch(closeSnackbarAction(...args))
@@ -120,8 +120,8 @@ const WorkspaceDetails = () => {
     const addUser = () => {
         const dialogProp = {
             type: 'ADD',
-            cancelButtonName: 'Отмена',
-            confirmButtonName: 'Отправить приглашение',
+            cancelButtonName: 'Cancel',
+            confirmButtonName: 'Send Invite',
             data: workspace
         }
         setDialogProps(dialogProp)
@@ -139,8 +139,8 @@ const WorkspaceDetails = () => {
     const editInvite = (user) => {
         const dialogProp = {
             type: 'EDIT',
-            cancelButtonName: 'Отмена',
-            confirmButtonName: 'Обновить приглашение',
+            cancelButtonName: 'Cancel',
+            confirmButtonName: 'Update Invite',
             data: {
                 ...user,
                 isWorkspaceUser: true
@@ -152,7 +152,6 @@ const WorkspaceDetails = () => {
     }
 
     const editUser = (user) => {
-        // Not used for now
         const userObj = {
             ...user,
             assignedRoles: [
@@ -161,26 +160,26 @@ const WorkspaceDetails = () => {
                     active: true
                 }
             ],
-            activeWorkspaceId: workspaceId
+            workspaceId: workspaceId
         }
         const dialogProp = {
             type: 'EDIT',
-            cancelButtonName: 'Отмена',
-            confirmButtonName: 'Сохранить',
+            cancelButtonName: 'Cancel',
+            confirmButtonName: 'Update Role',
             data: userObj
         }
-        setEditDialogProps(dialogProp)
-        setShowEditDialog(true)
+        setWorkspaceUserRoleDialogProps(dialogProp)
+        setShowWorkspaceUserRoleDialog(true)
     }
 
     const unlinkUser = async () => {
         const userList = usersSelected.map((user) => (user.name ? `${user.name} (${user.email})` : user.email)).join(', ')
 
         const confirmPayload = {
-            title: `Удалить пользователей`,
-            description: `Удалить следующих пользователей из рабочего пространства?\n${userList}`,
-            confirmButtonName: 'Удалить',
-            cancelButtonName: 'Отмена'
+            title: `Remove Users`,
+            description: `Remove the following users from the workspace?\n${userList}`,
+            confirmButtonName: 'Remove',
+            cancelButtonName: 'Cancel'
         }
 
         const orgOwner = workspaceUsers.find(
@@ -188,7 +187,7 @@ const WorkspaceDetails = () => {
         )
         if (orgOwner) {
             enqueueSnackbar({
-                message: `Владелец организации не может быть удален из рабочего пространства.`,
+                message: `Organization owner cannot be removed from workspace.`,
                 options: {
                     key: new Date().getTime() + Math.random(),
                     variant: 'error',
@@ -210,7 +209,7 @@ const WorkspaceDetails = () => {
                 await Promise.all(deletePromises)
 
                 enqueueSnackbar({
-                    message: `${usersSelected.length} пользователь(ей) удален(ы) из рабочего пространства.`,
+                    message: `${usersSelected.length} User(s) removed from workspace.`,
                     options: {
                         key: new Date().getTime() + Math.random(),
                         variant: 'success',
@@ -232,7 +231,7 @@ const WorkspaceDetails = () => {
                 onConfirm()
             } catch (error) {
                 enqueueSnackbar({
-                    message: `Не удалось удалить пользователей: ${
+                    message: `Failed to unlink users: ${
                         typeof error.response.data === 'object' ? error.response.data.message : error.response.data
                     }`,
                     options: {
@@ -253,7 +252,7 @@ const WorkspaceDetails = () => {
 
     const onConfirm = () => {
         setShowAddUserDialog(false)
-        setShowEditDialog(false)
+        setShowWorkspaceUserRoleDialog(false)
         getAllUsersByWorkspaceIdApi.request(workspaceId)
     }
 
@@ -317,9 +316,9 @@ const WorkspaceDetails = () => {
                             onBack={() => window.history.back()}
                             search={workspaceUsers.length > 0}
                             onSearchChange={onSearchChange}
-                            searchPlaceholder={'Поиск пользователей'}
-                            title={(workspace?.name || '') + ': Пользователи рабочего пространства'}
-                            description={'Управление пользователями рабочего пространства и разрешениями.'}
+                            searchPlaceholder={'Search Users'}
+                            title={(workspace?.name || '') + ': Workspace Users'}
+                            description={'Manage workspace users and permissions.'}
                         >
                             {workspaceUsers.length > 0 && (
                                 <>
@@ -332,7 +331,7 @@ const WorkspaceDetails = () => {
                                         color='error'
                                         startIcon={<IconUnlink />}
                                     >
-                                        Удалить пользователей
+                                        Remove Users
                                     </PermissionButton>
                                     <StyledPermissionButton
                                         permissionId={'workspace:add-user'}
@@ -341,7 +340,7 @@ const WorkspaceDetails = () => {
                                         onClick={addUser}
                                         startIcon={<IconUserPlus />}
                                     >
-                                        Добавить
+                                        Add User
                                     </StyledPermissionButton>
                                 </>
                             )}
@@ -355,7 +354,7 @@ const WorkspaceDetails = () => {
                                         alt='empty_datasetSVG'
                                     />
                                 </Box>
-                                <div>Назначенных пользователей пока нет</div>
+                                <div>No Assigned Users Yet</div>
                                 <StyledPermissionButton
                                     permissionId={'workspace:add-user'}
                                     variant='contained'
@@ -363,7 +362,7 @@ const WorkspaceDetails = () => {
                                     startIcon={<IconUserPlus />}
                                     onClick={addUser}
                                 >
-                                    Добавить
+                                    Add User
                                 </StyledPermissionButton>
                             </Stack>
                         ) : (
@@ -392,10 +391,10 @@ const WorkspaceDetails = () => {
                                                         }}
                                                     />
                                                 </StyledTableCell>
-                                                <StyledTableCell>Email/Имя</StyledTableCell>
-                                                <StyledTableCell>Роль</StyledTableCell>
-                                                <StyledTableCell>Статус</StyledTableCell>
-                                                <StyledTableCell>Последний вход</StyledTableCell>
+                                                <StyledTableCell>Email/Name</StyledTableCell>
+                                                <StyledTableCell>Role</StyledTableCell>
+                                                <StyledTableCell>Status</StyledTableCell>
+                                                <StyledTableCell>Last Login</StyledTableCell>
                                                 <StyledTableCell> </StyledTableCell>
                                             </TableRow>
                                         </TableHead>
@@ -474,7 +473,7 @@ const WorkspaceDetails = () => {
                                                             </StyledTableCell>
                                                             <StyledTableCell>
                                                                 {item.isOrgOwner ? (
-                                                                    <Chip size='small' label={'ВЛАДЕЛЕЦ ОРГАНИЗАЦИИ'} />
+                                                                    <Chip size='small' label={'ORGANIZATION OWNER'} />
                                                                 ) : (
                                                                     item.role.name
                                                                 )}
@@ -498,13 +497,22 @@ const WorkspaceDetails = () => {
                                                             </StyledTableCell>
                                                             <StyledTableCell>
                                                                 {!item.lastLogin
-                                                                    ? 'Никогда'
+                                                                    ? 'Never'
                                                                     : moment(item.lastLogin).format('DD/MM/YYYY HH:mm')}
                                                             </StyledTableCell>
                                                             <StyledTableCell>
                                                                 {!item.isOrgOwner && item.status.toUpperCase() === 'INVITED' && (
                                                                     <IconButton
-                                                                        title='Редактировать'
+                                                                        title='Edit'
+                                                                        color='primary'
+                                                                        onClick={() => onEditClick(item)}
+                                                                    >
+                                                                        <IconEdit />
+                                                                    </IconButton>
+                                                                )}
+                                                                {!item.isOrgOwner && item.status.toUpperCase() === 'ACTIVE' && (
+                                                                    <IconButton
+                                                                        title='Change Role'
                                                                         color='primary'
                                                                         onClick={() => onEditClick(item)}
                                                                     >
@@ -532,14 +540,13 @@ const WorkspaceDetails = () => {
                     onConfirm={onConfirm}
                 ></InviteUsersDialog>
             )}
-            {showEditDialog && (
-                <EditUserDialog
-                    show={showEditDialog}
-                    dialogProps={editDialogProps}
-                    onCancel={() => setShowEditDialog(false)}
+            {showWorkspaceUserRoleDialog && (
+                <EditWorkspaceUserRoleDialog
+                    show={showWorkspaceUserRoleDialog}
+                    dialogProps={workspaceUserRoleDialogProps}
+                    onCancel={() => setShowWorkspaceUserRoleDialog(false)}
                     onConfirm={onConfirm}
-                    setError={setError}
-                ></EditUserDialog>
+                />
             )}
             <ConfirmDialog />
         </>

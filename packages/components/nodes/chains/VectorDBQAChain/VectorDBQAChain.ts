@@ -17,31 +17,32 @@ class VectorDBQAChain_Chains implements INode {
     baseClasses: string[]
     description: string
     inputs: INodeParams[]
+    badge: string
 
     constructor() {
-        this.label = 'Цепочка вопросов-ответов векторной базы данных'
+        this.label = 'VectorDB QA Chain'
         this.name = 'vectorDBQAChain'
         this.version = 2.0
         this.type = 'VectorDBQAChain'
         this.icon = 'vectordb.svg'
         this.category = 'Chains'
-        this.description = 'Цепочка вопросов-ответов для векторных баз данных'
+        this.badge = 'DEPRECATING'
+        this.description = 'QA chain for vector databases'
         this.baseClasses = [this.type, ...getBaseClasses(VectorDBQAChain)]
         this.inputs = [
             {
-                label: 'Языковая модель',
+                label: 'Language Model',
                 name: 'model',
                 type: 'BaseLanguageModel'
             },
             {
-                label: 'Векторное хранилище',
+                label: 'Vector Store',
                 name: 'vectorStore',
                 type: 'VectorStore'
             },
             {
-                label: 'Модерация ввода',
-                description:
-                    'Обнаружение текста, который может генерировать вредоносный вывод, и предотвращение его отправки языковой модели',
+                label: 'Input Moderation',
+                description: 'Detect text that could generate harmful output and prevent it from being sent to the language model',
                 name: 'inputModeration',
                 type: 'Moderation',
                 optional: true,
@@ -56,7 +57,7 @@ class VectorDBQAChain_Chains implements INode {
 
         const chain = VectorDBQAChain.fromLLM(model, vectorStore, {
             k: (vectorStore as any)?.k ?? 4,
-            verbose: process.env.DEBUG === 'true'
+            verbose: process.env.DEBUG === 'true' ? true : false
         })
         return chain
     }

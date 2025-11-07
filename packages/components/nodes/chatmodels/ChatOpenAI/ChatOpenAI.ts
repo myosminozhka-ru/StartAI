@@ -1,10 +1,11 @@
-import { ChatOpenAI as LangchainChatOpenAI, ChatOpenAIFields, OpenAIClient } from '@langchain/openai'
+import { ChatOpenAI as LangchainChatOpenAI, ChatOpenAIFields } from '@langchain/openai'
 import { BaseCache } from '@langchain/core/caches'
 import { ICommonObject, IMultiModalOption, INode, INodeData, INodeOptionsValue, INodeParams } from '../../../src/Interface'
 import { getBaseClasses, getCredentialData, getCredentialParam } from '../../../src/utils'
 import { ChatOpenAI } from './FlowiseChatOpenAI'
 import { getModels, MODEL_TYPE } from '../../../src/modelLoader'
 import { HttpsProxyAgent } from 'https-proxy-agent'
+import { OpenAI as OpenAIClient } from 'openai'
 
 class ChatOpenAI_ChatModels implements INode {
     label: string
@@ -21,34 +22,34 @@ class ChatOpenAI_ChatModels implements INode {
     constructor() {
         this.label = 'ChatOpenAI'
         this.name = 'chatOpenAI'
-        this.version = 8.2
+        this.version = 8.3
         this.type = 'ChatOpenAI'
         this.icon = 'openai.svg'
         this.category = 'Chat Models'
-        this.description = 'Обертка вокруг больших языковых моделей OpenAI, использующих Chat endpoint'
+        this.description = 'Wrapper around OpenAI large language models that use the Chat endpoint'
         this.baseClasses = [this.type, ...getBaseClasses(LangchainChatOpenAI)]
         this.credential = {
-            label: 'Подключите учетные данные',
+            label: 'Connect Credential',
             name: 'credential',
             type: 'credential',
             credentialNames: ['openAIApi']
         }
         this.inputs = [
             {
-                label: 'Кэш',
+                label: 'Cache',
                 name: 'cache',
                 type: 'BaseCache',
                 optional: true
             },
             {
-                label: 'Название модели',
+                label: 'Model Name',
                 name: 'modelName',
                 type: 'asyncOptions',
                 loadMethod: 'listModels',
                 default: 'gpt-4o-mini'
             },
             {
-                label: 'Температура',
+                label: 'Temperature',
                 name: 'temperature',
                 type: 'number',
                 step: 0.1,
@@ -56,7 +57,7 @@ class ChatOpenAI_ChatModels implements INode {
                 optional: true
             },
             {
-                label: 'Потоковая передача',
+                label: 'Streaming',
                 name: 'streaming',
                 type: 'boolean',
                 default: true,
@@ -64,7 +65,7 @@ class ChatOpenAI_ChatModels implements INode {
                 additionalParams: true
             },
             {
-                label: 'Максимум токенов',
+                label: 'Max Tokens',
                 name: 'maxTokens',
                 type: 'number',
                 step: 1,
@@ -72,7 +73,7 @@ class ChatOpenAI_ChatModels implements INode {
                 additionalParams: true
             },
             {
-                label: 'Вероятность Top P',
+                label: 'Top Probability',
                 name: 'topP',
                 type: 'number',
                 step: 0.1,
@@ -80,7 +81,7 @@ class ChatOpenAI_ChatModels implements INode {
                 additionalParams: true
             },
             {
-                label: 'Штраф за частоту',
+                label: 'Frequency Penalty',
                 name: 'frequencyPenalty',
                 type: 'number',
                 step: 0.1,
@@ -88,7 +89,7 @@ class ChatOpenAI_ChatModels implements INode {
                 additionalParams: true
             },
             {
-                label: 'Штраф за присутствие',
+                label: 'Presence Penalty',
                 name: 'presencePenalty',
                 type: 'number',
                 step: 0.1,
@@ -96,7 +97,7 @@ class ChatOpenAI_ChatModels implements INode {
                 additionalParams: true
             },
             {
-                label: 'Таймаут',
+                label: 'Timeout',
                 name: 'timeout',
                 type: 'number',
                 step: 1,
@@ -104,69 +105,69 @@ class ChatOpenAI_ChatModels implements INode {
                 additionalParams: true
             },
             {
-                label: 'Строгий вызов инструментов',
+                label: 'Strict Tool Calling',
                 name: 'strictToolCalling',
                 type: 'boolean',
                 description:
-                    'Поддерживает ли модель аргумент `strict` при передаче инструментов. Если не указано, аргумент `strict` не будет передан в OpenAI.',
+                    'Whether the model supports the `strict` argument when passing in tools. If not specified, the `strict` argument will not be passed to OpenAI.',
                 optional: true,
                 additionalParams: true
             },
             {
-                label: 'Стоп-последовательность',
+                label: 'Stop Sequence',
                 name: 'stopSequence',
                 type: 'string',
                 rows: 4,
                 optional: true,
-                description: 'Список стоп-слов для использования при генерации. Используйте запятую для разделения нескольких стоп-слов.',
+                description: 'List of stop words to use when generating. Use comma to separate multiple stop words.',
                 additionalParams: true
             },
             {
-                label: 'Базовый путь',
+                label: 'BasePath',
                 name: 'basepath',
                 type: 'string',
                 optional: true,
                 additionalParams: true
             },
             {
-                label: 'URL прокси',
+                label: 'Proxy Url',
                 name: 'proxyUrl',
                 type: 'string',
                 optional: true,
                 additionalParams: true
             },
             {
-                label: 'Базовые опции',
+                label: 'BaseOptions',
                 name: 'baseOptions',
                 type: 'json',
                 optional: true,
                 additionalParams: true
             },
             {
-                label: 'Разрешить загрузку изображений',
+                label: 'Allow Image Uploads',
                 name: 'allowImageUploads',
                 type: 'boolean',
                 description:
-                    'Разрешить ввод изображений. См. <a href="https://docs.flowiseai.com/using-flowise/uploads#image" target="_blank">документацию</a> для подробностей.',
+                    'Allow image input. Refer to the <a href="https://docs.flowiseai.com/using-flowise/uploads#image" target="_blank">docs</a> for more details.',
                 default: false,
                 optional: true
             },
             {
-                label: 'Разрешение изображения',
-                description: 'Этот параметр контролирует разрешение, в котором модель просматривает изображение.',
+                label: 'Image Resolution',
+                description: 'This parameter controls the resolution in which the model views the image.',
                 name: 'imageResolution',
                 type: 'options',
                 options: [
                     {
-                        label: 'Низкое',
+                        label: 'Low',
                         name: 'low'
                     },
                     {
-                        label: 'Высокое',
+                        label: 'High',
                         name: 'high'
                     },
                     {
-                        label: 'Авто',
+                        label: 'Auto',
                         name: 'auto'
                     }
                 ],
@@ -177,27 +178,61 @@ class ChatOpenAI_ChatModels implements INode {
                 }
             },
             {
-                label: 'Усилие рассуждения',
-                description: 'Ограничивает усилия на рассуждения для моделей рассуждений. Применимо только для моделей o1 и o3.',
+                label: 'Reasoning',
+                description: 'Whether the model supports reasoning. Only applicable for reasoning models.',
+                name: 'reasoning',
+                type: 'boolean',
+                default: false,
+                optional: true,
+                additionalParams: true
+            },
+            {
+                label: 'Reasoning Effort',
+                description: 'Constrains effort on reasoning for reasoning models',
                 name: 'reasoningEffort',
                 type: 'options',
                 options: [
                     {
-                        label: 'Низкое',
+                        label: 'Low',
                         name: 'low'
                     },
                     {
-                        label: 'Среднее',
+                        label: 'Medium',
                         name: 'medium'
                     },
                     {
-                        label: 'Высокое',
+                        label: 'High',
                         name: 'high'
                     }
                 ],
-                default: 'medium',
-                optional: false,
-                additionalParams: true
+                additionalParams: true,
+                show: {
+                    reasoning: true
+                }
+            },
+            {
+                label: 'Reasoning Summary',
+                description: `A summary of the reasoning performed by the model. This can be useful for debugging and understanding the model's reasoning process`,
+                name: 'reasoningSummary',
+                type: 'options',
+                options: [
+                    {
+                        label: 'Auto',
+                        name: 'auto'
+                    },
+                    {
+                        label: 'Concise',
+                        name: 'concise'
+                    },
+                    {
+                        label: 'Detailed',
+                        name: 'detailed'
+                    }
+                ],
+                additionalParams: true,
+                show: {
+                    reasoning: true
+                }
             }
         ]
     }
@@ -223,7 +258,8 @@ class ChatOpenAI_ChatModels implements INode {
         const basePath = nodeData.inputs?.basepath as string
         const proxyUrl = nodeData.inputs?.proxyUrl as string
         const baseOptions = nodeData.inputs?.baseOptions
-        const reasoningEffort = nodeData.inputs?.reasoningEffort as OpenAIClient.Chat.ChatCompletionReasoningEffort
+        const reasoningEffort = nodeData.inputs?.reasoningEffort as OpenAIClient.ReasoningEffort | null
+        const reasoningSummary = nodeData.inputs?.reasoningSummary as 'auto' | 'concise' | 'detailed' | null
 
         const allowImageUploads = nodeData.inputs?.allowImageUploads as boolean
         const imageResolution = nodeData.inputs?.imageResolution as string
@@ -240,15 +276,10 @@ class ChatOpenAI_ChatModels implements INode {
             temperature: parseFloat(temperature),
             modelName,
             openAIApiKey,
+            apiKey: openAIApiKey,
             streaming: streaming ?? true
         }
 
-        if (modelName.includes('o3') || modelName.includes('o1')) {
-            delete obj.temperature
-        }
-        if ((modelName.includes('o1') || modelName.includes('o3')) && reasoningEffort) {
-            obj.reasoningEffort = reasoningEffort
-        }
         if (maxTokens) obj.maxTokens = parseInt(maxTokens, 10)
         if (topP) obj.topP = parseFloat(topP)
         if (frequencyPenalty) obj.frequencyPenalty = parseFloat(frequencyPenalty)
@@ -260,6 +291,19 @@ class ChatOpenAI_ChatModels implements INode {
             obj.stop = stopSequenceArray
         }
         if (strictToolCalling) obj.supportsStrictToolCalling = strictToolCalling
+
+        if (modelName.includes('o1') || modelName.includes('o3') || modelName.includes('gpt-5')) {
+            delete obj.temperature
+            delete obj.stop
+            const reasoning: OpenAIClient.Reasoning = {}
+            if (reasoningEffort) {
+                reasoning.effort = reasoningEffort
+            }
+            if (reasoningSummary) {
+                reasoning.summary = reasoningSummary
+            }
+            obj.reasoning = reasoning
+        }
 
         let parsedBaseOptions: any | undefined = undefined
 

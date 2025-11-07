@@ -25,30 +25,30 @@ class ChatAnthropic_ChatModels implements INode {
         this.type = 'ChatAnthropic'
         this.icon = 'Anthropic.svg'
         this.category = 'Chat Models'
-        this.description = 'Обертка вокруг ChatAnthropic больших языковых моделей, использующих Chat endpoint'
+        this.description = 'Wrapper around ChatAnthropic large language models that use the Chat endpoint'
         this.baseClasses = [this.type, ...getBaseClasses(LangchainChatAnthropic)]
         this.credential = {
-            label: 'Подключите учетные данные',
+            label: 'Connect Credential',
             name: 'credential',
             type: 'credential',
             credentialNames: ['anthropicApi']
         }
         this.inputs = [
             {
-                label: 'Кэш',
+                label: 'Cache',
                 name: 'cache',
                 type: 'BaseCache',
                 optional: true
             },
             {
-                label: 'Название модели',
+                label: 'Model Name',
                 name: 'modelName',
                 type: 'asyncOptions',
                 loadMethod: 'listModels',
                 default: 'claude-3-haiku'
             },
             {
-                label: 'Температура',
+                label: 'Temperature',
                 name: 'temperature',
                 type: 'number',
                 step: 0.1,
@@ -56,7 +56,7 @@ class ChatAnthropic_ChatModels implements INode {
                 optional: true
             },
             {
-                label: 'Потоковая передача',
+                label: 'Streaming',
                 name: 'streaming',
                 type: 'boolean',
                 default: true,
@@ -64,7 +64,7 @@ class ChatAnthropic_ChatModels implements INode {
                 additionalParams: true
             },
             {
-                label: 'Максимум токенов',
+                label: 'Max Tokens',
                 name: 'maxTokensToSample',
                 type: 'number',
                 step: 1,
@@ -88,30 +88,29 @@ class ChatAnthropic_ChatModels implements INode {
                 additionalParams: true
             },
             {
-                label: 'Расширенное мышление',
+                label: 'Extended Thinking',
                 name: 'extendedThinking',
                 type: 'boolean',
-                description: 'Включить расширенное мышление для модели рассуждений, такой как Claude Sonnet 3.7',
+                description: 'Enable extended thinking for reasoning model such as Claude Sonnet 3.7 and Claude 4',
                 optional: true,
                 additionalParams: true
             },
             {
-                label: 'Бюджет токенов',
+                label: 'Budget Tokens',
                 name: 'budgetTokens',
                 type: 'number',
                 step: 1,
                 default: 1024,
-                description:
-                    'Максимальное количество токенов, которое Claude может использовать для своего внутреннего процесса рассуждения',
+                description: 'Maximum number of tokens Claude is allowed use for its internal reasoning process',
                 optional: true,
                 additionalParams: true
             },
             {
-                label: 'Разрешить загрузку изображений',
+                label: 'Allow Image Uploads',
                 name: 'allowImageUploads',
                 type: 'boolean',
                 description:
-                    'Разрешить ввод изображений. См. <a href="https://docs.flowiseai.com/using-flowise/uploads#image" target="_blank">документацию</a> для получения дополнительной информации.',
+                    'Allow image input. Refer to the <a href="https://docs.flowiseai.com/using-flowise/uploads#image" target="_blank">docs</a> for more details.',
                 default: false,
                 optional: true
             }

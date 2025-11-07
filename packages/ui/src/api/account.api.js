@@ -6,8 +6,7 @@ const verifyAccountEmail = (body) => client.post('/account/verify', body)
 const resendVerificationEmail = (body) => client.post('/account/resend-verification', body)
 const forgotPassword = (body) => client.post('/account/forgot-password', body)
 const resetPassword = (body) => client.post('/account/reset-password', body)
-const getBillingData = () => client.get('/account/billing')
-const cancelSubscription = (body) => client.post('/account/cancel-subscription', body)
+const getBillingData = () => client.post('/account/billing')
 const logout = () => client.post('/account/logout')
 const getBasicAuth = () => client.get('/account/basic-auth')
 const checkBasicAuth = (body) => client.post('/account/basic-auth', body)
@@ -20,7 +19,6 @@ export default {
     resendVerificationEmail,
     forgotPassword,
     resetPassword,
-    cancelSubscription,
     logout,
     getBasicAuth,
     checkBasicAuth

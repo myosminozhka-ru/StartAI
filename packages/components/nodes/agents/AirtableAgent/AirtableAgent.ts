@@ -22,62 +22,61 @@ class Airtable_Agents implements INode {
     inputs: INodeParams[]
 
     constructor() {
-        this.label = 'Airtable Агент'
+        this.label = 'Airtable Agent'
         this.name = 'airtableAgent'
         this.version = 2.0
         this.type = 'AgentExecutor'
         this.category = 'Agents'
         this.icon = 'airtable.svg'
-        this.description = 'Агент для ответов на запросы по таблице Airtable'
+        this.description = 'Agent used to answer queries on Airtable table'
         this.baseClasses = [this.type, ...getBaseClasses(AgentExecutor)]
         this.credential = {
-            label: 'Подключите учетные данные',
+            label: 'Connect Credential',
             name: 'credential',
             type: 'credential',
             credentialNames: ['airtableApi']
         }
         this.inputs = [
             {
-                label: 'Языковая модель',
+                label: 'Language Model',
                 name: 'model',
                 type: 'BaseLanguageModel'
             },
             {
-                label: 'ID базы',
+                label: 'Base Id',
                 name: 'baseId',
                 type: 'string',
                 placeholder: 'app11RobdGoX0YNsC',
                 description:
-                    'Если URL вашей таблицы выглядит так: https://airtable.com/app11RobdGoX0YNsC/tblJdmvbrgizbYICO/viw9UrP77Id0CE4ee, то app11RovdGoX0YNsC - это ID базы'
+                    'If your table URL looks like: https://airtable.com/app11RobdGoX0YNsC/tblJdmvbrgizbYICO/viw9UrP77Id0CE4ee, app11RovdGoX0YNsC is the base id'
             },
             {
-                label: 'ID таблицы',
+                label: 'Table Id',
                 name: 'tableId',
                 type: 'string',
                 placeholder: 'tblJdmvbrgizbYICO',
                 description:
-                    'Если URL вашей таблицы выглядит так: https://airtable.com/app11RobdGoX0YNsC/tblJdmvbrgizbYICO/viw9UrP77Id0CE4ee, то tblJdmvbrgizbYICO - это ID таблицы'
+                    'If your table URL looks like: https://airtable.com/app11RobdGoX0YNsC/tblJdmvbrgizbYICO/viw9UrP77Id0CE4ee, tblJdmvbrgizbYICO is the table id'
             },
             {
-                label: 'Вернуть все',
+                label: 'Return All',
                 name: 'returnAll',
                 type: 'boolean',
                 default: true,
                 additionalParams: true,
-                description: 'Возвращать все результаты или только до указанного лимита'
+                description: 'If all results should be returned or only up to a given limit'
             },
             {
-                label: 'Лимит',
+                label: 'Limit',
                 name: 'limit',
                 type: 'number',
                 default: 100,
                 additionalParams: true,
-                description: 'Количество возвращаемых результатов'
+                description: 'Number of results to return'
             },
             {
-                label: 'Модерация ввода',
-                description:
-                    'Обнаружение текста, который может генерировать вредоносный вывод, и предотвращение его отправки в языковую модель',
+                label: 'Input Moderation',
+                description: 'Detect text that could generate harmful output and prevent it from being sent to the language model',
                 name: 'inputModeration',
                 type: 'Moderation',
                 optional: true,
@@ -164,7 +163,7 @@ json.dumps(my_dict)`
             const chain = new LLMChain({
                 llm: model,
                 prompt: PromptTemplate.fromTemplate(systemPrompt),
-                verbose: process.env.DEBUG === 'true'
+                verbose: process.env.DEBUG === 'true' ? true : false
             })
             const inputs = {
                 dict: dataframeColDict,
@@ -184,7 +183,7 @@ json.dumps(my_dict)`
                 // TODO: get print console output
                 finalResult = await pyodide.runPythonAsync(code)
             } catch (error) {
-                throw new Error(`Извините, я не могу найти ответ на вопрос: "${input}" используя следующий код: "${pythonCode}"`)
+                throw new Error(`Sorry, I'm unable to find answer for question: "${input}" using following code: "${pythonCode}"`)
             }
         }
 
@@ -193,7 +192,7 @@ json.dumps(my_dict)`
             const chain = new LLMChain({
                 llm: model,
                 prompt: PromptTemplate.fromTemplate(finalSystemPrompt),
-                verbose: process.env.DEBUG === 'true'
+                verbose: process.env.DEBUG === 'true' ? true : false
             })
             const inputs = {
                 question: input,
@@ -235,7 +234,7 @@ const fetchAirtableData = async (url: string, params: ICommonObject, accessToken
         const response = await axios.get(url, { params, headers })
         return response.data
     } catch (error) {
-        throw new Error(`Не удалось получить данные из Airtable по адресу ${url}: ${error}`)
+        throw new Error(`Failed to fetch ${url} from Airtable: ${error}`)
     }
 }
 

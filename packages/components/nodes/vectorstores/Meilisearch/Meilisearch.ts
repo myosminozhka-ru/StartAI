@@ -28,75 +28,76 @@ class MeilisearchRetriever_node implements INode {
         this.type = 'Meilisearch'
         this.icon = 'Meilisearch.png'
         this.category = 'Vector Stores'
-        this.description = `Вставить встроенные данные и выполнить поиск по сходству по запросу, используя гибридную функциональность поиска Meilisearch`
+        this.description = `Upsert embedded data and perform similarity search upon query using Meilisearch hybrid search functionality`
         this.baseClasses = ['BaseRetriever']
         this.credential = {
-            label: 'Подключите учетные данные',
+            label: 'Connect Credential',
             name: 'credential',
             type: 'credential',
             credentialNames: ['meilisearchApi']
         }
         this.inputs = [
             {
-                label: 'Документ',
+                label: 'Document',
                 name: 'document',
                 type: 'Document',
                 list: true,
                 optional: true
             },
             {
-                label: 'Вложения',
+                label: 'Embeddings',
                 name: 'embeddings',
                 type: 'Embeddings'
             },
             {
-                label: 'Хост',
+                label: 'Host',
                 name: 'host',
                 type: 'string',
-                description: "Это URL для желаемого экземпляра Meilisearch, URL не должен заканчиваться на '/'"
+                description: "This is the URL for the desired Meilisearch instance, the URL must not end with a '/'"
             },
             {
-                label: 'UID индекса',
+                label: 'Index Uid',
                 name: 'indexUid',
                 type: 'string',
-                description: 'UID для индекса, из которого отвечать'
+                description: 'UID for the index to answer from'
             },
             {
-                label: 'Удалить индекс если существует',
+                label: 'Delete Index if exists',
                 name: 'deleteIndex',
                 type: 'boolean',
                 optional: true
             },
             {
-                label: 'Топ K',
+                label: 'Top K',
                 name: 'K',
                 type: 'number',
-                description: 'количество лучших поисков для возврата в качестве контекста, по умолчанию 4',
+                description: 'number of top searches to return as context, default is 4',
                 additionalParams: true,
                 optional: true
             },
             {
-                label: 'Семантическое соотношение',
+                label: 'Semantic Ratio',
                 name: 'semanticRatio',
                 type: 'number',
-                description: 'процент семантического рассуждения в гибридном поиске meilisearch, по умолчанию 0.75',
+                description: 'percentage of semantic reasoning in meilisearch hybrid search, default is 0.75',
                 additionalParams: true,
                 optional: true
             },
             {
-                label: 'Фильтр поиска',
+                label: 'Search Filter',
                 name: 'searchFilter',
                 type: 'string',
-                description: 'фильтр поиска для применения к поисковым атрибутам',
+                description: 'search filter to apply on searchable attributes',
                 additionalParams: true,
-                optional: true
+                optional: true,
+                acceptVariable: true
             }
         ]
         this.outputs = [
             {
                 label: 'Meilisearch Retriever',
                 name: 'MeilisearchRetriever',
-                description: 'извлекать ответы',
+                description: 'retrieve answers',
                 baseClasses: this.baseClasses
             }
         ]
@@ -161,7 +162,7 @@ class MeilisearchRetriever_node implements INode {
                     }
                 } catch (error) {
                     console.error(error)
-                    console.warn('Error occured when deleting your index, if it did not exist, we will create one for you... ')
+                    console.warn('Error occurred when deleting your index, if it did not exist, we will create one for you... ')
                 }
             }
 

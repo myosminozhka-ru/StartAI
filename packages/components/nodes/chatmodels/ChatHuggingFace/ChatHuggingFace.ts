@@ -22,26 +22,26 @@ class ChatHuggingFace_ChatModels implements INode {
         this.type = 'ChatHuggingFace'
         this.icon = 'HuggingFace.svg'
         this.category = 'Chat Models'
-        this.description = 'Обертка вокруг HuggingFace больших языковых моделей'
+        this.description = 'Wrapper around HuggingFace large language models'
         this.baseClasses = [this.type, 'BaseChatModel', ...getBaseClasses(HuggingFaceInference)]
         this.credential = {
-            label: 'Подключите учетные данные',
+            label: 'Connect Credential',
             name: 'credential',
             type: 'credential',
             credentialNames: ['huggingFaceApi']
         }
         this.inputs = [
             {
-                label: 'Кэш',
+                label: 'Cache',
                 name: 'cache',
                 type: 'BaseCache',
                 optional: true
             },
             {
-                label: 'Модель',
+                label: 'Model',
                 name: 'model',
                 type: 'string',
-                description: 'Если используете собственный endpoint для инференса, оставьте это поле пустым',
+                description: 'If using own inference endpoint, leave this blank',
                 placeholder: 'gpt2'
             },
             {
@@ -49,36 +49,33 @@ class ChatHuggingFace_ChatModels implements INode {
                 name: 'endpoint',
                 type: 'string',
                 placeholder: 'https://xyz.eu-west-1.aws.endpoints.huggingface.cloud/gpt2',
-                description: 'Использование собственного endpoint для инференса',
+                description: 'Using your own inference endpoint',
                 optional: true
             },
             {
-                label: 'Температура',
+                label: 'Temperature',
                 name: 'temperature',
                 type: 'number',
                 step: 0.1,
-                description:
-                    'Параметр температуры может не применяться к определенным моделям. Пожалуйста, проверьте доступные параметры модели',
+                description: 'Temperature parameter may not apply to certain model. Please check available model parameters',
                 optional: true,
                 additionalParams: true
             },
             {
-                label: 'Максимум токенов',
+                label: 'Max Tokens',
                 name: 'maxTokens',
                 type: 'number',
                 step: 1,
-                description:
-                    'Параметр максимального количества токенов может не применяться к определенным моделям. Пожалуйста, проверьте доступные параметры модели',
+                description: 'Max Tokens parameter may not apply to certain model. Please check available model parameters',
                 optional: true,
                 additionalParams: true
             },
             {
-                label: 'Вероятность Top P',
+                label: 'Top Probability',
                 name: 'topP',
                 type: 'number',
                 step: 0.1,
-                description:
-                    'Параметр Top Probability может не применяться к определенным моделям. Пожалуйста, проверьте доступные параметры модели',
+                description: 'Top Probability parameter may not apply to certain model. Please check available model parameters',
                 optional: true,
                 additionalParams: true
             },
@@ -87,28 +84,26 @@ class ChatHuggingFace_ChatModels implements INode {
                 name: 'hfTopK',
                 type: 'number',
                 step: 0.1,
-                description: 'Параметр Top K может не применяться к определенным моделям. Пожалуйста, проверьте доступные параметры модели',
+                description: 'Top K parameter may not apply to certain model. Please check available model parameters',
                 optional: true,
                 additionalParams: true
             },
             {
-                label: 'Штраф частоты',
+                label: 'Frequency Penalty',
                 name: 'frequencyPenalty',
                 type: 'number',
                 step: 0.1,
-                description:
-                    'Параметр штрафа частоты может не применяться к определенным моделям. Пожалуйста, проверьте доступные параметры модели',
+                description: 'Frequency Penalty parameter may not apply to certain model. Please check available model parameters',
                 optional: true,
                 additionalParams: true
             },
             {
-                label: 'Стоп-последовательность',
+                label: 'Stop Sequence',
                 name: 'stop',
                 type: 'string',
                 rows: 4,
                 placeholder: 'AI assistant:',
-                description:
-                    'Устанавливает стоп-последовательности для использования. Используйте запятую для разделения различных последовательностей.',
+                description: 'Sets the stop sequences to use. Use comma to separate different sequences.',
                 optional: true,
                 additionalParams: true
             }
