@@ -1,4 +1,4 @@
-﻿import { VectaraStore, VectaraLibArgs, VectaraFilter, VectaraContextConfig, VectaraFile } from '@langchain/community/vectorstores/vectara'
+import { VectaraStore, VectaraLibArgs, VectaraFilter, VectaraContextConfig, VectaraFile } from '@langchain/community/vectorstores/vectara'
 import { ICommonObject, INode, INodeData, INodeOutputsValue, INodeParams } from '../../../src/Interface'
 import { getBaseClasses, getCredentialData, getCredentialParam } from '../../../src/utils'
 import { getFileFromStorage } from '../../../src'
@@ -144,7 +144,7 @@ class VectaraUpload_VectorStores implements INode {
 
             for (const file of files) {
                 const fileData = await getFileFromStorage(file, orgId, chatflowid)
-                const blob = new Blob([fileData])
+                const blob = new Blob([fileData as BlobPart])
                 vectaraFiles.push({ blob: blob, fileName: getFileName(file) })
             }
         } else {
@@ -158,7 +158,7 @@ class VectaraUpload_VectorStores implements INode {
                 const splitDataURI = file.split(',')
                 splitDataURI.pop()
                 const bf = Buffer.from(splitDataURI.pop() || '', 'base64')
-                const blob = new Blob([bf])
+                const blob = new Blob([bf as BlobPart])
                 vectaraFiles.push({ blob: blob, fileName: getFileName(file) })
             }
         }

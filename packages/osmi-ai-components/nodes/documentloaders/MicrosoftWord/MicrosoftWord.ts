@@ -126,7 +126,7 @@ class MicrosoftWord_DocumentLoaders implements INode {
             if (!file) continue
 
             const fileData = await this.getFileData(file, { orgId, chatflowid }, fromStorage)
-            const blob = new Blob([fileData])
+            const blob = new Blob([fileData as BlobPart])
             const loader = new WordLoader(blob)
 
             // use spread instead of push, because it raises RangeError: Maximum call stack size exceeded when too many docs

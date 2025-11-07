@@ -94,14 +94,11 @@ export class IdentityManager {
             })
             return decoded
         } catch (error) {
-            console.error('Error verifying license key:', error)
             // В dev режиме или при отключенной проверке просто декодируем без верификации подписи
             if (process.env.NODE_ENV === 'development' || process.env.DISABLE_LICENSE_VERIFICATION === 'true') {
                 try {
-                    console.log('🔓 License signature verification disabled - decoding without verification')
                     return jwt.decode(licenseKey)
                 } catch (decodeError) {
-                    console.error('Error decoding license key:', decodeError)
                     return null
                 }
             }
@@ -109,40 +106,12 @@ export class IdentityManager {
         }
     }
 
-    public _findLicenseKey(): { key: string | null; source: string } {
-        // Поиск лицензионного ключа в переменных окружения
-        // Поддерживается только специфичная legacy переменная
-        const legacyPatterns = ['_EE_LICENSE_KEY']
-
-        // Проверяем legacy переменные в определенном порядке
-        const knownLegacyVars = Object.keys(process.env)
-            .filter((key) => legacyPatterns.some((pattern) => key.endsWith(pattern)))
-            .sort() // Сортируем для предсказуемости
-
-        for (const envKey of knownLegacyVars) {
-            const envValue = process.env[envKey]
-            if (envValue) {
-                return { key: envValue, source: `${envKey} (legacy compatibility)` }
-            }
-        }
-
-        return { key: null, source: 'none' }
-    }
-
     private _validateLicenseKey = async () => {
         const LICENSE_URL = process.env.LICENSE_URL
-
-        // Автоматическое определение лицензионного ключа
-        const { key: LICENSE_KEY, source } = this._findLicenseKey()
-
-        // Логирование используемой переменной для отладки
-        if (LICENSE_KEY) {
-            console.log(`🔑 Using ${source} for enterprise license`)
-        }
+        const FLOWISE_EE_LICENSE_KEY = process.env.FLOWISE_EE_LICENSE_KEY
 
         // First check if license key is missing
-        if (!LICENSE_KEY) {
-            console.log('❌ No enterprise license key found. Running in Open Source mode.')
+        if (!FLOWISE_EE_LICENSE_KEY) {
             this.licenseValid = false
             this.currentInstancePlatform = Platform.OPEN_SOURCE
             return
@@ -150,7 +119,7 @@ export class IdentityManager {
 
         try {
             if (process.env.OFFLINE === 'true') {
-                const decodedLicense = this._offlineVerifyLicense(LICENSE_KEY)
+                const decodedLicense = this._offlineVerifyLicense(FLOWISE_EE_LICENSE_KEY)
 
                 if (!decodedLicense) {
                     this.licenseValid = false
@@ -189,7 +158,7 @@ export class IdentityManager {
                 this.currentInstancePlatform = Platform.ENTERPRISE
             } else if (LICENSE_URL) {
                 try {
-                    const response = await axios.post(`${LICENSE_URL}/enterprise/verify`, { license: LICENSE_KEY })
+                    const response = await axios.post(`${LICENSE_URL}/enterprise/verify`, { license: FLOWISE_EE_LICENSE_KEY })
                     this.licenseValid = response.data?.valid
 
                     if (!LICENSE_URL.includes('api')) this.currentInstancePlatform = Platform.ENTERPRISE
@@ -197,7 +166,6 @@ export class IdentityManager {
                     else if (LICENSE_URL.includes('v2')) this.currentInstancePlatform = response.data?.platform
                     else throw new InternalOsmiError(StatusCodes.INTERNAL_SERVER_ERROR, GeneralErrorMessage.UNHANDLED_EDGE_CASE)
                 } catch (error) {
-                    console.error('Error verifying license key:', error)
                     this.licenseValid = false
                     this.currentInstancePlatform = Platform.ENTERPRISE
                     return

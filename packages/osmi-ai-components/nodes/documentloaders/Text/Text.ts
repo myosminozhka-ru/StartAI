@@ -104,7 +104,7 @@ class Text_DocumentLoaders implements INode {
             for (const file of files) {
                 if (!file) continue
                 const fileData = await getFileFromStorage(file, orgId, chatflowid)
-                const blob = new Blob([fileData])
+                const blob = new Blob([fileData as BlobPart])
                 const loader = new TextLoader(blob)
 
                 if (textSplitter) {

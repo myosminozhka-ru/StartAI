@@ -152,7 +152,7 @@ class Json_DocumentLoaders implements INode {
             for (const file of files) {
                 if (!file) continue
                 const fileData = await getFileFromStorage(file, orgId, chatflowid)
-                const blob = new Blob([fileData])
+                const blob = new Blob([fileData as BlobPart])
                 const loader = new JSONLoader(blob, pointers.length != 0 ? pointers : undefined, metadata)
 
                 if (textSplitter) {

@@ -177,7 +177,7 @@ export class ArxivTool extends DynamicStructuredTool {
 
         // Get PDF buffer and create blob
         const buffer = await response.buffer()
-        const blob = new Blob([buffer])
+        const blob = new Blob([buffer as BlobPart])
 
         // Use PDFLoader to extract text (same as Pdf.ts)
         const loader = new PDFLoader(blob, {
