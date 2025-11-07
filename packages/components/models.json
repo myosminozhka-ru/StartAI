@@ -1855,6 +1855,31 @@
                     "output_cost": 0.000012
                 }
             ]
+        },
+        {
+            "name": "chatMWS",
+            "models": [
+                {
+                    "label": "mws-gpt-alpha",
+                    "name": "mws-gpt-alpha",
+                    "description": "MWS GPT Alpha модель от МТС"
+                },
+                {
+                    "label": "llama-3.3-70b-instruct",
+                    "name": "llama-3.3-70b-instruct",
+                    "description": "Llama 3.3 70B Instruct через MWS"
+                },
+                {
+                    "label": "qwen2.5-72b-instruct",
+                    "name": "qwen2.5-72b-instruct",
+                    "description": "Qwen 2.5 72B Instruct через MWS"
+                },
+                {
+                    "label": "deepseek-coder-v2-instruct",
+                    "name": "deepseek-coder-v2-instruct",
+                    "description": "DeepSeek Coder V2 Instruct через MWS"
+                }
+            ]
         }
     ],
     "embedding": [
@@ -2247,6 +2272,26 @@
                 {
                     "label": "us-west-2",
                     "name": "us-west-2"
+                }
+            ]
+        },
+        {
+            "name": "mwsEmbeddings",
+            "models": [
+                {
+                    "label": "bge-m3",
+                    "name": "bge-m3",
+                    "description": "BGE M3 embedding модель через MWS"
+                },
+                {
+                    "label": "bge-large-zh-v1.5",
+                    "name": "bge-large-zh-v1.5",
+                    "description": "BGE Large Zh v1.5 через MWS"
+                },
+                {
+                    "label": "e5-large-v2",
+                    "name": "e5-large-v2",
+                    "description": "E5 Large V2 embedding через MWS"
                 }
             ]
         }
