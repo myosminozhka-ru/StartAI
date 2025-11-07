@@ -391,9 +391,9 @@ const APIKey = () => {
                         <ViewHeader
                             onSearchChange={onSearchChange}
                             search={true}
-                            searchPlaceholder='Search API Keys'
-                            title='API Keys'
-                            description='Flowise API & SDK authentication keys'
+                            searchPlaceholder='Поиск API ключей'
+                            title='API ключи'
+                            description='Ключи аутентификации OSMI AI API и SDK'
                         >
                             <PermissionButton
                                 permissionId={'apikeys:import'}
@@ -425,7 +425,7 @@ const APIKey = () => {
                                         alt='APIEmptySVG'
                                     />
                                 </Box>
-                                <div>No API Keys Yet</div>
+                                <div>Пока нет API ключей</div>
                             </Stack>
                         ) : (
                             <>

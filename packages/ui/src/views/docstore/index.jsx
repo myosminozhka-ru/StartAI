@@ -154,9 +154,9 @@ const Documents = () => {
                     <ViewHeader
                         onSearchChange={onSearchChange}
                         search={hasDocStores}
-                        searchPlaceholder='Search Name'
-                        title='Document Store'
-                        description='Store and upsert documents for LLM retrieval (RAG)'
+                        searchPlaceholder='Поиск по названию'
+                        title='Хранилище документов'
+                        description='Хранение и обновление документов для поиска LLM (RAG)'
                     >
                         {hasDocStores && (
                             <ToggleButtonGroup
@@ -212,7 +212,7 @@ const Documents = () => {
                                     alt='doc_store_empty'
                                 />
                             </Box>
-                            <div>No Document Stores Created Yet</div>
+                            <div>Пока не создано ни одного хранилища</div>
                         </Stack>
                     ) : (
                         <React.Fragment>

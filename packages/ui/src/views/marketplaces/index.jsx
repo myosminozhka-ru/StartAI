@@ -587,9 +587,9 @@ const Marketplace = () => {
                             }
                             onSearchChange={onSearchChange}
                             search={true}
-                            searchPlaceholder='Search Name/Description/Node'
-                            title='Marketplace'
-                            description='Explore and use pre-built templates'
+                            searchPlaceholder='Поиск по названию/описанию/узлу'
+                            title='Маркетплейс'
+                            description='Изучайте и используйте готовые шаблоны'
                         >
                             <ToggleButtonGroup
                                 sx={{ borderRadius: 2, height: '100%' }}
@@ -606,7 +606,7 @@ const Marketplace = () => {
                                     }}
                                     variant='contained'
                                     value='card'
-                                    title='Card View'
+                                    title='Вид карточками'
                                 >
                                     <IconLayoutGrid />
                                 </ToggleButton>
@@ -618,7 +618,7 @@ const Marketplace = () => {
                                     }}
                                     variant='contained'
                                     value='list'
-                                    title='List View'
+                                    title='Вид списком'
                                 >
                                     <IconList />
                                 </ToggleButton>
@@ -627,8 +627,8 @@ const Marketplace = () => {
                         {hasPermission('templates:marketplace') && hasPermission('templates:custom') && (
                             <Stack direction='row' justifyContent='space-between' sx={{ mb: 2 }}>
                                 <Tabs value={activeTabValue} onChange={handleTabChange} textColor='primary' aria-label='tabs'>
-                                    <PermissionTab permissionId='templates:marketplace' value={0} label='Community Templates' />
-                                    <PermissionTab permissionId='templates:custom' value={1} label='My Templates' />
+                                    <PermissionTab permissionId='templates:marketplace' value={0} label='Шаблоны сообщества' />
+                                    <PermissionTab permissionId='templates:custom' value={1} label='Мои шаблоны' />
                                 </Tabs>
                                 <Autocomplete
                                     id='useCases'
@@ -794,7 +794,7 @@ const Marketplace = () => {
                                                     alt='WorkflowEmptySVG'
                                                 />
                                             </Box>
-                                            <div>No Marketplace Yet</div>
+                                            <div>Пока нет шаблонов</div>
                                         </Stack>
                                     )}
                             </TabPanel>
