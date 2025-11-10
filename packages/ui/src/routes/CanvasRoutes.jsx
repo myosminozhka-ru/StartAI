@@ -7,7 +7,7 @@ import { RequireAuth } from '@/routes/RequireAuth'
 
 // canvas routing
 const Canvas = Loadable(lazy(() => import('@/views/canvas')))
-const MarketplaceCanvas = Loadable(lazy(() => import('@/views/marketplaces/MarketplaceCanvas')))
+const MarketplaceCanvas = Loadable(lazy(() => import('@/views/agentflowsv2/MarketplaceCanvas')))
 const CanvasV2 = Loadable(lazy(() => import('@/views/agentflowsv2/Canvas')))
 const MarketplaceCanvasV2 = Loadable(lazy(() => import('@/views/agentflowsv2/MarketplaceCanvas')))
 

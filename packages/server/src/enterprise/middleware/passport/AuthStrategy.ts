@@ -24,18 +24,37 @@ export const getAuthStrategy = (options: any): Strategy => {
     }
     const jwtVerify = async (req: Request, payload: ICommonObject, done: VerifiedCallback) => {
         try {
-            if (!req.user) {
-                return done(null, false, 'Unauthorized.')
-            }
             const meta = decryptToken(payload.meta)
             if (!meta) {
                 return done(null, false, 'Unauthorized.')
             }
             const ids = meta.split(':')
-            if (ids.length !== 2 || req.user.id !== ids[0]) {
+            if (ids.length !== 2 || payload.id !== ids[0]) {
                 return done(null, false, 'Unauthorized.')
             }
-            done(null, req.user)
+            
+            // Если req.user уже есть (из сессии), используем его
+            if (req.user && req.user.id === payload.id) {
+                return done(null, req.user)
+            }
+            
+            // Создаем упрощенный user object из payload для minimal версии
+            const minimalUser = {
+                id: payload.id,
+                name: payload.username,
+                email: payload.email || '',
+                activeWorkspaceId: ids[1] || '',
+                activeOrganizationId: '',
+                activeWorkspace: 'Default Workspace',
+                roleId: '',
+                permissions: [],
+                features: [],
+                assignedWorkspaces: [],
+                isOrganizationAdmin: true,
+                isApiKeyValidated: false
+            }
+            
+            done(null, minimalUser)
         } catch (error) {
             done(error, false)
         }

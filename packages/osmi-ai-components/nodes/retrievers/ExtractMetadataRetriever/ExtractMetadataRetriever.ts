@@ -3,7 +3,12 @@ import { VectorStore, VectorStoreRetriever, VectorStoreRetrieverInput } from '@l
 import { INode, INodeData, INodeParams, INodeOutputsValue } from '../../../src/Interface'
 import { handleEscapeCharacters } from '../../../src'
 import { z } from 'zod'
-import { convertStructuredSchemaToZod } from '../../sequentialagents/commonUtils'
+// import { convertStructuredSchemaToZod } from '../../sequentialagents/commonUtils' // Закомментировано: файл удален в minimal версии
+
+// Временная заглушка для convertStructuredSchemaToZod
+const convertStructuredSchemaToZod = (schema: any) => {
+    return {}
+}
 
 const queryPrefix = 'query'
 const defaultPrompt = `Extract keywords from the query: {{${queryPrefix}}}`

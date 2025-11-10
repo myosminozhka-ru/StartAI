@@ -13,7 +13,8 @@ import { AIMessage, HumanMessage, BaseMessage } from '@langchain/core/messages'
 import { Document } from '@langchain/core/documents'
 import { getFileFromStorage } from './storageUtils'
 import { GetSecretValueCommand, SecretsManagerClient, SecretsManagerClientConfig } from '@aws-sdk/client-secrets-manager'
-import { customGet } from '../nodes/sequentialagents/commonUtils'
+// import { customGet } from '../nodes/sequentialagents/commonUtils' // Закомментировано: файл удален в minimal версии
+import { get as customGet } from 'lodash' // Используем lodash.get вместо customGet
 import { TextSplitter } from 'langchain/text_splitter'
 import { DocumentLoader } from 'langchain/document_loaders/base'
 import { NodeVM } from '@osmi-ai/nodevm'
@@ -695,16 +696,8 @@ export function handleEscapeCharacters(input: any, reverse: Boolean): any {
  * @returns {string}
  */
 export const getUserHome = (): string => {
-    let variableName = 'HOME'
-    if (process.platform === 'win32') {
-        variableName = 'USERPROFILE'
-    }
-
-    if (process.env[variableName] === undefined) {
-        // If for some reason the variable does not exist, fall back to current folder
-        return process.cwd()
-    }
-    return process.env[variableName] as string
+    const projectRoot = path.join(__dirname, '..', '..', '..', '..')
+    return projectRoot
 }
 
 /**

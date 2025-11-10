@@ -17,10 +17,11 @@ import { z } from 'zod'
 import { StructuredTool } from '@langchain/core/tools'
 import { AgentExecutor, JsonOutputToolsParser, ToolCallingAgentOutputParser } from '../../../src/agents'
 import { ChatMistralAI } from '@langchain/mistralai'
-import { ChatOpenAI } from '../../chatmodels/ChatOpenAI/OSMIChatOpenAI'
-import { ChatAnthropic } from '../../chatmodels/ChatAnthropic/OSMIChatAnthropic'
+// Закомментировано: ChatModels не используются в minimal версии
+// import { ChatOpenAI } from '../../chatmodels/ChatOpenAI/OSMIChatOpenAI'
+// import { ChatAnthropic } from '../../chatmodels/ChatAnthropic/OSMIChatAnthropic'
 import { addImagesToMessages, llmSupportsVision } from '../../../src/multiModalUtils'
-import { ChatGoogleGenerativeAI } from '../../chatmodels/ChatGoogleGenerativeAI/OSMIChatGoogleGenerativeAI'
+// import { ChatGoogleGenerativeAI } from '../../chatmodels/ChatGoogleGenerativeAI/OSMIChatGoogleGenerativeAI'
 
 const sysPrompt = `You are a supervisor tasked with managing a conversation between the following workers: {team_members}.
 Given the following user request, respond with the worker to act next.

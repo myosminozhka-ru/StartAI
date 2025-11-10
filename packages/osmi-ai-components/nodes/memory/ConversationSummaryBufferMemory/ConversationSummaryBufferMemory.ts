@@ -13,7 +13,8 @@ import { BaseLanguageModel } from '@langchain/core/language_models/base'
 import { BaseMessage, getBufferString, HumanMessage } from '@langchain/core/messages'
 import { ConversationSummaryBufferMemory, ConversationSummaryBufferMemoryInput } from 'langchain/memory'
 import { DataSource } from 'typeorm'
-import { ChatAnthropic } from '../../chatmodels/ChatAnthropic/OSMIChatAnthropic'
+// Закомментировано: ChatAnthropic не используется в minimal версии
+// import { ChatAnthropic } from '../../chatmodels/ChatAnthropic/OSMIChatAnthropic'
 
 class ConversationSummaryBufferMemory_Memory implements INode {
     label: string

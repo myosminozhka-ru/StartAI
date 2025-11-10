@@ -32,7 +32,7 @@ npm run start
    - Перейдите в раздел "Credentials"
    - Нажмите "Add Credential"
    - Выберите "MWS API"
-   - Введите API ключ: `4uRDvbtCf5o6B7WHtIFR`
+   - Введите ваш API ключ MWS
 
 2. **Проверьте доступность узлов:**
    - В разделе "Chat Models" должен появиться "ChatMWS"

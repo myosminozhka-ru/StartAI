@@ -1,5 +1,6 @@
 import express, { Request, Response } from 'express'
 import path from 'path'
+import fs from 'fs'
 import cors from 'cors'
 import http from 'http'
 import cookieParser from 'cookie-parser'
@@ -228,6 +229,9 @@ export class App {
                         next()
                     } else if (req.headers['x-request-from'] === 'internal') {
                         verifyToken(req, res, next)
+                    } else if (this.identityManager.getPlatformType() === Platform.OPEN_SOURCE) {
+                        // В Open Source режиме используем JWT токен вместо API ключа
+                        verifyToken(req, res, next)
                     } else {
                         // Only check license validity for non-open-source platforms
                         if (this.identityManager.getPlatformType() !== Platform.OPEN_SOURCE) {
@@ -339,19 +343,29 @@ export class App {
         // Serve UI static
         // ----------------------------------------
 
-        const packagePath = getNodeModulesPackagePath('OSMI-ui')
-        const uiBuildPath = path.join(packagePath, 'build')
-        const uiHtmlPath = path.join(packagePath, 'build', 'index.html')
+        // В minimal версии UI находится в packages/ui/build
+        let packagePath = getNodeModulesPackagePath('OSMI-ui')
+        if (!packagePath || !fs.existsSync(path.join(packagePath, 'build'))) {
+            // Fallback для локальной разработки
+            packagePath = path.join(__dirname, '..', '..', 'ui')
+        }
+        const uiBuildPath = path.resolve(path.join(packagePath, 'build'))
+        const uiHtmlPath = path.resolve(path.join(packagePath, 'build', 'index.html'))
 
         // Special handling for soglashenie file to set correct Content-Type
         this.app.get('/soglashenie', (req: Request, res: Response) => {
-            const soglasheniePath = path.join(uiBuildPath, 'soglashenie')
+            const soglasheniePath = path.resolve(path.join(uiBuildPath, 'soglashenie'))
             res.setHeader('Content-Type', 'application/pdf')
             res.setHeader('Content-Disposition', 'inline; filename="soglashenie.pdf"')
             res.sendFile(soglasheniePath)
         })
 
         this.app.use('/', express.static(uiBuildPath))
+
+        // Заглушка для webpack-dev-server WebSocket (убирает ошибки в консоли браузера)
+        this.app.get('/ws', (req: Request, res: Response) => {
+            res.status(404).send('WebSocket endpoint not available in production build')
+        })
 
         // All other requests not handled will return React app
         this.app.use((req: Request, res: Response) => {

@@ -1,29 +1,14 @@
-<!-- markdownlint-disable MD030 -->
-
-<p align="center">
-<img src="https://app.osmi-ai.ru/assets/osmi_black-VsBDPajo.png">
-<img src="https://app.osmi-ai.ru/assets/osmi_black-VsBDPajo.png">
-</p>
-
-<div align="center">
-
-[![Release Notes](https://img.shields.io/github/release/myosminozhka-ru/StartAI)](https://github.com/myosminozhka-ru/StartAI/releases)
-[![GitHub star chart](https://img.shields.io/github/stars/myosminozhka-ru/StartAI?style=social)](https://star-history.com/#myosminozhka-ru/StartAI)
-[![GitHub repository](https://img.shields.io/github/forks/myosminozhka-ru/StartAI?style=social)](https://github.com/myosminozhka-ru/StartAI)
-
-</div>
 <h3>Build AI Agents, Visually</h3>
 
 > **🎯 МИНИМАЛЬНАЯ ВЕРСИЯ ДЛЯ ОДНОГО АГЕНТА**  
-> Эта ветка содержит ультра-минималистичную версию OSMI StartAI, оптимизированную для работы одного агента с базовым набором инструментов. Максимально упрощена для быстрого развертывания и использования с российским MWS API МТС.
+> Эта ветка содержит ультра-минималистичную версию, оптимизированную для работы одного агента с базовым набором инструментов. Максимально упрощена для быстрого развертывания и использования с российским MWS API МТС.
 > 
 > **⚠️ ОГРАНИЧЕНИЯ:** Максимум 2 чатфлоу, только основные компоненты, без управления пользователями.
 
-<img width="100%" src="https://app.osmi-ai.ru/assets/osmi_black-VsBDPajo.png"></a>
 
 ## 🌿 Ветка: minimal-single-agent-version
 
-Эта ветка содержит **минимальную версию** OSMI StartAI для работы одного агента с базовым набором инструментов и российским MWS API МТС.
+Эта ветка содержит **минимальную версию** для работы одного агента с базовым набором инструментов и российским MWS API МТС.
 
 **Основные отличия от main:**
 - 🔒 **Лимит:** максимум 2 чатфлоу
@@ -42,7 +27,7 @@
 -   [🌱 Env Variables](#-env-variables)
 -   [📖 Documentation](#-documentation)
 -   [🌐 Self Host](#-self-host)
--   [☁️ OSMI IT Cloud](#️-osmi-it-cloud)
+-   [☁️ Cloud](#️-osmi-it-cloud)
 -   [🙋 Support](#-support)
 -   [🙌 Contributing](#-contributing)
 -   [📄 License](#-license)
@@ -121,7 +106,7 @@ Download and Install [NodeJS](https://nodejs.org/en/download) >= 18.15.0
 
 ## 🔥 New: MWS Integration
 
-OSMI StartAI теперь поддерживает интеграцию с **MWS (МТС) API** для использования российских языковых моделей!
+Теперь поддерживает интеграцию с **MWS (МТС) API** для использования российских языковых моделей!
 
 ### 🚀 Возможности MWS интеграции:
 
@@ -186,7 +171,7 @@ OSMI StartAI теперь поддерживает интеграцию с **MWS
 
 ## 👨‍💻 Developers
 
-OSMI AI has 3 different modules in a single mono repository.
+Has 3 different modules in a single mono repository.
 
 -   `server`: Node backend to serve API logics
 -   `ui`: React frontend
@@ -271,15 +256,15 @@ OSMI AI has 3 different modules in a single mono repository.
 
 ## 🌱 Env Variables
 
-OSMI AI supports different environment variables to configure your instance. You can specify the following variables in the `.env` file inside `packages/server` folder. Read [more](https://docs.osmi-ai.ru)
+Supports different environment variables to configure your instance. You can specify the following variables in the `.env` file inside `packages/server` folder. Read [more](https://docs.osmi-ai.ru)
 
 ## 📖 Documentation
 
-You can view the OSMI AI Docs [here](https://docs.osmi-ai.ru)
+You can view the Docs [here](https://docs.osmi-ai.ru)
 
 ## 🌐 Self Host
 
-Deploy OSMI AI self-hosted in your existing infrastructure. For deployment instructions, visit [our documentation](https://docs.osmi-ai.ru).
+Deploy self-hosted in your existing infrastructure. For deployment instructions, visit [our documentation](https://docs.osmi-ai.ru).
 
 ## ☁️ OSMI IT Cloud
 

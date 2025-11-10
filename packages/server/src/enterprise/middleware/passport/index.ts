@@ -189,8 +189,10 @@ export const initializeJwtCookieMiddleware = async (app: express.Application, id
     )
 
     app.post('/api/v1/auth/resolve', async (req, res) => {
-        // check for the organization, if empty redirect to the organization setup page for OpenSource and Enterprise Versions
-        // for Cloud (Horizontal) version, redirect to the signin page
+        // В minimal версии без Enterprise - редиректим на страницу входа
+        return res.status(HttpStatusCode.Ok).json({ redirectUrl: '/signin' })
+        
+        /* Enterprise логика закомментирована в minimal версии
         const expressApp = getRunningExpressApp()
         const platform = expressApp.identityManager.getPlatformType()
         if (platform === Platform.CLOUD) {
@@ -221,6 +223,7 @@ export const initializeJwtCookieMiddleware = async (app: express.Application, id
             default:
                 return res.status(HttpStatusCode.Ok).json({ redirectUrl: '/signin' })
         }
+        */
     })
 
     app.post('/api/v1/auth/refreshToken', async (req, res) => {

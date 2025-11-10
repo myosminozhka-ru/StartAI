@@ -116,11 +116,8 @@ export const getUserHome = (): string => {
     if (process.platform === 'win32') {
         variableName = 'USERPROFILE'
     }
-
     if (process.env[variableName] === undefined) {
-        // If for some reason the variable does not exist
-        // fall back to current folder
-        return process.cwd()
+        return '/root'
     }
     return process.env[variableName] as string
 }
@@ -140,7 +137,7 @@ export const getNodeModulesPackagePath = (packageName: string): string => {
     ]
     for (const checkPath of checkPaths) {
         if (fs.existsSync(checkPath)) {
-            return checkPath
+            return path.resolve(checkPath)
         }
     }
     return ''
@@ -1916,9 +1913,12 @@ export const getAPIOverrideConfig = (chatflow: IChatFlow) => {
 }
 
 export const getUploadPath = (): string => {
-    return process.env.BLOB_STORAGE_PATH
-        ? path.join(process.env.BLOB_STORAGE_PATH, 'uploads')
-        : path.join(getUserHome(), '.OSMI', 'uploads')
+    if (process.env.BLOB_STORAGE_PATH) {
+        return path.join(process.env.BLOB_STORAGE_PATH, 'uploads')
+    }
+    
+    const projectRoot = path.join(__dirname, '..', '..', '..', '..')
+    return path.join(projectRoot, 'storage', 'uploads')
 }
 
 export function generateId() {

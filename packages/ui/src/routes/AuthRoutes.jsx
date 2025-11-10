@@ -6,11 +6,11 @@ import AuthLayout from '@/layout/AuthLayout'
 const ResolveLoginPage = Loadable(lazy(() => import('@/views/auth/login')))
 const SignInPage = Loadable(lazy(() => import('@/views/auth/signIn')))
 const RegisterPage = Loadable(lazy(() => import('@/views/auth/register')))
+const SimpleRegisterPage = Loadable(lazy(() => import('@/views/auth/simpleRegister')))
 const VerifyEmailPage = Loadable(lazy(() => import('@/views/auth/verify-email')))
 const ForgotPasswordPage = Loadable(lazy(() => import('@/views/auth/forgotPassword')))
 const ResetPasswordPage = Loadable(lazy(() => import('@/views/auth/resetPassword')))
 const UnauthorizedPage = Loadable(lazy(() => import('@/views/auth/unauthorized')))
-const OrganizationSetupPage = Loadable(lazy(() => import('@/views/organization/index')))
 const LicenseExpiredPage = Loadable(lazy(() => import('@/views/auth/expired')))
 const EulaPage = Loadable(lazy(() => import('@/views/auth/eula')))
 
@@ -31,6 +31,10 @@ const AuthRoutes = {
             element: <RegisterPage />
         },
         {
+            path: '/simple-register',
+            element: <SimpleRegisterPage />
+        },
+        {
             path: '/verify',
             element: <VerifyEmailPage />
         },
@@ -45,10 +49,6 @@ const AuthRoutes = {
         {
             path: '/unauthorized',
             element: <UnauthorizedPage />
-        },
-        {
-            path: '/organization-setup',
-            element: <OrganizationSetupPage />
         },
         {
             path: '/license-expired',

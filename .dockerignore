@@ -4,8 +4,12 @@ build
 .git*
 
 **/node_modules
-**/build
 **/dist
+
+# Игнорируем build везде кроме UI
+packages/server/build
+packages/osmi-ai-components/build
+packages/api-documentation/build
 
 # packages/server/.env
 # packages/ui/.env

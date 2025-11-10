@@ -56,6 +56,8 @@ import executionsRouter from './executions'
 import validationRouter from './validation'
 import agentflowv2GeneratorRouter from './agentflowv2-generator'
 import textToSpeechRouter from './text-to-speech'
+import accountRouter from '../enterprise/routes/account.route'
+import simpleAuthRouter from './auth.route'
 
 import { IdentityManager } from '../IdentityManager'
 
@@ -119,5 +121,7 @@ router.use('/text-to-speech', textToSpeechRouter)
 
 router.use('/logs', IdentityManager.checkFeatureByPlan('feat:logs'), logsRouter)
 router.use('/files', IdentityManager.checkFeatureByPlan('feat:files'), filesRouter)
+router.use('/auth', simpleAuthRouter)  // Простая аутентификация без Enterprise
+router.use('/account', accountRouter)
 
 export default router
