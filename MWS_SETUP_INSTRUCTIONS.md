@@ -32,7 +32,7 @@ npm run start
    - Перейдите в раздел "Credentials"
    - Нажмите "Add Credential"
    - Выберите "MWS API"
-   - Введите API ключ: `4uRDvbtCf5o6B7WHtIFR`
+   - Введите API ключ: `ваш_api_ключ`
 
 2. **Проверьте доступность узлов:**
    - В разделе "Chat Models" должен появиться "ChatMWS"
@@ -56,17 +56,6 @@ npm run start
 - `models.json` - Обновлен с моделями MWS
 - `MWS_INTEGRATION_README.md` - Полная документация
 - `test_mws_integration.js` - Тестовый скрипт
-
-## API Credentials
-
-**MWS API:**
-- API Key: `4uRDvbtCf5o6B7WHtIFR`
-- Base URL: `https://api.gpt.mws.ru/v1`
-
-**MWS UI (для тестирования):**
-- URL: https://ui.gpt.mws.ru/login
-- Login: `Dneustroev@sk.ru`
-- Password: `4uRDvbtCf5o6B7WHtIFR`
 
 ## Устранение проблем
 

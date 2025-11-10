@@ -531,13 +531,9 @@ function getFilePaths(dir: string): FileInfo[] {
  * Prepare storage path
  */
 export const getStoragePath = (): string => {
-    const storagePath = process.env.BLOB_STORAGE_PATH
+    return process.env.BLOB_STORAGE_PATH
         ? path.join(process.env.BLOB_STORAGE_PATH)
         : path.join(getUserHome(), '.OSMI', 'storage')
-    if (!fs.existsSync(storagePath)) {
-        fs.mkdirSync(storagePath, { recursive: true })
-    }
-    return storagePath
 }
 
 /**

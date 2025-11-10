@@ -1048,11 +1048,11 @@ importers:
         specifier: ^2.0.4
         version: 2.0.8(@emotion/react@11.14.0(@types/react@18.3.26)(react@18.3.1))(@emotion/styled@11.14.1(@emotion/react@11.14.0(@types/react@18.3.26)(react@18.3.1))(@types/react@18.3.26)(react@18.3.1))(@mui/material@5.15.0(@emotion/react@11.14.0(@types/react@18.3.26)(react@18.3.1))(@emotion/styled@11.14.1(@emotion/react@11.14.0(@types/react@18.3.26)(react@18.3.1))(@types/react@18.3.26)(react@18.3.1))(@types/react@18.3.26)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       osmi-ai-embed:
-        specifier: github:artstyleplaystyle/OSMIChatEmbed#main
-        version: https://codeload.github.com/artstyleplaystyle/OSMIChatEmbed/tar.gz/7f9f6e83d9af565ec5bb2d7c8f97f670adf8e8d8
+        specifier: github:artstyleplaystyle/OSMIChatEmbed#deploy
+        version: https://codeload.github.com/artstyleplaystyle/OSMIChatEmbed/tar.gz/4cfbad0dc868a5d1f5d2b64b4238ffdf74965645
       osmi-ai-embed-react:
-        specifier: github:artstyleplaystyle/OSMIEmbedReact#main
-        version: https://codeload.github.com/artstyleplaystyle/OSMIEmbedReact/tar.gz/71a07b2f48304f10a67b43cdff5ba675e9f2b372(@types/node@24.9.2)(osmi-ai-embed@https://codeload.github.com/artstyleplaystyle/OSMIChatEmbed/tar.gz/7f9f6e83d9af565ec5bb2d7c8f97f670adf8e8d8)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(sass@1.93.3)(terser@5.44.0)(typescript@5.9.3)
+        specifier: github:artstyleplaystyle/OSMIEmbedReact#deploy
+        version: https://codeload.github.com/artstyleplaystyle/OSMIEmbedReact/tar.gz/8c77ff5dd980a38ceeb8986a78692ed3d8f9aad1(@types/node@24.9.2)(osmi-ai-embed@https://codeload.github.com/artstyleplaystyle/OSMIChatEmbed/tar.gz/4cfbad0dc868a5d1f5d2b64b4238ffdf74965645)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(sass@1.93.3)(terser@5.44.0)(typescript@5.9.3)
       prop-types:
         specifier: ^15.7.2
         version: 15.8.1
@@ -4533,30 +4533,35 @@ packages:
     engines: {node: '>= 10'}
     cpu: [arm64]
     os: [linux]
+    libc: [glibc]
 
   '@napi-rs/canvas-linux-arm64-musl@0.1.81':
     resolution: {integrity: sha512-Bj3m1cl4GIhsigkdwOxii4g4Ump3/QhNpx85IgAlCCYXpaly6mcsWpuDYEabfIGWOWhDUNBOndaQUPfWK1czOQ==}
     engines: {node: '>= 10'}
     cpu: [arm64]
     os: [linux]
+    libc: [musl]
 
   '@napi-rs/canvas-linux-riscv64-gnu@0.1.81':
     resolution: {integrity: sha512-yg/5NkHykVdwPlD3XObwCa/EswkOwLHswJcI9rHrac+znHsmCSj5AMX/RTU9Z9F6lZTwL60JM2Esit33XhAMiw==}
     engines: {node: '>= 10'}
     cpu: [riscv64]
     os: [linux]
+    libc: [glibc]
 
   '@napi-rs/canvas-linux-x64-gnu@0.1.81':
     resolution: {integrity: sha512-tPfMpSEBuV5dJSKexO/UZxpOqnYTaNbG8aKa1ek8QsWu+4SJ/foWkaxscra/RUv85vepx6WWDjzBNbNJsTnO0w==}
     engines: {node: '>= 10'}
     cpu: [x64]
     os: [linux]
+    libc: [glibc]
 
   '@napi-rs/canvas-linux-x64-musl@0.1.81':
     resolution: {integrity: sha512-1L0xnYgzqn8Baef+inPvY4dKqdmw3KCBoe0NEDgezuBZN7MA5xElwifoG8609uNdrMtJ9J6QZarsslLRVqri7g==}
     engines: {node: '>= 10'}
     cpu: [x64]
     os: [linux]
+    libc: [musl]
 
   '@napi-rs/canvas-win32-x64-msvc@0.1.81':
     resolution: {integrity: sha512-57ryVbhm/z7RE9/UVcS7mrLPdlayLesy+9U0Uf6epCoeSGrs99tfieCcgZWFbIgmByQ1AZnNtFI2N6huqDLlWQ==}
@@ -5231,36 +5236,42 @@ packages:
     engines: {node: '>= 10.0.0'}
     cpu: [arm]
     os: [linux]
+    libc: [glibc]
 
   '@parcel/watcher-linux-arm-musl@2.5.1':
     resolution: {integrity: sha512-6E+m/Mm1t1yhB8X412stiKFG3XykmgdIOqhjWj+VL8oHkKABfu/gjFj8DvLrYVHSBNC+/u5PeNrujiSQ1zwd1Q==}
     engines: {node: '>= 10.0.0'}
     cpu: [arm]
     os: [linux]
+    libc: [musl]
 
   '@parcel/watcher-linux-arm64-glibc@2.5.1':
     resolution: {integrity: sha512-LrGp+f02yU3BN9A+DGuY3v3bmnFUggAITBGriZHUREfNEzZh/GO06FF5u2kx8x+GBEUYfyTGamol4j3m9ANe8w==}
     engines: {node: '>= 10.0.0'}
     cpu: [arm64]
     os: [linux]
+    libc: [glibc]
 
   '@parcel/watcher-linux-arm64-musl@2.5.1':
     resolution: {integrity: sha512-cFOjABi92pMYRXS7AcQv9/M1YuKRw8SZniCDw0ssQb/noPkRzA+HBDkwmyOJYp5wXcsTrhxO0zq1U11cK9jsFg==}
     engines: {node: '>= 10.0.0'}
     cpu: [arm64]
     os: [linux]
+    libc: [musl]
 
   '@parcel/watcher-linux-x64-glibc@2.5.1':
     resolution: {integrity: sha512-GcESn8NZySmfwlTsIur+49yDqSny2IhPeZfXunQi48DMugKeZ7uy1FX83pO0X22sHntJ4Ub+9k34XQCX+oHt2A==}
     engines: {node: '>= 10.0.0'}
     cpu: [x64]
     os: [linux]
+    libc: [glibc]
 
   '@parcel/watcher-linux-x64-musl@2.5.1':
     resolution: {integrity: sha512-n0E2EQbatQ3bXhcH2D1XIAANAcTZkQICBPVaxMeaCVBtOpBZpWJuf7LwyWPSBDITb7In8mqQgJ7gH8CILCURXg==}
     engines: {node: '>= 10.0.0'}
     cpu: [x64]
     os: [linux]
+    libc: [musl]
 
   '@parcel/watcher-win32-arm64@2.5.1':
     resolution: {integrity: sha512-RFzklRvmc3PkjKjry3hLF9wD7ppR4AKcWNzH7kXR7GUe0Igb3Nz8fyPwtZCSquGrhU5HhUNDr/mKBqj7tqA2Vw==}
@@ -5566,56 +5577,67 @@ packages:
     resolution: {integrity: sha512-PsNAbcyv9CcecAUagQefwX8fQn9LQ4nZkpDboBOttmyffnInRy8R8dSg6hxxl2Re5QhHBf6FYIDhIj5v982ATQ==}
     cpu: [arm]
     os: [linux]
+    libc: [glibc]
 
   '@rollup/rollup-linux-arm-musleabihf@4.52.5':
     resolution: {integrity: sha512-Fw4tysRutyQc/wwkmcyoqFtJhh0u31K+Q6jYjeicsGJJ7bbEq8LwPWV/w0cnzOqR2m694/Af6hpFayLJZkG2VQ==}
     cpu: [arm]
     os: [linux]
+    libc: [musl]
 
   '@rollup/rollup-linux-arm64-gnu@4.52.5':
     resolution: {integrity: sha512-a+3wVnAYdQClOTlyapKmyI6BLPAFYs0JM8HRpgYZQO02rMR09ZcV9LbQB+NL6sljzG38869YqThrRnfPMCDtZg==}
     cpu: [arm64]
     os: [linux]
+    libc: [glibc]
 
   '@rollup/rollup-linux-arm64-musl@4.52.5':
     resolution: {integrity: sha512-AvttBOMwO9Pcuuf7m9PkC1PUIKsfaAJ4AYhy944qeTJgQOqJYJ9oVl2nYgY7Rk0mkbsuOpCAYSs6wLYB2Xiw0Q==}
     cpu: [arm64]
     os: [linux]
+    libc: [musl]
 
   '@rollup/rollup-linux-loong64-gnu@4.52.5':
     resolution: {integrity: sha512-DkDk8pmXQV2wVrF6oq5tONK6UHLz/XcEVow4JTTerdeV1uqPeHxwcg7aFsfnSm9L+OO8WJsWotKM2JJPMWrQtA==}
     cpu: [loong64]
     os: [linux]
+    libc: [glibc]
 
   '@rollup/rollup-linux-ppc64-gnu@4.52.5':
     resolution: {integrity: sha512-W/b9ZN/U9+hPQVvlGwjzi+Wy4xdoH2I8EjaCkMvzpI7wJUs8sWJ03Rq96jRnHkSrcHTpQe8h5Tg3ZzUPGauvAw==}
     cpu: [ppc64]
     os: [linux]
+    libc: [glibc]
 
   '@rollup/rollup-linux-riscv64-gnu@4.52.5':
     resolution: {integrity: sha512-sjQLr9BW7R/ZiXnQiWPkErNfLMkkWIoCz7YMn27HldKsADEKa5WYdobaa1hmN6slu9oWQbB6/jFpJ+P2IkVrmw==}
     cpu: [riscv64]
     os: [linux]
+    libc: [glibc]
 
   '@rollup/rollup-linux-riscv64-musl@4.52.5':
     resolution: {integrity: sha512-hq3jU/kGyjXWTvAh2awn8oHroCbrPm8JqM7RUpKjalIRWWXE01CQOf/tUNWNHjmbMHg/hmNCwc/Pz3k1T/j/Lg==}
     cpu: [riscv64]
     os: [linux]
+    libc: [musl]
 
   '@rollup/rollup-linux-s390x-gnu@4.52.5':
     resolution: {integrity: sha512-gn8kHOrku8D4NGHMK1Y7NA7INQTRdVOntt1OCYypZPRt6skGbddska44K8iocdpxHTMMNui5oH4elPH4QOLrFQ==}
     cpu: [s390x]
     os: [linux]
+    libc: [glibc]
 
   '@rollup/rollup-linux-x64-gnu@4.52.5':
     resolution: {integrity: sha512-hXGLYpdhiNElzN770+H2nlx+jRog8TyynpTVzdlc6bndktjKWyZyiCsuDAlpd+j+W+WNqfcyAWz9HxxIGfZm1Q==}
     cpu: [x64]
     os: [linux]
+    libc: [glibc]
 
   '@rollup/rollup-linux-x64-musl@4.52.5':
     resolution: {integrity: sha512-arCGIcuNKjBoKAXD+y7XomR9gY6Mw7HnFBv5Rw7wQRvwYLR7gBAgV7Mb2QTyjXfTveBNFAtPt46/36vV9STLNg==}
     cpu: [x64]
     os: [linux]
+    libc: [musl]
 
   '@rollup/rollup-openharmony-arm64@4.52.5':
     resolution: {integrity: sha512-QoFqB6+/9Rly/RiPjaomPLmR/13cgkIGfA40LHly9zcH1S0bN2HVFYk3a1eAyHQyjs3ZJYlXvIGtcCs5tko9Cw==}
@@ -6208,24 +6230,28 @@ packages:
     engines: {node: '>=10'}
     cpu: [arm64]
     os: [linux]
+    libc: [glibc]
 
   '@swc/core-linux-arm64-musl@1.14.0':
     resolution: {integrity: sha512-uofpVoPCEUjYIv454ZEZ3sLgMD17nIwlz2z7bsn7rl301Kt/01umFA7MscUovFfAK2IRGck6XB+uulMu6aFhKQ==}
     engines: {node: '>=10'}
     cpu: [arm64]
     os: [linux]
+    libc: [musl]
 
   '@swc/core-linux-x64-gnu@1.14.0':
     resolution: {integrity: sha512-quTTx1Olm05fBfv66DEBuOsOgqdypnZ/1Bh3yGXWY7ANLFeeRpCDZpljD9BSjdsNdPOlwJmEUZXMHtGm3v1TZQ==}
     engines: {node: '>=10'}
     cpu: [x64]
     os: [linux]
+    libc: [glibc]
 
   '@swc/core-linux-x64-musl@1.14.0':
     resolution: {integrity: sha512-caaNAu+aIqT8seLtCf08i8C3/UC5ttQujUjejhMcuS1/LoCKtNiUs4VekJd2UGt+pyuuSrQ6dKl8CbCfWvWeXw==}
     engines: {node: '>=10'}
     cpu: [x64]
     os: [linux]
+    libc: [musl]
 
   '@swc/core-win32-arm64-msvc@1.14.0':
     resolution: {integrity: sha512-EeW3jFlT3YNckJ6V/JnTfGcX7UHGyh6/AiCPopZ1HNaGiXVCKHPpVQZicmtyr/UpqxCXLrTgjHOvyMke7YN26A==}
@@ -13418,15 +13444,15 @@ packages:
     resolution: {integrity: sha512-PRT7ZORmwu2MEFt4/fv3Q+mEfN4zetKxufQrkShY2oGvUms9r8otu5HfdyIFHkYXjO7laNsoVGmM2MANfuTA8g==}
     engines: {node: '>=0.10.0'}
 
-  osmi-ai-embed-react@https://codeload.github.com/artstyleplaystyle/OSMIEmbedReact/tar.gz/71a07b2f48304f10a67b43cdff5ba675e9f2b372:
-    resolution: {tarball: https://codeload.github.com/artstyleplaystyle/OSMIEmbedReact/tar.gz/71a07b2f48304f10a67b43cdff5ba675e9f2b372}
+  osmi-ai-embed-react@https://codeload.github.com/artstyleplaystyle/OSMIEmbedReact/tar.gz/8c77ff5dd980a38ceeb8986a78692ed3d8f9aad1:
+    resolution: {tarball: https://codeload.github.com/artstyleplaystyle/OSMIEmbedReact/tar.gz/8c77ff5dd980a38ceeb8986a78692ed3d8f9aad1}
     version: 3.0.5
     peerDependencies:
       osmi-ai-embed: '*'
       react: 18.x
 
-  osmi-ai-embed@https://codeload.github.com/artstyleplaystyle/OSMIChatEmbed/tar.gz/7f9f6e83d9af565ec5bb2d7c8f97f670adf8e8d8:
-    resolution: {tarball: https://codeload.github.com/artstyleplaystyle/OSMIChatEmbed/tar.gz/7f9f6e83d9af565ec5bb2d7c8f97f670adf8e8d8}
+  osmi-ai-embed@https://codeload.github.com/artstyleplaystyle/OSMIChatEmbed/tar.gz/4cfbad0dc868a5d1f5d2b64b4238ffdf74965645:
+    resolution: {tarball: https://codeload.github.com/artstyleplaystyle/OSMIChatEmbed/tar.gz/4cfbad0dc868a5d1f5d2b64b4238ffdf74965645}
     version: 3.0.5
 
   ospath@1.2.2:
@@ -25811,7 +25837,7 @@ snapshots:
 
   '@types/sqlite3@3.1.11':
     dependencies:
-      '@types/node': 24.9.2
+      '@types/node': 20.19.24
 
   '@types/stack-utils@2.0.3': {}
 
@@ -30143,7 +30169,7 @@ snapshots:
     dependencies:
       basic-ftp: 5.0.5
       data-uri-to-buffer: 6.0.2
-      debug: 4.3.4
+      debug: 4.4.3(supports-color@8.1.1)
     transitivePeerDependencies:
       - supports-color
 
@@ -30808,7 +30834,7 @@ snapshots:
   http-proxy-agent@7.0.2:
     dependencies:
       agent-base: 7.1.4
-      debug: 4.3.4
+      debug: 4.4.3(supports-color@8.1.1)
     transitivePeerDependencies:
       - supports-color
 
@@ -34179,10 +34205,10 @@ snapshots:
     dependencies:
       lcid: 1.0.0
 
-  osmi-ai-embed-react@https://codeload.github.com/artstyleplaystyle/OSMIEmbedReact/tar.gz/71a07b2f48304f10a67b43cdff5ba675e9f2b372(@types/node@24.9.2)(osmi-ai-embed@https://codeload.github.com/artstyleplaystyle/OSMIChatEmbed/tar.gz/7f9f6e83d9af565ec5bb2d7c8f97f670adf8e8d8)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(sass@1.93.3)(terser@5.44.0)(typescript@5.9.3):
+  osmi-ai-embed-react@https://codeload.github.com/artstyleplaystyle/OSMIEmbedReact/tar.gz/8c77ff5dd980a38ceeb8986a78692ed3d8f9aad1(@types/node@24.9.2)(osmi-ai-embed@https://codeload.github.com/artstyleplaystyle/OSMIChatEmbed/tar.gz/4cfbad0dc868a5d1f5d2b64b4238ffdf74965645)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(sass@1.93.3)(terser@5.44.0)(typescript@5.9.3):
     dependencies:
       '@ladle/react': 2.5.1(@types/node@24.9.2)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(sass@1.93.3)(terser@5.44.0)(typescript@5.9.3)
-      osmi-ai-embed: https://codeload.github.com/artstyleplaystyle/OSMIChatEmbed/tar.gz/7f9f6e83d9af565ec5bb2d7c8f97f670adf8e8d8
+      osmi-ai-embed: https://codeload.github.com/artstyleplaystyle/OSMIChatEmbed/tar.gz/4cfbad0dc868a5d1f5d2b64b4238ffdf74965645
       react: 18.3.1
     transitivePeerDependencies:
       - '@types/node'
@@ -34196,7 +34222,7 @@ snapshots:
       - terser
       - typescript
 
-  osmi-ai-embed@https://codeload.github.com/artstyleplaystyle/OSMIChatEmbed/tar.gz/7f9f6e83d9af565ec5bb2d7c8f97f670adf8e8d8:
+  osmi-ai-embed@https://codeload.github.com/artstyleplaystyle/OSMIChatEmbed/tar.gz/4cfbad0dc868a5d1f5d2b64b4238ffdf74965645:
     dependencies:
       '@babel/core': 7.28.5
       '@microsoft/fetch-event-source': 2.0.1
@@ -34283,7 +34309,7 @@ snapshots:
     dependencies:
       '@tootallnate/quickjs-emscripten': 0.23.0
       agent-base: 7.1.4
-      debug: 4.3.4
+      debug: 4.4.3(supports-color@8.1.1)
       get-uri: 6.0.5
       http-proxy-agent: 7.0.2
       https-proxy-agent: 7.0.6
@@ -36766,7 +36792,7 @@ snapshots:
   socks-proxy-agent@8.0.5:
     dependencies:
       agent-base: 7.1.4
-      debug: 4.3.4
+      debug: 4.4.3(supports-color@8.1.1)
       socks: 2.8.7
     transitivePeerDependencies:
       - supports-color

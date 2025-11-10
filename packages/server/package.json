@@ -17,7 +17,8 @@
     ],
     "oclif": {
         "bin": "osmi-ai",
-        "commands": "./dist/commands"
+        "commands": "./dist/commands",
+        "dirname": "osmi-ai-data"
     },
     "scripts": {
         "build": "rimraf dist/enterprise/emails && gulp",

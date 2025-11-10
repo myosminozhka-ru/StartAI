@@ -107,3 +107,21 @@
 ## S/MIME message
 *.smime
 *.vsix
+
+# OSMI AI local data directories
+.osmi-data/
+.osmi-config/
+.osmi-cache/
+packages/server/.osmi-data/
+packages/server/.osmi-config/
+packages/server/.osmi-cache/
+
+# SQLite databases
+*.db
+*.sqlite
+*.sqlite3
+*.db-shm
+*.db-wal
+.OSMI/
+.startai/
+storage/

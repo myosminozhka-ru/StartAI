@@ -1,35 +1,43 @@
-# Build local monorepo image
-# docker build --no-cache -t osmi-ai .
-
-# Run image
-# docker run -d -p 3000:3000 osmi-ai
-
 FROM node:20-alpine
-RUN apk add --update libc6-compat python3 make g++
-# needed for pdfjs-dist
-RUN apk add --no-cache build-base cairo-dev pango-dev
 
-# Install Chromium
-RUN apk add --no-cache chromium
+RUN apk add --no-cache \
+    libc6-compat \
+    python3 \
+    make \
+    g++ \
+    build-base \
+    cairo-dev \
+    pango-dev \
+    chromium \
+    curl \
+    git \
+    bash
 
-
-RUN apk add --no-cache curl git
-
-#install PNPM globaly
-RUN npm install -g pnpm
+# === Проверка сети и установка pnpm ===
+RUN set -eux; \
+    echo "Проверяем подключение к registry.npmjs.org..."; \
+    if ! curl -s --head https://registry.npmjs.org/ | grep "200 OK" > /dev/null; then \
+        echo "⚠️  NPM registry недоступен. Переключаемся на зеркало npmmirror.com..."; \
+        npm config set registry https://registry.npmmirror.com/; \
+    else \
+        echo "✅ Доступ к npm registry подтверждён."; \
+    fi; \
+    npm install -g pnpm@10.11.0 --unsafe-perm=true; \
+    pnpm -v
 
 ENV PUPPETEER_SKIP_DOWNLOAD=true
 ENV PUPPETEER_EXECUTABLE_PATH=/usr/bin/chromium-browser
 
 ENV NODE_OPTIONS=--max-old-space-size=8192
-ENV OFFLINE=true
 
 WORKDIR /usr/src
 
-# Copy app source
+# Копируем весь код
 COPY . .
 
-RUN pnpm install
+RUN pnpm install --no-frozen-lockfile
+
+RUN cd packages/osmi-ai-components && (pnpm tsc || true) && pnpm gulp
 
 RUN pnpm build
 

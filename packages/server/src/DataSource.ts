@@ -15,8 +15,9 @@ let appDataSource: DataSource
 export const init = async (): Promise<void> => {
     let homePath
     let OSMIPath = path.join(getUserHome(), '.OSMI')
+    
     if (!fs.existsSync(OSMIPath)) {
-        fs.mkdirSync(OSMIPath)
+        fs.mkdirSync(OSMIPath, { recursive: true })
     }
     switch (process.env.DATABASE_TYPE) {
         case 'sqlite':

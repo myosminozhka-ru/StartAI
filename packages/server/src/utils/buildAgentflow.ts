@@ -2161,9 +2161,15 @@ export const executeAgentFlow = async ({
     if (lastNodeOutput?.usedTools) apiMessage.usedTools = JSON.stringify(lastNodeOutput.usedTools)
     if (lastNodeOutput?.fileAnnotations) apiMessage.fileAnnotations = JSON.stringify(lastNodeOutput.fileAnnotations)
     if (lastNodeOutput?.artifacts) apiMessage.artifacts = JSON.stringify(lastNodeOutput.artifacts)
+    if (lastNodeOutput?.humanInputAction && Object.keys(lastNodeOutput.humanInputAction).length)
+        apiMessage.action = JSON.stringify(lastNodeOutput.humanInputAction)
+
+    const chatMessage = await utilAddChatMessage(apiMessage, appDataSource)
+
+    // Генерируем follow-up prompts асинхронно, не блокируя возврат результата
     if (chatflow.followUpPrompts) {
         const followUpPromptsConfig = JSON.parse(chatflow.followUpPrompts)
-        const followUpPrompts = await generateFollowUpPrompts(followUpPromptsConfig, apiMessage.content, {
+        generateFollowUpPrompts(followUpPromptsConfig, apiMessage.content, {
             orgId,
             workspaceId,
             chatId,
@@ -2171,14 +2177,17 @@ export const executeAgentFlow = async ({
             appDataSource,
             databaseEntities
         })
-        if (followUpPrompts?.questions) {
-            apiMessage.followUpPrompts = JSON.stringify(followUpPrompts.questions)
-        }
+            .then(async (followUpPrompts) => {
+                if (followUpPrompts?.questions && chatMessage?.id) {
+                    await appDataSource.getRepository(ChatMessage).update(chatMessage.id, {
+                        followUpPrompts: JSON.stringify(followUpPrompts.questions)
+                    })
+                }
+            })
+            .catch((error) => {
+                logger.error(`[server]: Follow-up prompts generation error: ${getErrorMessage(error)}`)
+            })
     }
-    if (lastNodeOutput?.humanInputAction && Object.keys(lastNodeOutput.humanInputAction).length)
-        apiMessage.action = JSON.stringify(lastNodeOutput.humanInputAction)
-
-    const chatMessage = await utilAddChatMessage(apiMessage, appDataSource)
 
     logger.debug(`[server]: Finished running agentflow ${chatflowid}`)
 
@@ -2219,7 +2228,8 @@ export const executeAgentFlow = async ({
         }
 
         if (sseStreamer) {
-            await generateTTSForResponseStream(
+            // Генерируем TTS асинхронно, не блокируя возврат результата
+            generateTTSForResponseStream(
                 result.text,
                 chatflow.textToSpeech,
                 options,
@@ -2227,7 +2237,9 @@ export const executeAgentFlow = async ({
                 chatMessage?.id,
                 sseStreamer,
                 abortController
-            )
+            ).catch((error) => {
+                logger.error(`[server]: TTS generation error: ${getErrorMessage(error)}`)
+            })
         }
     }
 

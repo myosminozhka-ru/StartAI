@@ -737,7 +737,7 @@ const ChatMessage = ({ open, chatflowid, isAgentCanvas, isDialog, previews, setP
         setUploadedFiles([])
         setTimeout(() => {
             inputRef.current?.focus()
-        }, 100)
+        }, 50)
     }
 
     const handlePromptClick = async (promptStarterInput) => {
@@ -882,7 +882,7 @@ const ChatMessage = ({ open, chatflowid, isAgentCanvas, isDialog, previews, setP
                 const delay = (delayInms) => {
                     return new Promise((resolve) => setTimeout(resolve, delayInms))
                 }
-                await delay(2500) //TODO: check if embeddings can be retrieved using file name as metadata filter
+                await delay(500) // Уменьшена задержка с 2500ms до 500ms
 
                 uploads = uploads.map((upload) => {
                     return {
@@ -997,7 +997,7 @@ const ChatMessage = ({ open, chatflowid, isAgentCanvas, isDialog, previews, setP
                     setTimeout(() => {
                         inputRef.current?.focus()
                         scrollToBottom()
-                    }, 100)
+                    }, 50)
                 }
             }
         } catch (error) {
@@ -1108,7 +1108,7 @@ const ChatMessage = ({ open, chatflowid, isAgentCanvas, isDialog, previews, setP
         setTimeout(() => {
             inputRef.current?.focus()
             scrollToBottom()
-        }, 100)
+        }, 50)
     }
     // Prevent blank submissions and allow for multiline input
     const handleEnter = (e) => {

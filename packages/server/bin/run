@@ -1,5 +1,61 @@
 #!/usr/bin/env node
 
-const oclif = require('@oclif/core')
+// Загружаем .env файл ДО всего остального
+const path = require('path')
+const fs = require('fs')
+const dotenv = require('dotenv')
 
+const projectRoot = path.join(__dirname, '..', '..', '..')
+
+// Патчим @langchain/core чтобы отключить HTTP запросы к tiktoken
+// Это предотвращает блокировку при подсчёте токенов
+try {
+    const langchainCore = require('@langchain/core/language_models/base')
+    
+    // Патчим BaseChatModel.prototype.getNumTokens
+    if (langchainCore.BaseChatModel) {
+        langchainCore.BaseChatModel.prototype.getNumTokens = async function(content) {
+            // Приблизительный подсчёт: ~4 символа на токен
+            return Math.ceil(content.length / 4)
+        }
+    }
+    
+    // Патчим BaseLanguageModel.prototype.getNumTokens
+    if (langchainCore.BaseLanguageModel) {
+        langchainCore.BaseLanguageModel.prototype.getNumTokens = async function(content) {
+            // Приблизительный подсчёт: ~4 символа на токен
+            return Math.ceil(content.length / 4)
+        }
+    }
+} catch (err) {
+    console.warn('Не удалось пропатчить @langchain/core:', err.message)
+}
+
+if (!process.env.BLOB_STORAGE_PATH) {
+    process.env.BLOB_STORAGE_PATH = path.join(projectRoot, 'storage')
+}
+if (!process.env.DATABASE_PATH) {
+    process.env.DATABASE_PATH = projectRoot
+}
+if (!process.env.LOG_PATH) {
+    process.env.LOG_PATH = path.join(projectRoot, 'logs')
+}
+
+dotenv.config({ path: path.join(projectRoot, '.env'), override: false })
+
+const dirsToCreate = [
+    path.join(projectRoot, '.OSMI'),
+    path.join(process.env.BLOB_STORAGE_PATH, 'uploads'),
+    path.join(projectRoot, 'logs')
+]
+
+dirsToCreate.forEach(dir => {
+    if (!fs.existsSync(dir)) {
+        fs.mkdirSync(dir, { recursive: true })
+    }
+})
+
+process.env.DEBUG = ''
+
+const oclif = require('@oclif/core')
 oclif.run().then(require('@oclif/core/flush')).catch(require('@oclif/core/handle'))
