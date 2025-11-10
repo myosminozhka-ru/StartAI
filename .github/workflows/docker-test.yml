@@ -1,0 +1,19 @@
+name: 🐳 OSMI AI Docker Test
+
+on:
+    push:
+        branches:
+            - main
+
+    pull_request:
+        branches:
+            - '*'
+    workflow_dispatch:
+jobs:
+    build:
+        runs-on: ubuntu-latest
+        env:
+            PUPPETEER_SKIP_DOWNLOAD: true
+        steps:
+            - uses: actions/checkout@v4
+            - run: docker build --no-cache -t osmi-ai/osmi-ai:test .

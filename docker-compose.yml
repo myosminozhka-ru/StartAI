@@ -1,0 +1,19 @@
+services:
+  osmi-ai-develop:
+    container_name: osmi-ai-develop
+    image: osmi-ai-develop:latest
+    build:
+      context: .
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    ports:
+      - "3001:3000"
+    environment:
+      - PORT=3000
+    volumes:
+      - osmi-develop-data:/root/.osmi-ai/
+
+volumes:
+  osmi-develop-data:
+    driver: local
+

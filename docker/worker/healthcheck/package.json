@@ -1,0 +1,13 @@
+{
+    "name": "osmi-ai-worker-healthcheck",
+    "version": "1.0.0",
+    "description": "Simple healthcheck server for OSMI AI worker",
+    "main": "healthcheck.js",
+    "private": true,
+    "scripts": {
+        "start": "node healthcheck.js"
+    },
+    "dependencies": {
+        "express": "^4.19.2"
+    }
+}

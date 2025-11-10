@@ -1,0 +1,127 @@
+# editor
+.idea
+.vscode
+
+# dependencies
+**/node_modules
+**/package-lock.json
+**/yarn.lock
+
+## logs
+**/logs
+**/*.log
+
+## pnpm
+.pnpm-store/
+
+## build
+**/dist
+!**/dist/credentials/MWSApi.credential.*
+!**/dist/nodes/**/ChatMWS/**
+!**/dist/nodes/**/MWSEmbedding/**
+**/build
+
+## temp
+**/tmp
+**/temp
+
+## test
+**/coverage
+
+# misc
+.DS_Store
+
+## env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+.env
+
+## turbo
+.turbo
+
+## secrets
+**/*.key
+**/api.json
+
+## uploads
+**/uploads
+
+## compressed
+**/*.tgz
+
+## vscode
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+!.vscode/*.code-snippets
+
+# Local History for Visual Studio Code
+.history/
+
+## other keys
+*.key
+*.keys
+*.priv
+*.rsa
+*.key.json
+
+## ssh keys
+*.ssh
+*.ssh-key
+.key-mrc
+
+## Certificate Authority
+*.ca
+
+## Certificate
+*.crt
+
+## Certificate Sign Request
+*.csr
+
+## Certificate
+*.der 
+
+## Key database file
+*.kdb
+
+## OSCP request data
+*.org
+
+## PKCS #12
+*.p12
+
+## PEM-encoded certificate data
+*.pem
+
+## Random number seed
+*.rnd
+
+## SSLeay data
+*.ssleay
+
+## S/MIME message
+*.smime
+*.vsix
+
+# OSMI AI local data directories
+.osmi-data/
+.osmi-config/
+.osmi-cache/
+packages/server/.osmi-data/
+packages/server/.osmi-config/
+packages/server/.osmi-cache/
+
+# SQLite databases
+*.db
+*.sqlite
+*.sqlite3
+*.db-shm
+*.db-wal
+.OSMI/
+.startai/
+storage/

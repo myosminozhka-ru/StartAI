@@ -1,0 +1,876 @@
+import { useEffect, useState } from 'react'
+import { useDispatch, useSelector } from 'react-redux'
+import * as PropTypes from 'prop-types'
+import { useNavigate, useParams } from 'react-router-dom'
+
+// material-ui
+import {
+    Box,
+    Stack,
+    Typography,
+    TableContainer,
+    Paper,
+    Table,
+    TableHead,
+    TableRow,
+    TableCell,
+    TableBody,
+    Chip,
+    Menu,
+    MenuItem,
+    Divider,
+    Button,
+    Skeleton
+} from '@mui/material'
+import { alpha, styled, useTheme } from '@mui/material/styles'
+import { tableCellClasses } from '@mui/material/TableCell'
+
+// project imports
+import MainCard from '@/ui-component/cards/MainCard'
+import AddDocStoreDialog from '@/views/docstore/AddDocStoreDialog'
+import { BackdropLoader } from '@/ui-component/loading/BackdropLoader'
+import DocumentLoaderListDialog from '@/views/docstore/DocumentLoaderListDialog'
+import ErrorBoundary from '@/ErrorBoundary'
+import { StyledButton } from '@/ui-component/button/StyledButton'
+import ViewHeader from '@/layout/MainLayout/ViewHeader'
+import DeleteDocStoreDialog from './DeleteDocStoreDialog'
+import { Available } from '@/ui-component/rbac/available'
+import { PermissionIconButton, StyledPermissionButton } from '@/ui-component/button/RBACButtons'
+import DocumentStoreStatus from '@/views/docstore/DocumentStoreStatus'
+import ConfirmDialog from '@/ui-component/dialog/ConfirmDialog'
+import DocStoreAPIDialog from './DocStoreAPIDialog'
+
+// API
+import documentsApi from '@/api/documentstore'
+
+// Hooks
+import useApi from '@/hooks/useApi'
+import useNotifier from '@/utils/useNotifier'
+import { useAuth } from '@/hooks/useAuth'
+import { getFileName } from '@/utils/genericHelper'
+import useConfirm from '@/hooks/useConfirm'
+
+// icons
+import { IconPlus, IconRefresh, IconX, IconVectorBezier2 } from '@tabler/icons-react'
+import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown'
+import FileDeleteIcon from '@mui/icons-material/Delete'
+import FileEditIcon from '@mui/icons-material/Edit'
+import FileChunksIcon from '@mui/icons-material/AppRegistration'
+import NoteAddIcon from '@mui/icons-material/NoteAdd'
+import SearchIcon from '@mui/icons-material/Search'
+import RefreshIcon from '@mui/icons-material/Refresh'
+import CodeIcon from '@mui/icons-material/Code'
+import doc_store_details_emptySVG from '@/assets/images/doc_store_details_empty.svg'
+
+// store
+import { closeSnackbar as closeSnackbarAction, enqueueSnackbar as enqueueSnackbarAction } from '@/store/actions'
+import { useError } from '@/store/context/ErrorContext'
+
+// ==============================|| DOCUMENTS ||============================== //
+
+const StyledTableCell = styled(TableCell)(({ theme }) => ({
+    borderColor: theme.palette.grey[900] + 25,
+    padding: '6px 16px',
+
+    [`&.${tableCellClasses.head}`]: {
+        color: theme.palette.grey[900]
+    },
+    [`&.${tableCellClasses.body}`]: {
+        fontSize: 14,
+        height: 64
+    }
+}))
+
+const StyledTableRow = styled(TableRow)(() => ({
+    // hide last border
+    '&:last-child td, &:last-child th': {
+        border: 0
+    }
+}))
+
+const StyledMenu = styled((props) => (
+    <Menu
+        elevation={0}
+        anchorOrigin={{
+            vertical: 'bottom',
+            horizontal: 'right'
+        }}
+        transformOrigin={{
+            vertical: 'top',
+            horizontal: 'right'
+        }}
+        {...props}
+    />
+))(({ theme }) => ({
+    '& .MuiPaper-root': {
+        borderRadius: 6,
+        marginTop: theme.spacing(1),
+        minWidth: 180,
+        boxShadow:
+            'rgb(255, 255, 255) 0px 0px 0px 0px, rgba(0, 0, 0, 0.05) 0px 0px 0px 1px, rgba(0, 0, 0, 0.1) 0px 10px 15px -3px, rgba(0, 0, 0, 0.05) 0px 4px 6px -2px',
+        '& .MuiMenu-list': {
+            padding: '4px 0'
+        },
+        '& .MuiMenuItem-root': {
+            '& .MuiSvgIcon-root': {
+                fontSize: 18,
+                color: theme.palette.text.secondary,
+                marginRight: theme.spacing(1.5)
+            },
+            '&:active': {
+                backgroundColor: alpha(theme.palette.primary.main, theme.palette.action.selectedOpacity)
+            }
+        }
+    }
+}))
+
+const DocumentStoreDetails = () => {
+    const theme = useTheme()
+    const customization = useSelector((state) => state.customization)
+    const navigate = useNavigate()
+    const dispatch = useDispatch()
+    const { hasAssignedWorkspace } = useAuth()
+    useNotifier()
+    const { confirm } = useConfirm()
+
+    const enqueueSnackbar = (...args) => dispatch(enqueueSnackbarAction(...args))
+    const closeSnackbar = (...args) => dispatch(closeSnackbarAction(...args))
+    const { error, setError } = useError()
+    const { hasPermission } = useAuth()
+
+    const getSpecificDocumentStore = useApi(documentsApi.getSpecificDocumentStore)
+
+    const [isLoading, setLoading] = useState(true)
+    const [isBackdropLoading, setBackdropLoading] = useState(false)
+    const [showDialog, setShowDialog] = useState(false)
+    const [documentStore, setDocumentStore] = useState({})
+    const [dialogProps, setDialogProps] = useState({})
+    const [showDocumentLoaderListDialog, setShowDocumentLoaderListDialog] = useState(false)
+    const [documentLoaderListDialogProps, setDocumentLoaderListDialogProps] = useState({})
+    const [showDeleteDocStoreDialog, setShowDeleteDocStoreDialog] = useState(false)
+    const [deleteDocStoreDialogProps, setDeleteDocStoreDialogProps] = useState({})
+    const [showDocStoreAPIDialog, setShowDocStoreAPIDialog] = useState(false)
+    const [docStoreAPIDialogProps, setDocStoreAPIDialogProps] = useState({})
+
+    const [anchorEl, setAnchorEl] = useState(null)
+    const open = Boolean(anchorEl)
+
+    const { storeId } = useParams()
+
+    const openPreviewSettings = (id) => {
+        navigate('/document-stores/' + storeId + '/' + id)
+    }
+
+    const showStoredChunks = (id) => {
+        navigate('/document-stores/chunks/' + storeId + '/' + id)
+    }
+
+    const showVectorStoreQuery = (id) => {
+        navigate('/document-stores/query/' + id)
+    }
+
+    const onDocLoaderSelected = (docLoaderComponentName) => {
+        setShowDocumentLoaderListDialog(false)
+        navigate('/document-stores/' + storeId + '/' + docLoaderComponentName)
+    }
+
+    const showVectorStore = (id) => {
+        navigate('/document-stores/vector/' + id)
+    }
+
+    const listLoaders = () => {
+        const dialogProp = {
+            title: 'Выбрать загрузчик документов'
+        }
+        setDocumentLoaderListDialogProps(dialogProp)
+        setShowDocumentLoaderListDialog(true)
+    }
+
+    const deleteVectorStoreDataFromStore = async (storeId) => {
+        try {
+            await documentsApi.deleteVectorStoreDataFromStore(storeId)
+        } catch (error) {
+            console.error(error)
+        }
+    }
+
+    const onDocStoreDelete = async (type, file, removeFromVectorStore) => {
+        setBackdropLoading(true)
+        setShowDeleteDocStoreDialog(false)
+        if (type === 'STORE') {
+            if (removeFromVectorStore) {
+                await deleteVectorStoreDataFromStore(storeId)
+            }
+            try {
+                const deleteResp = await documentsApi.deleteDocumentStore(storeId)
+                setBackdropLoading(false)
+                if (deleteResp.data) {
+                    enqueueSnackbar({
+                        message: 'Хранилище, загрузчик и связанные чанки документов удалены',
+                        options: {
+                            key: new Date().getTime() + Math.random(),
+                            variant: 'success',
+                            action: (key) => (
+                                <Button style={{ color: 'white' }} onClick={() => closeSnackbar(key)}>
+                                    <IconX />
+                                </Button>
+                            )
+                        }
+                    })
+                    navigate('/document-stores/')
+                }
+            } catch (error) {
+                setBackdropLoading(false)
+                setError(error)
+                enqueueSnackbar({
+                    message: `Не удалось удалить хранилище документов: ${
+                        typeof error.response.data === 'object' ? error.response.data.message : error.response.data
+                    }`,
+                    options: {
+                        key: new Date().getTime() + Math.random(),
+                        variant: 'error',
+                        persist: true,
+                        action: (key) => (
+                            <Button style={{ color: 'white' }} onClick={() => closeSnackbar(key)}>
+                                <IconX />
+                            </Button>
+                        )
+                    }
+                })
+            }
+        } else if (type === 'LOADER') {
+            try {
+                const deleteResp = await documentsApi.deleteLoaderFromStore(storeId, file.id)
+                setBackdropLoading(false)
+                if (deleteResp.data) {
+                    enqueueSnackbar({
+                        message: 'Загрузчик и связанные чанки документов удалены',
+                        options: {
+                            key: new Date().getTime() + Math.random(),
+                            variant: 'success',
+                            action: (key) => (
+                                <Button style={{ color: 'white' }} onClick={() => closeSnackbar(key)}>
+                                    <IconX />
+                                </Button>
+                            )
+                        }
+                    })
+                    onConfirm()
+                }
+            } catch (error) {
+                setError(error)
+                setBackdropLoading(false)
+                enqueueSnackbar({
+                    message: `Не удалось удалить загрузчик документов: ${
+                        typeof error.response.data === 'object' ? error.response.data.message : error.response.data
+                    }`,
+                    options: {
+                        key: new Date().getTime() + Math.random(),
+                        variant: 'error',
+                        persist: true,
+                        action: (key) => (
+                            <Button style={{ color: 'white' }} onClick={() => closeSnackbar(key)}>
+                                <IconX />
+                            </Button>
+                        )
+                    }
+                })
+            }
+        }
+    }
+
+    const onLoaderDelete = (file, vectorStoreConfig, recordManagerConfig) => {
+        const props = {
+            title: `Удалить`,
+            description: `Удалить загрузчик ${file.loaderName}? Это удалит все связанные чанки документов.`,
+            vectorStoreConfig,
+            recordManagerConfig,
+            type: 'LOADER',
+            file
+        }
+
+        setDeleteDocStoreDialogProps(props)
+        setShowDeleteDocStoreDialog(true)
+    }
+
+    const onStoreDelete = (vectorStoreConfig, recordManagerConfig) => {
+        const props = {
+            title: `Удалить`,
+            description: `Удалить хранилище ${getSpecificDocumentStore.data?.name}? Это удалит все связанные загрузчики и чанки документов.`,
+            vectorStoreConfig,
+            recordManagerConfig,
+            type: 'STORE'
+        }
+
+        setDeleteDocStoreDialogProps(props)
+        setShowDeleteDocStoreDialog(true)
+    }
+
+    const onStoreRefresh = async (storeId) => {
+        const confirmPayload = {
+            title: `Обновить все загрузчики и чанки?`,
+            description: `Это перепроцессит все загрузчики и обновит все чанки. Это действие может занять некоторое время.`,
+            confirmButtonName: 'Обновить',
+            cancelButtonName: 'Отмена'
+        }
+        const isConfirmed = await confirm(confirmPayload)
+
+        if (isConfirmed) {
+            setAnchorEl(null)
+            setBackdropLoading(true)
+            try {
+                const resp = await documentsApi.refreshLoader(storeId)
+                if (resp.data) {
+                    enqueueSnackbar({
+                        message: 'Хранилище документов успешно обновлено!',
+                        options: {
+                            key: new Date().getTime() + Math.random(),
+                            variant: 'success',
+                            action: (key) => (
+                                <Button style={{ color: 'white' }} onClick={() => closeSnackbar(key)}>
+                                    <IconX />
+                                </Button>
+                            )
+                        }
+                    })
+                }
+                setBackdropLoading(false)
+            } catch (error) {
+                setBackdropLoading(false)
+                enqueueSnackbar({
+                    message: `Не удалось обновить хранилище документов: ${
+                        typeof error.response.data === 'object' ? error.response.data.message : error.response.data
+                    }`,
+                    options: {
+                        key: new Date().getTime() + Math.random(),
+                        variant: 'error',
+                        action: (key) => (
+                            <Button style={{ color: 'white' }} onClick={() => closeSnackbar(key)}>
+                                <IconX />
+                            </Button>
+                        )
+                    }
+                })
+            }
+        }
+    }
+
+    const onEditClicked = () => {
+        const data = {
+            name: documentStore.name,
+            description: documentStore.description,
+            id: documentStore.id
+        }
+        const dialogProp = {
+            title: 'Редактировать хранилище документов',
+            type: 'EDIT',
+            cancelButtonName: 'Отмена',
+            confirmButtonName: 'Обновить',
+            data: data
+        }
+        setDialogProps(dialogProp)
+        setShowDialog(true)
+    }
+
+    const onConfirm = () => {
+        setShowDialog(false)
+        getSpecificDocumentStore.request(storeId)
+    }
+
+    const handleClick = (event) => {
+        event.preventDefault()
+        event.stopPropagation()
+        setAnchorEl(event.currentTarget)
+    }
+
+    const onViewUpsertAPI = (storeId, loaderId) => {
+        const props = {
+            title: `Удалить`,
+            storeId,
+            loaderId
+        }
+        setDocStoreAPIDialogProps(props)
+        setShowDocStoreAPIDialog(true)
+    }
+
+    const handleClose = () => {
+        setAnchorEl(null)
+    }
+
+    useEffect(() => {
+        getSpecificDocumentStore.request(storeId)
+
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [])
+
+    useEffect(() => {
+        if (getSpecificDocumentStore.data) {
+            const workspaceId = getSpecificDocumentStore.data.workspaceId
+            if (!hasAssignedWorkspace(workspaceId)) {
+                navigate('/unauthorized')
+                return
+            }
+            setDocumentStore(getSpecificDocumentStore.data)
+        }
+
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [getSpecificDocumentStore.data])
+
+    useEffect(() => {
+        setLoading(getSpecificDocumentStore.loading)
+    }, [getSpecificDocumentStore.loading])
+
+    return (
+        <>
+            <MainCard>
+                {error ? (
+                    <ErrorBoundary error={error} />
+                ) : (
+                    <Stack flexDirection='column' sx={{ gap: 3 }}>
+                        <ViewHeader
+                            isBackButton={true}
+                            isEditButton={hasPermission('documentStores:create,documentStores:update')}
+                            search={false}
+                            title={documentStore?.name}
+                            description={documentStore?.description}
+                            onBack={() => navigate('/document-stores')}
+                            onEdit={() => onEditClicked()}
+                        >
+                            {(documentStore?.status === 'STALE' || documentStore?.status === 'UPSERTING') && (
+                                <PermissionIconButton
+                                    permissionId={'documentStores:view'}
+                                    onClick={onConfirm}
+                                    size='small'
+                                    color='primary'
+                                    title='Обновить хранилище документов'
+                                >
+                                    <IconRefresh />
+                                </PermissionIconButton>
+                            )}
+                            <StyledPermissionButton
+                                permissionId={'documentStores:add-loader'}
+                                variant='contained'
+                                sx={{ ml: 2, minWidth: 200, borderRadius: 2, height: '100%', color: 'white' }}
+                                startIcon={<IconPlus />}
+                                onClick={listLoaders}
+                            >
+                                Добавить загрузчик документов
+                            </StyledPermissionButton>
+                            <Button
+                                id='document-store-header-action-button'
+                                aria-controls={open ? 'document-store-header-menu' : undefined}
+                                aria-haspopup='true'
+                                aria-expanded={open ? 'true' : undefined}
+                                variant='outlined'
+                                disableElevation
+                                color='secondary'
+                                onClick={handleClick}
+                                sx={{ minWidth: 150 }}
+                                endIcon={<KeyboardArrowDownIcon />}
+                            >
+                                Другие действия
+                            </Button>
+                            <StyledMenu
+                                id='document-store-header-menu'
+                                MenuListProps={{
+                                    'aria-labelledby': 'document-store-header-menu-button'
+                                }}
+                                anchorEl={anchorEl}
+                                open={open}
+                                onClose={handleClose}
+                            >
+                                <MenuItem
+                                    disabled={documentStore?.totalChunks <= 0 || documentStore?.status === 'UPSERTING'}
+                                    onClick={() => showStoredChunks('all')}
+                                    disableRipple
+                                >
+                                    <FileChunksIcon />
+                                    Просмотр и редактирование чанков
+                                </MenuItem>
+                                <Available permission={'documentStores:upsert-config'}>
+                                    <MenuItem
+                                        disabled={documentStore?.totalChunks <= 0 || documentStore?.status === 'UPSERTING'}
+                                        onClick={() => showVectorStore(documentStore.id)}
+                                        disableRipple
+                                    >
+                                        <NoteAddIcon />
+                                        Обновить все чанки
+                                    </MenuItem>
+                                </Available>
+                                <MenuItem
+                                    disabled={documentStore?.totalChunks <= 0 || documentStore?.status !== 'UPSERTED'}
+                                    onClick={() => showVectorStoreQuery(documentStore.id)}
+                                    disableRipple
+                                >
+                                    <SearchIcon />
+                                    Поиск по данным
+                                </MenuItem>
+                                <Available permission={'documentStores:upsert-config'}>
+                                    <MenuItem
+                                        disabled={documentStore?.totalChunks <= 0 || documentStore?.status !== 'UPSERTED'}
+                                        onClick={() => onStoreRefresh(documentStore.id)}
+                                        disableRipple
+                                        title='Перепроцессить все загрузчики и обновить все чанки'
+                                    >
+                                        <RefreshIcon />
+                                        Обновить
+                                    </MenuItem>
+                                </Available>
+                                <Divider sx={{ my: 0.5 }} />
+                                <MenuItem
+                                    onClick={() => onStoreDelete(documentStore.vectorStoreConfig, documentStore.recordManagerConfig)}
+                                    disableRipple
+                                >
+                                    <FileDeleteIcon />
+                                    Удалить
+                                </MenuItem>
+                            </StyledMenu>
+                        </ViewHeader>
+                        <DocumentStoreStatus status={documentStore?.status} />
+                        {getSpecificDocumentStore.data?.whereUsed?.length > 0 && (
+                            <Stack flexDirection='row' sx={{ gap: 2, alignItems: 'center', flexWrap: 'wrap' }}>
+                                <div
+                                    style={{
+                                        paddingLeft: '15px',
+                                        paddingRight: '15px',
+                                        paddingTop: '10px',
+                                        paddingBottom: '10px',
+                                        fontSize: '0.9rem',
+                                        width: 'max-content',
+                                        display: 'flex',
+                                        flexDirection: 'row',
+                                        alignItems: 'center'
+                                    }}
+                                >
+                                    <IconVectorBezier2 style={{ marginRight: 5 }} size={17} />
+                                    Используется в чатфлоу:
+                                </div>
+                                {getSpecificDocumentStore.data.whereUsed.map((chatflowUsed, index) => (
+                                    <Chip
+                                        key={index}
+                                        clickable
+                                        style={{
+                                            width: 'max-content',
+                                            borderRadius: '25px',
+                                            boxShadow: customization.isDarkMode
+                                                ? '0 2px 14px 0 rgb(255 255 255 / 10%)'
+                                                : '0 2px 14px 0 rgb(32 40 45 / 10%)'
+                                        }}
+                                        label={chatflowUsed.name}
+                                        onClick={() => navigate('/canvas/' + chatflowUsed.id)}
+                                    ></Chip>
+                                ))}
+                            </Stack>
+                        )}
+                        {!isLoading && documentStore && !documentStore?.loaders?.length ? (
+                            <Stack sx={{ alignItems: 'center', justifyContent: 'center' }} flexDirection='column'>
+                                <Box sx={{ p: 2, height: 'auto' }}>
+                                    <img
+                                        style={{ objectFit: 'cover', height: '16vh', width: 'auto' }}
+                                        src={doc_store_details_emptySVG}
+                                        alt='doc_store_details_emptySVG'
+                                    />
+                                </Box>
+                                <div>Документы ещё не добавлены</div>
+                                <StyledButton
+                                    variant='contained'
+                                    sx={{ borderRadius: 2, height: '100%', mt: 2, color: 'white' }}
+                                    startIcon={<IconPlus />}
+                                    onClick={listLoaders}
+                                >
+                                    Добавить загрузчик документов
+                                </StyledButton>
+                            </Stack>
+                        ) : (
+                            <TableContainer
+                                sx={{ border: 1, borderColor: theme.palette.grey[900] + 25, borderRadius: 2 }}
+                                component={Paper}
+                            >
+                                <Table sx={{ minWidth: 650 }} aria-label='simple table'>
+                                    <TableHead
+                                        sx={{
+                                            backgroundColor: customization.isDarkMode
+                                                ? theme.palette.common.black
+                                                : theme.palette.grey[100],
+                                            height: 56
+                                        }}
+                                    >
+                                        <TableRow>
+                                            <StyledTableCell>&nbsp;</StyledTableCell>
+                                            <StyledTableCell>Загрузчик</StyledTableCell>
+                                            <StyledTableCell>Сплиттер</StyledTableCell>
+                                            <StyledTableCell>Источник(и)</StyledTableCell>
+                                            <StyledTableCell>Чанки</StyledTableCell>
+                                            <StyledTableCell>Символы</StyledTableCell>
+                                            <Available permission={'documentStores:preview-process,documentStores:delete-loader'}>
+                                                <StyledTableCell>Действия</StyledTableCell>
+                                            </Available>
+                                        </TableRow>
+                                    </TableHead>
+                                    <TableBody>
+                                        {isLoading ? (
+                                            <>
+                                                <StyledTableRow>
+                                                    <StyledTableCell>
+                                                        <Skeleton variant='text' />
+                                                    </StyledTableCell>
+                                                    <StyledTableCell>
+                                                        <Skeleton variant='text' />
+                                                    </StyledTableCell>
+                                                    <StyledTableCell>
+                                                        <Skeleton variant='text' />
+                                                    </StyledTableCell>
+                                                    <StyledTableCell>
+                                                        <Skeleton variant='text' />
+                                                    </StyledTableCell>
+                                                    <StyledTableCell>
+                                                        <Skeleton variant='text' />
+                                                    </StyledTableCell>
+                                                    <StyledTableCell>
+                                                        <Skeleton variant='text' />
+                                                    </StyledTableCell>
+                                                    <Available permission={'documentStores:preview-process,documentStores:delete-loader'}>
+                                                        <StyledTableCell>
+                                                            <Skeleton variant='text' />
+                                                        </StyledTableCell>
+                                                    </Available>
+                                                </StyledTableRow>
+                                                <StyledTableRow>
+                                                    <StyledTableCell>
+                                                        <Skeleton variant='text' />
+                                                    </StyledTableCell>
+                                                    <StyledTableCell>
+                                                        <Skeleton variant='text' />
+                                                    </StyledTableCell>
+                                                    <StyledTableCell>
+                                                        <Skeleton variant='text' />
+                                                    </StyledTableCell>
+                                                    <StyledTableCell>
+                                                        <Skeleton variant='text' />
+                                                    </StyledTableCell>
+                                                    <StyledTableCell>
+                                                        <Skeleton variant='text' />
+                                                    </StyledTableCell>
+                                                    <StyledTableCell>
+                                                        <Skeleton variant='text' />
+                                                    </StyledTableCell>
+                                                    <Available permission={'documentStores:preview-process,documentStores:delete-loader'}>
+                                                        <StyledTableCell>
+                                                            <Skeleton variant='text' />
+                                                        </StyledTableCell>
+                                                    </Available>
+                                                </StyledTableRow>
+                                            </>
+                                        ) : (
+                                            <>
+                                                {documentStore?.loaders &&
+                                                    documentStore?.loaders.length > 0 &&
+                                                    documentStore?.loaders.map((loader, index) => (
+                                                        <LoaderRow
+                                                            key={index}
+                                                            index={index}
+                                                            loader={loader}
+                                                            theme={theme}
+                                                            onEditClick={() => openPreviewSettings(loader.id)}
+                                                            onViewChunksClick={() => showStoredChunks(loader.id)}
+                                                            onDeleteClick={() =>
+                                                                onLoaderDelete(
+                                                                    loader,
+                                                                    documentStore?.vectorStoreConfig,
+                                                                    documentStore?.recordManagerConfig
+                                                                )
+                                                            }
+                                                            onChunkUpsert={() =>
+                                                                navigate(`/document-stores/vector/${documentStore.id}/${loader.id}`)
+                                                            }
+                                                            onViewUpsertAPI={() => onViewUpsertAPI(documentStore.id, loader.id)}
+                                                        />
+                                                    ))}
+                                            </>
+                                        )}
+                                    </TableBody>
+                                </Table>
+                            </TableContainer>
+                        )}
+                        {getSpecificDocumentStore.data?.status === 'STALE' && (
+                            <div style={{ width: '100%', textAlign: 'center', marginTop: '20px' }}>
+                                <Typography
+                                    color='warning'
+                                    style={{ color: 'darkred', fontWeight: 500, fontStyle: 'italic', fontSize: 12 }}
+                                >
+                                    Некоторые файлы ожидают обработки. Пожалуйста, обновите для получения актуального статуса.
+                                </Typography>
+                            </div>
+                        )}
+                    </Stack>
+                )}
+            </MainCard>
+            {showDialog && (
+                <AddDocStoreDialog
+                    dialogProps={dialogProps}
+                    show={showDialog}
+                    onCancel={() => setShowDialog(false)}
+                    onConfirm={onConfirm}
+                />
+            )}
+            {showDocumentLoaderListDialog && (
+                <DocumentLoaderListDialog
+                    show={showDocumentLoaderListDialog}
+                    dialogProps={documentLoaderListDialogProps}
+                    onCancel={() => setShowDocumentLoaderListDialog(false)}
+                    onDocLoaderSelected={onDocLoaderSelected}
+                />
+            )}
+            {showDeleteDocStoreDialog && (
+                <DeleteDocStoreDialog
+                    show={showDeleteDocStoreDialog}
+                    dialogProps={deleteDocStoreDialogProps}
+                    onCancel={() => setShowDeleteDocStoreDialog(false)}
+                    onDelete={onDocStoreDelete}
+                />
+            )}
+            {showDocStoreAPIDialog && (
+                <DocStoreAPIDialog
+                    show={showDocStoreAPIDialog}
+                    dialogProps={docStoreAPIDialogProps}
+                    onCancel={() => setShowDocStoreAPIDialog(false)}
+                />
+            )}
+            {isBackdropLoading && <BackdropLoader open={isBackdropLoading} />}
+            <ConfirmDialog />
+        </>
+    )
+}
+
+function LoaderRow(props) {
+    const [anchorEl, setAnchorEl] = useState(null)
+    const open = Boolean(anchorEl)
+
+    const handleClick = (event) => {
+        event.preventDefault()
+        event.stopPropagation()
+        setAnchorEl(event.currentTarget)
+    }
+
+    const handleClose = () => {
+        setAnchorEl(null)
+    }
+
+    const formatSources = (files, source) => {
+        // Prefer files.name when files array exists and has items
+        if (files && Array.isArray(files) && files.length > 0) {
+            return files.map((file) => file.name).join(', ')
+        }
+
+        // Fallback to original source logic
+        if (source && typeof source === 'string' && source.includes('base64')) {
+            return getFileName(source)
+        }
+        if (source && typeof source === 'string' && source.startsWith('[') && source.endsWith(']')) {
+            return JSON.parse(source).join(', ')
+        }
+        return source || 'No source'
+    }
+
+    return (
+        <>
+            <TableRow hover key={props.index} sx={{ '&:last-child td, &:last-child th': { border: 0 }, cursor: 'pointer' }}>
+                <StyledTableCell onClick={props.onViewChunksClick} scope='row' style={{ width: '5%' }}>
+                    <div
+                        style={{
+                            display: 'flex',
+                            width: '20px',
+                            height: '20px',
+                            backgroundColor: props.loader?.status === 'SYNC' ? '#00e676' : '#ffe57f',
+                            borderRadius: '50%'
+                        }}
+                    ></div>
+                </StyledTableCell>
+                <StyledTableCell onClick={props.onViewChunksClick} scope='row'>
+                    {props.loader.loaderName}
+                </StyledTableCell>
+                <StyledTableCell onClick={props.onViewChunksClick}>{props.loader.splitterName ?? 'None'}</StyledTableCell>
+                <StyledTableCell onClick={props.onViewChunksClick}>
+                    {formatSources(props.loader.files, props.loader.source)}
+                </StyledTableCell>
+                <StyledTableCell onClick={props.onViewChunksClick}>
+                    {props.loader.totalChunks && <Chip variant='outlined' size='small' label={props.loader.totalChunks.toLocaleString()} />}
+                </StyledTableCell>
+                <StyledTableCell onClick={props.onViewChunksClick}>
+                    {props.loader.totalChars && <Chip variant='outlined' size='small' label={props.loader.totalChars.toLocaleString()} />}
+                </StyledTableCell>
+                <Available permission={'documentStores:preview-process,documentStores:delete-loader'}>
+                    <StyledTableCell>
+                        <div>
+                            <Button
+                                id='document-store-action-button'
+                                aria-controls={open ? 'document-store-action-customized-menu' : undefined}
+                                aria-haspopup='true'
+                                aria-expanded={open ? 'true' : undefined}
+                                disableElevation
+                                onClick={(e) => handleClick(e)}
+                                endIcon={<KeyboardArrowDownIcon />}
+                            >
+                                Действия
+                            </Button>
+                            <StyledMenu
+                                id='document-store-actions-customized-menu'
+                                MenuListProps={{
+                                    'aria-labelledby': 'document-store-actions-customized-button'
+                                }}
+                                anchorEl={anchorEl}
+                                open={open}
+                                onClose={handleClose}
+                            >
+                                <Available permission={'documentStores:preview-process'}>
+                                    <MenuItem onClick={props.onEditClick} disableRipple>
+                                        <FileEditIcon />
+                                        Предпросмотр и обработка
+                                    </MenuItem>
+                                </Available>
+                                <Available permission={'documentStores:preview-process'}>
+                                    <MenuItem onClick={props.onViewChunksClick} disableRipple>
+                                        <FileChunksIcon />
+                                        Просмотр и редактирование чанков
+                                    </MenuItem>
+                                </Available>
+                                <Available permission={'documentStores:preview-process'}>
+                                    <MenuItem onClick={props.onChunkUpsert} disableRipple>
+                                        <NoteAddIcon />
+                                        Обновить чанки
+                                    </MenuItem>
+                                </Available>
+                                <Available permission={'documentStores:preview-process'}>
+                                    <MenuItem onClick={props.onViewUpsertAPI} disableRipple>
+                                        <CodeIcon />
+                                        Просмотр API
+                                    </MenuItem>
+                                </Available>
+                                <Divider sx={{ my: 0.5 }} />
+                                <Available permission={'documentStores:delete-loader'}>
+                                    <MenuItem onClick={props.onDeleteClick} disableRipple>
+                                        <FileDeleteIcon />
+                                        Удалить
+                                    </MenuItem>
+                                </Available>
+                            </StyledMenu>
+                        </div>
+                    </StyledTableCell>
+                </Available>
+            </TableRow>
+        </>
+    )
+}
+
+LoaderRow.propTypes = {
+    loader: PropTypes.any,
+    index: PropTypes.number,
+    open: PropTypes.bool,
+    theme: PropTypes.any,
+    onViewChunksClick: PropTypes.func,
+    onEditClick: PropTypes.func,
+    onDeleteClick: PropTypes.func,
+    onChunkUpsert: PropTypes.func,
+    onViewUpsertAPI: PropTypes.func
+}
+export default DocumentStoreDetails
