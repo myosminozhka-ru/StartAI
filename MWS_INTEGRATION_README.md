@@ -12,14 +12,9 @@
 
 1. Перейдите в раздел "Credentials" в OSMI
 2. Создайте новые учетные данные типа "MWS API"
-3. Введите ваш API ключ MWS: `4uRDvbtCf5o6B7WHtIFR`
+3. Введите ваш API ключ MWS: `ваш_api_ключ`
 
 ### 2. Доступ к MWS UI
-
-Для тестирования и получения дополнительной информации:
-- URL: https://ui.gpt.mws.ru/login
-- Логин: Dneustroev@sk.ru
-- Пароль: 4uRDvbtCf5o6B7WHtIFR
 
 ## Использование узлов
 

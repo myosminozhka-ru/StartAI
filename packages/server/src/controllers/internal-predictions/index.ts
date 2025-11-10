@@ -38,13 +38,13 @@ const createAndStreamInternalPrediction = async (req: Request, res: Response, ne
 
         const apiResponse = await utilBuildChatflow(req, true)
         sseStreamer.streamMetadataEvent(apiResponse.chatId, apiResponse)
+        sseStreamer.removeClient(chatId)
     } catch (error) {
         if (chatId) {
             sseStreamer.streamErrorEvent(chatId, getErrorMessage(error))
         }
-        next(error)
-    } finally {
         sseStreamer.removeClient(chatId)
+        next(error)
     }
 }
 export default {

@@ -29,7 +29,7 @@ class MWS_LLMs implements INode {
             label: 'Подключите учетные данные',
             name: 'credential',
             type: 'credential',
-            credentialNames: ['mwsApi']
+            credentialNames: ['mwsApi'],
         }
         this.inputs = [
             {
@@ -98,8 +98,31 @@ class MWS_LLMs implements INode {
 
     //@ts-ignore
     loadMethods = {
-        async listModels(): Promise<INodeOptionsValue[]> {
-            return await getMWSModels()
+        async listModels(nodeData: INodeData, options: ICommonObject): Promise<INodeOptionsValue[]> {
+            try {
+                if (nodeData?.credential) {
+                    try {
+                        const credentialData = await getCredentialData(nodeData.credential, options)
+                        let mwsApiKey = getCredentialParam('mwsApiKey', credentialData, nodeData)
+                        // Убираем кавычки если они есть
+                        if (mwsApiKey) {
+                            mwsApiKey = mwsApiKey.replace(/^["']|["']$/g, '')
+                        }
+                        if (mwsApiKey) {
+                            const models = await getMWSModels(mwsApiKey)
+                            if (models && models.length > 0) {
+                                return models
+                            }
+                        }
+                    } catch (apiError) {
+                        console.warn('Не удалось загрузить модели через MWS API:', apiError)
+                    }
+                }
+                return getDefaultMWSModels()
+            } catch (error) {
+                console.error('Ошибка при загрузке MWS моделей:', error)
+                return getDefaultMWSModels()
+            }
         }
     }
 
@@ -113,12 +136,26 @@ class MWS_LLMs implements INode {
         const timeout = nodeData.inputs?.timeout as string
         const cache = nodeData.inputs?.cache as BaseCache
 
+        if (nodeData.inputs?.credentialId) {
+            nodeData.credential = nodeData.inputs?.credentialId
+        }
+        
         const credentialData = await getCredentialData(nodeData.credential ?? '', options)
-        const mwsApiKey = getCredentialParam('mwsApiKey', credentialData, nodeData)
+        let mwsApiKey = getCredentialParam('mwsApiKey', credentialData, nodeData)
+        
+        // Убираем кавычки если они есть
+        if (mwsApiKey) {
+            mwsApiKey = mwsApiKey.replace(/^["']|["']$/g, '')
+        }
 
-        const obj: Partial<OpenAIInput> & { configuration?: ClientOptions } = {
+        if (!mwsApiKey || mwsApiKey.trim() === '') {
+            throw new Error('MWS API Key не найден. Выберите credential в настройках узла и сохраните chatflow.')
+        }
+
+        const obj: Partial<OpenAIInput> & { configuration?: ClientOptions; cache?: BaseCache } = {
             temperature: parseFloat(temperature),
             modelName,
+            apiKey: mwsApiKey,
             maxTokens: maxTokens ? parseInt(maxTokens, 10) : undefined,
             topP: topP ? parseFloat(topP) : undefined,
             frequencyPenalty: frequencyPenalty ? parseFloat(frequencyPenalty) : undefined,

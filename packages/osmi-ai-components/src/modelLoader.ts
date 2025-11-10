@@ -91,6 +91,9 @@ export const getModels = async (category: MODEL_TYPE, name: string) => {
     const returnData: INodeOptionsValue[] = []
     try {
         const modelConfig = await getModelConfig(category, name)
+        if (!modelConfig || !modelConfig.models) {
+            throw new Error(`Model configuration not found for ${name} in category ${category}`)
+        }
         returnData.push(...modelConfig.models)
         return returnData
     } catch (e) {
@@ -102,6 +105,9 @@ export const getRegions = async (category: MODEL_TYPE, name: string) => {
     const returnData: INodeOptionsValue[] = []
     try {
         const modelConfig = await getModelConfig(category, name)
+        if (!modelConfig || !modelConfig.regions) {
+            throw new Error(`Model configuration not found for ${name} in category ${category}`)
+        }
         returnData.push(...modelConfig.regions)
         return returnData
     } catch (e) {

@@ -32,7 +32,7 @@ class ChatMWS_ChatModels implements INode {
             label: 'Подключите учетные данные',
             name: 'credential',
             type: 'credential',
-            credentialNames: ['mwsApi']
+            credentialNames: ['mwsApi'],
         }
         this.inputs = [
             {
@@ -179,16 +179,37 @@ class ChatMWS_ChatModels implements INode {
             try {
                 // Пытаемся получить API ключ для динамической загрузки моделей
                 if (nodeData?.credential) {
-                    const credentialData = await getCredentialData(nodeData.credential, options)
-                    const mwsApiKey = getCredentialParam('mwsApiKey', credentialData, nodeData)
-                    if (mwsApiKey) {
-                        return await getMWSModels(mwsApiKey)
+                    try {
+                        const credentialData = await getCredentialData(nodeData.credential, options)
+                        let mwsApiKey = getCredentialParam('mwsApiKey', credentialData, nodeData)
+                        // Убираем кавычки если они есть
+                        if (mwsApiKey) {
+                            mwsApiKey = mwsApiKey.replace(/^["']|["']$/g, '')
+                        }
+                        if (mwsApiKey) {
+                            const models = await getMWSModels(mwsApiKey)
+                            if (models && models.length > 0) {
+                                return models
+                            }
+                        }
+                    } catch (apiError) {
+                        console.warn('Не удалось загрузить модели через MWS API:', apiError)
                     }
                 }
                 // Fallback к статическим моделям из models.json
-                return await getModels(MODEL_TYPE.CHAT, 'chatMWS')
+                try {
+                    const models = await getModels(MODEL_TYPE.CHAT, 'chatMWS')
+                    if (models && models.length > 0) {
+                        return models
+                    }
+                } catch (jsonError) {
+                    console.warn('Не удалось загрузить модели из models.json:', jsonError)
+                }
+                // Последний fallback к дефолтным моделям
+                console.info('Используем дефолтные MWS модели')
+                return getDefaultMWSModels()
             } catch (error) {
-                console.warn('Ошибка при загрузке MWS моделей, используем дефолтные:', error)
+                console.error('Критическая ошибка при загрузке MWS моделей:', error)
                 return getDefaultMWSModels()
             }
         }
@@ -214,15 +235,25 @@ class ChatMWS_ChatModels implements INode {
         if (nodeData.inputs?.credentialId) {
             nodeData.credential = nodeData.inputs?.credentialId
         }
+        
         const credentialData = await getCredentialData(nodeData.credential ?? '', options)
-        const mwsApiKey = getCredentialParam('mwsApiKey', credentialData, nodeData)
+        let mwsApiKey = getCredentialParam('mwsApiKey', credentialData, nodeData)
+        
+        // Убираем кавычки если они есть
+        if (mwsApiKey) {
+            mwsApiKey = mwsApiKey.replace(/^["']|["']$/g, '')
+        }
+
+        if (!mwsApiKey || mwsApiKey.trim() === '') {
+            throw new Error('MWS API Key не найден. Выберите credential в настройках узла и сохраните chatflow.')
+        }
 
         const cache = nodeData.inputs?.cache as BaseCache
 
         const obj: ChatOpenAIFields = {
             temperature: parseFloat(temperature),
             modelName,
-            openAIApiKey: mwsApiKey, // Используем MWS API ключ как OpenAI ключ для совместимости
+            apiKey: mwsApiKey,
             streaming: streaming ?? true,
             configuration: {
                 baseURL: 'https://api.gpt.mws.ru/v1'
@@ -232,7 +263,8 @@ class ChatMWS_ChatModels implements INode {
         if (modelName.includes('o3') || modelName.includes('o1')) {
             delete obj.temperature
         }
-        if (maxTokens) obj.maxTokens = parseInt(maxTokens, 10)
+        // Всегда устанавливаем maxTokens чтобы избежать вызова calculateMaxTokens в @langchain
+        obj.maxTokens = maxTokens ? parseInt(maxTokens, 10) : 4096
         if (topP) obj.topP = parseFloat(topP)
         if (frequencyPenalty) obj.frequencyPenalty = parseFloat(frequencyPenalty)
         if (presencePenalty) obj.presencePenalty = parseFloat(presencePenalty)

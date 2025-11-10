@@ -97,11 +97,21 @@ if (process.env.STORAGE_TYPE === 'gcs') {
     })
 }
 // expect the log dir be relative to the projects root
-const logDir = config.logging.dir
+let logDir = config.logging.dir
 
 // Create the log directory if it doesn't exist
 if (!fs.existsSync(logDir)) {
-    fs.mkdirSync(logDir)
+    try {
+        fs.mkdirSync(logDir, { recursive: true })
+    } catch (error: any) {
+        // If we can't create the directory, use a fallback in the project
+        const fallbackLogDir = path.join(__dirname, '..', '..', 'logs')
+        if (!fs.existsSync(fallbackLogDir)) {
+            fs.mkdirSync(fallbackLogDir, { recursive: true })
+        }
+        console.warn(`Could not create log directory at ${logDir}, using fallback: ${fallbackLogDir}`)
+        logDir = fallbackLogDir // Use fallback directory instead
+    }
 }
 
 const logger = createLogger({

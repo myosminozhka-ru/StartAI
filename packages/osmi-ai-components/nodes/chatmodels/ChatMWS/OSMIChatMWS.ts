@@ -9,9 +9,13 @@ export class ChatMWS extends LangchainChatOpenAI implements IVisionChatModal {
     id: string
 
     constructor(id: string, fields?: ChatOpenAIFields) {
-        // Переопределяем baseURL для MWS API
-        const mwsFields = {
+        if (!fields?.apiKey && !fields?.openAIApiKey) {
+            throw new Error('MWS API Key отсутствует. Добавьте credential.')
+        }
+        
+        const mwsFields: ChatOpenAIFields = {
             ...fields,
+            apiKey: fields?.apiKey || fields?.openAIApiKey,
             configuration: {
                 ...fields?.configuration,
                 baseURL: 'https://api.gpt.mws.ru/v1'

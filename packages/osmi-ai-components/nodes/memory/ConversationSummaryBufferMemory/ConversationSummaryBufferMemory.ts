@@ -152,14 +152,19 @@ class ConversationSummaryBufferMemoryExtended extends OSMISummaryBufferMemory im
         let currBufferLength = 0
 
         if (this.llm && typeof this.llm !== 'string') {
-            currBufferLength = await this.llm.getNumTokens(getBufferString(baseMessages, this.humanPrefix, this.aiPrefix))
+            // Используем только приблизительный подсчёт чтобы не блокировать (~4 символа на токен)
+            const bufferString = getBufferString(baseMessages, this.humanPrefix, this.aiPrefix)
+            currBufferLength = Math.ceil(bufferString.length / 4)
+            
             if (currBufferLength > this.maxTokenLimit) {
                 const prunedMemory = []
                 while (currBufferLength > this.maxTokenLimit) {
                     const poppedMessage = baseMessages.shift()
                     if (poppedMessage) {
                         prunedMemory.push(poppedMessage)
-                        currBufferLength = await this.llm.getNumTokens(getBufferString(baseMessages, this.humanPrefix, this.aiPrefix))
+                        // Приблизительный подсчёт токенов (~4 символа на токен)
+                        const bufferString = getBufferString(baseMessages, this.humanPrefix, this.aiPrefix)
+                        currBufferLength = Math.ceil(bufferString.length / 4)
                     }
                 }
                 this.movingSummaryBuffer = await this.predictNewSummary(prunedMemory, this.movingSummaryBuffer)

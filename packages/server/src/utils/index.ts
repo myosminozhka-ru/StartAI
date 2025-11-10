@@ -112,17 +112,8 @@ export const databaseEntities: IDatabaseEntity = {
  *
  */
 export const getUserHome = (): string => {
-    let variableName = 'HOME'
-    if (process.platform === 'win32') {
-        variableName = 'USERPROFILE'
-    }
-
-    if (process.env[variableName] === undefined) {
-        // If for some reason the variable does not exist
-        // fall back to current folder
-        return process.cwd()
-    }
-    return process.env[variableName] as string
+    const projectRoot = path.join(__dirname, '..', '..', '..', '..')
+    return projectRoot
 }
 
 /**
@@ -1916,9 +1907,12 @@ export const getAPIOverrideConfig = (chatflow: IChatFlow) => {
 }
 
 export const getUploadPath = (): string => {
-    return process.env.BLOB_STORAGE_PATH
-        ? path.join(process.env.BLOB_STORAGE_PATH, 'uploads')
-        : path.join(getUserHome(), '.OSMI', 'uploads')
+    if (process.env.BLOB_STORAGE_PATH) {
+        return path.join(process.env.BLOB_STORAGE_PATH, 'uploads')
+    }
+    
+    const projectRoot = path.join(__dirname, '..', '..', '..', '..')
+    return path.join(projectRoot, 'storage', 'uploads')
 }
 
 export function generateId() {

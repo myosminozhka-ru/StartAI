@@ -650,19 +650,28 @@ export const executeFlow = async ({
             if (agentReasoning?.length) apiMessage.agentReasoning = JSON.stringify(agentReasoning)
             if (finalAction && Object.keys(finalAction).length) apiMessage.action = JSON.stringify(finalAction)
 
+            const chatMessage = await utilAddChatMessage(apiMessage, appDataSource)
+
+            // Генерируем follow-up prompts асинхронно, не блокируя возврат результата
             if (agentflow.followUpPrompts) {
                 const followUpPromptsConfig = JSON.parse(agentflow.followUpPrompts)
-                const generatedFollowUpPrompts = await generateFollowUpPrompts(followUpPromptsConfig, apiMessage.content, {
+                generateFollowUpPrompts(followUpPromptsConfig, apiMessage.content, {
                     chatId,
                     chatflowid: agentflow.id,
                     appDataSource,
                     databaseEntities
                 })
-                if (generatedFollowUpPrompts?.questions) {
-                    apiMessage.followUpPrompts = JSON.stringify(generatedFollowUpPrompts.questions)
-                }
+                    .then(async (generatedFollowUpPrompts) => {
+                        if (generatedFollowUpPrompts?.questions && chatMessage?.id) {
+                            await appDataSource.getRepository(ChatMessage).update(chatMessage.id, {
+                                followUpPrompts: JSON.stringify(generatedFollowUpPrompts.questions)
+                            })
+                        }
+                    })
+                    .catch((error) => {
+                        logger.error(`[server]: Follow-up prompts generation error: ${getErrorMessage(error)}`)
+                    })
             }
-            const chatMessage = await utilAddChatMessage(apiMessage, appDataSource)
 
             await telemetry.sendTelemetry(
                 'agentflow_prediction_sent',
@@ -908,7 +917,12 @@ export const executeFlow = async ({
                 appDataSource,
                 databaseEntities
             }
-            await generateTTSForResponseStream(result.text, chatflow.textToSpeech, options, chatId, chatMessage?.id, sseStreamer, signal)
+            // Генерируем TTS асинхронно, не блокируя возврат результата
+            generateTTSForResponseStream(result.text, chatflow.textToSpeech, options, chatId, chatMessage?.id, sseStreamer, signal).catch(
+                (error) => {
+                    logger.error(`[server]: TTS generation error: ${getErrorMessage(error)}`)
+                }
+            )
         }
 
         return result

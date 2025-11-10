@@ -1,9 +1,6 @@
 ﻿import { Command, Flags } from '@oclif/core'
-import dotenv from 'dotenv'
 import path from 'path'
 import logger from '../utils/logger'
-
-dotenv.config({ path: path.join(__dirname, '..', '..', '.env'), override: true })
 
 enum EXIT_CODE {
     SUCCESS = 0,

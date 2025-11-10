@@ -76,21 +76,40 @@ class MWSEmbedding_Embeddings implements INode {
             try {
                 // Пытаемся получить API ключ для динамической загрузки моделей
                 if (nodeData?.credential) {
-                    const credentialData = await getCredentialData(nodeData.credential, options)
-                    const mwsApiKey = getCredentialParam('mwsApiKey', credentialData, nodeData)
-                    if (mwsApiKey) {
-                        // Фильтруем только embedding модели
-                        const allModels = await getMWSModels(mwsApiKey)
-                        return allModels.filter(model => 
-                            model.name.includes('embedding') || 
-                            model.name.includes('embed')
-                        )
+                    try {
+                        const credentialData = await getCredentialData(nodeData.credential, options)
+                        const mwsApiKey = getCredentialParam('mwsApiKey', credentialData, nodeData)
+                        if (mwsApiKey) {
+                            // Фильтруем только embedding модели
+                            const allModels = await getMWSModels(mwsApiKey)
+                            const embeddingModels = allModels.filter(model => 
+                                model.name.includes('embedding') || 
+                                model.name.includes('embed') ||
+                                model.name.includes('bge') ||
+                                model.name.includes('BAAI')
+                            )
+                            if (embeddingModels && embeddingModels.length > 0) {
+                                return embeddingModels
+                            }
+                        }
+                    } catch (apiError) {
+                        console.warn('Не удалось загрузить embedding модели через MWS API:', apiError)
                     }
                 }
                 // Fallback к статическим моделям из models.json
-                return await getModels(MODEL_TYPE.EMBEDDING, 'mwsEmbeddings')
+                try {
+                    const models = await getModels(MODEL_TYPE.EMBEDDING, 'mwsEmbeddings')
+                    if (models && models.length > 0) {
+                        return models
+                    }
+                } catch (jsonError) {
+                    console.warn('Не удалось загрузить embedding модели из models.json:', jsonError)
+                }
+                // Последний fallback к дефолтным моделям
+                console.info('Используем дефолтные MWS embedding модели')
+                return getDefaultMWSEmbeddingModels()
             } catch (error) {
-                console.warn('Ошибка при загрузке MWS embedding моделей, используем дефолтные:', error)
+                console.error('Критическая ошибка при загрузке MWS embedding моделей:', error)
                 return getDefaultMWSEmbeddingModels()
             }
         }

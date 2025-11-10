@@ -1,9 +1,6 @@
 // BEWARE: This file is an intereem solution until we have a proper config strategy
 
 import path from 'path'
-import dotenv from 'dotenv'
-
-dotenv.config({ path: path.join(__dirname, '..', '..', '.env'), override: true })
 
 // default config
 const loggingConfig = {

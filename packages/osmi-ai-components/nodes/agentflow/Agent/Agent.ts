@@ -1150,7 +1150,9 @@ class Agent_Agentflow implements INode {
 
         // Convert past messages to a format suitable for token counting
         const messagesString = pastMessages.map((msg: any) => `${msg.role}: ${msg.content}`).join('\n')
-        const tokenCount = await llmNodeInstance.getNumTokens(messagesString)
+        
+        // Используем только приблизительный подсчёт чтобы не блокировать (~4 символа на токен)
+        const tokenCount = Math.ceil(messagesString.length / 4)
 
         if (tokenCount > maxTokenLimit) {
             // Calculate how many messages to summarize (messages that exceed the token limit)
@@ -1163,9 +1165,9 @@ class Agent_Agentflow implements INode {
                 const poppedMessage = remainingMessages.shift()
                 if (poppedMessage) {
                     messagesToSummarize.push(poppedMessage)
-                    // Recalculate token count for remaining messages
+                    // Recalculate token count for remaining messages (приблизительный подсчёт)
                     const remainingMessagesString = remainingMessages.map((msg: any) => `${msg.role}: ${msg.content}`).join('\n')
-                    currBufferLength = await llmNodeInstance.getNumTokens(remainingMessagesString)
+                    currBufferLength = Math.ceil(remainingMessagesString.length / 4)
                 }
             }
 

@@ -1298,6 +1298,41 @@
                     "output_cost": 0.001
                 }
             ]
+        },
+        {
+            "name": "chatMWS",
+            "models": [
+                {
+                    "label": "MWS GPT Alpha",
+                    "name": "mws-gpt-alpha",
+                    "description": "MWS GPT Alpha - основная модель MWS"
+                },
+                {
+                    "label": "Qwen 2.5 32B Instruct",
+                    "name": "qwen2.5-32b-instruct",
+                    "description": "Qwen 2.5 32B Instruct через MWS API"
+                },
+                {
+                    "label": "Llama 3.3 70B Instruct",
+                    "name": "llama-3.3-70b-instruct",
+                    "description": "Llama 3.3 70B Instruct через MWS API"
+                },
+                {
+                    "label": "Llama 3.1 8B Instruct",
+                    "name": "llama-3.1-8b-instruct",
+                    "description": "Llama 3.1 8B Instruct через MWS API"
+                },
+                {
+                    "label": "Qwen 2.5 72B Instruct",
+                    "name": "qwen2.5-72b-instruct",
+                    "description": "Qwen 2.5 72B Instruct через MWS API"
+                },
+                {
+                    "label": "Gemma 3 27B IT",
+                    "name": "gemma-3-27b-it",
+                    "description": "Gemma 3 27B IT через MWS API"
+                }
+            ]
         }
     ],
     "llm": [
