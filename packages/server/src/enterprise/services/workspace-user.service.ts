@@ -231,7 +231,7 @@ export class WorkspaceUserService {
         if (!createdBy) throw new InternalOsmiError(StatusCodes.NOT_FOUND, UserErrorMessage.USER_NOT_FOUND)
 
         let newWorkspaceUser = this.createNewWorkspaceUser(data, queryRunner)
-        workspace.updatedBy = data.createdBy
+        // workspace.updatedBy removed for minimal version
         try {
             await queryRunner.startTransaction()
             newWorkspaceUser = await this.saveWorkspaceUser(newWorkspaceUser, queryRunner)

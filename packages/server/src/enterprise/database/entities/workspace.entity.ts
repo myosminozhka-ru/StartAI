@@ -13,12 +13,6 @@ export class Workspace {
     
     @Column({ nullable: true })
     name?: string
-    
-    @Column({ nullable: true })
-    createdBy?: string
-    
-    @Column({ nullable: true })
-    updatedBy?: string
 }
 
 

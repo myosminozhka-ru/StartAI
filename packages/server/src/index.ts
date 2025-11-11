@@ -269,8 +269,9 @@ export class App {
                         if (!org) {
                             return res.status(401).json({ error: 'Unauthorized Access' })
                         }
-                        const subscriptionId = org.subscriptionId as string
-                        const customerId = org.customerId as string
+                        // В Open Source режиме нет subscriptionId и customerId
+                        const subscriptionId = ''
+                        const customerId = ''
                         const features = await this.identityManager.getFeaturesByPlan(subscriptionId)
                         const productId = await this.identityManager.getProductIdFromSubscription(subscriptionId)
 

@@ -44,12 +44,6 @@ export class User {
     @Column({ nullable: true })
     user_type?: string
     
-    @Column({ nullable: true })
-    createdBy?: string
-    
-    @Column({ nullable: true })
-    updatedBy?: string
-    
     @ManyToOne(() => require('./workspace.entity').Workspace, { nullable: true })
     @JoinColumn({ name: 'activeWorkspaceId' })
     workspace?: any

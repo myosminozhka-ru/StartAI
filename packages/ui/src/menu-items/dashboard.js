@@ -62,15 +62,6 @@ const dashboard = {
                     permission: 'chatflows:view'
                 },
                 {
-                    id: 'agentflows',
-                    title: 'Агентфлоу',
-                    type: 'item',
-                    url: '/agentflows',
-                    icon: icons.IconUsersGroup,
-                    breadcrumbs: true,
-                    permission: 'agentflows:view'
-                },
-                {
                     id: 'executions',
                     title: 'Выполнения',
                     type: 'item',

@@ -70,6 +70,9 @@ const blacklistForChatflowCanvas = {
     Memory: agentMemoryNodes
 }
 
+// Скрыть категории для minimal версии
+const blacklistCategoriesForChatflowCanvas = ['LlamaIndex', 'Utilities']
+
 const AddNodes = ({ nodesData, node, isAgentCanvas, isAgentflowv2, onFlowGenerated }) => {
     const theme = useTheme()
     const customization = useSelector((state) => state.customization)
@@ -159,16 +162,9 @@ const AddNodes = ({ nodesData, node, isAgentCanvas, isAgentflowv2, onFlowGenerat
     }
 
     const groupByTags = (nodes, newTabValue = 0) => {
-        const langchainNodes = nodes.filter((nd) => !nd.tags)
-        const llmaindexNodes = nodes.filter((nd) => nd.tags && nd.tags.includes('LlamaIndex'))
-        const utilitiesNodes = nodes.filter((nd) => nd.tags && nd.tags.includes('Utilities'))
-        if (newTabValue === 0) {
-            return langchainNodes
-        } else if (newTabValue === 1) {
-            return llmaindexNodes
-        } else {
-            return utilitiesNodes
-        }
+        // Только LangChain узлы в minimal версии (без LlamaIndex и Utilities)
+        const langchainNodes = nodes.filter((nd) => !nd.tags || (!nd.tags.includes('LlamaIndex') && !nd.tags.includes('Utilities')))
+        return langchainNodes
     }
 
     const groupByCategory = (nodes, newTabValue, isFilter) => {
@@ -227,11 +223,24 @@ const AddNodes = ({ nodesData, node, isAgentCanvas, isAgentflowv2, onFlowGenerat
                 if (category === 'Agent Flows' || category === 'Multi Agents' || category === 'Sequential Agents') {
                     continue
                 }
+                
+                // Фильтруем узлы с тегами LlamaIndex и Utilities для minimal версии
+                let categoryNodes = result[category]
+                categoryNodes = categoryNodes.filter((nd) => {
+                    const hasLlamaIndexTag = nd.tags && nd.tags.includes('LlamaIndex')
+                    const hasUtilitiesTag = nd.tags && nd.tags.includes('Utilities')
+                    return !hasLlamaIndexTag && !hasUtilitiesTag
+                })
+                
                 if (Object.keys(blacklistForChatflowCanvas).includes(category)) {
                     const nodes = blacklistForChatflowCanvas[category]
-                    result[category] = result[category].filter((nd) => !nodes.includes(nd.name))
+                    categoryNodes = categoryNodes.filter((nd) => !nodes.includes(nd.name))
                 }
-                filteredResult[category] = result[category]
+                
+                // Только добавляем категорию если в ней есть узлы
+                if (categoryNodes.length > 0) {
+                    filteredResult[category] = categoryNodes
+                }
             }
 
             setNodes(filteredResult)
@@ -262,13 +271,8 @@ const AddNodes = ({ nodesData, node, isAgentCanvas, isAgentflowv2, onFlowGenerat
     }
 
     const getImage = (tabValue) => {
-        if (tabValue === 0) {
-            return LangChainPNG
-        } else if (tabValue === 1) {
-            return LlamaindexPNG
-        } else {
-            return utilNodesPNG
-        }
+        // Только LangChain в minimal версии
+        return LangChainPNG
     }
 
     const renderIcon = (node) => {
@@ -434,7 +438,7 @@ const AddNodes = ({ nodesData, node, isAgentCanvas, isAgentflowv2, onFlowGenerat
                                                 onChange={handleTabChange}
                                                 aria-label='вкладки'
                                             >
-                                                {['LangChain', 'LlamaIndex', 'Utilities'].map((item, index) => (
+                                                {['LangChain'].map((item, index) => (
                                                     <Tab
                                                         icon={
                                                             <div

@@ -54,7 +54,6 @@ Download and Install [NodeJS](https://nodejs.org/en/download) >= 18.15.0
 
 ### ✅ Что осталось в UI:
 - **Чатфлоу** - создание диалоговых потоков (**ЛИМИТ: максимум 2 чатфлоу**)
-- **Агентфлоу** - построение агентских workflows
 - **Выполнения** - мониторинг запусков агентов
 - **Инструменты** - только 7 базовых инструментов:
   - Calculator, ChatflowTool, CurrentDateTime, CustomTool, RetrieverTool, Searxng, TavilyAPI
@@ -187,72 +186,46 @@ Has 3 different modules in a single mono repository.
 
 ### Setup
 
-1.  Clone the repository:
+1. Перейдите в директорию docker:
+   ```bash
+   cd docker
+   ```
 
-    ```bash
-    git clone https://github.com/myosminozhka-ru/OSMI-AI.git
-    ```
+2. Создайте копию `.env.example` и переименуйте в `.env`:
+   ```bash
+   cp .env.example .env
+   ```
 
-2.  Go into repository folder:
+3. Откройте файл `.env` и раскомментируйте/заполните необходимые настройки подключения к БД:
+   ```bash
+   # Тип базы данных
+   DATABASE_TYPE=postgres
+   
+   # DATABASE_PATH - закомментируйте, не используется для PostgreSQL
+   # DATABASE_PATH=...
+   
+   # Настройки PostgreSQL
+   DATABASE_PORT=
+   DATABASE_HOST
+   DATABASE_NAME=
+   DATABASE_USER=
+   DATABASE_PASSWORD=
+   ```
 
-    ```bash
-    cd OSMI-AI
-    ```
+4. Запустите сборку контейнеров:
+   ```bash
+   docker-compose -f docker-compose-queue-source.yml up -d --build
+   ```
 
-3.  Install all dependencies of all modules:
+5. Дождитесь запуска всех контейнеров (~1-2 минуты). Проверить статус можно командой:
+   ```bash
+   docker ps
+   ```
 
-    ```bash
-    pnpm install
-    ```
+6. **Откройте приложение в браузере:**
+   - **Регистрация**: `http://localhost:3000/simple-register`
+   - **Вход**: `http://localhost:3000/signin`
 
-4.  Build all the code:
-
-    ```bash
-    pnpm build
-    ```
-
-    <details>
-    <summary>Exit code 134 (JavaScript heap out of memory)</summary>  
-    If you get this error when running the above `build` script, try increasing the Node.js heap size and run the script again:
-
-    ```bash
-    # macOS / Linux / Git Bash
-    export NODE_OPTIONS="--max-old-space-size=4096"
-
-    # Windows PowerShell
-    $env:NODE_OPTIONS="--max-old-space-size=4096"
-
-    # Windows CMD
-    set NODE_OPTIONS=--max-old-space-size=4096
-    ```
-
-    Then run:
-
-    ```bash
-    pnpm build
-    ```
-
-    </details>
-
-5.  Start the app:
-
-    ```bash
-    pnpm start
-    ```
-
-    You can now access the app on [http://localhost:3000](http://localhost:3000)
-
-6.  For development build:
-
-    -   Create `.env` file and specify the `VITE_PORT` (refer to `.env.example`) in `packages/ui`
-    -   Create `.env` file and specify the `PORT` (refer to `.env.example`) in `packages/server`
-    -   Run:
-
-        ```bash
-        pnpm dev
-        ```
-
-    Any code changes will reload the app automatically on [http://localhost:8080](http://localhost:8080)
 
 ## 🌱 Env Variables
 

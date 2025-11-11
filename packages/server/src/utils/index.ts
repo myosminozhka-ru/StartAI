@@ -326,9 +326,10 @@ export const getEndingNodes = (
                 endingNodeData.category !== 'Agents' &&
                 endingNodeData.category !== 'Engine' &&
                 endingNodeData.category !== 'Multi Agents' &&
-                endingNodeData.category !== 'Sequential Agents'
+                endingNodeData.category !== 'Sequential Agents' &&
+                endingNodeData.category !== 'Chat Models'
             ) {
-                error = new InternalOsmiError(StatusCodes.INTERNAL_SERVER_ERROR, `Ending node must be either a Chain or Agent or Engine`)
+                error = new InternalOsmiError(StatusCodes.INTERNAL_SERVER_ERROR, `Ending node must be either a Chain, Agent, Engine or Chat Model`)
                 continue
             }
         }
@@ -1491,7 +1492,8 @@ export const isFlowValidForStream = (reactFlowNodes: IReactFlowNode[], endingNod
             'chatFireworks',
             'ChatSambanova',
             'chatBaiduWenxin',
-            'chatCometAPI'
+            'chatCometAPI',
+            'chatMWS'
         ],
         LLMs: ['azureOpenAI', 'openAI', 'ollama']
     }
@@ -1532,6 +1534,9 @@ export const isFlowValidForStream = (reactFlowNodes: IReactFlowNode[], endingNod
         // Engines that are available to stream
         const whitelistEngine = ['contextChatEngine', 'simpleChatEngine', 'queryEngine', 'subQuestionQueryEngine']
         isValidChainOrAgent = whitelistEngine.includes(endingNodeData.name)
+    } else if (endingNodeData.category === 'Chat Models') {
+        // Chat Models are always valid for streaming
+        isValidChainOrAgent = true
     }
 
     // If no output parser, flow is available to stream

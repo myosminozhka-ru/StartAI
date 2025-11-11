@@ -5,6 +5,8 @@ import bcrypt from 'bcryptjs'
 import { sign } from 'jsonwebtoken'
 import { getRunningExpressApp } from '../utils/getRunningExpressApp'
 import { User, UserStatus } from '../enterprise/database/entities/user.entity'
+import { Organization } from '../enterprise/database/entities/organization.entity'
+import { Workspace } from '../enterprise/database/entities/workspace.entity'
 import { encryptToken } from '../enterprise/utils/tempTokenUtils'
 
 const router = express.Router()
@@ -62,6 +64,27 @@ router.post('/simple-register', async (req: Request, res: Response, next: NextFu
             const salt = bcrypt.genSaltSync(parseInt(process.env.PASSWORD_SALT_HASH_ROUNDS || '10'))
             const hashedPassword = bcrypt.hashSync(password, salt)
 
+            // Создаем организацию для пользователя (используем общую для minimal версии)
+            let organization = await queryRunner.manager.findOne(Organization, {
+                where: { name: 'Default Organization' }
+            })
+            
+            if (!organization) {
+                organization = new Organization()
+                organization.name = 'Default Organization'
+                organization.createdDate = new Date().toISOString()
+                organization.updatedDate = new Date().toISOString()
+                await queryRunner.manager.save(organization)
+            }
+
+            // Создаем отдельный workspace для пользователя
+            const workspace = new Workspace()
+            workspace.name = `${name}'s Workspace`
+            workspace.organizationId = organization.id!
+            workspace.createdDate = new Date().toISOString()
+            workspace.updatedDate = new Date().toISOString()
+            await queryRunner.manager.save(workspace)
+
             // Создаем пользователя
             const user = new User()
             user.name = name
@@ -69,9 +92,9 @@ router.post('/simple-register', async (req: Request, res: Response, next: NextFu
             user.credential = hashedPassword
             user.status = UserStatus.ACTIVE
             user.role = 'admin'
-            user.createdBy = email.toLowerCase()
+            user.activeWorkspaceId = workspace.id
 
-            await queryRunner.manager.save(User, user)
+            await queryRunner.manager.save(user)
             await queryRunner.commitTransaction()
 
             // Удаляем чувствительные данные перед отправкой
@@ -155,12 +178,15 @@ router.post('/simple-login', async (req: Request, res: Response, next: NextFunct
                 })
             }
 
+            // Получаем workspace ID, преобразуя UUID в строку если нужно
+            const workspaceId = user.activeWorkspaceId ? String(user.activeWorkspaceId) : ''
+            
             // Создаем упрощенный объект пользователя для сессии
             const loggedInUser = {
                 id: user.id,
                 email: user.email,
                 name: user.name,
-                activeWorkspaceId: user.activeWorkspaceId || '',
+                activeWorkspaceId: workspaceId,
                 activeOrganizationId: '',
                 roleId: '',
                 permissions: [],
@@ -175,8 +201,8 @@ router.post('/simple-login', async (req: Request, res: Response, next: NextFunct
             const authTokenExpiry = parseInt(process.env.JWT_AUTH_TOKEN_EXPIRY_IN_MINUTES || '60')
             const refreshTokenExpiry = parseInt(process.env.JWT_REFRESH_TOKEN_EXPIRY_IN_MINUTES || '10080') // 7 days
             
-            const authToken = generateJwtToken(user.id!, user.activeWorkspaceId || '', user.name || '', authTokenExpiry, jwtAuthTokenSecret)
-            const refreshToken = generateJwtToken(user.id!, user.activeWorkspaceId || '', user.name || '', refreshTokenExpiry, jwtRefreshSecret)
+            const authToken = generateJwtToken(user.id!, workspaceId, user.name || '', authTokenExpiry, jwtAuthTokenSecret)
+            const refreshToken = generateJwtToken(user.id!, workspaceId, user.name || '', refreshTokenExpiry, jwtRefreshSecret)
 
             // Устанавливаем cookies
             res.cookie('token', authToken, {

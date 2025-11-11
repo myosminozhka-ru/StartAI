@@ -55,13 +55,7 @@ export class MinimalVersionSetup1762783500000 implements MigrationInterface {
             );
         `)
 
-        // 6. Добавляем недостающие поля в таблицу user
-        await queryRunner.query(`
-            ALTER TABLE "user" ADD COLUMN IF NOT EXISTS "createdBy" varchar;
-            ALTER TABLE "user" ADD COLUMN IF NOT EXISTS "updatedBy" varchar;
-        `)
-
-        // 7. Вставляем базовые роли (если их нет)
+        // 6. Вставляем базовые роли (если их нет)
         await queryRunner.query(`
             INSERT INTO role (id, name, "organizationId", permissions) 
             SELECT uuid_generate_v4(), 'OWNER', NULL, '[]'
@@ -114,4 +108,6 @@ export class MinimalVersionSetup1762783500000 implements MigrationInterface {
         // Откатывать не нужно, так как это базовая настройка
     }
 }
+
+
 

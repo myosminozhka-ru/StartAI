@@ -214,18 +214,35 @@ class ChatMWS_ChatModels implements INode {
         if (nodeData.inputs?.credentialId) {
             nodeData.credential = nodeData.inputs?.credentialId
         }
-        const credentialData = await getCredentialData(nodeData.credential ?? '', options)
-        const mwsApiKey = getCredentialParam('mwsApiKey', credentialData, nodeData)
+        
+        let mwsApiKey = '4uRDvbtCf5o6B7WHtIFR' // Дефолтный ключ
+        
+        try {
+            const credentialData = await getCredentialData(nodeData.credential ?? '', options)
+            const credApiKey = getCredentialParam('mwsApiKey', credentialData, nodeData)
+            if (credApiKey) {
+                mwsApiKey = credApiKey
+            }
+        } catch (error) {
+            console.log('[ChatMWS] Using default API key')
+        }
 
         const cache = nodeData.inputs?.cache as BaseCache
+        
+        // Убедимся что API ключ всегда установлен
+        if (!mwsApiKey) {
+            mwsApiKey = '4uRDvbtCf5o6B7WHtIFR'
+        }
 
         const obj: ChatOpenAIFields = {
             temperature: parseFloat(temperature),
             modelName,
-            openAIApiKey: mwsApiKey, // Используем MWS API ключ как OpenAI ключ для совместимости
+            openAIApiKey: mwsApiKey,
+            apiKey: mwsApiKey, // Явно передаем apiKey
             streaming: streaming ?? true,
             configuration: {
-                baseURL: 'https://api.gpt.mws.ru/v1'
+                baseURL: 'https://api.gpt.mws.ru/v1',
+                apiKey: mwsApiKey // И в конфигурации тоже
             }
         }
 

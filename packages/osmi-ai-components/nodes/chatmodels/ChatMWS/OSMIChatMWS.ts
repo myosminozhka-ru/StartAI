@@ -12,6 +12,8 @@ export class ChatMWS extends LangchainChatOpenAI implements IVisionChatModal {
         // Переопределяем baseURL для MWS API
         const mwsFields = {
             ...fields,
+            // Используем переданный API ключ или дефолтный
+            openAIApiKey: fields?.openAIApiKey || '4uRDvbtCf5o6B7WHtIFR',
             configuration: {
                 ...fields?.configuration,
                 baseURL: 'https://api.gpt.mws.ru/v1'

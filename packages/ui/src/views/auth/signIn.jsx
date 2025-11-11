@@ -224,6 +224,15 @@ const SignInPage = () => {
                                 .
                             </Typography>
                         )}
+                        {isOpenSource && (
+                            <Typography variant='body2' sx={{ color: theme.palette.grey[600] }}>
+                                Нет аккаунта?{' '}
+                                <Link style={{ color: `${theme.palette.primary.main}` }} to='/simple-register'>
+                                    Зарегистрируйтесь
+                                </Link>
+                                .
+                            </Typography>
+                        )}
                     </Stack>
                     <form onSubmit={doLogin}>
                         <Stack sx={{ width: '100%', flexDirection: 'column', alignItems: 'left', justifyContent: 'center', gap: 2 }}>

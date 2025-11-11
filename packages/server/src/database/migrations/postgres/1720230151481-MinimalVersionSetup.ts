@@ -41,16 +41,8 @@ export class MinimalVersionSetup1720230151481 implements MigrationInterface {
             WHERE NOT EXISTS (SELECT 1 FROM role WHERE name = 'PERSONAL_WORKSPACE');
         `)
 
-        // 3. Добавляем недостающие поля в таблицу user (если будет создана позже)
-        await queryRunner.query(`
-            DO $$
-            BEGIN
-                IF EXISTS (SELECT 1 FROM information_schema.tables WHERE table_name = 'user') THEN
-                    ALTER TABLE "user" ADD COLUMN IF NOT EXISTS "createdBy" varchar;
-                    ALTER TABLE "user" ADD COLUMN IF NOT EXISTS "updatedBy" varchar;
-                END IF;
-            END $$;
-        `)
+        // 3. User audit columns removed for minimal version simplification
+        // No longer adding createdBy/updatedBy to user table
 
         // 4. Добавляем поля в organization (если будет создана позже)
         await queryRunner.query(`

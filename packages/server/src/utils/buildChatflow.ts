@@ -775,7 +775,42 @@ export const executeFlow = async ({
         }
 
         /*** Run the ending node ***/
-        let result = await endingNodeInstance.run(endingNodeData, finalQuestion, runParams)
+        let result
+        
+        // Для Chat Models инициализируем модель и вызываем с поддержкой streaming
+        if (endingNodeData.category === 'Chat Models') {
+            // Инициализируем модель через init
+            const chatModel = await endingNodeInstance.init(endingNodeData, finalQuestion, runParams)
+            
+            if (isStreamValid && sseStreamer) {
+                // Streaming режим
+                sseStreamer.streamStartEvent(chatId, '')
+                
+                let streamedText = ''
+                const stream = await chatModel.stream(finalQuestion)
+                
+                for await (const chunk of stream) {
+                    const content = typeof chunk === 'string' ? chunk : chunk.content || ''
+                    if (content) {
+                        streamedText += content
+                        sseStreamer.streamTokenEvent(chatId, content)
+                    }
+                }
+                
+                result = { text: streamedText }
+            } else {
+                // Не streaming режим
+                const response = await chatModel.invoke(finalQuestion)
+                result = {
+                    text: typeof response === 'string' ? response : response.content || response.text || JSON.stringify(response)
+                }
+            }
+        } else if (typeof endingNodeInstance.run === 'function') {
+            result = await endingNodeInstance.run(endingNodeData, finalQuestion, runParams)
+            result = typeof result === 'string' ? { text: result } : result
+        } else {
+            throw new InternalOsmiError(StatusCodes.INTERNAL_SERVER_ERROR, `Node ${endingNodeData.name} does not have a valid execution method`)
+        }
 
         result = typeof result === 'string' ? { text: result } : result
 
@@ -927,16 +962,13 @@ const checkIfStreamValid = async (
     nodes: IReactFlowNode[],
     streaming: boolean | string | undefined
 ): Promise<boolean> => {
-    // If streaming is undefined, set to false by default
-    if (streaming === undefined) {
-        streaming = false
-    }
-
     // Once custom function ending node exists, flow is always unavailable to stream
     const isCustomFunctionEndingNode = endingNodes.some((node) => node.data?.outputs?.output === 'EndingNode')
     if (isCustomFunctionEndingNode) return false
 
     let isStreamValid = false
+    let hasChatModel = false
+    
     for (const endingNode of endingNodes) {
         const endingNodeData = endingNode.data || {} // Ensure endingNodeData is never undefined
 
@@ -956,12 +988,18 @@ const checkIfStreamValid = async (
             )
         }
 
-        isStreamValid = isFlowValidForStream(nodes, endingNodeData)
+        // Для Chat Models всегда разрешаем streaming
+        if (endingNodeData.category === 'Chat Models') {
+            isStreamValid = true
+            hasChatModel = true
+        } else {
+            isStreamValid = isFlowValidForStream(nodes, endingNodeData)
+        }
     }
-
-    isStreamValid = (streaming === 'true' || streaming === true) && isStreamValid
-
-    return isStreamValid
+    
+    // Для Chat Models игнорируем параметр streaming из запроса и всегда включаем
+    const finalStreamValid = hasChatModel ? true : ((streaming === 'true' || streaming === true) && isStreamValid)
+    return finalStreamValid
 }
 
 /**
@@ -1026,21 +1064,28 @@ export const utilBuildChatflow = async (req: Request, isInternal: boolean = fals
         }
         const workspaceId = workspace.id
 
-        const org = await appServer.AppDataSource.getRepository(Organization).findOneBy({
-            id: workspace.organizationId
-        })
-        if (!org) {
-            throw new InternalOsmiError(StatusCodes.NOT_FOUND, `Organization ${workspace.organizationId} not found`)
+        let orgId = ''
+        let subscriptionId = ''
+
+        if (workspace.organizationId) {
+            const org = await appServer.AppDataSource.getRepository(Organization).findOneBy({
+                id: workspace.organizationId
+            })
+            if (org) {
+                orgId = org.id
+                organizationId = orgId
+                // subscriptionId остается пустым для Open Source режима
+            }
         }
 
-        const orgId = org.id
-        organizationId = orgId
-        const subscriptionId = org.subscriptionId as string
-
-        const subscriptionDetails = await appServer.usageCacheManager.getSubscriptionDataFromCache(subscriptionId)
+        const subscriptionDetails = subscriptionId 
+            ? await appServer.usageCacheManager.getSubscriptionDataFromCache(subscriptionId)
+            : null
         const productId = subscriptionDetails?.productId || ''
 
-        await checkPredictions(orgId, subscriptionId, appServer.usageCacheManager)
+        if (orgId && subscriptionId) {
+            await checkPredictions(orgId, subscriptionId, appServer.usageCacheManager)
+        }
 
         const executeData: IExecuteFlowParams = {
             incomingInput, // Use the defensively created incomingInput variable

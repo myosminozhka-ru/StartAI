@@ -53,6 +53,10 @@ const AuthRoutes = {
         {
             path: '/license-expired',
             element: <LicenseExpiredPage />
+        },
+        {
+            path: '/soglashenie',
+            element: <EulaPage />
         }
     ]
 }

@@ -9,10 +9,6 @@ import { RequireAuth } from '@/routes/RequireAuth'
 // chatflows routing
 const Chatflows = Loadable(lazy(() => import('@/views/chatflows')))
 
-// agents routing
-const Agentflows = Loadable(lazy(() => import('@/views/agentflows')))
-
-
 // apikey routing
 const APIKey = Loadable(lazy(() => import('@/views/apikey')))
 
@@ -74,14 +70,6 @@ const MainRoutes = {
             element: (
                 <RequireAuth permission={'chatflows:view'}>
                     <Chatflows />
-                </RequireAuth>
-            )
-        },
-        {
-            path: '/agentflows',
-            element: (
-                <RequireAuth permission={'agentflows:view'}>
-                    <Agentflows />
                 </RequireAuth>
             )
         },

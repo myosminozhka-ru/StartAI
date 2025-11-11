@@ -10,6 +10,9 @@ import { LoadingButton } from '@mui/lab'
 import MainCard from '@/ui-component/cards/MainCard'
 import { Input } from '@/ui-component/input/Input'
 
+// API
+import authApi from '@/api/auth'
+
 // Hooks
 import useApi from '@/hooks/useApi'
 
@@ -57,26 +60,7 @@ const SimpleRegisterPage = () => {
     const [eulaAccepted, setEulaAccepted] = useState(false)
 
     const navigate = useNavigate()
-
-    // API для простой регистрации
-    const registerApi = useApi({
-        post: async (body) => {
-            const response = await fetch('/api/v1/auth/simple-register', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(body)
-            })
-            
-            if (!response.ok) {
-                const error = await response.json()
-                throw new Error(error.message || 'Ошибка регистрации')
-            }
-            
-            return response.json()
-        }
-    })
+    const registerApi = useApi(authApi.simpleRegister)
 
     const doRegister = (event) => {
         event.preventDefault()
@@ -305,4 +289,6 @@ const SimpleRegisterPage = () => {
 }
 
 export default SimpleRegisterPage
+
+
 

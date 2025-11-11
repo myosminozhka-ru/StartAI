@@ -156,8 +156,9 @@ export const initializeJwtCookieMiddleware = async (app: express.Application, id
                     if (!organization) {
                         return done('Organization not found')
                     }
-                    const subscriptionId = organization.subscriptionId as string
-                    const customerId = organization.customerId as string
+                    // В Open Source режиме нет subscriptionId и customerId
+                    const subscriptionId = ''
+                    const customerId = ''
                     const features = await identityManager.getFeaturesByPlan(subscriptionId)
                     const productId = await identityManager.getProductIdFromSubscription(subscriptionId)
 

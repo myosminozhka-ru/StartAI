@@ -137,8 +137,7 @@ export class AccountService {
                     // @ts-ignore
                     referral: data.user.referral || ''
                 })
-                data.organization.customerId = customerId
-                data.organization.subscriptionId = subscriptionId
+                // customerId and subscriptionId removed for minimal version
 
                 // if credential exists then the user is signing up with email/password
                 // if not then the user is signing up with oauth/sso
@@ -217,19 +216,18 @@ export class AccountService {
         }
 
         if (!data.organization.id) {
-            data.organization.createdBy = data.user.createdBy
+            data.organization.createdBy = data.user.id
             data.organization = this.organizationservice.createNewOrganization(data.organization, queryRunner, true)
         }
         data.organizationUser.organizationId = data.organization.id
         data.organizationUser.userId = data.user.id
-        data.organizationUser.createdBy = data.user.createdBy
+        data.organizationUser.createdBy = data.user.id
         data.organizationUser = this.organizationUserService.createNewOrganizationUser(data.organizationUser, queryRunner)
         data.workspace.organizationId = data.organization.id
-        data.workspace.createdBy = data.user.createdBy
         data.workspace = this.workspaceService.createNewWorkspace(data.workspace, queryRunner, true)
         data.workspaceUser.workspaceId = data.workspace.id
         data.workspaceUser.userId = data.user.id
-        data.workspaceUser.createdBy = data.user.createdBy
+        data.workspaceUser.createdBy = data.user.id
         data.workspaceUser.status = WorkspaceUserStatus.ACTIVE
         data.workspaceUser = this.workspaceUserService.createNewWorkspaceUser(data.workspaceUser, queryRunner)
 
@@ -317,16 +315,14 @@ export class AccountService {
                 data.organizationUser.userId = data.user.id
                 const roleMember = await this.roleService.readGeneralRoleByName(GeneralRole.MEMBER, queryRunner)
                 data.organizationUser.roleId = roleMember.id
-                data.organizationUser.createdBy = data.user.createdBy
+                data.organizationUser.createdBy = data.user.id
                 data.organizationUser.status = OrganizationUserStatus.INVITED
                 data.organizationUser = await this.organizationUserService.createNewOrganizationUser(data.organizationUser, queryRunner)
-
-                workspace.updatedBy = data.user.createdBy
 
                 data.workspaceUser.workspaceId = data.workspace.id
                 data.workspaceUser.userId = data.user.id
                 data.workspaceUser.roleId = data.role.id
-                data.workspaceUser.createdBy = data.user.createdBy
+                data.workspaceUser.createdBy = data.user.id
                 data.workspaceUser.status = WorkspaceUserStatus.INVITED
                 data.workspaceUser = await this.workspaceUserService.createNewWorkspaceUser(data.workspaceUser, queryRunner)
 
@@ -354,7 +350,7 @@ export class AccountService {
                 data.organizationUser.userId = user.id
                 const roleMember = await this.roleService.readGeneralRoleByName(GeneralRole.MEMBER, queryRunner)
                 data.organizationUser.roleId = roleMember.id
-                data.organizationUser.createdBy = data.user.createdBy
+                data.organizationUser.createdBy = user.id
                 data.organizationUser.status = OrganizationUserStatus.INVITED
                 data.organizationUser = await this.organizationUserService.createNewOrganizationUser(data.organizationUser, queryRunner)
             } else {
@@ -403,18 +399,16 @@ export class AccountService {
                     await sendWorkspaceInvite(data.user.email!, data.workspace.name!, registerLink, this.identityManager.getPlatformType())
                 }
             } else {
-                data.organizationUser.updatedBy = data.user.createdBy
+                data.organizationUser.updatedBy = user.id
 
                 const dashboardLink = `${process.env.APP_URL}`
                 await sendWorkspaceAdd(data.user.email!, data.workspace.name!, dashboardLink)
             }
 
-            workspace.updatedBy = data.user.createdBy
-
             data.workspaceUser.workspaceId = data.workspace.id
             data.workspaceUser.userId = user.id
             data.workspaceUser.roleId = data.role.id
-            data.workspaceUser.createdBy = data.user.createdBy
+            data.workspaceUser.createdBy = user.id
             data.workspaceUser.status = WorkspaceUserStatus.INVITED
             data.workspaceUser = await this.workspaceUserService.createNewWorkspaceUser(data.workspaceUser, queryRunner)
 
