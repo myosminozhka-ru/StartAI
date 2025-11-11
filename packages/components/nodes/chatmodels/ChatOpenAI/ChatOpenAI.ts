@@ -231,8 +231,25 @@ class ChatOpenAI_ChatModels implements INode {
         if (nodeData.inputs?.credentialId) {
             nodeData.credential = nodeData.inputs?.credentialId
         }
+        
         const credentialData = await getCredentialData(nodeData.credential ?? '', options)
-        const openAIApiKey = getCredentialParam('openAIApiKey', credentialData, nodeData)
+        
+        // Проверяем все возможные источники API ключа
+        let openAIApiKey = 
+            getCredentialParam('openAIApiKey', credentialData, nodeData) ||
+            credentialData?.openAIApiKey ||
+            nodeData.inputs?.openAIApiKey ||
+            process.env.OPENAI_API_KEY
+        
+        if (!openAIApiKey) {
+            console.error('[ChatOpenAI] Не удалось найти OPENAI_API_KEY в:', {
+                hasCredential: !!nodeData.credential,
+                credentialDataKeys: Object.keys(credentialData || {}),
+                nodeInputsKeys: Object.keys(nodeData.inputs || {}),
+                hasEnvVar: !!process.env.OPENAI_API_KEY
+            })
+            throw new Error('OPENAI_API_KEY отсутствует. Пожалуйста, добавьте учетные данные OpenAI через интерфейс или установите переменную окружения OPENAI_API_KEY.')
+        }
 
         const cache = nodeData.inputs?.cache as BaseCache
 
