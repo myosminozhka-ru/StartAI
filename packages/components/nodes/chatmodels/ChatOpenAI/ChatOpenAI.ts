@@ -242,12 +242,6 @@ class ChatOpenAI_ChatModels implements INode {
             process.env.OPENAI_API_KEY
         
         if (!openAIApiKey) {
-            console.error('[ChatOpenAI] Не удалось найти OPENAI_API_KEY в:', {
-                hasCredential: !!nodeData.credential,
-                credentialDataKeys: Object.keys(credentialData || {}),
-                nodeInputsKeys: Object.keys(nodeData.inputs || {}),
-                hasEnvVar: !!process.env.OPENAI_API_KEY
-            })
             throw new Error('OPENAI_API_KEY отсутствует. Пожалуйста, добавьте учетные данные OpenAI через интерфейс или установите переменную окружения OPENAI_API_KEY.')
         }
 
@@ -257,6 +251,7 @@ class ChatOpenAI_ChatModels implements INode {
             temperature: parseFloat(temperature),
             modelName,
             openAIApiKey,
+            apiKey: openAIApiKey,
             streaming: streaming ?? true
         }
 

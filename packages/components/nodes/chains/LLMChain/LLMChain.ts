@@ -257,7 +257,7 @@ const runPrediction = async (
 
         if (seen.length === 0) {
             // All inputVariables have fixed values specified
-            const options = { ...promptValues }
+            const options = promptValues ? { ...promptValues } : {}
             if (shouldStreamResponse) {
                 const handler = new CustomChainHandler(sseStreamer, chatId)
                 const res = await chain.call(options, [loggerHandler, handler, ...callbacks])
@@ -271,7 +271,7 @@ const runPrediction = async (
             const lastValue = seen.pop()
             if (!lastValue) throw new Error('Пожалуйста, укажите значения промпта')
             const options = {
-                ...promptValues,
+                ...(promptValues || {}),
                 [lastValue]: input
             }
             if (shouldStreamResponse) {
