@@ -41,7 +41,26 @@ if (!process.env.LOG_PATH) {
     process.env.LOG_PATH = path.join(projectRoot, 'logs')
 }
 
-dotenv.config({ path: path.join(projectRoot, '.env'), override: false })
+// Пытаемся загрузить .env из разных мест (в порядке приоритета)
+const envPaths = [
+    path.join(projectRoot, 'packages', 'server', '.env'),  // packages/server/.env (приоритет)
+    path.join(projectRoot, '.env')                          // корень (fallback)
+]
+
+envPaths.forEach(envPath => {
+    if (fs.existsSync(envPath)) {
+        console.log(`📂 Attempting to load .env from: ${envPath}`)
+        const result = dotenv.config({ path: envPath, override: false })
+        if (result.error) {
+            console.log(`❌ Error loading .env: ${result.error}`)
+        } else {
+            console.log(`✅ Loaded .env from: ${envPath}`)
+            console.log(`📊 DATABASE_TYPE: ${process.env.DATABASE_TYPE}`)
+            console.log(`📊 DATABASE_HOST: ${process.env.DATABASE_HOST}`)
+            console.log(`📊 PORT: ${process.env.PORT}`)
+        }
+    }
+})
 
 const dirsToCreate = [
     path.join(projectRoot, '.OSMI'),
