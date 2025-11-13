@@ -107,11 +107,19 @@ export class IdentityManager {
     }
 
     private _validateLicenseKey = async () => {
+        // Проверяем флаги отключения верификации лицензии
+        if (process.env.DISABLE_LICENSE_VERIFICATION === 'true' || process.env.NODE_ENV === 'development') {
+            console.log('🔓 License verification disabled (development mode or explicit flag)')
+            this.licenseValid = true
+            this.currentInstancePlatform = Platform.ENTERPRISE
+            return
+        }
+
         const LICENSE_URL = process.env.LICENSE_URL
-        const FLOWISE_EE_LICENSE_KEY = process.env.FLOWISE_EE_LICENSE_KEY
+        const OSMI_EE_LICENSE_KEY = process.env.OSMI_EE_LICENSE_KEY
 
         // First check if license key is missing
-        if (!FLOWISE_EE_LICENSE_KEY) {
+        if (!OSMI_EE_LICENSE_KEY) {
             this.licenseValid = false
             this.currentInstancePlatform = Platform.OPEN_SOURCE
             return
@@ -119,7 +127,7 @@ export class IdentityManager {
 
         try {
             if (process.env.OFFLINE === 'true') {
-                const decodedLicense = this._offlineVerifyLicense(FLOWISE_EE_LICENSE_KEY)
+                const decodedLicense = this._offlineVerifyLicense(OSMI_EE_LICENSE_KEY)
 
                 if (!decodedLicense) {
                     this.licenseValid = false
@@ -158,7 +166,7 @@ export class IdentityManager {
                 this.currentInstancePlatform = Platform.ENTERPRISE
             } else if (LICENSE_URL) {
                 try {
-                    const response = await axios.post(`${LICENSE_URL}/enterprise/verify`, { license: FLOWISE_EE_LICENSE_KEY })
+                    const response = await axios.post(`${LICENSE_URL}/enterprise/verify`, { license: OSMI_EE_LICENSE_KEY })
                     this.licenseValid = response.data?.valid
 
                     if (!LICENSE_URL.includes('api')) this.currentInstancePlatform = Platform.ENTERPRISE

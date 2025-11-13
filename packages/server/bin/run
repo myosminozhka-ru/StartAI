@@ -31,16 +31,6 @@ try {
     console.warn('Не удалось пропатчить @langchain/core:', err.message)
 }
 
-if (!process.env.BLOB_STORAGE_PATH) {
-    process.env.BLOB_STORAGE_PATH = path.join(projectRoot, 'storage')
-}
-if (!process.env.DATABASE_PATH) {
-    process.env.DATABASE_PATH = projectRoot
-}
-if (!process.env.LOG_PATH) {
-    process.env.LOG_PATH = path.join(projectRoot, 'logs')
-}
-
 // Пытаемся загрузить .env из разных мест (в порядке приоритета)
 const envPaths = [
     path.join(projectRoot, 'packages', 'server', '.env'),  // packages/server/.env (приоритет)
@@ -62,15 +52,53 @@ envPaths.forEach(envPath => {
     }
 })
 
-const dirsToCreate = [
-    path.join(projectRoot, '.OSMI'),
-    path.join(process.env.BLOB_STORAGE_PATH, 'uploads'),
-    path.join(projectRoot, 'logs')
-]
+// Преобразуем Enterprise переменные для совместимости
+if (process.env._EE_LICENSE_KEY && !process.env.OSMI_EE_LICENSE_KEY) {
+    process.env.OSMI_EE_LICENSE_KEY = process.env._EE_LICENSE_KEY
+}
+if (process.env.OSMI_AI_EE_LICENSE_KEY && !process.env.OSMI_EE_LICENSE_KEY) {
+    process.env.OSMI_EE_LICENSE_KEY = process.env.OSMI_AI_EE_LICENSE_KEY
+}
+if (process.env.OSMI_EE_LICENSE_KEY) {
+    console.log(`🔑 Enterprise license key loaded`)
+}
+if (process.env.OFFLINE === 'true') {
+    console.log(`🔌 Running in OFFLINE mode`)
+}
 
+// Создаём директории на основе переменных из .env
+const dirsToCreate = []
+
+// Добавляем LOG_PATH если он задан
+if (process.env.LOG_PATH) {
+    dirsToCreate.push(process.env.LOG_PATH)
+    console.log(`📁 Will create LOG_PATH: ${process.env.LOG_PATH}`)
+}
+
+// Добавляем BLOB_STORAGE_PATH если он задан
+if (process.env.BLOB_STORAGE_PATH) {
+    dirsToCreate.push(process.env.BLOB_STORAGE_PATH)
+    dirsToCreate.push(path.join(process.env.BLOB_STORAGE_PATH, 'uploads'))
+    console.log(`📁 Will create BLOB_STORAGE_PATH: ${process.env.BLOB_STORAGE_PATH}`)
+}
+
+// Добавляем DATABASE_PATH если он задан и это не sqlite
+if (process.env.DATABASE_PATH && process.env.DATABASE_TYPE !== 'postgres') {
+    dirsToCreate.push(process.env.DATABASE_PATH)
+    console.log(`📁 Will create DATABASE_PATH: ${process.env.DATABASE_PATH}`)
+}
+
+// Создаём все директории
 dirsToCreate.forEach(dir => {
     if (!fs.existsSync(dir)) {
-        fs.mkdirSync(dir, { recursive: true })
+        try {
+            fs.mkdirSync(dir, { recursive: true })
+            console.log(`✅ Created directory: ${dir}`)
+        } catch (err) {
+            console.error(`❌ Failed to create directory ${dir}:`, err.message)
+        }
+    } else {
+        console.log(`✓ Directory exists: ${dir}`)
     }
 })
 

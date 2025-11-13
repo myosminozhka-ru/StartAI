@@ -14,10 +14,13 @@ let appDataSource: DataSource
 
 export const init = async (): Promise<void> => {
     let homePath
-    let OSMIPath = path.join(getUserHome(), '.OSMI')
+    let OSMIPath = process.env.DATABASE_PATH || path.join(getUserHome(), '.OSMI')
     
-    if (!fs.existsSync(OSMIPath)) {
-        fs.mkdirSync(OSMIPath, { recursive: true })
+    // Создаём директорию только для SQLite
+    if (process.env.DATABASE_TYPE === 'sqlite' || !process.env.DATABASE_TYPE) {
+        if (!fs.existsSync(OSMIPath)) {
+            fs.mkdirSync(OSMIPath, { recursive: true })
+        }
     }
     switch (process.env.DATABASE_TYPE) {
         case 'sqlite':
