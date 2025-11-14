@@ -11,8 +11,21 @@ services:
     environment:
       - PORT=3000
     volumes:
-      - osmi-develop-data:/root/.osmi-ai/
+      - osmi-develop-data:/home/appuser/.osmi-ai/
 
+  omsiai-app-worker:
+    container_name: osmi-ai-app-worker
+    image: osmi-ai-app-worker:latest
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        UID: 1023
+        GID: 1023
+    restart: always
+    ports:
+      - "3021:3000"
+    command: ["pnpm", "run", "start-worker"]
 volumes:
   osmi-develop-data:
     driver: local

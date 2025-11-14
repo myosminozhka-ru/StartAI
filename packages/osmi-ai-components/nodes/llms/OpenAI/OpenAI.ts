@@ -2,7 +2,7 @@ import { ClientOptions, OpenAI, OpenAIInput } from '@langchain/openai'
 import { BaseCache } from '@langchain/core/caches'
 import { BaseLLMParams } from '@langchain/core/language_models/llms'
 import { ICommonObject, INode, INodeData, INodeOptionsValue, INodeParams } from '../../../src/Interface'
-import { getBaseClasses, getCredentialData, getCredentialParam } from '../../../src/utils'
+import { attachOpenAIApiKey, getBaseClasses, getCredentialData, getCredentialParam } from '../../../src/utils'
 import { getModels, MODEL_TYPE } from '../../../src/modelLoader'
 
 class OpenAI_LLMs implements INode {
@@ -150,15 +150,18 @@ class OpenAI_LLMs implements INode {
 
         const credentialData = await getCredentialData(nodeData.credential ?? '', options)
         const openAIApiKey = getCredentialParam('openAIApiKey', credentialData, nodeData)
+        if (!openAIApiKey) {
+            throw new Error('OpenAI API key is required. Please provide it via credentials.')
+        }
 
         const cache = nodeData.inputs?.cache as BaseCache
 
         const obj: Partial<OpenAIInput> & BaseLLMParams & { configuration?: ClientOptions } = {
             temperature: parseFloat(temperature),
             modelName,
-            openAIApiKey,
             streaming: streaming ?? true
         }
+        attachOpenAIApiKey(obj, openAIApiKey)
 
         if (maxTokens) obj.maxTokens = parseInt(maxTokens, 10)
         if (topP) obj.topP = parseFloat(topP)

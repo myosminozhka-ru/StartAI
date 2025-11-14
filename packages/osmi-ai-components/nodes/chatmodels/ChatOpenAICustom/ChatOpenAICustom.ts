@@ -132,6 +132,9 @@ class ChatOpenAICustom_ChatModels implements INode {
 
         const credentialData = await getCredentialData(nodeData.credential ?? '', options)
         const openAIApiKey = getCredentialParam('openAIApiKey', credentialData, nodeData)
+        if (!openAIApiKey) {
+            throw new Error('OpenAI API key is required. Please provide it via credentials.')
+        }
 
         const obj: ChatOpenAIFields = {
             temperature: parseFloat(temperature),

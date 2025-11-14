@@ -1,6 +1,6 @@
 import { ClientOptions, OpenAIEmbeddings, OpenAIEmbeddingsParams } from '@langchain/openai'
 import { ICommonObject, INode, INodeData, INodeOptionsValue, INodeParams } from '../../../src/Interface'
-import { getBaseClasses, getCredentialData, getCredentialParam } from '../../../src/utils'
+import { attachOpenAIApiKey, getBaseClasses, getCredentialData, getCredentialParam } from '../../../src/utils'
 import { MODEL_TYPE, getModels } from '../../../src/modelLoader'
 import { getMWSModels, getDefaultMWSEmbeddingModels } from '../../../src/mwsModelLoader'
 
@@ -128,13 +128,13 @@ class MWSEmbedding_Embeddings implements INode {
         const credentialData = await getCredentialData(nodeData.credential ?? '', options)
         const mwsApiKey = getCredentialParam('mwsApiKey', credentialData, nodeData)
 
-        const obj: Partial<OpenAIEmbeddingsParams> & { openAIApiKey?: string; configuration?: ClientOptions } = {
-            openAIApiKey: mwsApiKey,
+        const obj: Partial<OpenAIEmbeddingsParams> & { configuration?: ClientOptions } = {
             modelName,
             configuration: {
                 baseURL: 'https://api.gpt.mws.ru/v1'
             }
         }
+        attachOpenAIApiKey(obj, mwsApiKey)
 
         if (stripNewLines) obj.stripNewLines = stripNewLines
         if (batchSize) obj.batchSize = parseInt(batchSize, 10)

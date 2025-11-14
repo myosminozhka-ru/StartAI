@@ -1,7 +1,7 @@
 ﻿import { ChatOpenAI as LangchainChatOpenAI, ChatOpenAIFields, OpenAIClient } from '@langchain/openai'
 import { BaseCache } from '@langchain/core/caches'
 import { ICommonObject, IMultiModalOption, INode, INodeData, INodeOptionsValue, INodeParams } from '../../../src/Interface'
-import { getBaseClasses, getCredentialData, getCredentialParam } from '../../../src/utils'
+import { attachOpenAIApiKey, getBaseClasses, getCredentialData, getCredentialParam } from '../../../src/utils'
 import { ChatOpenAI } from './OSMIChatOpenAI'
 import { getModels, MODEL_TYPE } from '../../../src/modelLoader'
 import { HttpsProxyAgent } from 'https-proxy-agent'
@@ -232,16 +232,25 @@ class ChatOpenAI_ChatModels implements INode {
             nodeData.credential = nodeData.inputs?.credentialId
         }
         const credentialData = await getCredentialData(nodeData.credential ?? '', options)
-        const openAIApiKey = getCredentialParam('openAIApiKey', credentialData, nodeData)
+        let openAIApiKey =
+            getCredentialParam('openAIApiKey', credentialData, nodeData) ||
+            credentialData?.openAIApiKey ||
+            nodeData.inputs?.openAIApiKey ||
+            process.env.OPENAI_API_KEY
+        if (!openAIApiKey) {
+            throw new Error(
+                'OPENAI_API_KEY отсутствует. Пожалуйста, добавьте учетные данные OpenAI через интерфейс или установите переменную окружения OPENAI_API_KEY.'
+            )
+        }
 
         const cache = nodeData.inputs?.cache as BaseCache
 
         const obj: ChatOpenAIFields = {
             temperature: parseFloat(temperature),
             modelName,
-            openAIApiKey,
             streaming: streaming ?? true
         }
+        attachOpenAIApiKey(obj, openAIApiKey)
 
         if (modelName.includes('o3') || modelName.includes('o1')) {
             delete obj.temperature

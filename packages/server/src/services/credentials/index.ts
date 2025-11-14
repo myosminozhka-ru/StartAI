@@ -2,7 +2,7 @@
 import { StatusCodes } from 'http-status-codes'
 import { getRunningExpressApp } from '../../utils/getRunningExpressApp'
 import { Credential } from '../../database/entities/Credential'
-import { transformToCredentialEntity, decryptCredentialData } from '../../utils'
+import { transformToCredentialEntity, decryptCredentialData, REDACTED_CREDENTIAL_VALUE } from '../../utils'
 import { ICredentialReturnResponse } from '../../Interface'
 import { InternalOsmiError } from '../../errors/InternalOsmiError'
 import { getErrorMessage } from '../../errors/utils'
@@ -175,7 +175,16 @@ const updateCredential = async (credentialId: string, requestBody: any): Promise
             throw new InternalOsmiError(StatusCodes.NOT_FOUND, `Credential ${credentialId} not found`)
         }
         const decryptedCredentialData = await decryptCredentialData(credential.encryptedData)
-        requestBody.plainDataObj = { ...decryptedCredentialData, ...requestBody.plainDataObj }
+        
+        // Filter out REDACTED_CREDENTIAL_VALUE from requestBody.plainDataObj
+        const filteredPlainDataObj: any = {}
+        for (const key in requestBody.plainDataObj) {
+            if (requestBody.plainDataObj[key] !== REDACTED_CREDENTIAL_VALUE) {
+                filteredPlainDataObj[key] = requestBody.plainDataObj[key]
+            }
+        }
+        
+        requestBody.plainDataObj = { ...decryptedCredentialData, ...filteredPlainDataObj }
         const updateCredential = await transformToCredentialEntity(requestBody)
         await appServer.AppDataSource.getRepository(Credential).merge(credential, updateCredential)
         const dbResponse = await appServer.AppDataSource.getRepository(Credential).save(credential)

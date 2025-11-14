@@ -653,7 +653,41 @@ export const defaultChain = (...values: any[]): any | undefined => {
 }
 
 export const getCredentialParam = (paramName: string, credentialData: ICommonObject, nodeData: INodeData, defaultValue?: any): any => {
-    return (nodeData.inputs as ICommonObject)[paramName] ?? credentialData[paramName] ?? defaultValue ?? undefined
+    // Попытка получить значение из inputs, credentials, defaultValue
+    const value = (nodeData.inputs as ICommonObject)[paramName] ?? credentialData[paramName] ?? defaultValue
+    
+    // Если значение не найдено, пробуем переменные окружения как fallback
+    if (!value) {
+        // Маппинг имен параметров на переменные окружения
+        const envVarMap: { [key: string]: string } = {
+            'anthropicApiKey': 'ANTHROPIC_API_KEY',
+            'googleApiKey': 'GOOGLE_API_KEY',
+            'cohereApiKey': 'COHERE_API_KEY',
+            'huggingFaceApi': 'HUGGINGFACEHUB_API_KEY',
+            'pineconeApiKey': 'PINECONE_API_KEY',
+            'replicate_api_key': 'REPLICATE_API_TOKEN'
+        }
+        
+        const envVarName = envVarMap[paramName]
+        if (envVarName) {
+            const envValue = getEnvironmentVariable(envVarName)
+            if (envValue) {
+                console.log(`🔑 Using ${envVarName} from environment variables for ${paramName}`)
+                return envValue
+            }
+        }
+    }
+    
+    return value ?? undefined
+}
+
+export const attachOpenAIApiKey = <T>(config: T, apiKey?: string): T => {
+    if (apiKey) {
+        const target = config as Record<string, any>
+        target.openAIApiKey = apiKey
+        target.apiKey = apiKey
+    }
+    return config
 }
 
 // reference https://www.freeformatter.com/json-escape.html
