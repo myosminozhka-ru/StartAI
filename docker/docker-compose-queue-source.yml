@@ -5,7 +5,7 @@ services:
         image: redis:alpine
         container_name: osmi-ai-redis
         ports:
-            - '6379:6379'
+            - '6380:6379'
         volumes:
             - redis_data:/data
         healthcheck:
@@ -13,7 +13,6 @@ services:
             interval: 10s
             timeout: 5s
             retries: 5
-            start_period: 10s
         logging:
             driver: "json-file"
             options:
@@ -32,26 +31,9 @@ services:
         volumes:
             # Mount local .osmi-ai to container's default location
             - ../.osmi-ai:/root/.osmi-ai
-        environment:
-            # --- Essential osmi-ai Vars ---
-            - PORT=${PORT:-3000}
-            - DATABASE_TYPE=${DATABASE_TYPE:-sqlite}
-            - DATABASE_HOST=postgres
-            - DATABASE_PORT=5432
-            - DATABASE_NAME=${DATABASE_NAME}
-            - DATABASE_USER=${DATABASE_USER}
-            - DATABASE_PASSWORD=${DATABASE_PASSWORD}
-            - DATABASE_PATH=/root/.osmi-ai
-            - SECRETKEY_PATH=/root/.osmi-ai
-            - LOG_PATH=/root/.osmi-ai/logs
-            - BLOB_STORAGE_PATH=/root/.osmi-ai/storage
-            # --- Queue Vars (Main Instance) ---
-            - MODE=production
-            - QUEUE_NAME=osmi-ai-queue # Ensure this matches worker
-            - REDIS_URL=redis://redis:6379 # Use service name 'redis'
+        env_file:
+            - ../packages/server/.env
         depends_on:
-            postgres:
-                condition: service_healthy
             redis:
                 condition: service_healthy
         healthcheck:
@@ -59,7 +41,6 @@ services:
             interval: 30s
             timeout: 10s
             retries: 5
-            start_period: 60s
         stop_grace_period: 30s
         restart: unless-stopped
         logging:
@@ -78,23 +59,8 @@ services:
         volumes:
             # Mount same local .osmi-ai to worker
             - ../.osmi-ai:/root/.osmi-ai
-        environment:
-            # --- Essential osmi-ai Vars ---
-            - WORKER_PORT=${WORKER_PORT:-5566} # Port for worker healthcheck
-            - DATABASE_TYPE=${DATABASE_TYPE:-sqlite}
-            - DATABASE_HOST=postgres
-            - DATABASE_PORT=5432
-            - DATABASE_NAME=${DATABASE_NAME}
-            - DATABASE_USER=${DATABASE_USER}
-            - DATABASE_PASSWORD=${DATABASE_PASSWORD}
-            - DATABASE_PATH=/root/.osmi-ai
-            - SECRETKEY_PATH=/root/.osmi-ai
-            - LOG_PATH=/root/.osmi-ai/logs
-            - BLOB_STORAGE_PATH=/root/.osmi-ai/storage
-            # --- Queue Vars (Main Instance) ---
-            - MODE=production
-            - QUEUE_NAME=osmi-ai-queue # Ensure this matches worker
-            - REDIS_URL=redis://redis:6379 # Use service name 'redis'
+        env_file:
+            - ../packages/server/.env
         depends_on:
             redis:
                 condition: service_healthy
@@ -105,7 +71,6 @@ services:
             interval: 30s
             timeout: 10s
             retries: 5
-            start_period: 60s
         stop_grace_period: 30s
         restart: unless-stopped
         logging:

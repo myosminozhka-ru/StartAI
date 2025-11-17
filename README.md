@@ -17,36 +17,7 @@
 - 👥 **Пользователи:** убрано управление пользователями и рабочими пространствами
 - 📦 **Размер:** значительно уменьшен за счет удаления неиспользуемых компонентов
 
-## 📚 Table of Contents
 
--   [⚡ Quick Start](#-quick-start)
--   [🎯 Minimal Single Agent Version](#-minimal-single-agent-version)
--   [🔥 New: MWS Integration](#-new-mws-integration)
--   [🐳 Docker](#-docker)
--   [👨‍💻 Developers](#-developers)
--   [🌱 Env Variables](#-env-variables)
--   [📖 Documentation](#-documentation)
--   [🌐 Self Host](#-self-host)
--   [☁️ Cloud](#️-osmi-it-cloud)
--   [🙋 Support](#-support)
--   [🙌 Contributing](#-contributing)
--   [📄 License](#-license)
-
-## ⚡Quick Start
-
-Download and Install [NodeJS](https://nodejs.org/en/download) >= 18.15.0
-
-1. Install
-    ```bash
-    pnpm install
-    ```
-2. Start
-
-    ```bash
-    pnpx start
-    ```
-
-3. Open [http://localhost:3000](http://localhost:3000)
 
 ## 🎯 Minimal Single Agent Version
 
@@ -75,61 +46,7 @@ Download and Install [NodeJS](https://nodejs.org/en/download) >= 18.15.0
 - **1 модерация:** SimplePromptModeration
 - **1 менеджер записей:** PostgresRecordManager
 
-### ❌ Что полностью удалено:
-**UI разделы:**
-- Ассистенты, Маркетплейсы
-- Управление пользователями, роли, права доступа
-- Рабочие пространства, организации
-- SSO интеграция, активность входа
 
-**AI компоненты:**
-- Все LlamaIndex компоненты (engine, responsesynthesizer)
-- Все Chains (цепочки)
-- Все Утилиты
-- 34+ инструментов (оставлено только 7)
-- Все агенты кроме ToolAgent
-- Все чат-модели кроме MWS
-- Все LLM кроме MWS
-- Все эмбеддинги кроме MWS
-- 38 загрузчиков документов
-- Последовательные агенты, графы
-- Модерация OpenAI
-- MySQL и SQLite менеджеры записей
-
-### 🚀 Преимущества минимальной версии:
-- **Максимальная простота** - только самое необходимое
-- **Российская локализация** - работает через MWS API МТС
-- **Быстрое развертывание** - минимум зависимостей
-- **Ограниченный функционал** - идеально для простых задач
-- **Один агент** - сосредоточенность на базовых возможностях
-
-## 🔥 New: MWS Integration
-
-Теперь поддерживает интеграцию с **MWS (МТС) API** для использования российских языковых моделей!
-
-### 🚀 Возможности MWS интеграции:
-
-- **ChatMWS узел** - доступ к мощным языковым моделям МТС
-- **MWS Embeddings** - создание векторных представлений текста
-- **Динамическая загрузка моделей** через API
-- **Полная совместимость** с существующими пайплайнами
-
-### 🎯 Доступные модели:
-
-**Chat модели:**
-- `mws-gpt-alpha` - основная рекомендуемая модель МТС
-- `qwen2.5-32b-instruct` - мощная китайская модель
-- `llama-3.3-70b-instruct` - новая модель Meta
-
-**Embedding модели:**
-- `bge-m3` - универсальная многоязычная модель
-- `BAAI/bge-multilingual-gemma2` - продвинутая модель для эмбеддингов
-
-### 📚 Документация:
-
-- [🧪 Руководство по тестированию MWS](./MWS_TESTING_GUIDE.md)
-- [📖 Инструкции по настройке MWS](./MWS_SETUP_INSTRUCTIONS.md)
-- [🔧 Техническая документация MWS](./MWS_INTEGRATION_README.md)
 
 ### ⚡ Быстрый старт с MWS:
 
@@ -168,21 +85,6 @@ Download and Install [NodeJS](https://nodejs.org/en/download) >= 18.15.0
     docker stop osmi-ai
     ```
 
-## 👨‍💻 Developers
-
-Has 3 different modules in a single mono repository.
-
--   `server`: Node backend to serve API logics
--   `ui`: React frontend
--   `components`: Third-party nodes integrations
--   `api-documentation`: Auto-generated swagger-ui API docs from express
-
-### Prerequisite
-
--   Install [PNPM](https://pnpm.io/installation)
-    ```bash
-    npm i -g pnpm
-    ```
 
 ### Setup
 
@@ -212,17 +114,38 @@ Has 3 different modules in a single mono repository.
    DATABASE_PASSWORD=
    ```
 
-4. Запустите сборку контейнеров:
+4. Для изменения CDN путей откройте файл `packages/ui/.env` и укажите:
+   ```bash
+   # Полный URL для GitHub CDN (для встраивания компонента)
+   VITE_CDN_URL=https://your-cdn.com/gh/artstyleplaystyle/OSMIChatEmbed@main/dist/web.js
+   
+   # Полный URL для NPM CDN (для встраивания компонента)
+   VITE_CDN_URL_NPM=https://your-cdn.com/npm/OSMI-embed@latest/dist/web.js
+   ```
+   **Важно:** После изменения CDN путей необходимо пересобрать UI: `cd packages/ui && npm run build`
+
+5. Для настройки Redis откройте файл `packages/server/.env` и укажите (если используете внешний Redis):
+   ```bash
+   
+   # Или отдельные параметры подключения
+   REDIS_HOST=redis
+   REDIS_PORT=6379
+   REDIS_USERNAME=
+   REDIS_PASSWORD=
+   
+Примеры можно найти в .env.example
+
+6. Запустите сборку контейнеров:
    ```bash
    docker-compose -f docker-compose-queue-source.yml up -d --build
    ```
 
-5. Дождитесь запуска всех контейнеров (~1-2 минуты). Проверить статус можно командой:
+7. Дождитесь запуска всех контейнеров (~1-2 минуты). Проверить статус можно командой:
    ```bash
    docker ps
    ```
 
-6. **Откройте приложение в браузере:**
+8. **Откройте приложение в браузере:**
    - **Регистрация**: `http://localhost:3000/simple-register`
    - **Вход**: `http://localhost:3000/signin`
 
@@ -247,17 +170,6 @@ Get Started with [OSMI IT Cloud](https://app.osmi-ai.ru).
 
 Feel free to ask any questions, raise problems, and request new features in [Discussion](https://github.com/myosminozhka-ru/OSMI-AI/discussions).
 
-## 🙌 Contributing
-
-Thanks go to these awesome contributors
-
-<a href="https://github.com/myosminozhka-ru/OSMI-AI/graphs/contributors">
-<img src="https://contrib.rocks/image?repo=myosminozhka-ru/OSMI-AI" />
-</a><br><br>
-
-See [Contributing Guide](CONTRIBUTING.md). For questions or issues, please create an issue in our repository.
-
-[![Star History Chart](https://api.star-history.com/svg?repos=myosminozhka-ru/OSMI-AI&type=Timeline)](https://star-history.com/#myosminozhka-ru/OSMI-AI&Date)
 
 ## 📄 License
 

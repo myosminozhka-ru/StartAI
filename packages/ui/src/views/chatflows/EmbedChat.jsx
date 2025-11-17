@@ -8,7 +8,7 @@ import { CopyBlock, atomOneDark } from 'react-code-blocks'
 import { CheckboxInput } from '@/ui-component/checkbox/Checkbox'
 
 // Const
-import { baseURL } from '@/store/constant'
+import { baseURL, cdnURL, cdnURLNpm } from '@/store/constant'
 
 function TabPanel(props) {
     const { children, value, index, ...other } = props
@@ -42,7 +42,7 @@ const codes = ['Всплывающий Html', 'Полноэкранный Html',
 
 const embedPopupHtmlCode = (chatflowid) => {
     return `<script type="module">
-    import Chatbot from "https://cdn.jsdelivr.net/gh/artstyleplaystyle/OSMIChatEmbed@main/dist/web.js"
+    import Chatbot from "${cdnURL}"
     Chatbot.init({
         chatflowid: "${chatflowid}",
         apiHost: "${baseURL}",
@@ -66,7 +66,7 @@ const App = () => {
 const embedFullpageHtmlCode = (chatflowid) => {
     return `<osmi-ai-fullchatbot></osmi-ai-fullchatbot>
 <script type="module">
-    import Chatbot from "https://cdn.jsdelivr.net/gh/artstyleplaystyle/OSMIChatEmbed@main/dist/web.js"
+    import Chatbot from "${cdnURL}"
     Chatbot.initFull({
         chatflowid: "${chatflowid}",
         apiHost: "${baseURL}",
@@ -196,7 +196,7 @@ const customStringify = (obj) => {
 
 const embedPopupHtmlCodeCustomization = (chatflowid) => {
     return `<script type="module">
-    import Chatbot from "https://cdn.jsdelivr.net/gh/artstyleplaystyle/OSMIChatEmbed@main/dist/web.js"
+    import Chatbot from "${cdnURL}"
     Chatbot.init({
         chatflowid: "${chatflowid}",
         apiHost: "${baseURL}",
@@ -249,7 +249,7 @@ const getFullPageThemeConfig = () => {
 const embedFullpageHtmlCodeCustomization = (chatflowid) => {
     return `<osmi-ai-fullchatbot></osmi-ai-fullchatbot>
 <script type="module">
-    import Chatbot from "https://cdn.jsdelivr.net/gh/artstyleplaystyle/OSMIChatEmbed@main/dist/web.js"
+    import Chatbot from "${cdnURL}"
     Chatbot.initFull({
         chatflowid: "${chatflowid}",
         apiHost: "${baseURL}",
@@ -353,7 +353,7 @@ const EmbedChat = ({ chatflowid }) => {
                                     <a rel='noreferrer' target='_blank' href='https://www.npmjs.com/package/OSMI-embed?activeTab=versions'>
                                         версию
                                     </a>
-                                    :&nbsp;<code>{`https://cdn.jsdelivr.net/npm/OSMI-embed@<version>/dist/web.js`}</code>
+                                    :&nbsp;<code>{cdnURLNpm}</code>
                                 </p>
                             </span>
                             <div style={{ height: 10 }}></div>
