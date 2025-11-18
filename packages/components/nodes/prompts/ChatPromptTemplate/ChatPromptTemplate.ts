@@ -133,7 +133,47 @@ class ChatPromptTemplate_Prompts implements INode {
                     libraries: ['axios', '@langchain/core']
                 })
 
-                const parsedResponse = JSON.parse(response)
+                // Если response уже массив объектов, используем его напрямую
+                // Если это строка, пытаемся распарсить как JSON
+                let parsedResponse: any
+                
+                // Сначала проверяем, не является ли response строкой с "[object ...]"
+                if (typeof response === 'string') {
+                    // Проверяем, не является ли это строковым представлением объекта ДО попытки парсинга
+                    if (response.trim().startsWith('[object ') || 
+                        response.includes('[object Hum') || 
+                        response.includes('[object AIM') || 
+                        response.includes('[object Tool')) {
+                        throw new Error(`Invalid response: objects were converted to string representations (e.g., "${response.substring(0, 50)}..."). NodeVM cannot serialize Langchain message objects directly. Try returning a JSON stringified array of message objects, or use a different approach.`)
+                    }
+                    // Проверяем, является ли это валидным JSON перед парсингом
+                    const trimmedResponse = response.trim()
+                    if ((trimmedResponse.startsWith('{') && trimmedResponse.endsWith('}')) || 
+                        (trimmedResponse.startsWith('[') && trimmedResponse.endsWith(']'))) {
+                        try {
+                            parsedResponse = JSON.parse(response)
+                        } catch (parseError) {
+                            // Если ошибка парсинга связана с "[object ...]", выбросим понятное сообщение
+                            if (parseError instanceof SyntaxError && parseError.message.includes('Unexpected token')) {
+                                throw new Error(`Failed to parse response: objects were converted to string representations (e.g., "[object HumanMessage]"). Make sure to return actual message objects or valid JSON string. Original error: ${parseError.message}`)
+                            }
+                            throw new Error(`Failed to parse response as JSON: ${parseError}. Response preview: ${response.substring(0, 100)}`)
+                        }
+                    } else {
+                        throw new Error(`Response is not a valid JSON string or array. Received: ${typeof response}. Make sure to return an array of message objects or a valid JSON string.`)
+                    }
+                } else if (Array.isArray(response)) {
+                    // Проверяем, не являются ли элементы массива строками "[object ...]"
+                    const hasInvalidStrings = response.some((item: any) => 
+                        typeof item === 'string' && (item.startsWith('[object ') || item.includes('[object Hum') || item.includes('[object AIM'))
+                    )
+                    if (hasInvalidStrings) {
+                        throw new Error('Response contains invalid string representations of objects. Make sure to return actual message objects, not stringified versions.')
+                    }
+                    parsedResponse = response
+                } else {
+                    throw new Error(`Unexpected response type: ${typeof response}. Expected array or JSON string. Response: ${String(response).substring(0, 100)}`)
+                }
 
                 if (!Array.isArray(parsedResponse)) {
                     throw new Error('Returned message history must be an array')

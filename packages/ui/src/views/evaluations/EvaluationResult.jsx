@@ -177,8 +177,8 @@ const EvalEvaluationRows = () => {
 
     const runAgain = async () => {
         const confirmPayload = {
-            title: `Повторить оценку`,
-            description: `Инициировать повторный запуск для оценки ${evaluation.name}?`,
+            title: `Повторить результат`,
+            description: `Инициировать повторный запуск для результата ${evaluation.name}?`,
             confirmButtonName: 'Да',
             cancelButtonName: 'Нет'
         }

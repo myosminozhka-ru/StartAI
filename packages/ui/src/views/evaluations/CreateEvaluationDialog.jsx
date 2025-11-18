@@ -49,7 +49,7 @@ import useNotifier from '@/utils/useNotifier'
 // const
 import { evaluators as evaluatorsOptions } from '../evaluators/evaluatorConstant'
 
-const steps = ['Наборы данных', 'Оценщики', 'LLM метрики']
+const steps = ['Тест кейсы', 'AI тестировщики', 'LLM метрики']
 
 const CreateEvaluationDialog = ({ show, dialogProps, onCancel, onConfirm }) => {
     const portalElement = document.getElementById('portal')
@@ -249,7 +249,7 @@ const CreateEvaluationDialog = ({ show, dialogProps, onCancel, onConfirm }) => {
             try {
                 const nodes = getNodesByCategoryApi.data
                 llmNodes.push({
-                    label: 'Без оценки',
+                    label: 'Без тестирования',
                     name: 'no_grading',
                     credential: {}
                 })
@@ -392,10 +392,10 @@ const CreateEvaluationDialog = ({ show, dialogProps, onCancel, onConfirm }) => {
                         {activeStep === 0 && (
                             <>
                                 <Typography sx={{ mt: 2 }} variant='h4'>
-                                    Выберите набор данных для тестирования на потоках
+                                    Выберите тест кейсы для тестирования на потоках
                                 </Typography>
                                 <Typography sx={{ mt: 2 }} variant='body2'>
-                                    Использует столбец <span style={{ fontStyle: 'italic' }}>input</span> из набора данных для выполнения
+                                    Использует столбец <span style={{ fontStyle: 'italic' }}>input</span> из тест кейсов для выполнения
                                     выбранных чатфлоу(ов) и сравнивает результаты со столбцом output.
                                 </Typography>
                                 <Typography variant='body2'>Будут вычислены следующие метрики:</Typography>
@@ -414,10 +414,10 @@ const CreateEvaluationDialog = ({ show, dialogProps, onCancel, onConfirm }) => {
                         {activeStep === 1 && (
                             <>
                                 <Typography sx={{ mt: 2 }} variant='h4'>
-                                    Модульное тестирование потоков с помощью пользовательских оценщиков
+                                    Модульное тестирование потоков с помощью пользовательских AI тестировщиков
                                 </Typography>
                                 <Typography sx={{ mt: 2, mb: 2 }} variant='body2'>
-                                    После выполнения все выбранные оценщики будут выполнены на результатах. Каждый оценщик будет оценивать
+                                    После выполнения все выбранные AI тестировщики будут выполнены на результатах. Каждый тестировщик будет оценивать
                                     результаты на основе определенных критериев и возвращать индикатор прохождения/непрохождения.
                                 </Typography>
                                 <Chip
@@ -483,7 +483,7 @@ const CreateEvaluationDialog = ({ show, dialogProps, onCancel, onConfirm }) => {
                             </Box>
                             <Box>
                                 <Typography variant='overline'>
-                                    Чатфлоу(ы) для оценки<span style={{ color: 'red' }}>&nbsp;*</span>
+                                    Чатфлоу(ы) для тестирования<span style={{ color: 'red' }}>&nbsp;*</span>
                                 </Typography>
                                 <MultiDropdown
                                     name={'chatflow1'}
@@ -497,7 +497,7 @@ const CreateEvaluationDialog = ({ show, dialogProps, onCancel, onConfirm }) => {
                     {activeStep === 1 && (
                         <>
                             <Box>
-                                <Typography variant='overline'>Выберите оценщики</Typography>
+                                <Typography variant='overline'>Выберите AI тестировщики</Typography>
                                 <MultiDropdown
                                     name={'selectEvals'}
                                     options={availableSimpleEvaluators}
@@ -511,7 +511,7 @@ const CreateEvaluationDialog = ({ show, dialogProps, onCancel, onConfirm }) => {
                         <>
                             <Box>
                                 <Typography variant='overline' sx={{ mr: 2 }}>
-                                    Использовать LLM для оценки результатов ?
+                                    Использовать LLM для тестирования результатов ?
                                 </Typography>
                                 <Dropdown
                                     name='chatLLM'
@@ -550,14 +550,14 @@ const CreateEvaluationDialog = ({ show, dialogProps, onCancel, onConfirm }) => {
                             )}
                             {useLLM && chatLLMs.find((llm) => llm.name === selectedLLM)?.credential && (
                                 <Box>
-                                    <Typography variant='overline'>Выберите учетные данные</Typography>
+                                    <Typography variant='overline'>Выберите API сервисов</Typography>
                                     <CredentialInputHandler
                                         key={selectedLLM}
                                         size='small'
                                         sx={{ flexGrow: 1, marginBottom: 3 }}
                                         data={credentialId ? { credential: credentialId } : {}}
                                         inputParam={{
-                                            label: 'Подключить учетные данные',
+                                            label: 'Подключить API сервисов',
                                             name: 'credential',
                                             type: 'credential',
                                             credentialNames: [
@@ -572,7 +572,7 @@ const CreateEvaluationDialog = ({ show, dialogProps, onCancel, onConfirm }) => {
                             )}
                             {useLLM && (
                                 <Box>
-                                    <Typography variant='overline'>Выберите оценщики</Typography>
+                                    <Typography variant='overline'>Выберите AI тестировщики</Typography>
                                     <MultiDropdown
                                         name={'selectLLMEvals'}
                                         options={availableLLMEvaluators}
@@ -595,7 +595,7 @@ const CreateEvaluationDialog = ({ show, dialogProps, onCancel, onConfirm }) => {
                 <div style={{ flex: 1 }}></div>
                 {activeStep === 1 && selectedSimpleEvaluators.length === 0 && (
                     <Button
-                        title='Пропустить оценщики'
+                        title='Пропустить AI тестировщики'
                         color='primary'
                         sx={{ mr: 2, borderRadius: 25 }}
                         variant='outlined'

@@ -246,7 +246,7 @@ const Credentials = () => {
                             onSearchChange={onSearchChange}
                             search={true}
                             searchPlaceholder='Поиск учетных записей'
-                            title='Учетные записи'
+                            title='API сервисов'
                             description='API ключи, токены и секреты для интеграций с сторонними сервисами'
                         >
                             <StyledPermissionButton
@@ -422,7 +422,7 @@ const Credentials = () => {
                                                         )}
                                                         {credential.shared && (
                                                             <>
-                                                                <StyledTableCell colSpan={'3'}>Общие учетные данные</StyledTableCell>
+                                                                <StyledTableCell colSpan={'3'}>Общие API сервисов</StyledTableCell>
                                                             </>
                                                         )}
                                                     </StyledTableRow>

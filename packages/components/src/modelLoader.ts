@@ -38,7 +38,29 @@ const getRawModelFile = async () => {
         process.env.MODEL_LIST_CONFIG_JSON ?? 'https://raw.githubusercontent.com/FlowiseAI/Flowise/main/packages/components/models.json'
     try {
         if (isValidUrl(modelFile)) {
-            const resp = await axios.get(modelFile)
+            // Добавляем таймаут для запроса к GitHub, чтобы избежать зависаний
+            const axiosConfig: any = {
+                timeout: 10000 // 10 секунд таймаут
+            }
+            // Настраиваем прокси для axios, если указан в переменных окружения
+            const proxyEnv = process.env.HTTPS_PROXY || process.env.HTTP_PROXY
+            if (proxyEnv) {
+                try {
+                    const proxyUrl = new URL(proxyEnv)
+                    axiosConfig.proxy = {
+                        protocol: proxyUrl.protocol.replace(':', ''),
+                        host: proxyUrl.hostname,
+                        port: parseInt(proxyUrl.port) || (proxyUrl.protocol === 'https:' ? 443 : 80),
+                        auth: proxyUrl.username && proxyUrl.password ? {
+                            username: proxyUrl.username,
+                            password: proxyUrl.password
+                        } : undefined
+                    }
+                } catch (e) {
+                    // Если не удалось распарсить URL прокси, продолжаем без прокси
+                }
+            }
+            const resp = await axios.get(modelFile, axiosConfig)
             if (resp.status === 200 && resp.data) {
                 return resp.data
             } else {
@@ -52,9 +74,14 @@ const getRawModelFile = async () => {
         }
         throw new Error('Model file does not exist or is empty')
     } catch (e) {
-        const models = await fs.promises.readFile(getModelsJSONPath(), 'utf8')
-        if (models) {
-            return JSON.parse(models)
+        // Fallback на локальный файл при любой ошибке
+        try {
+            const models = await fs.promises.readFile(getModelsJSONPath(), 'utf8')
+            if (models) {
+                return JSON.parse(models)
+            }
+        } catch (localError) {
+            // Если и локальный файл не читается, возвращаем пустой объект
         }
         return {}
     }

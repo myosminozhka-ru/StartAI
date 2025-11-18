@@ -164,7 +164,7 @@ const Evaluators = () => {
                             isEditButton={false}
                             onSearchChange={onSearchChange}
                             search={true}
-                            title='Оценщики'
+                            title='AI тестировщики'
                             description=''
                         >
                             <StyledPermissionButton

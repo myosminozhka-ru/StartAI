@@ -109,7 +109,7 @@ const EvalsEvaluation = () => {
         const dialogProp = {
             type: 'ADD',
             cancelButtonName: 'Отмена',
-            confirmButtonName: 'Запустить новую оценку',
+            confirmButtonName: 'Запустить новый результат',
             data: {}
         }
         setDialogProps(dialogProp)
@@ -119,7 +119,7 @@ const EvalsEvaluation = () => {
     const deleteEvaluationsAllVersions = async () => {
         const confirmPayload = {
             title: `Удалить`,
-            description: `Удалить ${selected.length} ${selected.length > 1 ? 'оценки' : 'оценку'}? Это удалит все версии оценки.`,
+            description: `Удалить ${selected.length} ${selected.length > 1 ? 'результаты' : 'результат'}? Это удалит все версии результата.`,
             confirmButtonName: 'Удалить',
             cancelButtonName: 'Отмена'
         }
@@ -146,7 +146,7 @@ const EvalsEvaluation = () => {
                 }
             } catch (error) {
                 enqueueSnackbar({
-                    message: `Не удалось удалить ${selected.length > 1 ? 'оценки' : 'оценку'}: ${
+                    message: `Не удалось удалить ${selected.length > 1 ? 'результаты' : 'результат'}: ${
                         typeof error.response.data === 'object' ? error.response.data.message : error.response.data
                     }`,
                     options: {
@@ -217,7 +217,7 @@ const EvalsEvaluation = () => {
         if (createNewEvaluation.error) {
             // Change to Notifstack
             enqueueSnackbar({
-                message: `Не удалось создать новую оценку: ${
+                message: `Не удалось создать новый результат: ${
                     typeof createNewEvaluation.error.response?.data === 'object'
                         ? createNewEvaluation.error.response.data.message
                         : createNewEvaluation.error.response?.data || createNewEvaluation.error.message || 'Неизвестная ошибка'
@@ -253,7 +253,7 @@ const EvalsEvaluation = () => {
                     <ErrorBoundary error={error} />
                 ) : (
                     <Stack flexDirection='column' sx={{ gap: 3 }}>
-                        <ViewHeader isBackButton={false} isEditButton={false} search={false} title={'Оценки'} description=''>
+                        <ViewHeader isBackButton={false} isEditButton={false} search={false} title={'Результаты'} description=''>
                             <StyledButton
                                 color='secondary'
                                 variant='outlined'
@@ -281,7 +281,7 @@ const EvalsEvaluation = () => {
                                 color='error'
                                 startIcon={<IconTrash />}
                             >
-                                Удалить {selected.length} {selected.length === 1 ? 'оценку' : 'оценки'}
+                                Удалить {selected.length} {selected.length === 1 ? 'результат' : 'результаты'}
                             </StyledPermissionButton>
                         )}
                         {!isTableLoading && rows.length <= 0 ? (
@@ -467,7 +467,7 @@ function EvaluationRunRow(props) {
     const deleteChildEvaluations = async () => {
         const confirmPayload = {
             title: `Удалить`,
-            description: `Удалить ${childSelected.length} ${childSelected.length > 1 ? 'оценки' : 'оценку'}?`,
+            description: `Удалить ${childSelected.length} ${childSelected.length > 1 ? 'результаты' : 'результат'}?`,
             confirmButtonName: 'Удалить',
             cancelButtonName: 'Отмена'
         }
@@ -493,7 +493,7 @@ function EvaluationRunRow(props) {
                 }
             } catch (error) {
                 enqueueSnackbar({
-                    message: `Не удалось удалить оценку: ${
+                    message: `Не удалось удалить результат: ${
                         typeof error.response.data === 'object' ? error.response.data.message : error.response.data
                     }`,
                     options: {
@@ -667,7 +667,7 @@ function EvaluationRunRow(props) {
                             color='error'
                             startIcon={<IconTrash />}
                         >
-                            Удалить {childSelected.length} {childSelected.length === 1 ? 'оценку' : 'оценки'}
+                            Удалить {childSelected.length} {childSelected.length === 1 ? 'результат' : 'результаты'}
                         </Button>
                     </StyledTableCell>
                 </TableRow>

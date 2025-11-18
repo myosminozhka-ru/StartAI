@@ -4,7 +4,7 @@ import { ICommonObject, IMultiModalOption, INode, INodeData, INodeOptionsValue, 
 import { getBaseClasses, getCredentialData, getCredentialParam } from '../../../src/utils'
 import { ChatOpenAI } from './FlowiseChatOpenAI'
 import { getModels, MODEL_TYPE } from '../../../src/modelLoader'
-import { HttpsProxyAgent } from 'https-proxy-agent'
+import { ProxyAgent } from 'undici'
 
 class ChatOpenAI_ChatModels implements INode {
     label: string
@@ -221,7 +221,7 @@ class ChatOpenAI_ChatModels implements INode {
         const streaming = nodeData.inputs?.streaming as boolean
         const strictToolCalling = nodeData.inputs?.strictToolCalling as boolean
         const basePath = nodeData.inputs?.basepath as string
-        const proxyUrl = nodeData.inputs?.proxyUrl as string
+        const proxyUrl = nodeData.inputs?.proxyUrl as string || process.env.HTTPS_PROXY || process.env.HTTP_PROXY
         const baseOptions = nodeData.inputs?.baseOptions
         const reasoningEffort = nodeData.inputs?.reasoningEffort as OpenAIClient.Chat.ChatCompletionReasoningEffort
 
@@ -252,7 +252,9 @@ class ChatOpenAI_ChatModels implements INode {
             modelName,
             openAIApiKey,
             apiKey: openAIApiKey,
-            streaming: streaming ?? true
+            streaming: streaming ?? true,
+            // Устанавливаем таймаут по умолчанию 60 секунд, если не указан явно
+            timeout: timeout ? parseInt(timeout, 10) : 60000
         }
 
         if (modelName.includes('o3') || modelName.includes('o1')) {
@@ -265,7 +267,6 @@ class ChatOpenAI_ChatModels implements INode {
         if (topP) obj.topP = parseFloat(topP)
         if (frequencyPenalty) obj.frequencyPenalty = parseFloat(frequencyPenalty)
         if (presencePenalty) obj.presencePenalty = parseFloat(presencePenalty)
-        if (timeout) obj.timeout = parseInt(timeout, 10)
         if (cache) obj.cache = cache
         if (stopSequence) {
             const stopSequenceArray = stopSequence.split(',').map((item) => item.trim())
@@ -291,9 +292,51 @@ class ChatOpenAI_ChatModels implements INode {
         }
 
         if (proxyUrl) {
-            obj.configuration = {
-                ...obj?.configuration,
-                httpAgent: new HttpsProxyAgent(proxyUrl)
+            try {
+                // Проверяем тип прокси (SOCKS5 или HTTP/HTTPS)
+                const isSocks5 = proxyUrl.startsWith('socks5://')
+                
+                if (isSocks5) {
+                    // Для SOCKS5 используем socks-proxy-agent
+                    // OpenAI SDK v4 использует undici, но undici не поддерживает SOCKS5 напрямую
+                    // Используем глобальную настройку через переменные окружения
+                    // и настраиваем fetch через socks-proxy-agent
+                    const { SocksProxyAgent } = require('socks-proxy-agent')
+                    const socksAgent = new SocksProxyAgent(proxyUrl)
+                    
+                    // Создаем кастомный fetch, который использует socks-proxy-agent
+                    const socksFetch = async (url: string | Request | URL, init?: RequestInit): Promise<Response> => {
+                        // Для undici нужно использовать другой подход
+                        // Используем node-fetch с socks-proxy-agent
+                        const nodeFetch = require('node-fetch')
+                        return nodeFetch(url, {
+                            ...init,
+                            agent: socksAgent
+                        } as any)
+                    }
+                    
+                    obj.configuration = {
+                        ...obj?.configuration,
+                        fetch: socksFetch as any
+                    }
+                } else {
+                    // Для HTTP/HTTPS прокси используем ProxyAgent из undici
+                    const proxyAgent = new ProxyAgent(proxyUrl)
+                    const proxyFetch = async (url: string | Request | URL, init?: RequestInit): Promise<Response> => {
+                        return fetch(url, {
+                            ...init,
+                            dispatcher: proxyAgent
+                        } as any)
+                    }
+                    obj.configuration = {
+                        ...obj?.configuration,
+                        httpAgent: proxyAgent as any,
+                        fetch: proxyFetch as any
+                    }
+                }
+            } catch (proxyError) {
+                // Если прокси не работает, логируем ошибку, но продолжаем без прокси
+                console.warn(`[ChatOpenAI] Ошибка настройки прокси: ${proxyError}. Продолжаем без прокси.`)
             }
         }
 

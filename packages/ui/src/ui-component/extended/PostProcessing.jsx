@@ -195,7 +195,7 @@ const PostProcessing = ({ dialogProps }) => {
                 >
                     <IconBulb size={30} color='#2d6a4f' />
                     <span style={{ color: '#2d6a4f', marginLeft: 10, fontWeight: 500 }}>
-                        Следующие переменные доступны для использования в пользовательской функции:{' '}
+                        Следующие параметры доступны для использования в пользовательской функции:{' '}
                         <pre>$flow.rawOutput, $flow.input, $flow.chatflowId, $flow.sessionId, $flow.chatId</pre>
                     </span>
                 </div>

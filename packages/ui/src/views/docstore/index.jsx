@@ -336,7 +336,7 @@ const Documents = () => {
                                     alt='doc_store_empty'
                                 />
                             </Box>
-                            <div>Хранилища документов еще не созданы</div>
+                            <div>База документов еще не создана</div>
                         </Stack>
                     )}
                 </Stack>

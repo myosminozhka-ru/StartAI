@@ -161,8 +161,8 @@ const Tools = () => {
                         <ViewHeader
                             onSearchChange={onSearchChange}
                             search={true}
-                            searchPlaceholder='Поиск инструментов'
-                            title='Инструменты'
+                            searchPlaceholder='Поиск интеграций'
+                            title='Интеграции'
                             description='Внешние функции или API, которые агент может использовать для выполнения действий'
                         >
                             <ToggleButtonGroup
@@ -260,7 +260,7 @@ const Tools = () => {
                                         alt='Нет инструментов'
                                     />
                                 </Box>
-                                <div>Инструменты еще не созданы</div>
+                                <div>Интеграции еще не созданы</div>
                             </Stack>
                         )}
                     </Stack>

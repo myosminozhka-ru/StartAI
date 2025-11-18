@@ -36,9 +36,9 @@ import { HIDE_CANVAS_DIALOG, SHOW_CANVAS_DIALOG } from '@/store/actions'
 
 const exampleAPIFunc = `/*
 * Вы можете использовать любые библиотеки, импортированные в Flowise
-* Вы можете использовать свойства, указанные во входной схеме, как переменные. Например: Свойство = userid, Переменная = $userid
+* Вы можете использовать свойства, указанные во входной схеме, как параметры. Например: Свойство = userid, Параметр = $userid
 * Вы можете получить стандартную конфигурацию flow: $flow.sessionId, $flow.chatId, $flow.chatflowId, $flow.input, $flow.state
-* Вы можете получить пользовательские переменные: $vars.<имя-переменной>
+* Вы можете получить пользовательские параметры: $vars.<имя-параметра>
 * В конце функция должна возвращать строковое значение
 */
 
@@ -543,7 +543,7 @@ const ToolDialog = ({ show, dialogProps, onUseTemplate, onCancel, onConfirm, set
                         <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                             <Stack sx={{ position: 'relative', alignItems: 'center' }} direction='row'>
                                 <Typography variant='overline'>Javascript-функция</Typography>
-                                <TooltipWithParser title='Функция, которая выполняется при использовании инструмента. Вы можете использовать свойства, указанные во входной схеме, как переменные. Например, если свойство <code>userid</code>, используйте <code>$userid</code>. Возвращаемое значение должно быть строкой. Также можно переопределить код через API, следуя <a target="_blank" href="https://docs.flowiseai.com/tools/custom-tool#override-function-from-api">этой инструкции</a>' />
+                                <TooltipWithParser title='Функция, которая выполняется при использовании инструмента. Вы можете использовать свойства, указанные во входной схеме, как параметры. Например, если свойство <code>userid</code>, используйте <code>$userid</code>. Возвращаемое значение должно быть строкой. Также можно переопределить код через API, следуя <a target="_blank" href="https://docs.flowiseai.com/tools/custom-tool#override-function-from-api">этой инструкции</a>' />
                             </Stack>
                             <Stack direction='row'>
                                 <Button

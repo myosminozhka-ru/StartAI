@@ -184,7 +184,7 @@ const EvalDatasets = () => {
                             isEditButton={false}
                             onSearchChange={onSearchChange}
                             search={true}
-                            title='Наборы данных'
+                            title='Тест кейсы'
                             description=''
                         >
                             <StyledPermissionButton

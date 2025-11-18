@@ -24,11 +24,11 @@ const HowToUseVariablesDialog = ({ show, onCancel }) => {
             aria-describedby='alert-dialog-description'
         >
             <DialogTitle sx={{ fontSize: '1rem' }} id='alert-dialog-title'>
-                Как использовать переменные
+                Как использовать параметры
             </DialogTitle>
             <DialogContent>
                 <p style={{ marginBottom: '10px' }}>
-                    Переменные можно использовать в Custom Tool, Custom Function, Custom Loader, If Else Function с префиксом $.
+                    Параметры можно использовать в Custom Tool, Custom Function, Custom Loader, If Else Function с префиксом $.
                 </p>
                 <CodeEditor
                     disabled={true}
@@ -39,7 +39,7 @@ const HowToUseVariablesDialog = ({ show, onCancel }) => {
                     basicSetup={{ highlightActiveLine: false, highlightActiveLineGutter: false }}
                 />
                 <p style={{ marginBottom: '10px' }}>
-                    Переменные также можно использовать в параметре Text Field любого узла. Например, в System Message агента:
+                    Параметры также можно использовать в параметре Text Field любого узла. Например, в System Message агента:
                 </p>
                 <CodeEditor
                     disabled={true}

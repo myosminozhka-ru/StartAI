@@ -21,7 +21,7 @@ class IfElseFunction_Utilities implements INode {
         this.version = 2.0
         this.type = 'IfElseFunction'
         this.icon = 'ifelsefunction.svg'
-        this.category = 'Утилиты'
+        this.category = 'Utilities'
         this.description = `Разделяет потоки на основе If Else javascript функций`
         this.baseClasses = [this.type, 'Utilities']
         this.tags = ['Utilities']

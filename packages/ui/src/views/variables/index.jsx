@@ -70,7 +70,7 @@ const StyledTableRow = styled(TableRow)(() => ({
     }
 }))
 
-// ==============================|| Переменные ||============================== //
+// ==============================|| Параметры ||============================== //
 
 const Variables = () => {
     const theme = useTheme()
@@ -201,9 +201,9 @@ const Variables = () => {
                         <ViewHeader
                             onSearchChange={onSearchChange}
                             search={true}
-                            searchPlaceholder='Поиск переменных'
-                            title='Переменные'
-                            description='Создание и управление глобальными переменными'
+                            searchPlaceholder='Поиск параметров'
+                            title='Параметры'
+                            description='Создание и управление глобальными параметрами'
                         >
                             <Button variant='outlined' sx={{ borderRadius: 2, height: '100%' }} onClick={() => setShowHowToDialog(true)}>
                                 Использовать

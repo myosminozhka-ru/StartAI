@@ -1548,6 +1548,10 @@ export const executeJavaScriptCode = async (
         const externalDeps = process.env.TOOL_FUNCTION_EXTERNAL_DEP ? process.env.TOOL_FUNCTION_EXTERNAL_DEP.split(',') : []
         let deps = process.env.ALLOW_BUILTIN_DEP === 'true' ? availableDependencies.concat(externalDeps) : externalDeps
         deps.push(...defaultAllowExternalDependencies)
+        // Добавляем библиотеки из параметра libraries
+        if (libraries && libraries.length > 0) {
+            deps.push(...libraries)
+        }
         deps = [...new Set(deps)]
 
         // Create secure wrappers for HTTP libraries
@@ -1574,12 +1578,41 @@ export const executeJavaScriptCode = async (
         }
         secureWrappers['node-fetch'] = secureNodeFetch
 
+        // Разрешить подмодули для @langchain/core и других langchain пакетов
+        // Всегда добавляем подмодули @langchain/core, если @langchain/core доступен в availableDependencies или передан в libraries
+        const langchainSubmodules: string[] = []
+        
+        // Проверяем, доступен ли @langchain/core:
+        // 1. В availableDependencies (всегда проверяем, независимо от ALLOW_BUILTIN_DEP)
+        // 2. В deps (если передан через libraries или ALLOW_BUILTIN_DEP=true)
+        const hasLangchainCoreInAvailable = availableDependencies.includes('@langchain/core')
+        const hasLangchainCoreInDeps = deps.includes('@langchain/core') || deps.some((dep: string) => dep.startsWith('@langchain/core'))
+        const hasLangchainCoreAvailable = hasLangchainCoreInAvailable || hasLangchainCoreInDeps
+        
+        // Если @langchain/core доступен, всегда добавляем все основные подмодули
+        if (hasLangchainCoreAvailable) {
+            langchainSubmodules.push('@langchain/core/messages')
+            langchainSubmodules.push('@langchain/core/documents')
+            langchainSubmodules.push('@langchain/core/prompts')
+            langchainSubmodules.push('@langchain/core/runnables')
+            langchainSubmodules.push('@langchain/core/output_parsers')
+            langchainSubmodules.push('@langchain/core/load')
+            langchainSubmodules.push('@langchain/core/utils')
+            
+            // Также добавляем @langchain/core в deps, если его там еще нет
+            if (!deps.includes('@langchain/core')) {
+                deps.push('@langchain/core')
+            }
+        }
+        
+        const allDeps = [...new Set([...deps, ...langchainSubmodules])] // Используем Set для удаления дубликатов
+
         const defaultNodeVMOptions: any = {
             console: 'inherit',
             sandbox,
             require: {
                 external: {
-                    modules: deps,
+                    modules: allDeps,
                     transitive: false // Prevent transitive dependencies
                 },
                 builtin: builtinDeps,
@@ -1604,11 +1637,35 @@ export const executeJavaScriptCode = async (
             if (streamOutput && finalOutput) {
                 let streamOutputString = finalOutput
                 if (typeof response === 'object') {
-                    streamOutputString = JSON.stringify(finalOutput, null, 2)
+                    // Для объектов Langchain сообщений не используем JSON.stringify, 
+                    // так как они могут быть преобразованы в "[object ...]"
+                    try {
+                        streamOutputString = JSON.stringify(finalOutput, null, 2)
+                    } catch (e) {
+                        // Если не удалось сериализовать, используем строковое представление
+                        streamOutputString = String(finalOutput)
+                    }
                 }
                 streamOutput(streamOutputString)
             }
 
+            // Если результат - массив объектов Langchain сообщений, возвращаем их как есть
+            // Важно: объекты Langchain должны оставаться объектами, а не преобразовываться в строки
+            if (Array.isArray(finalOutput)) {
+                // Проверяем, не являются ли элементы массива строками "[object ...]"
+                const hasInvalidStrings = finalOutput.some((item: any) => 
+                    typeof item === 'string' && item.startsWith('[object ') && item.endsWith(']')
+                )
+                if (hasInvalidStrings) {
+                    // Если есть строки "[object ...]", это означает, что объекты были неправильно сериализованы
+                    // Попробуем восстановить их из исходного кода или выбросим понятную ошибку
+                    throw new Error('Objects were converted to string representations. Make sure Langchain message objects are properly returned from the code.')
+                }
+                // Если массив содержит валидные объекты, возвращаем их как есть
+                return finalOutput
+            }
+            
+            // Для не-массивов используем parseOutput
             return parseOutput(finalOutput)
         } catch (e) {
             throw new Error(`NodeVM Execution Error: ${e}`)

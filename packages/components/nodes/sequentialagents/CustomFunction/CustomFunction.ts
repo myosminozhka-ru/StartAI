@@ -35,7 +35,7 @@ class CustomFunction_SeqAgents implements INode {
         this.version = 1.0
         this.type = 'CustomFunction'
         this.icon = 'customfunction.svg'
-        this.category = 'Последовательные агенты'
+        this.category = 'Sequential Agents'
         this.description = `Выполнение пользовательской javascript функции`
         this.baseClasses = [this.type]
         this.inputs = [

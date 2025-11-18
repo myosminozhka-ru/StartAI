@@ -370,8 +370,8 @@ const APIKey = () => {
                         <ViewHeader
                             onSearchChange={onSearchChange}
                             search={true}
-                            searchPlaceholder='Поиск API ключей'
-                            title='API ключи'
+                            searchPlaceholder='Поиск API агентов'
+                            title='API агентов'
                             description='Ключи аутентификации API и SDK'
                         >
                             <PermissionButton

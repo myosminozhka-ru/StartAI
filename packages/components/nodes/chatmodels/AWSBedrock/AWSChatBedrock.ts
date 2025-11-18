@@ -26,7 +26,7 @@ class AWSChatBedrock_ChatModels implements INode {
         this.version = 6.1
         this.type = 'AWSChatBedrock'
         this.icon = 'aws.svg'
-        this.category = 'Модели чата'
+        this.category = 'Chat Models'
         this.description = 'Обертка для больших языковых моделей AWS Bedrock, использующих Converse API'
         this.baseClasses = [this.type, ...getBaseClasses(ChatBedrockConverse)]
         this.credential = {

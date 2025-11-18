@@ -23,7 +23,7 @@ class CustomFunction_Utilities implements INode {
         this.version = 3.0
         this.type = 'CustomFunction'
         this.icon = 'customfunction.svg'
-        this.category = 'Утилиты'
+        this.category = 'Utilities'
         this.description = `Выполнить пользовательскую javascript функцию`
         this.baseClasses = [this.type, 'Utilities']
         this.tags = ['Utilities']
