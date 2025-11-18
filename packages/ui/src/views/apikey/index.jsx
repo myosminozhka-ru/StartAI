@@ -371,7 +371,7 @@ const APIKey = () => {
                             onSearchChange={onSearchChange}
                             search={true}
                             searchPlaceholder='Поиск API ключей'
-                            title='API ключи'
+                            title='API агентов'
                             description='Ключи аутентификации API и SDK'
                         >
                             <PermissionButton

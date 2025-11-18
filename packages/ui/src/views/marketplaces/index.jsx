@@ -575,7 +575,7 @@ const Marketplace = () => {
                             onSearchChange={onSearchChange}
                             search={true}
                             searchPlaceholder='Поиск по названию/описанию/узлу'
-                            title='Маркетплейс'
+                            title='Шаблоны'
                             description='Изучайте и используйте готовые шаблоны'
                         >
                             <ToggleButtonGroup

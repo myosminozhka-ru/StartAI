@@ -146,7 +146,7 @@ const Documents = () => {
                         onSearchChange={onSearchChange}
                         search={true}
                         searchPlaceholder='Поиск по названию'
-                        title='Хранилище документов'
+                        title='База документов'
                         description='Храните и обновляйте документы для извлечения информации языковыми моделями (RAG)'
                     >
                         <ToggleButtonGroup

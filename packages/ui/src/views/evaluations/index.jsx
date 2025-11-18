@@ -253,7 +253,7 @@ const EvalsEvaluation = () => {
                     <ErrorBoundary error={error} />
                 ) : (
                     <Stack flexDirection='column' sx={{ gap: 3 }}>
-                        <ViewHeader isBackButton={false} isEditButton={false} search={false} title={'Оценки'} description=''>
+                        <ViewHeader isBackButton={false} isEditButton={false} search={false} title={'Результаты'} description=''>
                             <StyledButton
                                 color='secondary'
                                 variant='outlined'

@@ -246,7 +246,7 @@ const Credentials = () => {
                             onSearchChange={onSearchChange}
                             search={true}
                             searchPlaceholder='Поиск учетных записей'
-                            title='Учетные записи'
+                            title='API сервисов'
                             description='API ключи, токены и секреты для интеграций с сторонними сервисами'
                         >
                             <StyledPermissionButton

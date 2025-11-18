@@ -49,7 +49,7 @@ import useNotifier from '@/utils/useNotifier'
 // const
 import { evaluators as evaluatorsOptions } from '../evaluators/evaluatorConstant'
 
-const steps = ['Наборы данных', 'Оценщики', 'LLM метрики']
+const steps = ['Тест кейсы', 'AI тестировщики', 'LLM метрики']
 
 const CreateEvaluationDialog = ({ show, dialogProps, onCancel, onConfirm }) => {
     const portalElement = document.getElementById('portal')
