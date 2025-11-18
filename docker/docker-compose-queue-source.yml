@@ -78,7 +78,7 @@ services:
         container_name: osmi-ai-worker
         build:
             context: .. 
-            dockerfile: Dockerfile 
+            dockerfile: docker/worker/Dockerfile
         env_file:
             - ../packages/server/.env
         depends_on:
@@ -93,13 +93,6 @@ services:
             interval: 30s
             timeout: 10s
             retries: 5
-        stop_grace_period: 30s
-        restart: unless-stopped
-        logging:
-            driver: "json-file"
-            options:
-                max-size: "10m"
-                max-file: "3"
         networks:
             - osmi-ai-net
 
