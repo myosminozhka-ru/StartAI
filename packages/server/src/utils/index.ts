@@ -1585,10 +1585,21 @@ export const getEncryptionKey = async (): Promise<string> => {
     try {
         return await fs.promises.readFile(getEncryptionKeyPath(), 'utf8')
     } catch (error) {
+        // Если используется S3/GCS для storage, не создаем локальные файлы
+        // В этом случае нужно использовать OSMI_SECRETKEY_OVERWRITE или AWS Secrets Manager
+        const storageType = process.env.STORAGE_TYPE || 'local'
+        if (storageType === 's3' || storageType === 'gcs') {
+            throw new Error('Encryption key not found and cannot be created locally when using S3/GCS storage. Please set OSMI_SECRETKEY_OVERWRITE environment variable or use AWS Secrets Manager.')
+        }
         const encryptKey = generateEncryptKey()
         const defaultLocation = process.env.SECRETKEY_PATH
             ? path.join(process.env.SECRETKEY_PATH, 'encryption.key')
             : path.join(getUserHome(), '.OSMI', 'encryption.key')
+        // Создаем директорию только если она не существует
+        const dir = path.dirname(defaultLocation)
+        if (!fs.existsSync(dir)) {
+            fs.mkdirSync(dir, { recursive: true })
+        }
         await fs.promises.writeFile(defaultLocation, encryptKey)
         return encryptKey
     }

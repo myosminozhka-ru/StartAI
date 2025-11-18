@@ -63,7 +63,7 @@ const dashboard = {
                 },
                 {
                     id: 'executions',
-                    title: 'Выполнения',
+                    title: 'Аналитика',
                     type: 'item',
                     url: '/executions',
                     icon: icons.IconListCheck,
@@ -72,7 +72,7 @@ const dashboard = {
                 },
                 {
                     id: 'tools',
-                    title: 'Инструменты',
+                    title: 'Интеграции',
                     type: 'item',
                     url: '/tools',
                     icon: icons.IconTool,
@@ -81,7 +81,7 @@ const dashboard = {
                 },
                 {
                     id: 'credentials',
-                    title: 'Учётные данные',
+                    title: 'API сервисов',
                     type: 'item',
                     url: '/credentials',
                     icon: icons.IconLock,
@@ -90,7 +90,7 @@ const dashboard = {
                 },
                 {
                     id: 'variables',
-                    title: 'Переменные',
+                    title: 'Параметры',
                     type: 'item',
                     url: '/variables',
                     icon: icons.IconVariable,
@@ -99,7 +99,7 @@ const dashboard = {
                 },
                 {
                     id: 'apikey',
-                    title: 'API ключи',
+                    title: 'API агентов',
                     type: 'item',
                     url: '/apikey',
                     icon: icons.IconKey,
@@ -108,7 +108,7 @@ const dashboard = {
                 },
                 {
                     id: 'document-stores',
-                    title: 'Хранилища документов',
+                    title: 'База документов',
                     type: 'item',
                     url: '/document-stores',
                     icon: icons.IconFiles,
@@ -119,12 +119,12 @@ const dashboard = {
         },
         {
             id: 'evaluations',
-            title: 'Оценки',
+            title: 'Тестирование',
             type: 'group',
             children: [
                 {
                     id: 'datasets',
-                    title: 'Наборы данных',
+                    title: 'Тест кейсы',
                     type: 'item',
                     url: '/datasets',
                     icon: icons.IconDatabase,
@@ -134,7 +134,7 @@ const dashboard = {
                 },
                 {
                     id: 'evaluators',
-                    title: 'Оценщики',
+                    title: 'AI тестировщики',
                     type: 'item',
                     url: '/evaluators',
                     icon: icons.IconTestPipe,
@@ -144,7 +144,7 @@ const dashboard = {
                 },
                 {
                     id: 'evaluations',
-                    title: 'Оценки',
+                    title: 'Результаты',
                     type: 'item',
                     url: '/evaluations',
                     icon: icons.IconChartHistogram,

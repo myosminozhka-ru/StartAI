@@ -1,9 +1,3 @@
-# Build local monorepo image
-# docker build --no-cache -t osmi-ai .
-
-# Run image
-# docker run -d -p 3000:3000 osmi-ai
-
 FROM node:20-alpine
 RUN apk add --update libc6-compat python3 make g++
 # needed for pdfjs-dist

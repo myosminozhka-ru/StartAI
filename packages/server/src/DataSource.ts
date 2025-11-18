@@ -15,7 +15,9 @@ let appDataSource: DataSource
 export const init = async (): Promise<void> => {
     let homePath
     let OSMIPath = path.join(getUserHome(), '.OSMI')
-    if (!fs.existsSync(OSMIPath)) {
+    // Не создаем локальные папки если используется S3 или GCS
+    const storageType = process.env.STORAGE_TYPE || 'local'
+    if (storageType === 'local' && !fs.existsSync(OSMIPath)) {
         fs.mkdirSync(OSMIPath)
     }
     switch (process.env.DATABASE_TYPE) {

@@ -54,51 +54,13 @@
 2. Добавьте узел **ChatMWS** в ваш чатфлоу
 3. Настройте модель `mws-gpt-alpha` и протестируйте!
 
-## 🐳 Docker
-
-### Docker Compose
-
-1. Clone project
-2. Go to `docker` folder at the root of the project
-3. Copy `.env.example` file, paste it into the same location, and rename to `.env` file
-4. `docker compose up -d`
-5. Open [http://localhost:3000](http://localhost:3000)
-6. You can bring the containers down by `docker compose stop`
-
-### Docker Image
-
-1. Build the image locally:
-
-    ```bash
-    docker build --no-cache -t osmi-ai .
-    ```
-
-2. Run image:
-
-    ```bash
-    docker run -d --name osmi-ai -p 3000:3000 osmi-ai
-    ```
-
-3. Stop image:
-
-    ```bash
-    docker stop osmi-ai
-    ```
-
 
 ### Setup
 
-1. Перейдите в директорию docker:
-   ```bash
-   cd docker
-   ```
+1. Перейдите в директорию packages/server и создайте копию `.env.example` и переименуйте в `.env`
 
-2. Создайте копию `.env.example` и переименуйте в `.env`:
-   ```bash
-   cp .env.example .env
-   ```
 
-3. Откройте файл `.env` и раскомментируйте/заполните необходимые настройки подключения к БД:
+2. Откройте файл `.env` и раскомментируйте/заполните необходимые настройки подключения к БД:
    ```bash
    # Тип базы данных
    DATABASE_TYPE=postgres
@@ -113,6 +75,15 @@
    DATABASE_USER=
    DATABASE_PASSWORD=
    ```
+3. Для настроек связанных с с3 заполните поля:
+   OSMI_SECRETKEY_OVERWRITE= # для хранения ключа шифрования в енв, SECRETKEY_PATH заккоментировать
+   STORAGE_TYPE=s3 #(local | s3 | gcs)
+   S3_STORAGE_BUCKET_NAME=
+   S3_STORAGE_ACCESS_KEY_ID=
+   S3_STORAGE_SECRET_ACCESS_KEY=
+   S3_STORAGE_REGION=
+   S3_ENDPOINT_URL=
+   S3_FORCE_PATH_STYLE=false
 
 4. Для изменения CDN путей откройте файл `packages/ui/.env` и укажите:
    ```bash
@@ -140,10 +111,7 @@
    docker-compose -f docker-compose-queue-source.yml up -d --build
    ```
 
-7. Дождитесь запуска всех контейнеров (~1-2 минуты). Проверить статус можно командой:
-   ```bash
-   docker ps
-   ```
+7. Примеры Dockerfile находятся в docker/docker_files
 
 8. **Откройте приложение в браузере:**
    - **Регистрация**: `http://localhost:3000/simple-register`
