@@ -57,7 +57,7 @@ export const createFileAttachment = async (req: Request) => {
         if (!workspace) {
             throw new InternalOsmiError(StatusCodes.NOT_FOUND, `Workspace ${chatflowWorkspaceId} not found`)
         }
-        workspaceId = workspace.id
+        workspaceId = workspace.id || ''
 
         const org = await appServer.AppDataSource.getRepository(Organization).findOneBy({
             id: workspace.organizationId
@@ -66,8 +66,8 @@ export const createFileAttachment = async (req: Request) => {
             throw new InternalOsmiError(StatusCodes.NOT_FOUND, `Organization ${workspace.organizationId} not found`)
         }
 
-        orgId = org.id
-        subscriptionId = org.subscriptionId as string
+        orgId = org.id || ''
+        subscriptionId = org.subscriptionId || ''
     }
 
     // Parse chatbot configuration to get file upload settings

@@ -24,5 +24,8 @@ export class Organization {
     
     @Column({ nullable: true })
     updatedBy?: string
+    
+    @Column({ nullable: true })
+    subscriptionId?: string
 }
 

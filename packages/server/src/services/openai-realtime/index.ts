@@ -86,8 +86,8 @@ const buildAndInitTool = async (chatflowid: string, _chatId?: string, _apiMessag
         throw new InternalOsmiError(StatusCodes.NOT_FOUND, `Organization ${workspace.organizationId} not found`)
     }
 
-    const orgId = org.id
-    const subscriptionId = org.subscriptionId
+    const orgId = org.id || ''
+    const subscriptionId = org.subscriptionId || ''
 
     const reactFlowNodes = await buildFlow({
         startingNodeIds,

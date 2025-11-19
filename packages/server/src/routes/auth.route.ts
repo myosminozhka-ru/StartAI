@@ -19,9 +19,9 @@ const secureCookie = process.env.SECURE_COOKIES === 'false' ? false : process.en
 
 const generateJwtToken = (userId: string, workspaceId: string, name: string, expiryInMinutes: number, secret: string) => {
     const encryptedUserInfo = encryptToken(userId + ':' + workspaceId)
-    return sign({ id: userId, username: name, meta: encryptedUserInfo }, secret!, {
-        expiresIn: expiryInMinutes + 'm',
-        notBefore: '0',
+    return sign({ id: userId, username: name, meta: encryptedUserInfo }, secret, {
+        expiresIn: `${expiryInMinutes}m`,
+        notBefore: 0,
         algorithm: 'HS256',
         audience: jwtAudience,
         issuer: jwtIssuer
@@ -183,14 +183,17 @@ router.post('/simple-login', async (req: Request, res: Response, next: NextFunct
             
             // Создаем упрощенный объект пользователя для сессии
             const loggedInUser = {
-                id: user.id,
-                email: user.email,
-                name: user.name,
+                id: user.id || '',
+                email: user.email || '',
+                name: user.name || '',
                 activeWorkspaceId: workspaceId,
                 activeOrganizationId: '',
+                activeOrganizationSubscriptionId: '',
+                activeOrganizationCustomerId: '',
+                activeOrganizationProductId: '',
                 roleId: '',
                 permissions: [],
-                features: [],
+                features: {},
                 isOrganizationAdmin: true,
                 activeWorkspace: 'Default Workspace',
                 assignedWorkspaces: [],
@@ -220,7 +223,7 @@ router.post('/simple-login', async (req: Request, res: Response, next: NextFunct
             })
 
             // Сохраняем в сессию через passport.login
-            req.login(loggedInUser, { session: true }, (loginErr) => {
+            req.login(loggedInUser as any, { session: true }, (loginErr) => {
                 if (loginErr) {
                     return next(loginErr)
                 }

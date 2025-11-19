@@ -120,7 +120,7 @@ class Astra_VectorStores implements INode {
                 endpoint: credentialData?.dbEndPoint
             }
 
-            const astraConfig: AstraLibArgs = {
+            const astraConfig: AstraLibArgs & { namespace?: string } = {
                 ...clientConfig,
                 namespace: astraNamespace ?? 'default_keyspace',
                 collection: astraCollection ?? credentialData.collectionName ?? 'OSMI_test',
@@ -167,7 +167,7 @@ class Astra_VectorStores implements INode {
             endpoint: credentialData?.dbEndPoint
         }
 
-        const astraConfig: AstraLibArgs = {
+        const astraConfig: AstraLibArgs & { namespace?: string } = {
             ...clientConfig,
             namespace: astraNamespace ?? 'default_keyspace',
             collection: astraCollection ?? credentialData.collectionName ?? 'OSMI_test',

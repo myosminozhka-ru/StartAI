@@ -17,11 +17,10 @@ import { z } from 'zod'
 import { StructuredTool } from '@langchain/core/tools'
 import { AgentExecutor, JsonOutputToolsParser, ToolCallingAgentOutputParser } from '../../../src/agents'
 import { ChatMistralAI } from '@langchain/mistralai'
-// Закомментировано: ChatModels не используются в minimal версии
-// import { ChatOpenAI } from '../../chatmodels/ChatOpenAI/OSMIChatOpenAI'
-// import { ChatAnthropic } from '../../chatmodels/ChatAnthropic/OSMIChatAnthropic'
+import { ChatOpenAI } from '@langchain/openai'
+import { ChatAnthropic } from '@langchain/anthropic'
 import { addImagesToMessages, llmSupportsVision } from '../../../src/multiModalUtils'
-// import { ChatGoogleGenerativeAI } from '../../chatmodels/ChatGoogleGenerativeAI/OSMIChatGoogleGenerativeAI'
+import { ChatGoogleGenerativeAI } from '@langchain/google-genai'
 
 const sysPrompt = `You are a supervisor tasked with managing a conversation between the following workers: {team_members}.
 Given the following user request, respond with the worker to act next.
@@ -257,7 +256,7 @@ class Supervisor_MultiAgents implements INode {
                 multiModalMessageContent = messages.multiModalMessageContent
 
                 // Force OpenAI to use tool
-                const modelWithTool = llm.bind({
+                const modelWithTool = (llm as any).bind({
                     tools: [tool],
                     tool_choice: { type: 'function', function: { name: routerToolName } },
                     signal: abortControllerSignal ? abortControllerSignal.signal : undefined
@@ -515,7 +514,7 @@ class Supervisor_MultiAgents implements INode {
                 multiModalMessageContent = messages.multiModalMessageContent
 
                 // Force OpenAI to use tool
-                const modelWithTool = llm.bind({
+                const modelWithTool = (llm as any).bind({
                     tools: [tool],
                     tool_choice: { type: 'function', function: { name: routerToolName } },
                     signal: abortControllerSignal ? abortControllerSignal.signal : undefined

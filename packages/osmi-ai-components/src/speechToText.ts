@@ -80,7 +80,8 @@ export const convertSpeechToText = async (upload: IFileUpload, speechToTextConfi
                     const apiVersion = credentialData.apiVersion || '2024-05-15-preview'
 
                     const formData = new FormData()
-                    const audioBlob = new Blob([audio_file], { type: upload.type })
+                    const blobData = audio_file instanceof Buffer ? new Uint8Array(audio_file.buffer, audio_file.byteOffset, audio_file.byteLength) : (audio_file instanceof Uint8Array ? audio_file : new Uint8Array(audio_file as any))
+                    const audioBlob = new Blob([blobData as any], { type: upload.type })
                     formData.append('audio', audioBlob, upload.name)
 
                     const channelsStr = speechToTextConfig.channels || '0,1'

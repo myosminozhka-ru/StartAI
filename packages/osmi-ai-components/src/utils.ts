@@ -739,24 +739,8 @@ export const mapChatMessageToBaseMessage = async (chatmessages: any[] = [], orgI
                                 }
                             })
                         } else if (upload.type === 'stored-file:full') {
-                            const fileLoaderNodeModule = await import('../nodes/documentloaders/File/File')
-                            // @ts-ignore
-                            const fileLoaderNodeInstance = new fileLoaderNodeModule.nodeClass()
-                            const options = {
-                                retrieveAttachmentChatId: true,
-                                chatflowid: message.chatflowid,
-                                chatId: message.chatId,
-                                orgId
-                            }
-                            let fileInputFieldFromMimeType = 'txtFile'
-                            fileInputFieldFromMimeType = mapMimeTypeToInputField(upload.mime)
-                            const nodeData = {
-                                inputs: {
-                                    [fileInputFieldFromMimeType]: `FILE-STORAGE::${JSON.stringify([upload.name])}`
-                                }
-                            }
-                            const documents: string = await fileLoaderNodeInstance.init(nodeData, '', options)
-                            messageWithFileUploads += `<doc name='${upload.name}'>${handleEscapeCharacters(documents, true)}</doc>\n\n`
+                            // File loader не доступен в minimal версии - пропускаем этот тип файла
+                            continue
                         }
                     }
                     const messageContent = messageWithFileUploads ? `${messageWithFileUploads}\n\n${message.content}` : message.content

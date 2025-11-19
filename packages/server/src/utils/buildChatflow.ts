@@ -1072,7 +1072,7 @@ export const utilBuildChatflow = async (req: Request, isInternal: boolean = fals
                 id: workspace.organizationId
             })
             if (org) {
-                orgId = org.id
+                orgId = org.id || ''
                 organizationId = orgId
                 // subscriptionId остается пустым для Open Source режима
             }
@@ -1103,10 +1103,10 @@ export const utilBuildChatflow = async (req: Request, isInternal: boolean = fals
             componentNodes: appServer.nodesPool.componentNodes,
             isTool, // used to disable streaming if incoming request its from ChatflowTool
             usageCacheManager: appServer.usageCacheManager,
-            orgId,
-            workspaceId,
-            subscriptionId,
-            productId
+            orgId: orgId || '',
+            workspaceId: workspaceId || '',
+            subscriptionId: subscriptionId || '',
+            productId: productId || ''
         }
 
         if (process.env.MODE === MODE.QUEUE) {

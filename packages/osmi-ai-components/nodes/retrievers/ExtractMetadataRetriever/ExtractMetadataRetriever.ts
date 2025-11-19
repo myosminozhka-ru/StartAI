@@ -172,7 +172,7 @@ class DynamicMetadataRetriever<V extends VectorStore> extends VectorStoreRetriev
     prompt = ''
 
     constructor(input: RetrieverInput<V>) {
-        super(input)
+        super(input as any)
         this.topK = input.topK ?? this.topK
         this.structuredLLM = input.structuredLLM ?? this.structuredLLM
         this.prompt = input.prompt ?? this.prompt

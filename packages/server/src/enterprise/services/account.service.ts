@@ -175,7 +175,7 @@ export class AccountService {
                 if (data.user.tempToken) {
                     const user = await this.userService.readUserByToken(data.user.tempToken, queryRunner)
                     if (!user) throw new InternalOsmiError(StatusCodes.NOT_FOUND, UserErrorMessage.USER_NOT_FOUND)
-                    if (user.email.toLowerCase() !== data.user.email?.toLowerCase())
+                    if (user.email && data.user.email && user.email.toLowerCase() !== data.user.email.toLowerCase())
                         throw new InternalOsmiError(StatusCodes.BAD_REQUEST, UserErrorMessage.INVALID_USER_EMAIL)
                     const name = data.user.name
                     if (data.user.credential) user.credential = this.userService.encryptUserCredential(data.user.credential)

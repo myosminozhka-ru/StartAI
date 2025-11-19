@@ -198,8 +198,11 @@ export function tryJsonStringify(obj: unknown, fallback: string) {
 }
 
 export function elapsed(run: Run): string {
-    if (!run.end_time) return ''
-    const elapsed = run.end_time - run.start_time
+    if (!run.end_time || !run.start_time) return ''
+    const endTime = typeof run.end_time === 'string' ? new Date(run.end_time).getTime() : (run.end_time as any)
+    const startTime = typeof run.start_time === 'string' ? new Date(run.start_time).getTime() : (run.start_time as any)
+    const elapsed = endTime - startTime
+    if (isNaN(elapsed)) return ''
     if (elapsed < 1000) {
         return `${elapsed}ms`
     }

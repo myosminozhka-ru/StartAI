@@ -90,9 +90,11 @@ export class WorkspaceUserService {
             .getMany()
 
         return workspaceUsers.map((workspaceUser) => {
-            delete workspaceUser.user.credential
-            delete workspaceUser.user.tempToken
-            delete workspaceUser.user.tokenExpiry
+            if (workspaceUser.user) {
+                delete workspaceUser.user.credential
+                delete workspaceUser.user.tempToken
+                delete workspaceUser.user.tokenExpiry
+            }
             return {
                 ...workspaceUser,
                 isOrgOwner: workspaceUser.roleId === ownerRole?.id
@@ -176,9 +178,11 @@ export class WorkspaceUserService {
             .getMany()
 
         return workspaceUsers.map((workspaceUser) => {
-            delete workspaceUser.user.credential
-            delete workspaceUser.user.tempToken
-            delete workspaceUser.user.tokenExpiry
+            if (workspaceUser.user) {
+                delete workspaceUser.user.credential
+                delete workspaceUser.user.tempToken
+                delete workspaceUser.user.tokenExpiry
+            }
             return {
                 ...workspaceUser,
                 isOrgOwner: workspaceUser.roleId === ownerRole?.id
