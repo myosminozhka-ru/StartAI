@@ -325,7 +325,7 @@ const EvalsEvaluation = () => {
                                             <TableCell>Последняя версия</TableCell>
                                             <TableCell>Средние метрики</TableCell>
                                             <TableCell>Последняя оценка</TableCell>
-                                            <TableCell>Чатфлоу(ы)</TableCell>
+                                            <TableCell>Агенты</TableCell>
                                             <TableCell>Набор данных</TableCell>
                                             <TableCell> </TableCell>
                                         </TableRow>

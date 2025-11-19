@@ -396,7 +396,7 @@ const CreateEvaluationDialog = ({ show, dialogProps, onCancel, onConfirm }) => {
                                 </Typography>
                                 <Typography sx={{ mt: 2 }} variant='body2'>
                                     Использует столбец <span style={{ fontStyle: 'italic' }}>input</span> из набора данных для выполнения
-                                    выбранных чатфлоу(ов) и сравнивает результаты со столбцом output.
+                                    выбранных агентов и сравнивает результаты со столбцом output.
                                 </Typography>
                                 <Typography variant='body2'>Будут вычислены следующие метрики:</Typography>
                                 <Stack
@@ -483,7 +483,7 @@ const CreateEvaluationDialog = ({ show, dialogProps, onCancel, onConfirm }) => {
                             </Box>
                             <Box>
                                 <Typography variant='overline'>
-                                    Чатфлоу(ы) для оценки<span style={{ color: 'red' }}>&nbsp;*</span>
+                                    Агенты для оценки<span style={{ color: 'red' }}>&nbsp;*</span>
                                 </Typography>
                                 <MultiDropdown
                                     name={'chatflow1'}
@@ -550,14 +550,14 @@ const CreateEvaluationDialog = ({ show, dialogProps, onCancel, onConfirm }) => {
                             )}
                             {useLLM && chatLLMs.find((llm) => llm.name === selectedLLM)?.credential && (
                                 <Box>
-                                    <Typography variant='overline'>Выберите учетные данные</Typography>
+                                    <Typography variant='overline'>Выберите API сервисов</Typography>
                                     <CredentialInputHandler
                                         key={selectedLLM}
                                         size='small'
                                         sx={{ flexGrow: 1, marginBottom: 3 }}
                                         data={credentialId ? { credential: credentialId } : {}}
                                         inputParam={{
-                                            label: 'Подключить учетные данные',
+                                            label: 'Подключить API сервисов',
                                             name: 'credential',
                                             type: 'credential',
                                             credentialNames: [

@@ -35,7 +35,7 @@ const CHATFLOW_CONFIGURATION_TABS = [
         id: 'chatFeedback'
     },
     {
-        label: 'Анализ чатфлоу',
+        label: 'Анализ агента',
         id: 'analyseChatflow'
     },
     {

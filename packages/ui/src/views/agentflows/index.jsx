@@ -178,7 +178,7 @@ const Agentflows = () => {
                         onSearchChange={onSearchChange}
                         search={true}
                         searchPlaceholder='Поиск по названию или категории'
-                        title='Потоки агентов'
+                        title='Мульти агенты'
                         description='Многокомпонентные системы, оркестрация рабочих процессов'
                     >
                         <ToggleButtonGroup

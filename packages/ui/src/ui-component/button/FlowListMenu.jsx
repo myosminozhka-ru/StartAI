@@ -101,7 +101,7 @@ export default function FlowListMenu({ chatflow, isAgentCanvas, isAgentflowV2, s
     const [exportTemplateDialogProps, setExportTemplateDialogProps] = useState({})
 
     // Переводим только текстовые строки для пользователя
-    const title = isAgentCanvas ? 'Агенты' : 'Чатфлоу'
+    const title = isAgentCanvas ? 'Мульти агенты' : 'Агенты'
 
     const handleClick = (event) => {
         setAnchorEl(event.currentTarget)
@@ -269,11 +269,11 @@ export default function FlowListMenu({ chatflow, isAgentCanvas, isAgentflowV2, s
     const handleDuplicate = () => {
         setAnchorEl(null)
         
-        // Проверяем лимит чатфлоу (максимум 2) для обычных чатфлоу
+        // Проверяем лимит агентов (максимум 2) для обычных агентов
         if (!isAgentCanvas && !isAgentflowV2) {
             const currentCount = updateFlowsApi.data?.total || 0
             if (currentCount >= 2) {
-                setError('Достигнут лимит чатфлоу. Максимально можно создать 2 чатфлоу. Удалите существующий чатфлоу, чтобы создать новый.')
+                setError('Достигнут лимит агентов. Максимально можно создать 2 агента. Удалите существующего агента, чтобы создать нового.')
                 return
             }
         }

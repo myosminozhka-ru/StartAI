@@ -46,7 +46,7 @@ const speechToTextProviders = {
         url: 'https://platform.openai.com/docs/guides/speech-to-text',
         inputs: [
             {
-                label: 'Подключить учетные данные',
+                label: 'Подключить API сервисов',
                 name: 'credential',
                 type: 'credential',
                 credentialNames: ['openAIApi']
@@ -84,7 +84,7 @@ const speechToTextProviders = {
         url: 'https://www.assemblyai.com/',
         inputs: [
             {
-                label: 'Подключить учетные данные',
+                label: 'Подключить API сервисов',
                 name: 'credential',
                 type: 'credential',
                 credentialNames: ['assemblyAIApi']
@@ -98,7 +98,7 @@ const speechToTextProviders = {
         url: 'https://localai.io/features/audio-to-text/',
         inputs: [
             {
-                label: 'Подключить учетные данные',
+                label: 'Подключить API сервисов',
                 name: 'credential',
                 type: 'credential',
                 credentialNames: ['localAIApi']
@@ -150,7 +150,7 @@ const speechToTextProviders = {
         url: 'https://azure.microsoft.com/en-us/products/cognitive-services/speech-services',
         inputs: [
             {
-                label: 'Подключить учетные данные',
+                label: 'Подключить API сервисов',
                 name: 'credential',
                 type: 'credential',
                 credentialNames: ['azureCognitiveServices']
@@ -210,7 +210,7 @@ const speechToTextProviders = {
                 optional: true
             },
             {
-                label: 'Подключить учетные данные',
+                label: 'Подключить API сервисов',
                 name: 'credential',
                 type: 'credential',
                 credentialNames: ['groqApi']

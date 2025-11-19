@@ -46,7 +46,7 @@ const analyticProviders = [
         url: 'https://smith.langchain.com',
         inputs: [
             {
-                label: 'Подключите учетные данные',
+                label: 'Подключите API сервисов',
                 name: 'credential',
                 type: 'credential',
                 credentialNames: ['langsmithApi']
@@ -74,7 +74,7 @@ const analyticProviders = [
         url: 'https://langfuse.com',
         inputs: [
             {
-                label: 'Подключите учетные данные',
+                label: 'Подключите API сервисов',
                 name: 'credential',
                 type: 'credential',
                 credentialNames: ['langfuseApi']
@@ -101,7 +101,7 @@ const analyticProviders = [
         url: 'https://lunary.ai',
         inputs: [
             {
-                label: 'Подключите учетные данные',
+                label: 'Подключите API сервисов',
                 name: 'credential',
                 type: 'credential',
                 credentialNames: ['lunaryApi']
@@ -121,7 +121,7 @@ const analyticProviders = [
         url: 'https://langwatch.ai',
         inputs: [
             {
-                label: 'Подключите учетные данные',
+                label: 'Подключите API сервисов',
                 name: 'credential',
                 type: 'credential',
                 credentialNames: ['langwatchApi']
@@ -141,7 +141,7 @@ const analyticProviders = [
         url: 'https://arize.com',
         inputs: [
             {
-                label: 'Подключите учетные данные',
+                label: 'Подключите API сервисов',
                 name: 'credential',
                 type: 'credential',
                 credentialNames: ['arizeApi']
@@ -169,7 +169,7 @@ const analyticProviders = [
         url: 'https://phoenix.arize.com',
         inputs: [
             {
-                label: 'Подключите учетные данные',
+                label: 'Подключите API сервисов',
                 name: 'credential',
                 type: 'credential',
                 credentialNames: ['phoenixApi']
@@ -197,7 +197,7 @@ const analyticProviders = [
         url: 'https://www.comet.com/opik',
         inputs: [
             {
-                label: 'Подключите учетные данные',
+                label: 'Подключите API сервисов',
                 name: 'credential',
                 type: 'credential',
                 credentialNames: ['opikApi']

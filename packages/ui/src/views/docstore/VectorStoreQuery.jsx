@@ -261,7 +261,7 @@ const VectorStoreQuery = () => {
                     <ViewHeader
                         isBackButton={true}
                         search={false}
-                        title={documentStore?.name || 'Документное хранилище'}
+                        title={documentStore?.name || 'База документов'}
                         description='Песочница поиска — тестируйте настройки поиска по вашему векторному хранилищу'
                         onBack={() => navigate(-1)}
                     >

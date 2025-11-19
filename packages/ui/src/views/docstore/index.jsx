@@ -79,7 +79,7 @@ const Documents = () => {
 
     const addNew = () => {
         const dialogProp = {
-            title: 'Добавить новое хранилище документов',
+            title: 'Добавить новую базу документов',
             type: 'ADD',
             cancelButtonName: 'Отмена',
             confirmButtonName: 'Добавить'
@@ -146,7 +146,7 @@ const Documents = () => {
                         onSearchChange={onSearchChange}
                         search={true}
                         searchPlaceholder='Поиск по названию'
-                        title='Хранилище документов'
+                        title='База документов'
                         description='Храните и обновляйте документы для извлечения информации языковыми моделями (RAG)'
                     >
                         <ToggleButtonGroup
@@ -336,7 +336,7 @@ const Documents = () => {
                                     alt='doc_store_empty'
                                 />
                             </Box>
-                            <div>Хранилища документов еще не созданы</div>
+                            <div>База документов еще не создана</div>
                         </Stack>
                     )}
                 </Stack>

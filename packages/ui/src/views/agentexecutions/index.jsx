@@ -243,7 +243,7 @@ const AgentExecutions = () => {
                 <ErrorBoundary error={error} />
             ) : (
                 <Stack flexDirection='column' sx={{ gap: 3 }}>
-                    <ViewHeader title='Выполнения агентов' description='Мониторинг и управление выполнением потоков агентов' />
+                    <ViewHeader title='Аналитика' description='Мониторинг и управление выполнением потоков агентов' />
 
                     {/* Filter Section */}
                     <Box sx={{ mb: 2, width: '100%' }}>

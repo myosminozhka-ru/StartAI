@@ -82,10 +82,10 @@ const Chatflows = () => {
     }
 
     const addNew = () => {
-        // Проверяем лимит чатфлоу (максимум 2)
+        // Проверяем лимит агентов (максимум 2)
         const currentCount = getAllChatflowsApi.data?.total || 0
         if (currentCount >= 2) {
-            setError('Достигнут лимит чатфлоу. Максимально можно создать 2 чатфлоу. Удалите существующий чатфлоу, чтобы создать новый.')
+            setError('Достигнут лимит агентов. Максимально можно создать 2 агента. Удалите существующего агента, чтобы создать нового.')
             return
         }
         navigate('/canvas')
@@ -187,7 +187,7 @@ const Chatflows = () => {
                             startIcon={<IconPlus />}
                             sx={{ borderRadius: 2, height: 40 }}
                             disabled={(getAllChatflowsApi.data?.total || 0) >= 2}
-                            title={(getAllChatflowsApi.data?.total || 0) >= 2 ? 'Достигнут лимит чатфлоу (максимум 2)' : 'Добавить новый чатфлоу'}
+                            title={(getAllChatflowsApi.data?.total || 0) >= 2 ? 'Достигнут лимит агентов (максимум 2)' : 'Добавить нового агента'}
                         >
                             Добавить
                         </StyledPermissionButton>

@@ -102,7 +102,7 @@ const logDir = config.logging.dir
 // Create the log directory if it doesn't exist (только для локального хранилища)
 const storageType = process.env.STORAGE_TYPE || 'local'
 if (storageType === 'local' && !fs.existsSync(logDir)) {
-    fs.mkdirSync(logDir)
+    fs.mkdirSync(logDir, { recursive: true })
 }
 
 const logger = createLogger({
