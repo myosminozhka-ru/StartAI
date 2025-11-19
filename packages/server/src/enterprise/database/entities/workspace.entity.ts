@@ -22,6 +22,12 @@ export class Workspace {
     
     @Column({ type: 'timestamp', nullable: true })
     updatedDate?: Date
+    
+    @Column({ nullable: true })
+    createdBy?: string
+    
+    @Column({ nullable: true })
+    updatedBy?: string
 }
 
 

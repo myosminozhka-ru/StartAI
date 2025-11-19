@@ -72,8 +72,8 @@ router.post('/simple-register', async (req: Request, res: Response, next: NextFu
             if (!organization) {
                 organization = new Organization()
                 organization.name = 'Default Organization'
-                organization.createdDate = new Date().toISOString()
-                organization.updatedDate = new Date().toISOString()
+                organization.createdDate = new Date()
+                organization.updatedDate = new Date()
                 await queryRunner.manager.save(organization)
             }
 
@@ -81,8 +81,8 @@ router.post('/simple-register', async (req: Request, res: Response, next: NextFu
             const workspace = new Workspace()
             workspace.name = `${name}'s Workspace`
             workspace.organizationId = organization.id!
-            workspace.createdDate = new Date().toISOString()
-            workspace.updatedDate = new Date().toISOString()
+            workspace.createdDate = new Date()
+            workspace.updatedDate = new Date()
             await queryRunner.manager.save(workspace)
 
             // Создаем пользователя

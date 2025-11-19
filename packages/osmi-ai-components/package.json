@@ -5,6 +5,7 @@
     "main": "dist/src/index",
     "types": "dist/src/index.d.ts",
     "scripts": {
+        "prebuild": "tsc --skipLibCheck --noUnusedLocals false --noUnusedParameters false",
         "build": "gulp",
         "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
         "clean": "rimraf dist",

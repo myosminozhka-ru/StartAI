@@ -42,8 +42,9 @@ export class WorkspaceUserService {
             throw new InternalOsmiError(StatusCodes.BAD_REQUEST, WorkspaceUserErrorMessage.INVALID_WORKSPACE_USER_SATUS)
     }
 
-    public validateWorkspaceUserLastLogin(lastLogin: string | undefined) {
-        if (isInvalidDateTime(lastLogin))
+    public validateWorkspaceUserLastLogin(lastLogin: string | Date | undefined) {
+        const lastLoginStr = lastLogin instanceof Date ? lastLogin.toISOString() : lastLogin
+        if (isInvalidDateTime(lastLoginStr))
             throw new InternalOsmiError(StatusCodes.BAD_REQUEST, WorkspaceUserErrorMessage.INVALID_WORKSPACE_USER_LASTLOGIN)
     }
 

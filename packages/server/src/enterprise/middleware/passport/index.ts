@@ -183,7 +183,7 @@ export const initializeJwtCookieMiddleware = async (app: express.Application, id
                     
                     const loggedInUser: LoggedInUser = {
                         id: workspaceUser.userId || '',
-                        email: response.user.email,
+                        email: response.user.email || '',
                         name: response.user?.name || '',
                         roleId: workspaceUser.roleId || '',
                         activeOrganizationId: organization.id || '',
@@ -195,7 +195,7 @@ export const initializeJwtCookieMiddleware = async (app: express.Application, id
                         activeWorkspace: workspaceUser.workspace.name,
                         assignedWorkspaces,
                         isApiKeyValidated: true,
-                        permissions: [...JSON.parse(role.permissions)],
+                        permissions: [...JSON.parse(role.permissions as string)],
                         features
                     }
                     return done(null, loggedInUser, { message: 'Logged in Successfully' })
@@ -415,8 +415,8 @@ const _generateJwtToken = (user: Partial<LoggedInUser>, expiryInMinutes: number,
         { id: user?.id, username: user?.name, meta: encryptedUserInfo },
         secret,
         {
-            expiresIn: expiryInMinutes + 'm', // Expiry in minutes
-            notBefore: '0', // Cannot use before now, can be configured to be deferred.
+            expiresIn: String(expiryInMinutes) + 'm', // Expiry in minutes
+            notBefore: 0, // Cannot use before now, can be configured to be deferred.
             algorithm: 'HS256', // HMAC using SHA-256 hash algorithm
             audience: jwtAudience, // The audience of the token
             issuer: jwtIssuer // The issuer of the token

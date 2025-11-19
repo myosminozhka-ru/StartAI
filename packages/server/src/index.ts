@@ -257,7 +257,7 @@ export class App {
                         const ownerRole = await this.AppDataSource.getRepository(Role).findOne({
                             where: { name: GeneralRole.OWNER, organizationId: IsNull() }
                         })
-                        if (!ownerRole) {
+                        if (!ownerRole || !ownerRole.permissions) {
                             return res.status(401).json({ error: 'Unauthorized Access' })
                         }
 
@@ -277,7 +277,9 @@ export class App {
 
                         // @ts-ignore
                         req.user = {
-                            permissions: [...JSON.parse(ownerRole.permissions)],
+                            permissions: Array.isArray(ownerRole.permissions) 
+                                ? ownerRole.permissions 
+                                : [...JSON.parse(ownerRole.permissions as string)],
                             features,
                             activeOrganizationId: activeOrganizationId,
                             activeOrganizationSubscriptionId: subscriptionId,
@@ -285,7 +287,7 @@ export class App {
                             activeOrganizationProductId: productId,
                             isOrganizationAdmin: true,
                             activeWorkspaceId: apiKeyWorkSpaceId!,
-                            activeWorkspace: workspace.name,
+                            activeWorkspace: workspace.name || '',
                             isApiKeyValidated: true
                         }
                         next()
