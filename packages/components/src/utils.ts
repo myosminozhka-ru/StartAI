@@ -85,6 +85,7 @@ export const availableDependencies = [
     '@upstash/redis',
     '@zilliz/milvus2-sdk-node',
     'apify-client',
+    'axios',
     'cheerio',
     'chromadb',
     'cohere-ai',
