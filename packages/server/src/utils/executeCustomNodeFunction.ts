@@ -35,7 +35,11 @@ export const executeCustomNodeFunction = async ({
         const nodeData = { inputs: { functionInputVariables, ...body } }
         if (Object.prototype.hasOwnProperty.call(componentNodes, 'customFunction')) {
             try {
-                const nodeInstanceFilePath = componentNodes['customFunction'].filePath as string
+                const nodeComponent = componentNodes['customFunction']
+                if (!nodeComponent || !nodeComponent.filePath) {
+                    throw new Error('CustomFunction node component not found or missing filePath')
+                }
+                const nodeInstanceFilePath = nodeComponent.filePath as string
                 const nodeModule = await import(nodeInstanceFilePath)
                 const newNodeInstance = new nodeModule.nodeClass()
 

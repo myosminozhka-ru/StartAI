@@ -111,6 +111,9 @@ export const createFileAttachment = async (req: Request) => {
 
     // Find FileLoader node
     const fileLoaderComponent = appServer.nodesPool.componentNodes['fileLoader']
+    if (!fileLoaderComponent || !fileLoaderComponent.filePath) {
+        throw new InternalOsmiError(StatusCodes.NOT_FOUND, 'FileLoader node component not found or missing filePath')
+    }
     const fileLoaderNodeInstanceFilePath = fileLoaderComponent.filePath as string
     const fileLoaderNodeModule = await import(fileLoaderNodeInstanceFilePath)
     const fileLoaderNodeInstance = new fileLoaderNodeModule.nodeClass()

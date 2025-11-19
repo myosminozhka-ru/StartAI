@@ -193,7 +193,11 @@ const initEndingNode = async ({
 
     logger.debug(`[server]: Running ${reactFlowNodeData.label} (${reactFlowNodeData.id})`)
 
-    const nodeInstanceFilePath = componentNodes[reactFlowNodeData.name].filePath as string
+    const nodeComponent = componentNodes[reactFlowNodeData.name]
+    if (!nodeComponent || !nodeComponent.filePath) {
+        throw new Error(`Node component "${reactFlowNodeData.name}" not found or missing filePath`)
+    }
+    const nodeInstanceFilePath = nodeComponent.filePath as string
     const nodeModule = await import(nodeInstanceFilePath)
     const nodeInstance = new nodeModule.nodeClass({ sessionId })
 
@@ -840,7 +844,11 @@ export const executeFlow = async ({
             if (chatflowConfig?.postProcessing?.enabled === true) {
                 try {
                     const postProcessingFunction = JSON.parse(chatflowConfig?.postProcessing?.customFunction)
-                    const nodeInstanceFilePath = componentNodes['customFunction'].filePath as string
+                    const nodeComponent = componentNodes['customFunction']
+                    if (!nodeComponent || !nodeComponent.filePath) {
+                        throw new Error('CustomFunction node component not found or missing filePath')
+                    }
+                    const nodeInstanceFilePath = nodeComponent.filePath as string
                     const nodeModule = await import(nodeInstanceFilePath)
                     //set the outputs.output to EndingNode to prevent json escaping of content...
                     const nodeData = {

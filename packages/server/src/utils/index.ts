@@ -579,7 +579,12 @@ export const buildFlow = async ({
         if (!reactFlowNode || reactFlowNode === undefined || nodeIndex < 0) continue
 
         try {
-            const nodeInstanceFilePath = componentNodes[reactFlowNode.data.name].filePath as string
+            const nodeComponent = componentNodes[reactFlowNode.data.name]
+            if (!nodeComponent || !nodeComponent.filePath) {
+                logger.error(`[server]: Node component "${reactFlowNode.data.name}" not found or missing filePath`)
+                continue
+            }
+            const nodeInstanceFilePath = nodeComponent.filePath as string
             const nodeModule = await import(nodeInstanceFilePath)
             const newNodeInstance = new nodeModule.nodeClass()
 
@@ -778,7 +783,12 @@ export const clearSessionMemory = async (
         // Only clear specific session memory from View Message Dialog UI
         if (isClearFromViewMessageDialog && memoryType && node.data.label !== memoryType) continue
 
-        const nodeInstanceFilePath = componentNodes[node.data.name].filePath as string
+        const nodeComponent = componentNodes[node.data.name]
+        if (!nodeComponent || !nodeComponent.filePath) {
+            logger.error(`[server]: Node component "${node.data.name}" not found or missing filePath`)
+            continue
+        }
+        const nodeInstanceFilePath = nodeComponent.filePath as string
         const nodeModule = await import(nodeInstanceFilePath)
         const newNodeInstance = new nodeModule.nodeClass()
         const options: ICommonObject = { orgId, chatId, appDataSource, databaseEntities, logger }
@@ -1789,7 +1799,11 @@ export const getSessionChatHistory = async (
     logger: any,
     prependMessages?: IMessage[]
 ): Promise<IMessage[]> => {
-    const nodeInstanceFilePath = componentNodes[memoryNode.data.name].filePath as string
+    const nodeComponent = componentNodes[memoryNode.data.name]
+    if (!nodeComponent || !nodeComponent.filePath) {
+        throw new Error(`Node component "${memoryNode.data.name}" not found or missing filePath`)
+    }
+    const nodeInstanceFilePath = nodeComponent.filePath as string
     const nodeModule = await import(nodeInstanceFilePath)
     const newNodeInstance = new nodeModule.nodeClass()
 

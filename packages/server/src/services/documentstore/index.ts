@@ -551,7 +551,11 @@ const _splitIntoChunks = async (appDataSource: DataSource, componentNodes: IComp
     try {
         let splitterInstance = null
         if (data.splitterId && data.splitterConfig && Object.keys(data.splitterConfig).length > 0) {
-            const nodeInstanceFilePath = componentNodes[data.splitterId].filePath as string
+            const nodeComponent = componentNodes[data.splitterId]
+            if (!nodeComponent || !nodeComponent.filePath) {
+                throw new Error(`Splitter node component "${data.splitterId}" not found or missing filePath`)
+            }
+            const nodeInstanceFilePath = nodeComponent.filePath as string
             const nodeModule = await import(nodeInstanceFilePath)
             const newNodeInstance = new nodeModule.nodeClass()
             let nodeData = {
@@ -561,7 +565,11 @@ const _splitIntoChunks = async (appDataSource: DataSource, componentNodes: IComp
             splitterInstance = await newNodeInstance.init(nodeData)
         }
         if (!data.loaderId) return []
-        const nodeInstanceFilePath = componentNodes[data.loaderId].filePath as string
+        const loaderComponent = componentNodes[data.loaderId]
+        if (!loaderComponent || !loaderComponent.filePath) {
+            throw new Error(`Loader node component "${data.loaderId}" not found or missing filePath`)
+        }
+        const nodeInstanceFilePath = loaderComponent.filePath as string
         const nodeModule = await import(nodeInstanceFilePath)
         // doc loader configs
         const nodeData = {
@@ -1504,6 +1512,9 @@ const _createEmbeddingsObject = async (
 ): Promise<any> => {
     // prepare embedding node data
     const embeddingComponent = componentNodes[data.embeddingName]
+    if (!embeddingComponent) {
+        throw new Error(`Embedding component "${data.embeddingName}" not found`)
+    }
     const embeddingNodeData: any = {
         inputs: { ...data.embeddingConfig },
         outputs: { output: 'document' },
@@ -1521,6 +1532,9 @@ const _createEmbeddingsObject = async (
     if (upsertHistory) upsertHistory['flowData'] = saveUpsertFlowData(embeddingNodeData, upsertHistory)
 
     // init embedding object
+    if (!embeddingComponent.filePath) {
+        throw new Error(`Embedding component "${data.embeddingName}" missing filePath`)
+    }
     const embeddingNodeInstanceFilePath = embeddingComponent.filePath as string
     const embeddingNodeModule = await import(embeddingNodeInstanceFilePath)
     const embeddingNodeInstance = new embeddingNodeModule.nodeClass()
@@ -1539,6 +1553,9 @@ const _createRecordManagerObject = async (
 ) => {
     // prepare record manager node data
     const recordManagerComponent = componentNodes[data.recordManagerName]
+    if (!recordManagerComponent) {
+        throw new Error(`Record manager component "${data.recordManagerName}" not found`)
+    }
     const rmNodeData: any = {
         inputs: { ...data.recordManagerConfig },
         id: `${recordManagerComponent.name}_0`,
@@ -1555,6 +1572,9 @@ const _createRecordManagerObject = async (
     if (upsertHistory) upsertHistory['flowData'] = saveUpsertFlowData(rmNodeData, upsertHistory)
 
     // init record manager object
+    if (!recordManagerComponent || !recordManagerComponent.filePath) {
+        throw new Error(`Record manager component "${data.recordManagerConfig.recordManager}" not found or missing filePath`)
+    }
     const rmNodeInstanceFilePath = recordManagerComponent.filePath as string
     const rmNodeModule = await import(rmNodeInstanceFilePath)
     const rmNodeInstance = new rmNodeModule.nodeClass()
@@ -1600,7 +1620,11 @@ const _createVectorStoreObject = async (
     vStoreNodeData: INodeData,
     upsertHistory?: Record<string, any>
 ) => {
-    const vStoreNodeInstanceFilePath = componentNodes[data.vectorStoreName].filePath as string
+    const vStoreComponent = componentNodes[data.vectorStoreName]
+    if (!vStoreComponent || !vStoreComponent.filePath) {
+        throw new Error(`Vector store component "${data.vectorStoreName}" not found or missing filePath`)
+    }
+    const vStoreNodeInstanceFilePath = vStoreComponent.filePath as string
     const vStoreNodeModule = await import(vStoreNodeInstanceFilePath)
     const vStoreNodeInstance = new vStoreNodeModule.nodeClass()
     if (upsertHistory) upsertHistory['flowData'] = saveUpsertFlowData(vStoreNodeData, upsertHistory)
@@ -2092,7 +2116,11 @@ const generateDocStoreToolDesc = async (docStoreId: string, selectedChatModel: I
             .join('\n')
 
         if (selectedChatModel && Object.keys(selectedChatModel).length > 0) {
-            const nodeInstanceFilePath = appServer.nodesPool.componentNodes[selectedChatModel.name].filePath as string
+            const nodeComponent = appServer.nodesPool.componentNodes[selectedChatModel.name]
+            if (!nodeComponent || !nodeComponent.filePath) {
+                throw new Error(`Chat model component "${selectedChatModel.name}" not found or missing filePath`)
+            }
+            const nodeInstanceFilePath = nodeComponent.filePath as string
             const nodeModule = await import(nodeInstanceFilePath)
             const newNodeInstance = new nodeModule.nodeClass()
             const nodeData = {

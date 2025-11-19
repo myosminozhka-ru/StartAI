@@ -503,7 +503,11 @@ const generateAssistantInstruction = async (task: string, selectedChatModel: ICo
         const appServer = getRunningExpressApp()
 
         if (selectedChatModel && Object.keys(selectedChatModel).length > 0) {
-            const nodeInstanceFilePath = appServer.nodesPool.componentNodes[selectedChatModel.name].filePath as string
+            const nodeComponent = appServer.nodesPool.componentNodes[selectedChatModel.name]
+            if (!nodeComponent || !nodeComponent.filePath) {
+                throw new Error(`Chat model component "${selectedChatModel.name}" not found or missing filePath`)
+            }
+            const nodeInstanceFilePath = nodeComponent.filePath as string
             const nodeModule = await import(nodeInstanceFilePath)
             const newNodeInstance = new nodeModule.nodeClass()
             const nodeData = {

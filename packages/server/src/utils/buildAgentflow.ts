@@ -1018,7 +1018,11 @@ const executeNode = async ({
         })
 
         // Get node implementation
-        const nodeInstanceFilePath = componentNodes[reactFlowNode.data.name].filePath as string
+        const nodeComponent = componentNodes[reactFlowNode.data.name]
+        if (!nodeComponent || !nodeComponent.filePath) {
+            throw new Error(`Node component "${reactFlowNode.data.name}" not found or missing filePath`)
+        }
+        const nodeInstanceFilePath = nodeComponent.filePath as string
         const nodeModule = await import(nodeInstanceFilePath)
         const newNodeInstance = new nodeModule.nodeClass()
 

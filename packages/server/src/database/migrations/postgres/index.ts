@@ -40,6 +40,7 @@ import { AddTextToSpeechToChatFlow1754986480347 } from './1754986480347-AddTextT
 import { ModifyChatflowType1755066758601 } from './1755066758601-ModifyChatflowType'
 import { AddTextToSpeechToChatFlow1759419194331 } from './1759419194331-AddTextToSpeechToChatFlow'
 import { AddChatFlowNameIndex1759424903973 } from './1759424903973-AddChatFlowNameIndex'
+import { AddAuditColumns1762783700000 } from './1762783700000-AddAuditColumns'
 import { MinimalVersionSetup1720230151481 } from './1720230151481-MinimalVersionSetup'
 
 import { AddAuthTables1720230151482 } from '../../../enterprise/database/migrations/postgres/1720230151482-AddAuthTables'
@@ -109,5 +110,6 @@ export const postgresMigrations = [
     AddTextToSpeechToChatFlow1754986480347,
     ModifyChatflowType1755066758601,
     AddTextToSpeechToChatFlow1759419194331,
-    AddChatFlowNameIndex1759424903973
+    AddChatFlowNameIndex1759424903973,
+    AddAuditColumns1762783700000
 ]
