@@ -101,7 +101,7 @@ export default function FlowListMenu({ chatflow, isAgentCanvas, isAgentflowV2, s
     const [exportTemplateDialogProps, setExportTemplateDialogProps] = useState({})
 
     // Переводим только текстовые строки для пользователя
-    const title = isAgentCanvas ? 'Агенты' : 'Чатфлоу'
+    const title = isAgentCanvas ? 'Мульти агенты' : 'Агенты'
 
     const handleClick = (event) => {
         setAnchorEl(event.currentTarget)

@@ -75,7 +75,7 @@ const AgentflowCanvas = () => {
     const URLpath = document.location.pathname.toString().split('/')
     const chatflowId =
         URLpath[URLpath.length - 1] === 'canvas' || URLpath[URLpath.length - 1] === 'agentcanvas' ? '' : URLpath[URLpath.length - 1]
-    const canvasTitle = URLpath.includes('agentcanvas') ? 'Агенты' : 'Чатфлоу'
+    const canvasTitle = URLpath.includes('agentcanvas') ? 'Мульти агенты' : 'Агенты'
 
     const { confirm } = useConfirm()
 
