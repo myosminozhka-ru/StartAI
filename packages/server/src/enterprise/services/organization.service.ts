@@ -59,7 +59,9 @@ export class OrganizationService {
 
     public createNewOrganization(data: Partial<Organization>, queryRunner: QueryRunner, isRegister: boolean = false) {
         this.validateOrganizationName(data.name, isRegister)
-        data.updatedBy = data.createdBy
+        if (data.createdBy) {
+            data.updatedBy = data.createdBy
+        }
         data.id = generateId()
 
         return queryRunner.manager.create(Organization, data)
@@ -73,6 +75,9 @@ export class OrganizationService {
         const queryRunner = this.dataSource.createQueryRunner()
         await queryRunner.connect()
 
+        if (!data.createdBy) {
+            throw new InternalOsmiError(StatusCodes.BAD_REQUEST, 'CreatedBy is required')
+        }
         const user = await this.userService.readUserById(data.createdBy, queryRunner)
         if (!user) throw new InternalOsmiError(StatusCodes.NOT_FOUND, UserErrorMessage.USER_NOT_FOUND)
 
@@ -97,6 +102,9 @@ export class OrganizationService {
 
         const oldOrganizationData = await this.readOrganizationById(newOrganizationData.id, queryRunner)
         if (!oldOrganizationData) throw new InternalOsmiError(StatusCodes.NOT_FOUND, OrganizationErrorMessage.ORGANIZATION_NOT_FOUND)
+        if (!newOrganizationData.updatedBy) {
+            throw new InternalOsmiError(StatusCodes.BAD_REQUEST, 'UpdatedBy is required')
+        }
         const user = await this.userService.readUserById(newOrganizationData.updatedBy, queryRunner)
         if (!user) throw new InternalOsmiError(StatusCodes.NOT_FOUND, UserErrorMessage.USER_NOT_FOUND)
         if (newOrganizationData.name) {

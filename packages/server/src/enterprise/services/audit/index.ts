@@ -49,7 +49,7 @@ const fetchLoginActivity = async (body: any) => {
         const pagedResults = await appServer.AppDataSource.getRepository(LoginActivity).find({
             where: whereCondition,
             order: {
-                attemptedDateTime: 'DESC'
+                attemptedDateTime: 'DESC' as any
             },
             skip,
             take
@@ -73,12 +73,12 @@ const recordLoginActivity = async (username: string, activityCode: LoginActivity
             return
         }
         const loginMode = ssoProvider ?? 'Email/Password'
-        const loginActivity = appServer.AppDataSource.getRepository(LoginActivity).create({
-            username,
-            activityCode,
-            message,
-            loginMode
-        })
+        const loginActivity = new LoginActivity()
+        loginActivity.username = username
+        loginActivity.activityCode = activityCode
+        loginActivity.message = message
+        loginActivity.loginMode = loginMode
+        loginActivity.attemptedDateTime = new Date()
         const result = await appServer.AppDataSource.getRepository(LoginActivity).save(loginActivity)
         return result
     } catch (error) {

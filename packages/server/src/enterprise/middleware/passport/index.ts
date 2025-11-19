@@ -122,7 +122,7 @@ export const initializeJwtCookieMiddleware = async (app: express.Application, id
                             : (response.workspaceDetails as WorkspaceUser)
                     const workspaceUserService = new WorkspaceUserService()
                     workspaceUser.status = WorkspaceUserStatus.ACTIVE
-                    workspaceUser.lastLogin = new Date().toISOString()
+                    workspaceUser.lastLogin = new Date()
                     workspaceUser.updatedBy = workspaceUser.userId
                     const organizationUserService = new OrganizationUserService()
                     const { organizationUser } = await organizationUserService.readOrganizationUserByWorkspaceIdUserId(
@@ -138,11 +138,14 @@ export const initializeJwtCookieMiddleware = async (app: express.Application, id
 
                     const workspaceUsers = await workspaceUserService.readWorkspaceUserByUserId(organizationUser.userId, queryRunner)
                     const assignedWorkspaces: IAssignedWorkspace[] = workspaceUsers.map((workspaceUser) => {
+                        if (!workspaceUser.workspace) {
+                            throw new InternalOsmiError(StatusCodes.NOT_FOUND, 'Workspace not found')
+                        }
                         return {
-                            id: workspaceUser.workspace.id,
-                            name: workspaceUser.workspace.name,
-                            role: workspaceUser.role?.name,
-                            organizationId: workspaceUser.workspace.organizationId
+                            id: workspaceUser.workspace.id || '',
+                            name: workspaceUser.workspace.name || '',
+                            role: workspaceUser.role?.name || '',
+                            organizationId: workspaceUser.workspace.organizationId || ''
                         } as IAssignedWorkspace
                     })
 
@@ -162,15 +165,31 @@ export const initializeJwtCookieMiddleware = async (app: express.Application, id
                     const features = await identityManager.getFeaturesByPlan(subscriptionId)
                     const productId = await identityManager.getProductIdFromSubscription(subscriptionId)
 
+                    if (!response.user.email) {
+                        throw new InternalOsmiError(StatusCodes.BAD_REQUEST, 'User email is required')
+                    }
+                    if (!workspaceUser.workspace) {
+                        throw new InternalOsmiError(StatusCodes.NOT_FOUND, 'Workspace not found')
+                    }
+                    if (!workspaceUser.workspaceId) {
+                        throw new InternalOsmiError(StatusCodes.NOT_FOUND, 'Workspace ID is required')
+                    }
+                    if (!workspaceUser.workspace.name) {
+                        throw new InternalOsmiError(StatusCodes.NOT_FOUND, 'Workspace name is required')
+                    }
+                    if (!role.permissions) {
+                        throw new InternalOsmiError(StatusCodes.NOT_FOUND, 'Role permissions are required')
+                    }
+                    
                     const loggedInUser: LoggedInUser = {
-                        id: workspaceUser.userId,
+                        id: workspaceUser.userId || '',
                         email: response.user.email,
-                        name: response.user?.name,
-                        roleId: workspaceUser.roleId,
-                        activeOrganizationId: organization.id,
+                        name: response.user?.name || '',
+                        roleId: workspaceUser.roleId || '',
+                        activeOrganizationId: organization.id || '',
                         activeOrganizationSubscriptionId: subscriptionId,
                         activeOrganizationCustomerId: customerId,
-                        activeOrganizationProductId: productId,
+                        activeOrganizationProductId: productId || '',
                         isOrganizationAdmin: workspaceUser.roleId === ownerRole.id,
                         activeWorkspaceId: workspaceUser.workspaceId,
                         activeWorkspace: workspaceUser.workspace.name,
@@ -391,14 +410,18 @@ export const generateJwtRefreshToken = (user: any) => {
 }
 
 const _generateJwtToken = (user: Partial<LoggedInUser>, expiryInMinutes: number, secret: string) => {
-    const encryptedUserInfo = encryptToken(user?.id + ':' + user?.activeWorkspaceId)
-    return sign({ id: user?.id, username: user?.name, meta: encryptedUserInfo }, secret!, {
-        expiresIn: expiryInMinutes + 'm', // Expiry in minutes
-        notBefore: '0', // Cannot use before now, can be configured to be deferred.
-        algorithm: 'HS256', // HMAC using SHA-256 hash algorithm
-        audience: jwtAudience, // The audience of the token
-        issuer: jwtIssuer // The issuer of the token
-    })
+    const encryptedUserInfo = encryptToken((user?.id || '') + ':' + (user?.activeWorkspaceId || ''))
+    return sign(
+        { id: user?.id, username: user?.name, meta: encryptedUserInfo },
+        secret,
+        {
+            expiresIn: expiryInMinutes + 'm', // Expiry in minutes
+            notBefore: '0', // Cannot use before now, can be configured to be deferred.
+            algorithm: 'HS256', // HMAC using SHA-256 hash algorithm
+            audience: jwtAudience, // The audience of the token
+            issuer: jwtIssuer // The issuer of the token
+        }
+    )
 }
 
 export const verifyToken = (req: Request, res: Response, next: NextFunction) => {

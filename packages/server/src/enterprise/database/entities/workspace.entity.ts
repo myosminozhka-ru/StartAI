@@ -1,7 +1,10 @@
 // Заглушка для minimal версии
 import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm'
 
-export type WorkspaceName = string
+export enum WorkspaceName {
+    DEFAULT_WORKSPACE = 'Default Workspace',
+    DEFAULT_PERSONAL_WORKSPACE = 'Default Personal Workspace'
+}
 
 @Entity()
 export class Workspace {
@@ -13,6 +16,12 @@ export class Workspace {
     
     @Column({ nullable: true })
     name?: string
+    
+    @Column({ type: 'timestamp', nullable: true })
+    createdDate?: Date
+    
+    @Column({ type: 'timestamp', nullable: true })
+    updatedDate?: Date
 }
 
 

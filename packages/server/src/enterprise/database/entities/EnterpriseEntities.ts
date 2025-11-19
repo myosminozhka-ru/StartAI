@@ -7,6 +7,21 @@ export const EnterpriseEntities = []
 export class LoginActivity {
     @PrimaryGeneratedColumn('uuid')
     id?: string
+    
+    @Column({ nullable: true })
+    username?: string
+    
+    @Column({ type: 'integer', nullable: true })
+    activityCode?: number
+    
+    @Column({ nullable: true })
+    message?: string
+    
+    @Column({ nullable: true })
+    loginMode?: string
+    
+    @Column({ type: 'timestamp', nullable: true })
+    attemptedDateTime?: Date
 }
 
 @Entity()

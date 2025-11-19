@@ -80,6 +80,9 @@ export class OrganizationUserService {
             .where('workspace.id = :workspaceId', { workspaceId })
             .getOne()
         if (!workspace) throw new InternalOsmiError(StatusCodes.NOT_FOUND, WorkspaceUserErrorMessage.WORKSPACE_USER_NOT_FOUND)
+        if (!workspace.workspace) {
+            throw new InternalOsmiError(StatusCodes.NOT_FOUND, 'Workspace not found')
+        }
         return await this.readOrganizationUserByOrganizationIdUserId(workspace.workspace.organizationId, userId, queryRunner)
     }
 
@@ -112,9 +115,11 @@ export class OrganizationUserService {
                     userId: organizationUser.userId,
                     workspace: { organizationId: organizationId }
                 })
-                delete organizationUser.user.credential
-                delete organizationUser.user.tempToken
-                delete organizationUser.user.tokenExpiry
+                if (organizationUser.user) {
+                    delete organizationUser.user.credential
+                    delete organizationUser.user.tempToken
+                    delete organizationUser.user.tokenExpiry
+                }
                 return {
                     ...organizationUser,
                     isOrgOwner: organizationUser.roleId === ownerRole?.id,
@@ -145,9 +150,11 @@ export class OrganizationUserService {
             .getMany()
 
         return orgUsers.map((organizationUser) => {
-            delete organizationUser.user.credential
-            delete organizationUser.user.tempToken
-            delete organizationUser.user.tokenExpiry
+            if (organizationUser.user) {
+                delete organizationUser.user.credential
+                delete organizationUser.user.tempToken
+                delete organizationUser.user.tokenExpiry
+            }
             return {
                 ...organizationUser,
                 isOrgOwner: organizationUser.roleId === ownerRole?.id
@@ -226,7 +233,9 @@ export class OrganizationUserService {
         if (!createdBy) throw new InternalOsmiError(StatusCodes.NOT_FOUND, UserErrorMessage.USER_NOT_FOUND)
 
         let newOrganizationUser = this.createNewOrganizationUser(data, queryRunner)
-        organization.updatedBy = data.createdBy
+        if (data.createdBy) {
+            organization.updatedBy = data.createdBy
+        }
         try {
             await queryRunner.startTransaction()
             newOrganizationUser = await this.saveOrganizationUser(newOrganizationUser, queryRunner)

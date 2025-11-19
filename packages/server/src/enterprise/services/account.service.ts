@@ -151,7 +151,7 @@ export class AccountService {
                 } else {
                     data.user.status = UserStatus.ACTIVE
                     data.user.tempToken = ''
-                    data.user.tokenExpiry = null
+                    data.user.tokenExpiry = undefined
                 }
                 data.organization.name = OrganizationName.DEFAULT_ORGANIZATION
                 data.organizationUser.role = await this.roleService.readGeneralRoleByName(GeneralRole.OWNER, queryRunner)
@@ -194,7 +194,7 @@ export class AccountService {
                     const today = new Date()
                     if (today > tokenExpiry) throw new InternalOsmiError(StatusCodes.BAD_REQUEST, UserErrorMessage.EXPIRED_TEMP_TOKEN)
                     data.user.tempToken = ''
-                    data.user.tokenExpiry = null
+                    data.user.tokenExpiry = undefined
                     data.user.name = name
                     data.user.status = UserStatus.ACTIVE
                     data.organizationUser.status = OrganizationUserStatus.ACTIVE
@@ -216,6 +216,9 @@ export class AccountService {
         }
 
         if (!data.organization.id) {
+            if (!data.user.id) {
+                throw new InternalOsmiError(StatusCodes.BAD_REQUEST, 'User ID is required')
+            }
             data.organization.createdBy = data.user.id
             data.organization = this.organizationservice.createNewOrganization(data.organization, queryRunner, true)
         }
@@ -379,6 +382,9 @@ export class AccountService {
                 }
                 if (workspaceUser.length === 1) {
                     oldWorkspaceUser = workspaceUser[0]
+                    if (!oldWorkspaceUser.workspace) {
+                        throw new InternalOsmiError(StatusCodes.NOT_FOUND, 'Workspace not found')
+                    }
                     if (oldWorkspaceUser.workspace.name === WorkspaceName.DEFAULT_PERSONAL_WORKSPACE) {
                         await sendWorkspaceInvite(
                             data.user.email!,
@@ -474,7 +480,7 @@ export class AccountService {
                 }
             }
             if (platform === Platform.ENTERPRISE) {
-                await auditService.recordLoginActivity(user.email, LoginActivityCode.LOGIN_SUCCESS, 'Login Success')
+                await auditService.recordLoginActivity(user.email || '', LoginActivityCode.LOGIN_SUCCESS, 'Login Success')
             }
             return { user, workspaceDetails: wsUserOrUsers }
         } finally {
@@ -493,7 +499,7 @@ export class AccountService {
             if (!user) throw new InternalOsmiError(StatusCodes.NOT_FOUND, UserErrorMessage.USER_NOT_FOUND)
             data.user = user
             data.user.tempToken = ''
-            data.user.tokenExpiry = null
+            data.user.tokenExpiry = undefined
             data.user.status = UserStatus.ACTIVE
             data.user = await this.userService.saveUser(data.user, queryRunner)
             await queryRunner.commitTransaction()

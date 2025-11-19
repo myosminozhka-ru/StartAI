@@ -1,7 +1,7 @@
 import { DataSource } from 'typeorm'
 import { v4 as uuidv4 } from 'uuid'
 import bcrypt from 'bcryptjs'
-import { User } from '../enterprise/database/entities/user.entity'
+import { User, UserStatus } from '../enterprise/database/entities/user.entity'
 import { Organization } from '../enterprise/database/entities/organization.entity'
 import { Workspace } from '../enterprise/database/entities/workspace.entity'
 import logger from '../utils/logger'
@@ -30,9 +30,9 @@ export async function seedDefaultData(AppDataSource: DataSource): Promise<void> 
         user.name = 'Admin'
         user.credential = hashedPassword
         user.role = 'admin'
-        user.status = 'active'
-        user.createdDate = new Date().toISOString()
-        user.updatedDate = new Date().toISOString()
+        user.status = UserStatus.ACTIVE
+        user.createdDate = new Date()
+        user.updatedDate = new Date()
         await userRepo.save(user)
         logger.info('✅ [seed]: Default user created')
 
@@ -41,8 +41,8 @@ export async function seedDefaultData(AppDataSource: DataSource): Promise<void> 
         const organization = new Organization()
         organization.id = orgId
         organization.name = 'Default Organization'
-        organization.createdDate = new Date().toISOString()
-        organization.updatedDate = new Date().toISOString()
+        organization.createdDate = new Date()
+        organization.updatedDate = new Date()
         await orgRepo.save(organization)
         logger.info('✅ [seed]: Default organization created')
 
@@ -52,8 +52,8 @@ export async function seedDefaultData(AppDataSource: DataSource): Promise<void> 
         workspace.id = workspaceId
         workspace.name = 'Default Workspace'
         workspace.organizationId = orgId
-        workspace.createdDate = new Date().toISOString()
-        workspace.updatedDate = new Date().toISOString()
+        workspace.createdDate = new Date()
+        workspace.updatedDate = new Date()
         await workspaceRepo.save(workspace)
         logger.info('✅ [seed]: Default workspace created')
 
