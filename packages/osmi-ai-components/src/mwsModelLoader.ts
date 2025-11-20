@@ -76,6 +76,11 @@ export const getDefaultMWSModels = (): INodeOptionsValue[] => {
             label: 'Qwen 2.5 Coder 7B Instruct',
             name: 'qwen2.5-coder-7b-instruct',
             description: 'Qwen 2.5 Coder 7B Instruct через MWS API'
+        },
+        {
+            label: 'Cotype 2 Pro',
+            name: 'cotype-2-pro',
+            description: 'Cotype 2 Pro через MWS API'
         }
     ]
 }
@@ -91,9 +96,9 @@ export const getDefaultMWSEmbeddingModels = (): INodeOptionsValue[] => {
             description: 'BGE M3 - многоязычная embedding модель через MWS API'
         },
         {
-            label: 'BAAI BGE Multilingual Gemma2',
-            name: 'BAAI/bge-multilingual-gemma2',
-            description: 'BAAI BGE Multilingual Gemma2 через MWS API'
+            label: 'Cotype 2 Pro',
+            name: 'cotype-2-pro',
+            description: 'Cotype 2 Pro embedding модель через MWS API'
         }
     ]
 }

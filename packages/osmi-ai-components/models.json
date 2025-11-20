@@ -1331,6 +1331,11 @@
                     "label": "Gemma 3 27B IT",
                     "name": "gemma-3-27b-it",
                     "description": "Gemma 3 27B IT через MWS API"
+                },
+                {
+                    "label": "Cotype 2 Pro",
+                    "name": "cotype-2-pro",
+                    "description": "Cotype 2 Pro через MWS API"
                 }
             ]
         }
@@ -2100,9 +2105,9 @@
                     "description": "BGE M3 - многоязычная embedding модель через MWS API"
                 },
                 {
-                    "label": "BAAI BGE Multilingual Gemma2",
-                    "name": "BAAI/bge-multilingual-gemma2",
-                    "description": "BAAI BGE Multilingual Gemma2 через MWS API"
+                    "label": "Cotype 2 Pro",
+                    "name": "cotype-2-pro",
+                    "description": "Cotype 2 Pro embedding модель через MWS API"
                 }
             ]
         }

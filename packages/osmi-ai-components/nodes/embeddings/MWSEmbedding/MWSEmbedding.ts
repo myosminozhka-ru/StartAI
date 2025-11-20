@@ -37,7 +37,7 @@ class MWSEmbedding_Embeddings implements INode {
                 name: 'modelName',
                 type: 'asyncOptions',
                 loadMethod: 'listModels',
-                default: 'bge-m3'
+                default: 'cotype-2-pro'
             },
             {
                 label: 'Удалить переносы строк',
@@ -80,13 +80,11 @@ class MWSEmbedding_Embeddings implements INode {
                         const credentialData = await getCredentialData(nodeData.credential, options)
                         const mwsApiKey = getCredentialParam('mwsApiKey', credentialData, nodeData)
                         if (mwsApiKey) {
-                            // Фильтруем только embedding модели
+                            // Фильтруем только cotype и bge-m3 модели
                             const allModels = await getMWSModels(mwsApiKey)
                             const embeddingModels = allModels.filter(model => 
-                                model.name.includes('embedding') || 
-                                model.name.includes('embed') ||
-                                model.name.includes('bge') ||
-                                model.name.includes('BAAI')
+                                model.name.toLowerCase().includes('cotype') ||
+                                model.name.toLowerCase() === 'bge-m3'
                             )
                             if (embeddingModels && embeddingModels.length > 0) {
                                 return embeddingModels

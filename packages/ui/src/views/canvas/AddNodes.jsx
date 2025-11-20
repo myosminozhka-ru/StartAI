@@ -55,7 +55,7 @@ function a11yProps(index) {
     }
 }
 
-const blacklistCategoriesForAgentCanvas = ['Agents', 'Memory', 'Record Manager', 'Utilities']
+const blacklistCategoriesForAgentCanvas = ['Agents', 'Memory', 'Record Manager', 'Utilities', 'Graph']
 
 const agentMemoryNodes = ['agentMemory', 'sqliteAgentMemory', 'postgresAgentMemory', 'mySQLAgentMemory']
 
@@ -128,12 +128,26 @@ const AddNodes = ({ nodesData, node, isAgentCanvas, isAgentflowv2, onFlowGenerat
             })
             return passed
         }
-        let nodes = nodesData.filter((nd) => nd.category !== 'Multi Agents' && nd.category !== 'Sequential Agents')
+        let nodes = nodesData.filter((nd) => 
+            nd.category !== 'Multi Agents' && 
+            nd.category !== 'Sequential Agents' && 
+            nd.category !== 'Graph' &&
+            nd.category !== 'Utilities' &&
+            (!nd.tags || !nd.tags.includes('LlamaIndex'))
+        )
 
         for (const category in blacklistForChatflowCanvas) {
             const nodeNames = blacklistForChatflowCanvas[category]
             nodes = nodes.filter((nd) => !nodeNames.includes(nd.name))
         }
+
+        // Фильтруем чат модели, оставляем только MWS
+        nodes = nodes.filter((nd) => {
+            if (nd.category === 'Chat Models') {
+                return nd.name === 'chatMWS'
+            }
+            return true
+        })
 
         const passed = nodes.filter((nd) => {
             const passesName = nd.name.toLowerCase().includes(value.toLowerCase())
@@ -227,9 +241,21 @@ const AddNodes = ({ nodesData, node, isAgentCanvas, isAgentflowv2, onFlowGenerat
                 if (category === 'Agent Flows' || category === 'Multi Agents' || category === 'Sequential Agents') {
                     continue
                 }
+                if (category === 'Graph') {
+                    continue
+                }
+                if (category === 'Utilities') {
+                    continue
+                }
                 if (Object.keys(blacklistForChatflowCanvas).includes(category)) {
                     const nodes = blacklistForChatflowCanvas[category]
                     result[category] = result[category].filter((nd) => !nodes.includes(nd.name))
+                }
+                // Фильтруем LlamaIndex узлы
+                result[category] = result[category].filter((nd) => !nd.tags || !nd.tags.includes('LlamaIndex'))
+                // Фильтруем чат модели, оставляем только MWS
+                if (category === 'Chat Models') {
+                    result[category] = result[category].filter((nd) => nd.name === 'chatMWS')
                 }
                 filteredResult[category] = result[category]
             }
@@ -434,7 +460,7 @@ const AddNodes = ({ nodesData, node, isAgentCanvas, isAgentflowv2, onFlowGenerat
                                                 onChange={handleTabChange}
                                                 aria-label='вкладки'
                                             >
-                                                {['LangChain', 'LlamaIndex', 'Utilities'].map((item, index) => (
+                                                {['LangChain'].map((item, index) => (
                                                     <Tab
                                                         icon={
                                                             <div

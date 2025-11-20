@@ -1,68 +1,107 @@
 version: '3.1'
 
 services:
+    postgres:
+        image: postgres:15-alpine
+        container_name: osmi-ai-postgres
+        ports:
+            - '5434:5432'
+        environment:
+            POSTGRES_USER: ${DATABASE_USER}
+            POSTGRES_PASSWORD: ${DATABASE_PASSWORD}
+            POSTGRES_DB: ${DATABASE_NAME}
+        volumes:
+            - postgres_data:/var/lib/postgresql/data
+        healthcheck:
+            test: ["CMD-SHELL", "pg_isready -U ${DATABASE_USER} -d ${DATABASE_NAME}"]
+            interval: 10s
+            timeout: 5s
+            retries: 5
+        logging:
+            driver: "json-file"
+            options:
+                max-size: "10m"
+                max-file: "3"
+        networks:
+            - osmi-ai-net
+
     redis:
         image: redis:alpine
         container_name: osmi-ai-redis
         ports:
-            - '6379:6379'
+            - '6380:6379'
         volumes:
             - redis_data:/data
+        healthcheck:
+            test: ["CMD", "redis-cli", "ping"]
+            interval: 10s
+            timeout: 5s
+            retries: 5
+        logging:
+            driver: "json-file"
+            options:
+                max-size: "10m"
+                max-file: "3"
         networks:
             - osmi-ai-net
 
     osmi-ai:
         container_name: osmi-ai-main
         build:
-            context: .. # Build using the Dockerfile in the root directory
-            dockerfile: docker/Dockerfile
+            context: ..
+            dockerfile: Dockerfile
         ports:
-            - '${PORT}:${PORT}'
-        volumes:
-            # Mount local .osmi-ai to container's default location
-            - ../.osmi-ai:/root/.osmi-ai
-        environment:
-            # --- Essential osmi-ai Vars ---
-            - PORT=${PORT:-3000}
-            - DATABASE_PATH=/root/.osmi-ai
-            - SECRETKEY_PATH=/root/.osmi-ai
-            - LOG_PATH=/root/.osmi-ai/logs
-            - BLOB_STORAGE_PATH=/root/.osmi-ai/storage
-            # --- Queue Vars (Main Instance) ---
-            - MODE=queue
-            - QUEUE_NAME=osmi-ai-queue # Ensure this matches worker
-            - REDIS_URL=redis://redis:6379 # Use service name 'redis'
+            - '${PORT:-3000}:3000'
+        env_file:
+            - ../packages/server/.env
         depends_on:
-            - redis
+            postgres:
+                condition: service_healthy
+            redis:
+                condition: service_healthy
+        healthcheck:
+            test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:${PORT:-3000}/api/v1/ping"]
+            interval: 30s
+            timeout: 10s
+            retries: 5
+        stop_grace_period: 30s
+        restart: unless-stopped
+        logging:
+            driver: "json-file"
+            options:
+                max-size: "10m"
+                max-file: "3"
         networks:
             - osmi-ai-net
 
     osmi-ai-worker:
         container_name: osmi-ai-worker
         build:
-            context: .. # Build context is still the root
-            dockerfile: docker/worker/Dockerfile # Ensure this path is correct
-        volumes:
-            # Mount same local .osmi-ai to worker
-            - ../.osmi-ai:/root/.osmi-ai
+            context: .. 
+            dockerfile: docker/worker/Dockerfile
+        env_file:
+            - ../packages/server/.env
         environment:
-            # --- Essential osmi-ai Vars ---
-            - WORKER_PORT=${WORKER_PORT:-5566} # Port for worker healthcheck
-            - DATABASE_PATH=/root/.osmi-ai
-            - SECRETKEY_PATH=/root/.osmi-ai
-            - LOG_PATH=/root/.osmi-ai/logs
-            - BLOB_STORAGE_PATH=/root/.osmi-ai/storage
-            # --- Queue Vars (Main Instance) ---
-            - MODE=queue
-            - QUEUE_NAME=osmi-ai-queue # Ensure this matches worker
-            - REDIS_URL=redis://redis:6379 # Use service name 'redis'
+            - DATABASE_HOST=postgres
+            - REDIS_HOST=redis
         depends_on:
-            - redis
-            - osmi-ai
+            postgres:
+                condition: service_healthy
+            redis:
+                condition: service_healthy
+            osmi-ai:
+                condition: service_healthy
+        healthcheck:
+            test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:${WORKER_PORT:-5566}/healthz"]
+            interval: 30s
+            timeout: 10s
+            retries: 5
         networks:
             - osmi-ai-net
 
 volumes:
+    postgres_data:
+        driver: local
     redis_data:
         driver: local
 

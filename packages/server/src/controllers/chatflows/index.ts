@@ -136,6 +136,17 @@ const saveChatflow = async (req: Request, res: Response, next: NextFunction) => 
         const subscriptionId = req.user?.activeOrganizationSubscriptionId || ''
         const body = req.body
 
+        // Ограничение на создание чатфлоу: не более 2
+        if (body.type === 'CHATFLOW') {
+            const existingChatflowCount = await chatflowsService.getAllChatflowsCountByOrganization('CHATFLOW', orgId)
+            if (existingChatflowCount >= 2) {
+                throw new InternalOsmiError(
+                    StatusCodes.FORBIDDEN,
+                    'Достигнут лимит на создание чатфлоу. Максимальное количество: 2'
+                )
+            }
+        }
+
         const existingChatflowCount = await chatflowsService.getAllChatflowsCountByOrganization(body.type, orgId)
         const newChatflowCount = 1
         await checkUsageLimit('flows', subscriptionId, getRunningExpressApp().usageCacheManager, existingChatflowCount + newChatflowCount)

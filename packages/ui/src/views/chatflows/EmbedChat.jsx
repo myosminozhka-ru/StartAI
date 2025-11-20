@@ -41,8 +41,9 @@ function a11yProps(index) {
 const codes = ['Всплывающий Html', 'Полноэкранный Html', 'Всплывающий React', 'Полноэкранный React']
 
 const embedPopupHtmlCode = (chatflowid) => {
+    const cdnUrl = import.meta.env.VITE_CDN_URL || "https://cdn.jsdelivr.net/gh/artstyleplaystyle/OSMIChatEmbed@main/dist/web.js"
     return `<script type="module">
-    import Chatbot from "https://cdn.jsdelivr.net/gh/artstyleplaystyle/OSMIChatEmbed@main/dist/web.js"
+    import Chatbot from "${cdnUrl}"
     Chatbot.init({
         chatflowid: "${chatflowid}",
         apiHost: "${baseURL}",
@@ -64,9 +65,10 @@ const App = () => {
 }
 
 const embedFullpageHtmlCode = (chatflowid) => {
+    const cdnUrl = import.meta.env.VITE_CDN_URL || "https://cdn.jsdelivr.net/gh/artstyleplaystyle/OSMIChatEmbed@main/dist/web.js"
     return `<osmi-ai-fullchatbot></osmi-ai-fullchatbot>
 <script type="module">
-    import Chatbot from "https://cdn.jsdelivr.net/gh/artstyleplaystyle/OSMIChatEmbed@main/dist/web.js"
+    import Chatbot from "${cdnUrl}"
     Chatbot.initFull({
         chatflowid: "${chatflowid}",
         apiHost: "${baseURL}",
@@ -195,8 +197,9 @@ const customStringify = (obj) => {
 }
 
 const embedPopupHtmlCodeCustomization = (chatflowid) => {
+    const cdnUrl = import.meta.env.VITE_CDN_URL || "https://cdn.jsdelivr.net/gh/artstyleplaystyle/OSMIChatEmbed@main/dist/web.js"
     return `<script type="module">
-    import Chatbot from "https://cdn.jsdelivr.net/gh/artstyleplaystyle/OSMIChatEmbed@main/dist/web.js"
+    import Chatbot from "${cdnUrl}"
     Chatbot.init({
         chatflowid: "${chatflowid}",
         apiHost: "${baseURL}",
@@ -247,9 +250,10 @@ const getFullPageThemeConfig = () => {
 }
 
 const embedFullpageHtmlCodeCustomization = (chatflowid) => {
+    const cdnUrl = import.meta.env.VITE_CDN_URL || "https://cdn.jsdelivr.net/gh/artstyleplaystyle/OSMIChatEmbed@main/dist/web.js"
     return `<osmi-ai-fullchatbot></osmi-ai-fullchatbot>
 <script type="module">
-    import Chatbot from "https://cdn.jsdelivr.net/gh/artstyleplaystyle/OSMIChatEmbed@main/dist/web.js"
+    import Chatbot from "${cdnUrl}"
     Chatbot.initFull({
         chatflowid: "${chatflowid}",
         apiHost: "${baseURL}",
@@ -353,7 +357,7 @@ const EmbedChat = ({ chatflowid }) => {
                                     <a rel='noreferrer' target='_blank' href='https://www.npmjs.com/package/OSMI-embed?activeTab=versions'>
                                         версию
                                     </a>
-                                    :&nbsp;<code>{`https://cdn.jsdelivr.net/npm/OSMI-embed@<version>/dist/web.js`}</code>
+                                    :&nbsp;<code>{import.meta.env.VITE_CDN_URL_NPM || `https://cdn.jsdelivr.net/npm/OSMI-embed@<version>/dist/web.js`}</code>
                                 </p>
                             </span>
                             <div style={{ height: 10 }}></div>
