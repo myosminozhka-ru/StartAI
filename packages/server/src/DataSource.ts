@@ -14,18 +14,12 @@ let appDataSource: DataSource
 
 export const init = async (): Promise<void> => {
     let homePath
-    let OSMIPath = path.join(getUserHome(), '.OSMI')
-    // Всегда создаем базовую директорию .OSMI для логов и других системных файлов
-    // Даже при использовании S3/GCS, так как она нужна для логов oclif и других системных целей
-    if (!fs.existsSync(OSMIPath)) {
-        fs.mkdirSync(OSMIPath, { recursive: true })
-    }
-    // Создаем поддиректорию storage только для локального хранилища
-    const storageType = process.env.STORAGE_TYPE || 'local'
-    if (storageType === 'local') {
-        const storagePath = path.join(OSMIPath, 'storage')
-        if (!fs.existsSync(storagePath)) {
-            fs.mkdirSync(storagePath, { recursive: true })
+    let OSMIPath = process.env.DATABASE_PATH || path.join(getUserHome(), '.OSMI')
+    
+    // Создаём директорию только для SQLite
+    if (process.env.DATABASE_TYPE === 'sqlite' || !process.env.DATABASE_TYPE) {
+        if (!fs.existsSync(OSMIPath)) {
+            fs.mkdirSync(OSMIPath, { recursive: true })
         }
     }
     switch (process.env.DATABASE_TYPE) {

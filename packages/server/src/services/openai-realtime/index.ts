@@ -86,8 +86,8 @@ const buildAndInitTool = async (chatflowid: string, _chatId?: string, _apiMessag
         throw new InternalOsmiError(StatusCodes.NOT_FOUND, `Organization ${workspace.organizationId} not found`)
     }
 
-    const orgId = org.id || ''
-    const subscriptionId = org.subscriptionId || ''
+    const orgId = org.id
+    const subscriptionId = org.subscriptionId
 
     const reactFlowNodes = await buildFlow({
         startingNodeIds,
@@ -139,11 +139,7 @@ const buildAndInitTool = async (chatflowid: string, _chatId?: string, _apiMessag
     )
     let nodeToExecuteData = reactFlowNodeData
 
-    const nodeComponent = appServer.nodesPool.componentNodes[nodeToExecuteData.name]
-    if (!nodeComponent || !nodeComponent.filePath) {
-        throw new Error(`Node component "${nodeToExecuteData.name}" not found or missing filePath`)
-    }
-    const nodeInstanceFilePath = nodeComponent.filePath as string
+    const nodeInstanceFilePath = appServer.nodesPool.componentNodes[nodeToExecuteData.name].filePath as string
     const nodeModule = await import(nodeInstanceFilePath)
     const nodeInstance = new nodeModule.nodeClass()
 

@@ -17,7 +17,8 @@
     ],
     "oclif": {
         "bin": "osmi-ai",
-        "commands": "./dist/commands"
+        "commands": "./dist/commands",
+        "dirname": "osmi-ai-data"
     },
     "scripts": {
         "build": "rimraf dist/enterprise/emails && gulp",
@@ -47,10 +48,10 @@
         "cypress:run": "cypress run",
         "e2e": "start-server-and-test dev http://localhost:3000 cypress:run",
         "cypress:ci": "START_SERVER_AND_TEST_INSECURE=1 start-server-and-test start https-get://localhost:3000 cypress:run",
-        "test": "cross-env NODE_OPTIONS=\"--experimental-vm-modules\" jest --runInBand --detectOpenHandles --forceExit --passWithNoTests",
-        "test:unit": "cross-env NODE_OPTIONS=\"--experimental-vm-modules\" jest --runInBand --detectOpenHandles --forceExit test/utils/simple.test.ts test/utils/api-key.util.test.ts test/routes/v1/osmi-embed.route.test.ts",
-        "test:api": "cross-env NODE_OPTIONS=\"--experimental-vm-modules\" jest --runInBand --detectOpenHandles --forceExit test/routes/v1/user.route.test.ts test/routes/v1/organization-user.route.test.ts",
-        "test:coverage": "cross-env NODE_OPTIONS=\"--experimental-vm-modules\" jest --runInBand --detectOpenHandles --forceExit --coverage"
+        "test": "jest --runInBand --detectOpenHandles --forceExit --passWithNoTests",
+        "test:unit": "jest --runInBand --detectOpenHandles --forceExit test/utils/simple.test.ts test/integration/mws.integration.test.js",
+        "test:api": "jest --runInBand --detectOpenHandles --forceExit test/routes/v1/user.route.test.ts test/routes/v1/organization-user.route.test.ts",
+        "test:coverage": "jest --runInBand --detectOpenHandles --forceExit --coverage"
     },
     "keywords": [
         "ai",
@@ -122,7 +123,7 @@
         "express-rate-limit": "^6.9.0",
         "express-session": "^1.18.1",
         "osmi-ai-components": "workspace:^",
-        "OSMI-nim-container-manager": "npm:flowise-nim-container-manager@^1.0.11",
+        "nim-container-manager": "^1.0.5",
         "osmi-ai-ui": "workspace:^",
         "global-agent": "^3.0.0",
         "gulp": "^4.0.2",

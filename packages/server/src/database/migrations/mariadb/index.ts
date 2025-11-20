@@ -50,8 +50,7 @@ import { LinkWorkspaceId1729130948686 } from '../../../enterprise/database/migra
 import { LinkOrganizationId1729133111652 } from '../../../enterprise/database/migrations/mariadb/1729133111652-LinkOrganizationId'
 import { AddSSOColumns1730519457880 } from '../../../enterprise/database/migrations/mariadb/1730519457880-AddSSOColumns'
 import { AddPersonalWorkspace1734074497540 } from '../../../enterprise/database/migrations/mariadb/1734074497540-AddPersonalWorkspace'
-// Enterprise миграция отключена в minimal версии
-// import { RefactorEnterpriseDatabase1737076223692 } from '../../../enterprise/database/migrations/mariadb/1737076223692-RefactorEnterpriseDatabase'
+import { RefactorEnterpriseDatabase1737076223692 } from '../../../enterprise/database/migrations/mariadb/1737076223692-RefactorEnterpriseDatabase'
 import { ExecutionLinkWorkspaceId1746862866554 } from '../../../enterprise/database/migrations/mariadb/1746862866554-ExecutionLinkWorkspaceId'
 
 export const mariadbMigrations = [
@@ -98,7 +97,7 @@ export const mariadbMigrations = [
     AddSSOColumns1730519457880,
     AddSeqNoToDatasetRow1733752119696,
     AddPersonalWorkspace1734074497540,
-    // RefactorEnterpriseDatabase1737076223692, // Отключено в minimal версии
+    RefactorEnterpriseDatabase1737076223692,
     AddExecutionEntity1738090872625,
     FixOpenSourceAssistantTable1743758056188,
     AddErrorToEvaluationRun1744964560174,

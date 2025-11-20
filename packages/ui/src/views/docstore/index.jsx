@@ -79,7 +79,7 @@ const Documents = () => {
 
     const addNew = () => {
         const dialogProp = {
-            title: 'Добавить новую базу документов',
+            title: 'Добавить новое хранилище документов',
             type: 'ADD',
             cancelButtonName: 'Отмена',
             confirmButtonName: 'Добавить'
@@ -336,7 +336,7 @@ const Documents = () => {
                                     alt='doc_store_empty'
                                 />
                             </Box>
-                            <div>База документов еще не создана</div>
+                            <div>Хранилища документов еще не созданы</div>
                         </Stack>
                     )}
                 </Stack>

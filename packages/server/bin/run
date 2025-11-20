@@ -1,5 +1,108 @@
 #!/usr/bin/env node
 
-const oclif = require('@oclif/core')
+// Загружаем .env файл ДО всего остального
+const path = require('path')
+const fs = require('fs')
+const dotenv = require('dotenv')
 
+const projectRoot = path.join(__dirname, '..', '..', '..')
+
+// Патчим @langchain/core чтобы отключить HTTP запросы к tiktoken
+// Это предотвращает блокировку при подсчёте токенов
+try {
+    const langchainCore = require('@langchain/core/language_models/base')
+    
+    // Патчим BaseChatModel.prototype.getNumTokens
+    if (langchainCore.BaseChatModel) {
+        langchainCore.BaseChatModel.prototype.getNumTokens = async function(content) {
+            // Приблизительный подсчёт: ~4 символа на токен
+            return Math.ceil(content.length / 4)
+        }
+    }
+    
+    // Патчим BaseLanguageModel.prototype.getNumTokens
+    if (langchainCore.BaseLanguageModel) {
+        langchainCore.BaseLanguageModel.prototype.getNumTokens = async function(content) {
+            // Приблизительный подсчёт: ~4 символа на токен
+            return Math.ceil(content.length / 4)
+        }
+    }
+} catch (err) {
+    console.warn('Не удалось пропатчить @langchain/core:', err.message)
+}
+
+// Пытаемся загрузить .env из разных мест (в порядке приоритета)
+const envPaths = [
+    path.join(projectRoot, 'packages', 'server', '.env'),  // packages/server/.env (приоритет)
+    path.join(projectRoot, '.env')                          // корень (fallback)
+]
+
+envPaths.forEach(envPath => {
+    if (fs.existsSync(envPath)) {
+        console.log(`📂 Attempting to load .env from: ${envPath}`)
+        const result = dotenv.config({ path: envPath, override: false })
+        if (result.error) {
+            console.log(`❌ Error loading .env: ${result.error}`)
+        } else {
+            console.log(`✅ Loaded .env from: ${envPath}`)
+            console.log(`📊 DATABASE_TYPE: ${process.env.DATABASE_TYPE}`)
+            console.log(`📊 DATABASE_HOST: ${process.env.DATABASE_HOST}`)
+            console.log(`📊 PORT: ${process.env.PORT}`)
+        }
+    }
+})
+
+// Преобразуем Enterprise переменные для совместимости
+if (process.env._EE_LICENSE_KEY && !process.env.OSMI_EE_LICENSE_KEY) {
+    process.env.OSMI_EE_LICENSE_KEY = process.env._EE_LICENSE_KEY
+}
+if (process.env.OSMI_AI_EE_LICENSE_KEY && !process.env.OSMI_EE_LICENSE_KEY) {
+    process.env.OSMI_EE_LICENSE_KEY = process.env.OSMI_AI_EE_LICENSE_KEY
+}
+if (process.env.OSMI_EE_LICENSE_KEY) {
+    console.log(`🔑 Enterprise license key loaded`)
+}
+if (process.env.OFFLINE === 'true') {
+    console.log(`🔌 Running in OFFLINE mode`)
+}
+
+// Создаём директории на основе переменных из .env
+const dirsToCreate = []
+
+// Добавляем LOG_PATH если он задан
+if (process.env.LOG_PATH) {
+    dirsToCreate.push(process.env.LOG_PATH)
+    console.log(`📁 Will create LOG_PATH: ${process.env.LOG_PATH}`)
+}
+
+// Добавляем BLOB_STORAGE_PATH если он задан
+if (process.env.BLOB_STORAGE_PATH) {
+    dirsToCreate.push(process.env.BLOB_STORAGE_PATH)
+    dirsToCreate.push(path.join(process.env.BLOB_STORAGE_PATH, 'uploads'))
+    console.log(`📁 Will create BLOB_STORAGE_PATH: ${process.env.BLOB_STORAGE_PATH}`)
+}
+
+// Добавляем DATABASE_PATH если он задан и это не sqlite
+if (process.env.DATABASE_PATH && process.env.DATABASE_TYPE !== 'postgres') {
+    dirsToCreate.push(process.env.DATABASE_PATH)
+    console.log(`📁 Will create DATABASE_PATH: ${process.env.DATABASE_PATH}`)
+}
+
+// Создаём все директории
+dirsToCreate.forEach(dir => {
+    if (!fs.existsSync(dir)) {
+        try {
+            fs.mkdirSync(dir, { recursive: true })
+            console.log(`✅ Created directory: ${dir}`)
+        } catch (err) {
+            console.error(`❌ Failed to create directory ${dir}:`, err.message)
+        }
+    } else {
+        console.log(`✓ Directory exists: ${dir}`)
+    }
+})
+
+process.env.DEBUG = ''
+
+const oclif = require('@oclif/core')
 oclif.run().then(require('@oclif/core/flush')).catch(require('@oclif/core/handle'))

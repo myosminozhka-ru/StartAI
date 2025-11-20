@@ -19,15 +19,13 @@ import path from 'path'
 import { LoginMethodStatus } from './enterprise/database/entities/login-method.entity'
 import { ErrorMessage, LoggedInUser } from './enterprise/Interface.Enterprise'
 import { Permissions } from './enterprise/rbac/Permissions'
-// Enterprise сервисы закомментированы в minimal версии
-// import { LoginMethodService } from './enterprise/services/login-method.service'
-// import { OrganizationService } from './enterprise/services/organization.service'
-// SSO удален в minimal версии
-// import Auth0SSO from './enterprise/sso/Auth0SSO'
-// import AzureSSO from './enterprise/sso/AzureSSO'
-// import GithubSSO from './enterprise/sso/GithubSSO'
-// import GoogleSSO from './enterprise/sso/GoogleSSO'
-// import SSOBase from './enterprise/sso/SSOBase'
+import { LoginMethodService } from './enterprise/services/login-method.service'
+import { OrganizationService } from './enterprise/services/organization.service'
+import Auth0SSO from './enterprise/sso/Auth0SSO'
+import AzureSSO from './enterprise/sso/AzureSSO'
+import GithubSSO from './enterprise/sso/GithubSSO'
+import GoogleSSO from './enterprise/sso/GoogleSSO'
+import SSOBase from './enterprise/sso/SSOBase'
 import { InternalOsmiError } from './errors/InternalOsmiError'
 import { Platform, UserPlan } from './Interface'
 import { StripeManager } from './StripeManager'
@@ -37,8 +35,7 @@ import { getRunningExpressApp } from './utils/getRunningExpressApp'
 import { ENTERPRISE_FEATURE_FLAGS } from './utils/quotaUsage'
 import Stripe from 'stripe'
 
-// SSO удален в minimal версии
-// const allSSOProviders = ['azure', 'google', 'auth0', 'github']
+const allSSOProviders = ['azure', 'google', 'auth0', 'github']
 export class IdentityManager {
     private static instance: IdentityManager
     private stripeManager?: StripeManager
@@ -46,9 +43,8 @@ export class IdentityManager {
     permissions: Permissions
     ssoProviderName: string = ''
     currentInstancePlatform: Platform = Platform.OPEN_SOURCE
-    // SSO удален в minimal версии
     // create a map to store the sso provider name and the sso provider instance
-    // ssoProviders: Map<string, SSOBase> = new Map()
+    ssoProviders: Map<string, SSOBase> = new Map()
 
     public static async getInstance(): Promise<IdentityManager> {
         if (!IdentityManager.instance) {
@@ -98,14 +94,11 @@ export class IdentityManager {
             })
             return decoded
         } catch (error) {
-            console.error('Error verifying license key:', error)
             // В dev режиме или при отключенной проверке просто декодируем без верификации подписи
             if (process.env.NODE_ENV === 'development' || process.env.DISABLE_LICENSE_VERIFICATION === 'true') {
                 try {
-                    console.log('🔓 License signature verification disabled - decoding without verification')
                     return jwt.decode(licenseKey)
                 } catch (decodeError) {
-                    console.error('Error decoding license key:', decodeError)
                     return null
                 }
             }
@@ -113,40 +106,20 @@ export class IdentityManager {
         }
     }
 
-    public _findLicenseKey(): { key: string | null; source: string } {
-        // Поиск лицензионного ключа в переменных окружения
-        // Поддерживается только специфичная legacy переменная
-        const legacyPatterns = ['_EE_LICENSE_KEY']
-
-        // Проверяем legacy переменные в определенном порядке
-        const knownLegacyVars = Object.keys(process.env)
-            .filter((key) => legacyPatterns.some((pattern) => key.endsWith(pattern)))
-            .sort() // Сортируем для предсказуемости
-
-        for (const envKey of knownLegacyVars) {
-            const envValue = process.env[envKey]
-            if (envValue) {
-                return { key: envValue, source: `${envKey} (legacy compatibility)` }
-            }
-        }
-
-        return { key: null, source: 'none' }
-    }
-
     private _validateLicenseKey = async () => {
-        const LICENSE_URL = process.env.LICENSE_URL
-
-        // Автоматическое определение лицензионного ключа
-        const { key: LICENSE_KEY, source } = this._findLicenseKey()
-
-        // Логирование используемой переменной для отладки
-        if (LICENSE_KEY) {
-            console.log(`🔑 Using ${source} for enterprise license`)
+        // Проверяем флаги отключения верификации лицензии
+        if (process.env.DISABLE_LICENSE_VERIFICATION === 'true' || process.env.NODE_ENV === 'development') {
+            console.log('🔓 License verification disabled (development mode or explicit flag)')
+            this.licenseValid = true
+            this.currentInstancePlatform = Platform.ENTERPRISE
+            return
         }
+
+        const LICENSE_URL = process.env.LICENSE_URL
+        const OSMI_EE_LICENSE_KEY = process.env.OSMI_EE_LICENSE_KEY
 
         // First check if license key is missing
-        if (!LICENSE_KEY) {
-            console.log('❌ No enterprise license key found. Running in Open Source mode.')
+        if (!OSMI_EE_LICENSE_KEY) {
             this.licenseValid = false
             this.currentInstancePlatform = Platform.OPEN_SOURCE
             return
@@ -154,7 +127,7 @@ export class IdentityManager {
 
         try {
             if (process.env.OFFLINE === 'true') {
-                const decodedLicense = this._offlineVerifyLicense(LICENSE_KEY)
+                const decodedLicense = this._offlineVerifyLicense(OSMI_EE_LICENSE_KEY)
 
                 if (!decodedLicense) {
                     this.licenseValid = false
@@ -193,7 +166,7 @@ export class IdentityManager {
                 this.currentInstancePlatform = Platform.ENTERPRISE
             } else if (LICENSE_URL) {
                 try {
-                    const response = await axios.post(`${LICENSE_URL}/enterprise/verify`, { license: LICENSE_KEY })
+                    const response = await axios.post(`${LICENSE_URL}/enterprise/verify`, { license: OSMI_EE_LICENSE_KEY })
                     this.licenseValid = response.data?.valid
 
                     if (!LICENSE_URL.includes('api')) this.currentInstancePlatform = Platform.ENTERPRISE
@@ -201,7 +174,6 @@ export class IdentityManager {
                     else if (LICENSE_URL.includes('v2')) this.currentInstancePlatform = response.data?.platform
                     else throw new InternalOsmiError(StatusCodes.INTERNAL_SERVER_ERROR, GeneralErrorMessage.UNHANDLED_EDGE_CASE)
                 } catch (error) {
-                    console.error('Error verifying license key:', error)
                     this.licenseValid = false
                     this.currentInstancePlatform = Platform.ENTERPRISE
                     return
@@ -212,10 +184,7 @@ export class IdentityManager {
         }
     }
 
-    // Enterprise SSO закомментирован в minimal версии
     public initializeSSO = async (app: express.Application) => {
-        // Заглушка - SSO не используется в minimal версии
-        /*
         if (this.getPlatformType() === Platform.CLOUD || this.getPlatformType() === Platform.ENTERPRISE) {
             const loginMethodService = new LoginMethodService()
             let queryRunner
@@ -248,21 +217,65 @@ export class IdentityManager {
         }
         // iterate through the remaining providers and initialize them with configEnabled as false
         this.initializeEmptySSO(app)
-        */
     }
 
-    // SSO удален в minimal версии
     initializeEmptySSO(app: Application) {
-        // Заглушка - SSO не используется
+        allSSOProviders.map((providerName) => {
+            if (!this.ssoProviders.has(providerName)) {
+                this.initializeSsoProvider(app, providerName, undefined)
+            }
+        })
     }
 
     initializeSsoProvider(app: Application, providerName: string, providerConfig: any) {
-        // Заглушка - SSO не используется
+        if (this.ssoProviders.has(providerName)) {
+            const provider = this.ssoProviders.get(providerName)
+            if (provider) {
+                if (providerConfig && providerConfig.configEnabled === true) {
+                    provider.setSSOConfig(providerConfig)
+                    provider.initialize()
+                } else {
+                    // if false, disable the provider
+                    provider.setSSOConfig(undefined)
+                }
+            }
+        } else {
+            switch (providerName) {
+                case 'azure': {
+                    const azureSSO = new AzureSSO(app, providerConfig)
+                    azureSSO.initialize()
+                    this.ssoProviders.set(providerName, azureSSO)
+                    break
+                }
+                case 'google': {
+                    const googleSSO = new GoogleSSO(app, providerConfig)
+                    googleSSO.initialize()
+                    this.ssoProviders.set(providerName, googleSSO)
+                    break
+                }
+                case 'auth0': {
+                    const auth0SSO = new Auth0SSO(app, providerConfig)
+                    auth0SSO.initialize()
+                    this.ssoProviders.set(providerName, auth0SSO)
+                    break
+                }
+                case 'github': {
+                    const githubSSO = new GithubSSO(app, providerConfig)
+                    githubSSO.initialize()
+                    this.ssoProviders.set(providerName, githubSSO)
+                    break
+                }
+                default:
+                    throw new Error(`SSO Provider ${providerName} not found`)
+            }
+        }
     }
 
     async getRefreshToken(providerName: any, ssoRefreshToken: string) {
-        // Заглушка - SSO не используется
-        return null
+        if (!this.ssoProviders.has(providerName)) {
+            throw new Error(`SSO Provider ${providerName} not found`)
+        }
+        return await (this.ssoProviders.get(providerName) as SSOBase).refreshToken(ssoRefreshToken)
     }
 
     public async getProductIdFromSubscription(subscriptionId: string) {

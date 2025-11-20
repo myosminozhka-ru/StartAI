@@ -1,33 +1,44 @@
-// Заглушка для minimal версии
-import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm'
+import { Column, CreateDateColumn, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm'
+import { Organization } from './organization.entity'
+import { User } from './user.entity'
 
 export enum WorkspaceName {
     DEFAULT_WORKSPACE = 'Default Workspace',
-    DEFAULT_PERSONAL_WORKSPACE = 'Default Personal Workspace'
+    DEFAULT_PERSONAL_WORKSPACE = 'Personal Workspace'
 }
 
 @Entity()
 export class Workspace {
     @PrimaryGeneratedColumn('uuid')
-    id?: string
-    
-    @Column({ nullable: true })
+    id: string
+
+    @Column({ type: 'varchar', length: 100, default: WorkspaceName.DEFAULT_PERSONAL_WORKSPACE })
+    name: string
+
+    @Column({ type: 'text', nullable: true })
+    description?: string
+
+    @Column({ nullable: false })
     organizationId?: string
-    
-    @Column({ nullable: true })
-    name?: string
-    
-    @Column({ type: 'timestamp', nullable: true })
+    @ManyToOne(() => Organization, (organization) => organization.id)
+    @JoinColumn({ name: 'organizationId' })
+    organization?: Organization
+
+    @CreateDateColumn()
     createdDate?: Date
-    
-    @Column({ type: 'timestamp', nullable: true })
+
+    @UpdateDateColumn()
     updatedDate?: Date
-    
-    @Column({ nullable: true })
+
+    @Column({ nullable: false })
     createdBy?: string
-    
-    @Column({ nullable: true })
+    @ManyToOne(() => User, (user) => user.createdWorkspace)
+    @JoinColumn({ name: 'createdBy' })
+    createdByUser?: User
+
+    @Column({ nullable: false })
     updatedBy?: string
+    @ManyToOne(() => User, (user) => user.updatedWorkspace)
+    @JoinColumn({ name: 'updatedBy' })
+    updatedByUser?: User
 }
-
-

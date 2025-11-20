@@ -51,11 +51,7 @@ export class LLMEvaluationRunner {
     async createLLM(data: ICommonObject): Promise<any> {
         try {
             const appServer = getRunningExpressApp()
-            const nodeComponent = appServer.nodesPool.componentNodes[data.llmConfig.llm]
-            if (!nodeComponent || !nodeComponent.filePath) {
-                throw new Error(`LLM component "${data.llmConfig.llm}" not found or missing filePath`)
-            }
-            const nodeInstanceFilePath = nodeComponent.filePath as string
+            const nodeInstanceFilePath = appServer.nodesPool.componentNodes[data.llmConfig.llm].filePath as string
             const nodeModule = await import(nodeInstanceFilePath)
             const newNodeInstance = new nodeModule.nodeClass()
             let nodeData = {

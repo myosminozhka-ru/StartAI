@@ -422,7 +422,7 @@ const Credentials = () => {
                                                         )}
                                                         {credential.shared && (
                                                             <>
-                                                                <StyledTableCell colSpan={'3'}>Общие API сервисов</StyledTableCell>
+                                                                <StyledTableCell colSpan={'3'}>Общие учетные данные</StyledTableCell>
                                                             </>
                                                         )}
                                                     </StyledTableRow>

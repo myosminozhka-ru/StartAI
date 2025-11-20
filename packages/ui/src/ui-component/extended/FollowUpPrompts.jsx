@@ -49,7 +49,7 @@ const followUpPromptsOptions = {
         icon: anthropicIcon,
         inputs: [
             {
-                label: 'Подключите API сервисов',
+                label: 'Подключите учетные данные',
                 name: 'credential',
                 type: 'credential',
                 credentialNames: ['anthropicApi']
@@ -85,7 +85,7 @@ const followUpPromptsOptions = {
         icon: azureOpenAiIcon,
         inputs: [
             {
-                label: 'Подключите API сервисов',
+                label: 'Подключите учетные данные',
                 name: 'credential',
                 type: 'credential',
                 credentialNames: ['azureOpenAIApi']
@@ -121,7 +121,7 @@ const followUpPromptsOptions = {
         icon: geminiIcon,
         inputs: [
             {
-                label: 'Подключите API сервисов',
+                label: 'Подключите учетные данные',
                 name: 'credential',
                 type: 'credential',
                 credentialNames: ['googleGenerativeAI']
@@ -157,7 +157,7 @@ const followUpPromptsOptions = {
         icon: groqIcon,
         inputs: [
             {
-                label: 'Подключите API сервисов',
+                label: 'Подключите учетные данные',
                 name: 'credential',
                 type: 'credential',
                 credentialNames: ['groqApi']
@@ -193,7 +193,7 @@ const followUpPromptsOptions = {
         icon: mistralAiIcon,
         inputs: [
             {
-                label: 'Подключите API сервисов',
+                label: 'Подключите учетные данные',
                 name: 'credential',
                 type: 'credential',
                 credentialNames: ['mistralAIApi']
@@ -229,7 +229,7 @@ const followUpPromptsOptions = {
         icon: openAiIcon,
         inputs: [
             {
-                label: 'Подключите API сервисов',
+                label: 'Подключите учетные данные',
                 name: 'credential',
                 type: 'credential',
                 credentialNames: ['openAIApi']

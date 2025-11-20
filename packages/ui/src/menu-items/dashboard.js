@@ -3,9 +3,11 @@ import {
     IconList,
     IconUsersGroup,
     IconHierarchy,
+    IconBuildingStore,
     IconKey,
     IconTool,
     IconLock,
+    IconRobot,
     IconSettings,
     IconVariable,
     IconFiles,
@@ -15,7 +17,12 @@ import {
     IconChartHistogram,
     IconUserEdit,
     IconFileUpload,
+    IconClipboardList,
+    IconStack2,
+    IconUsers,
+    IconLockCheck,
     IconFileDatabase,
+    IconShieldLock,
     IconListCheck
 } from '@tabler/icons-react'
 
@@ -23,10 +30,12 @@ import {
 const icons = {
     IconHierarchy,
     IconUsersGroup,
+    IconBuildingStore,
     IconList,
     IconKey,
     IconTool,
     IconLock,
+    IconRobot,
     IconSettings,
     IconVariable,
     IconFiles,
@@ -36,7 +45,12 @@ const icons = {
     IconUserEdit,
     IconChartHistogram,
     IconFileUpload,
+    IconClipboardList,
+    IconStack2,
+    IconUsers,
+    IconLockCheck,
     IconFileDatabase,
+    IconShieldLock,
     IconListCheck
 }
 

@@ -42,9 +42,8 @@ export class WorkspaceUserService {
             throw new InternalOsmiError(StatusCodes.BAD_REQUEST, WorkspaceUserErrorMessage.INVALID_WORKSPACE_USER_SATUS)
     }
 
-    public validateWorkspaceUserLastLogin(lastLogin: string | Date | undefined) {
-        const lastLoginStr = lastLogin instanceof Date ? lastLogin.toISOString() : lastLogin
-        if (isInvalidDateTime(lastLoginStr))
+    public validateWorkspaceUserLastLogin(lastLogin: string | undefined) {
+        if (isInvalidDateTime(lastLogin))
             throw new InternalOsmiError(StatusCodes.BAD_REQUEST, WorkspaceUserErrorMessage.INVALID_WORKSPACE_USER_LASTLOGIN)
     }
 
@@ -90,11 +89,9 @@ export class WorkspaceUserService {
             .getMany()
 
         return workspaceUsers.map((workspaceUser) => {
-            if (workspaceUser.user) {
-                delete workspaceUser.user.credential
-                delete workspaceUser.user.tempToken
-                delete workspaceUser.user.tokenExpiry
-            }
+            delete workspaceUser.user.credential
+            delete workspaceUser.user.tempToken
+            delete workspaceUser.user.tokenExpiry
             return {
                 ...workspaceUser,
                 isOrgOwner: workspaceUser.roleId === ownerRole?.id
@@ -178,11 +175,9 @@ export class WorkspaceUserService {
             .getMany()
 
         return workspaceUsers.map((workspaceUser) => {
-            if (workspaceUser.user) {
-                delete workspaceUser.user.credential
-                delete workspaceUser.user.tempToken
-                delete workspaceUser.user.tokenExpiry
-            }
+            delete workspaceUser.user.credential
+            delete workspaceUser.user.tempToken
+            delete workspaceUser.user.tokenExpiry
             return {
                 ...workspaceUser,
                 isOrgOwner: workspaceUser.roleId === ownerRole?.id
@@ -236,7 +231,7 @@ export class WorkspaceUserService {
         if (!createdBy) throw new InternalOsmiError(StatusCodes.NOT_FOUND, UserErrorMessage.USER_NOT_FOUND)
 
         let newWorkspaceUser = this.createNewWorkspaceUser(data, queryRunner)
-        // workspace.updatedBy removed for minimal version
+        workspace.updatedBy = data.createdBy
         try {
             await queryRunner.startTransaction()
             newWorkspaceUser = await this.saveWorkspaceUser(newWorkspaceUser, queryRunner)

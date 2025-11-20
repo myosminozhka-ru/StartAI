@@ -56,6 +56,11 @@ import { useConfig } from '@/store/context/ConfigContext'
 import { getErrorMessage } from '@/utils/errorHandler'
 
 const dataToExport = [
+    'Agentflows',
+    'Agentflows V2',
+    'Assistants Custom',
+    'Assistants OpenAI',
+    'Assistants Azure',
     'Chatflows',
     'Chat Messages',
     'Chat Feedbacks',

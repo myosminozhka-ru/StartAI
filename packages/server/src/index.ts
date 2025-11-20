@@ -1,6 +1,5 @@
 import express, { Request, Response } from 'express'
 import path from 'path'
-import fs from 'fs'
 import cors from 'cors'
 import http from 'http'
 import cookieParser from 'cookie-parser'
@@ -229,9 +228,6 @@ export class App {
                         next()
                     } else if (req.headers['x-request-from'] === 'internal') {
                         verifyToken(req, res, next)
-                    } else if (this.identityManager.getPlatformType() === Platform.OPEN_SOURCE) {
-                        // В Open Source режиме используем JWT токен вместо API ключа
-                        verifyToken(req, res, next)
                     } else {
                         // Only check license validity for non-open-source platforms
                         if (this.identityManager.getPlatformType() !== Platform.OPEN_SOURCE) {
@@ -257,7 +253,7 @@ export class App {
                         const ownerRole = await this.AppDataSource.getRepository(Role).findOne({
                             where: { name: GeneralRole.OWNER, organizationId: IsNull() }
                         })
-                        if (!ownerRole || !ownerRole.permissions) {
+                        if (!ownerRole) {
                             return res.status(401).json({ error: 'Unauthorized Access' })
                         }
 
@@ -269,17 +265,14 @@ export class App {
                         if (!org) {
                             return res.status(401).json({ error: 'Unauthorized Access' })
                         }
-                        // В Open Source режиме нет subscriptionId и customerId
-                        const subscriptionId = ''
-                        const customerId = ''
+                        const subscriptionId = org.subscriptionId as string
+                        const customerId = org.customerId as string
                         const features = await this.identityManager.getFeaturesByPlan(subscriptionId)
                         const productId = await this.identityManager.getProductIdFromSubscription(subscriptionId)
 
                         // @ts-ignore
                         req.user = {
-                            permissions: Array.isArray(ownerRole.permissions) 
-                                ? ownerRole.permissions 
-                                : [...JSON.parse(ownerRole.permissions as string)],
+                            permissions: [...JSON.parse(ownerRole.permissions)],
                             features,
                             activeOrganizationId: activeOrganizationId,
                             activeOrganizationSubscriptionId: subscriptionId,
@@ -287,7 +280,7 @@ export class App {
                             activeOrganizationProductId: productId,
                             isOrganizationAdmin: true,
                             activeWorkspaceId: apiKeyWorkSpaceId!,
-                            activeWorkspace: workspace.name || '',
+                            activeWorkspace: workspace.name,
                             isApiKeyValidated: true
                         }
                         next()
@@ -346,29 +339,11 @@ export class App {
         // Serve UI static
         // ----------------------------------------
 
-        // В minimal версии UI находится в packages/ui/build
-        let packagePath = getNodeModulesPackagePath('OSMI-ui')
-        if (!packagePath || !fs.existsSync(path.join(packagePath, 'build'))) {
-            // Fallback для локальной разработки
-            packagePath = path.join(__dirname, '..', '..', 'ui')
-        }
-        const uiBuildPath = path.resolve(path.join(packagePath, 'build'))
-        const uiHtmlPath = path.resolve(path.join(packagePath, 'build', 'index.html'))
-
-        // Special handling for soglashenie file to set correct Content-Type
-        this.app.get('/soglashenie', (req: Request, res: Response) => {
-            const soglasheniePath = path.resolve(path.join(uiBuildPath, 'soglashenie'))
-            res.setHeader('Content-Type', 'application/pdf')
-            res.setHeader('Content-Disposition', 'inline; filename="soglashenie.pdf"')
-            res.sendFile(soglasheniePath)
-        })
+        const packagePath = getNodeModulesPackagePath('osmi-ai-ui')
+        const uiBuildPath = path.join(packagePath, 'build')
+        const uiHtmlPath = path.join(packagePath, 'build', 'index.html')
 
         this.app.use('/', express.static(uiBuildPath))
-
-        // Заглушка для webpack-dev-server WebSocket (убирает ошибки в консоли браузера)
-        this.app.get('/ws', (req: Request, res: Response) => {
-            res.status(404).send('WebSocket endpoint not available in production build')
-        })
 
         // All other requests not handled will return React app
         this.app.use((req: Request, res: Response) => {

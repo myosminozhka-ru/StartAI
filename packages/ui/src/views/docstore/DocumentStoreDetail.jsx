@@ -206,7 +206,7 @@ const DocumentStoreDetails = () => {
                 setBackdropLoading(false)
                 if (deleteResp.data) {
                     enqueueSnackbar({
-                        message: 'База документов, загрузчик и связанные чанки документов удалены',
+                        message: 'Хранилище, загрузчик и связанные чанки документов удалены',
                         options: {
                             key: new Date().getTime() + Math.random(),
                             variant: 'success',
@@ -223,7 +223,7 @@ const DocumentStoreDetails = () => {
                 setBackdropLoading(false)
                 setError(error)
                 enqueueSnackbar({
-                    message: `Не удалось удалить базу документов: ${
+                    message: `Не удалось удалить хранилище документов: ${
                         typeof error.response.data === 'object' ? error.response.data.message : error.response.data
                     }`,
                     options: {
@@ -296,7 +296,7 @@ const DocumentStoreDetails = () => {
     const onStoreDelete = (vectorStoreConfig, recordManagerConfig) => {
         const props = {
             title: `Удалить`,
-            description: `Удалить базу документов ${getSpecificDocumentStore.data?.name}? Это удалит все связанные загрузчики и чанки документов.`,
+            description: `Удалить хранилище ${getSpecificDocumentStore.data?.name}? Это удалит все связанные загрузчики и чанки документов.`,
             vectorStoreConfig,
             recordManagerConfig,
             type: 'STORE'
@@ -322,7 +322,7 @@ const DocumentStoreDetails = () => {
                 const resp = await documentsApi.refreshLoader(storeId)
                 if (resp.data) {
                     enqueueSnackbar({
-                        message: 'База документов успешно обновлена!',
+                        message: 'Хранилище документов успешно обновлено!',
                         options: {
                             key: new Date().getTime() + Math.random(),
                             variant: 'success',
@@ -338,7 +338,7 @@ const DocumentStoreDetails = () => {
             } catch (error) {
                 setBackdropLoading(false)
                 enqueueSnackbar({
-                    message: `Не удалось обновить базу документов: ${
+                    message: `Не удалось обновить хранилище документов: ${
                         typeof error.response.data === 'object' ? error.response.data.message : error.response.data
                     }`,
                     options: {
@@ -362,7 +362,7 @@ const DocumentStoreDetails = () => {
             id: documentStore.id
         }
         const dialogProp = {
-            title: 'Редактировать базу документов',
+            title: 'Редактировать хранилище документов',
             type: 'EDIT',
             cancelButtonName: 'Отмена',
             confirmButtonName: 'Обновить',
@@ -442,7 +442,7 @@ const DocumentStoreDetails = () => {
                                     onClick={onConfirm}
                                     size='small'
                                     color='primary'
-                                    title='Обновить базу документов'
+                                    title='Обновить хранилище документов'
                                 >
                                     <IconRefresh />
                                 </PermissionIconButton>
@@ -543,7 +543,7 @@ const DocumentStoreDetails = () => {
                                     }}
                                 >
                                     <IconVectorBezier2 style={{ marginRight: 5 }} size={17} />
-                                    Используется в агентах:
+                                    Используется в чатфлоу:
                                 </div>
                                 {getSpecificDocumentStore.data.whereUsed.map((chatflowUsed, index) => (
                                     <Chip

@@ -1,52 +1,78 @@
+<!-- markdownlint-disable MD030 -->
+
+<p align="center">
+<img src="https://app.osmi-ai.ru/assets/osmi_black-VsBDPajo.png">
+<img src="https://app.osmi-ai.ru/assets/osmi_black-VsBDPajo.png">
+</p>
+
+<div align="center">
+
+[![Release Notes](https://img.shields.io/github/release/myosminozhka-ru/StartAI)](https://github.com/myosminozhka-ru/StartAI/releases)
+[![GitHub star chart](https://img.shields.io/github/stars/myosminozhka-ru/StartAI?style=social)](https://star-history.com/#myosminozhka-ru/StartAI)
+[![GitHub repository](https://img.shields.io/github/forks/myosminozhka-ru/StartAI?style=social)](https://github.com/myosminozhka-ru/StartAI)
+
+</div>
 <h3>Build AI Agents, Visually</h3>
 
-> **🎯 МИНИМАЛЬНАЯ ВЕРСИЯ ДЛЯ ОДНОГО АГЕНТА**  
-> Эта ветка содержит ультра-минималистичную версию, оптимизированную для работы одного агента с базовым набором инструментов. Максимально упрощена для быстрого развертывания и использования с российским MWS API МТС.
-> 
-> **⚠️ ОГРАНИЧЕНИЯ:** Максимум 2 чатфлоу, только основные компоненты, без управления пользователями.
+<img width="100%" src="https://app.osmi-ai.ru/assets/osmi_black-VsBDPajo.png"></a>
 
+## 📚 Table of Contents
 
-## 🌿 Ветка: minimal-single-agent-version
+-   [⚡ Quick Start](#-quick-start)
+-   [🔥 New: MWS Integration](#-new-mws-integration)
+-   [🐳 Docker](#-docker)
+-   [👨‍💻 Developers](#-developers)
+-   [🌱 Env Variables](#-env-variables)
+-   [📖 Documentation](#-documentation)
+-   [🌐 Self Host](#-self-host)
+-   [☁️ OSMI IT Cloud](#️-osmi-it-cloud)
+-   [🙋 Support](#-support)
+-   [🙌 Contributing](#-contributing)
+-   [📄 License](#-license)
 
-Эта ветка содержит **минимальную версию** для работы одного агента с базовым набором инструментов и российским MWS API МТС.
+## ⚡Quick Start
 
-**Основные отличия от main:**
-- 🔒 **Лимит:** максимум 2 чатфлоу
-- 🤖 **AI:** только MWS компоненты (ChatMWS, MWS LLM, MWSEmbedding)
-- 🛠️ **Инструменты:** только 7 базовых инструментов
-- 👥 **Пользователи:** убрано управление пользователями и рабочими пространствами
-- 📦 **Размер:** значительно уменьшен за счет удаления неиспользуемых компонентов
+Download and Install [NodeJS](https://nodejs.org/en/download) >= 18.15.0
 
+1. Install
+    ```bash
+    pnpm install
+    ```
+2. Start
 
+    ```bash
+    pnpx start
+    ```
 
-## 🎯 Minimal Single Agent Version
+3. Open [http://localhost:3000](http://localhost:3000)
 
-Эта ветка содержит **ультра-минималистичную версию** OSMI StartAI, максимально упрощенную для работы одного агента.
+## 🔥 New: MWS Integration
 
-### ✅ Что осталось в UI:
-- **Чатфлоу** - создание диалоговых потоков (**ЛИМИТ: максимум 2 чатфлоу**)
-- **Выполнения** - мониторинг запусков агентов
-- **Инструменты** - только 7 базовых инструментов:
-  - Calculator, ChatflowTool, CurrentDateTime, CustomTool, RetrieverTool, Searxng, TavilyAPI
-- **Учётные данные** - безопасное хранение API ключей
-- **Переменные** - управление конфигурацией
-- **API ключи** - доступ к REST API
-- **Хранилища документов** - работа с документами
-- **Оценки** - тестирование и валидация моделей
-- **Логи** - мониторинг системы
-- **Настройки аккаунта** - персональные настройки
+OSMI StartAI теперь поддерживает интеграцию с **MWS (МТС) API** для использования российских языковых моделей!
 
-### 🤖 Компоненты AI (только MWS):
-- **1 агент:** ToolAgent (Агент инструментов)
-- **1 чат-модель:** ChatMWS (MWS GPT от МТС)
-- **1 LLM:** MWS LLM (MWS GPT для LLM задач)
-- **1 эмбеддинг:** MWSEmbedding (MWS эмбеддинги)
-- **1 кэш:** RedisEmbeddingsCache
-- **1 загрузчик:** DocumentStore
-- **1 модерация:** SimplePromptModeration
-- **1 менеджер записей:** PostgresRecordManager
+### 🚀 Возможности MWS интеграции:
 
+- **ChatMWS узел** - доступ к мощным языковым моделям МТС
+- **MWS Embeddings** - создание векторных представлений текста
+- **Динамическая загрузка моделей** через API
+- **Полная совместимость** с существующими пайплайнами
 
+### 🎯 Доступные модели:
+
+**Chat модели:**
+- `mws-gpt-alpha` - основная рекомендуемая модель МТС
+- `qwen2.5-32b-instruct` - мощная китайская модель
+- `llama-3.3-70b-instruct` - новая модель Meta
+
+**Embedding модели:**
+- `bge-m3` - универсальная многоязычная модель
+- `BAAI/bge-multilingual-gemma2` - продвинутая модель для эмбеддингов
+
+### 📚 Документация:
+
+- [🧪 Руководство по тестированию MWS](./MWS_TESTING_GUIDE.md)
+- [📖 Инструкции по настройке MWS](./MWS_SETUP_INSTRUCTIONS.md)
+- [🔧 Техническая документация MWS](./MWS_INTEGRATION_README.md)
 
 ### ⚡ Быстрый старт с MWS:
 
@@ -54,81 +80,133 @@
 2. Добавьте узел **ChatMWS** в ваш чатфлоу
 3. Настройте модель `mws-gpt-alpha` и протестируйте!
 
+## 🐳 Docker
+
+### Docker Compose
+
+1. Clone project
+2. Go to `docker` folder at the root of the project
+3. Copy `.env.example` file, paste it into the same location, and rename to `.env` file
+4. `docker compose up -d`
+5. Open [http://localhost:3000](http://localhost:3000)
+6. You can bring the containers down by `docker compose stop`
+
+### Docker Image
+
+1. Build the image locally:
+
+    ```bash
+    docker build --no-cache -t osmi-ai .
+    ```
+
+2. Run image:
+
+    ```bash
+    docker run -d --name osmi-ai -p 3000:3000 osmi-ai
+    ```
+
+3. Stop image:
+
+    ```bash
+    docker stop osmi-ai
+    ```
+
+## 👨‍💻 Developers
+
+OSMI AI has 3 different modules in a single mono repository.
+
+-   `server`: Node backend to serve API logics
+-   `ui`: React frontend
+-   `components`: Third-party nodes integrations
+-   `api-documentation`: Auto-generated swagger-ui API docs from express
+
+### Prerequisite
+
+-   Install [PNPM](https://pnpm.io/installation)
+    ```bash
+    npm i -g pnpm
+    ```
 
 ### Setup
 
-1. Перейдите в директорию packages/server и создайте копию `.env.example` и переименуйте в `.env`
+1.  Clone the repository:
 
+    ```bash
+    git clone https://github.com/myosminozhka-ru/OSMI-AI.git
+    ```
 
-2. Откройте файл `.env` и раскомментируйте/заполните необходимые настройки подключения к БД:
-   ```bash
-   # Тип базы данных
-   DATABASE_TYPE=postgres
-   
-   # DATABASE_PATH - закомментируйте, не используется для PostgreSQL
-   # DATABASE_PATH=...
-   
-   # Настройки PostgreSQL
-   DATABASE_PORT=
-   DATABASE_HOST
-   DATABASE_NAME=
-   DATABASE_USER=
-   DATABASE_PASSWORD=
-   ```
-3. Для настроек связанных с с3 заполните поля:
-   OSMI_SECRETKEY_OVERWRITE= # для хранения ключа шифрования в енв, SECRETKEY_PATH заккоментировать
-   STORAGE_TYPE=s3 #(local | s3 | gcs)
-   S3_STORAGE_BUCKET_NAME=
-   S3_STORAGE_ACCESS_KEY_ID=
-   S3_STORAGE_SECRET_ACCESS_KEY=
-   S3_STORAGE_REGION=
-   S3_ENDPOINT_URL=
-   S3_FORCE_PATH_STYLE=false
+2.  Go into repository folder:
 
-4. Для изменения CDN путей откройте файл `packages/ui/.env` и укажите:
-   ```bash
-   # Полный URL для GitHub CDN (для встраивания компонента)
-   VITE_CDN_URL=https://your-cdn.com/gh/artstyleplaystyle/OSMIChatEmbed@main/dist/web.js
-   
-   # Полный URL для NPM CDN (для встраивания компонента)
-   VITE_CDN_URL_NPM=https://your-cdn.com/npm/OSMI-embed@latest/dist/web.js
-   ```
-   **Важно:** После изменения CDN путей необходимо пересобрать UI: `cd packages/ui && npm run build`
+    ```bash
+    cd OSMI-AI
+    ```
 
-5. Для настройки Redis откройте файл `packages/server/.env` и укажите (если используете внешний Redis):
-   ```bash
-   
-   # Или отдельные параметры подключения
-   REDIS_HOST=redis
-   REDIS_PORT=6379
-   REDIS_USERNAME=
-   REDIS_PASSWORD=
-   
-Примеры можно найти в .env.example
+3.  Install all dependencies of all modules:
 
-6. Запустите сборку контейнеров:
-   ```bash
-   docker-compose -f docker-compose-queue-source.yml up -d --build
-   ```
+    ```bash
+    pnpm install
+    ```
 
-7. Примеры Dockerfile находятся в docker/docker_files
+4.  Build all the code:
 
-8. **Откройте приложение в браузере:**
-   - **Регистрация**: `http://localhost:3000/simple-register`
-   - **Вход**: `http://localhost:3000/signin`
+    ```bash
+    pnpm build
+    ```
 
+    <details>
+    <summary>Exit code 134 (JavaScript heap out of memory)</summary>  
+    If you get this error when running the above `build` script, try increasing the Node.js heap size and run the script again:
+
+    ```bash
+    # macOS / Linux / Git Bash
+    export NODE_OPTIONS="--max-old-space-size=4096"
+
+    # Windows PowerShell
+    $env:NODE_OPTIONS="--max-old-space-size=4096"
+
+    # Windows CMD
+    set NODE_OPTIONS=--max-old-space-size=4096
+    ```
+
+    Then run:
+
+    ```bash
+    pnpm build
+    ```
+
+    </details>
+
+5.  Start the app:
+
+    ```bash
+    pnpm start
+    ```
+
+    You can now access the app on [http://localhost:3000](http://localhost:3000)
+
+6.  For development build:
+
+    -   Create `.env` file and specify the `VITE_PORT` (refer to `.env.example`) in `packages/ui`
+    -   Create `.env` file and specify the `PORT` (refer to `.env.example`) in `packages/server`
+    -   Run:
+
+        ```bash
+        pnpm dev
+        ```
+
+    Any code changes will reload the app automatically on [http://localhost:8080](http://localhost:8080)
 
 ## 🌱 Env Variables
 
-Supports different environment variables to configure your instance. You can specify the following variables in the `.env` file inside `packages/server` folder. Read [more](https://docs.osmi-ai.ru)
+OSMI AI supports different environment variables to configure your instance. You can specify the following variables in the `.env` file inside `packages/server` folder. Read [more](https://docs.osmi-ai.ru)
 
 ## 📖 Documentation
 
-You can view the Docs [here](https://docs.osmi-ai.ru)
+You can view the OSMI AI Docs [here](https://docs.osmi-ai.ru)
 
 ## 🌐 Self Host
 
-Deploy self-hosted in your existing infrastructure. For deployment instructions, visit [our documentation](https://docs.osmi-ai.ru).
+Deploy OSMI AI self-hosted in your existing infrastructure. For deployment instructions, visit [our documentation](https://docs.osmi-ai.ru).
 
 ## ☁️ OSMI IT Cloud
 
@@ -138,6 +216,17 @@ Get Started with [OSMI IT Cloud](https://app.osmi-ai.ru).
 
 Feel free to ask any questions, raise problems, and request new features in [Discussion](https://github.com/myosminozhka-ru/OSMI-AI/discussions).
 
+## 🙌 Contributing
+
+Thanks go to these awesome contributors
+
+<a href="https://github.com/myosminozhka-ru/OSMI-AI/graphs/contributors">
+<img src="https://contrib.rocks/image?repo=myosminozhka-ru/OSMI-AI" />
+</a><br><br>
+
+See [Contributing Guide](CONTRIBUTING.md). For questions or issues, please create an issue in our repository.
+
+[![Star History Chart](https://api.star-history.com/svg?repos=myosminozhka-ru/OSMI-AI&type=Timeline)](https://star-history.com/#myosminozhka-ru/OSMI-AI&Date)
 
 ## 📄 License
 

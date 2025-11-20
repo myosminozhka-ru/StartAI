@@ -1,43 +1,62 @@
-// Заглушка для minimal версии
-import { Entity, Column, PrimaryGeneratedColumn, PrimaryColumn } from 'typeorm'
+import { Column, Entity, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm'
+import { ILoginActivity, IWorkspaceShared, IWorkspaceUser } from '../../Interface.Enterprise'
 
-export const EnterpriseEntities = []
-
-@Entity()
-export class LoginActivity {
+@Entity('workspace_users')
+export class WorkspaceUsers implements IWorkspaceUser {
     @PrimaryGeneratedColumn('uuid')
-    id?: string
-    
-    @Column({ nullable: true })
-    username?: string
-    
-    @Column({ type: 'integer', nullable: true })
-    activityCode?: number
-    
-    @Column({ nullable: true })
-    message?: string
-    
-    @Column({ nullable: true })
-    loginMode?: string
-    
-    @Column({ type: 'timestamp', nullable: true })
-    attemptedDateTime?: Date
+    id: string
+
+    @Column({ type: 'text' })
+    workspaceId: string
+
+    @Column({ type: 'text' })
+    userId: string
+
+    @Column({ type: 'text' })
+    role: string
 }
 
-@Entity()
-export class WorkspaceShared {
-    @PrimaryColumn()
-    workspaceId?: string
-    
-    @PrimaryColumn()
-    sharedItemId?: string
-    
-    @Column({ nullable: true })
-    itemType?: string
+@Entity('workspace_shared')
+export class WorkspaceShared implements IWorkspaceShared {
+    @PrimaryGeneratedColumn('uuid')
+    id: string
+
+    @Column({ type: 'text' })
+    workspaceId: string
+
+    @Column({ type: 'text' })
+    sharedItemId: string
+
+    @Column({ type: 'text', name: 'itemType' })
+    itemType: string
+
+    @Column({ type: 'timestamp' })
+    @UpdateDateColumn()
+    createdDate: Date
+
+    @Column({ type: 'timestamp' })
+    @UpdateDateColumn()
+    updatedDate: Date
 }
 
-@Entity()
-export class WorkspaceUsers {
+@Entity('login_activity')
+export class LoginActivity implements ILoginActivity {
     @PrimaryGeneratedColumn('uuid')
-    id?: string
+    id: string
+
+    @Column({ type: 'text' })
+    username: string
+
+    @Column({ name: 'activity_code' })
+    activityCode: number
+
+    @Column({ name: 'login_mode' })
+    loginMode: string
+
+    @Column({ type: 'text' })
+    message: string
+
+    @Column({ type: 'timestamp' })
+    @UpdateDateColumn()
+    attemptedDateTime: Date
 }

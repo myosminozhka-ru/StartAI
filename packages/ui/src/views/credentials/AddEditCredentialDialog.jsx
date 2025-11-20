@@ -127,7 +127,7 @@ const AddEditCredentialDialog = ({ show, dialogProps, onCancel, onConfirm, setEr
             const createResp = await credentialsApi.createCredential(obj)
             if (createResp.data) {
                 enqueueSnackbar({
-                    message: 'Новые API сервисов добавлены',
+                    message: 'Новые учетные данные добавлены',
                     options: {
                         key: new Date().getTime() + Math.random(),
                         variant: 'success',
@@ -143,7 +143,7 @@ const AddEditCredentialDialog = ({ show, dialogProps, onCancel, onConfirm, setEr
         } catch (error) {
             if (setError) setError(error)
             enqueueSnackbar({
-                message: `Не удалось добавить API сервисов: ${
+                message: `Не удалось добавить учетные данные: ${
                     typeof error.response.data === 'object' ? error.response.data.message : error.response.data
                 }`,
                 options: {
@@ -179,7 +179,7 @@ const AddEditCredentialDialog = ({ show, dialogProps, onCancel, onConfirm, setEr
             const saveResp = await credentialsApi.updateCredential(credential.id, saveObj)
             if (saveResp.data) {
                 enqueueSnackbar({
-                    message: 'API сервисов сохранены',
+                    message: 'Учетные данные сохранены',
                     options: {
                         key: new Date().getTime() + Math.random(),
                         variant: 'success',
@@ -195,7 +195,7 @@ const AddEditCredentialDialog = ({ show, dialogProps, onCancel, onConfirm, setEr
         } catch (error) {
             if (setError) setError(error)
             enqueueSnackbar({
-                message: `Не удалось сохранить API сервисов: ${
+                message: `Не удалось сохранить учетные данные: ${
                     typeof error.response.data === 'object' ? error.response.data.message : error.response.data
                 }`,
                 options: {

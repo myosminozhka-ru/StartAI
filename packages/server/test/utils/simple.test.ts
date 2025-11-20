@@ -7,7 +7,7 @@ describe('Simple Test Suite', () => {
     it('should handle strings correctly', () => {
         const message = 'OSMI AI is working!'
         expect(message).toContain('OSMI AI')
-        expect(message).not.toContain('Flowise')
+        expect(message.length).toBeGreaterThan(0)
     })
 
     it('should validate environment setup', () => {

@@ -38,13 +38,12 @@ export class EvaluationRunner {
                     let providerName = ''
                     for (let i = 0; i < val.length; i++) {
                         const metric = val[i]
-                        if (metric && typeof metric === 'object' && metric !== null) {
-                            modelName = (metric as any)['model'] || ''
-                            providerName = (metric as any)['provider'] || ''
-                        } else if (metric) {
-                            const parsed = JSON.parse(metric as string)
-                            modelName = parsed?.['model'] || ''
-                            providerName = parsed?.['provider'] || ''
+                        if (typeof metric === 'object') {
+                            modelName = metric['model']
+                            providerName = metric['provider']
+                        } else {
+                            modelName = JSON.parse(metric)['model']
+                            providerName = JSON.parse(metric)['provider']
                         }
 
                         if (modelName) {

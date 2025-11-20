@@ -12,7 +12,6 @@ import { getPageAndLimitParams } from '../../utils/pagination'
 import { WorkspaceUserErrorMessage, WorkspaceUserService } from '../../enterprise/services/workspace-user.service'
 import { QueryRunner } from 'typeorm'
 import { GeneralErrorMessage } from '../../utils/constants'
-import { Workspace } from '../../enterprise/database/entities/workspace.entity'
 
 const checkIfChatflowIsValidForStreaming = async (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -49,6 +48,13 @@ const deleteChatflow = async (req: Request, res: Response, next: NextFunction) =
         if (typeof req.params === 'undefined' || !req.params.id) {
             throw new InternalOsmiError(StatusCodes.PRECONDITION_FAILED, `Error: chatflowsController.deleteChatflow - id not provided!`)
         }
+        const orgId = req.user?.activeOrganizationId
+        if (!orgId) {
+            throw new InternalOsmiError(
+                StatusCodes.NOT_FOUND,
+                `Error: chatflowsController.deleteChatflow - organization ${orgId} not found!`
+            )
+        }
         const workspaceId = req.user?.activeWorkspaceId
         if (!workspaceId) {
             throw new InternalOsmiError(
@@ -56,16 +62,6 @@ const deleteChatflow = async (req: Request, res: Response, next: NextFunction) =
                 `Error: chatflowsController.deleteChatflow - workspace ${workspaceId} not found!`
             )
         }
-        
-        // Получаем organizationId из workspace если не передан
-        let orgId = req.user?.activeOrganizationId || ''
-        if (!orgId && workspaceId) {
-            const workspace = await getRunningExpressApp().AppDataSource.getRepository(Workspace).findOne({
-                where: { id: workspaceId }
-            })
-            orgId = workspace?.organizationId || ''
-        }
-        
         const apiResponse = await chatflowsService.deleteChatflow(req.params.id, orgId, workspaceId)
         return res.json(apiResponse)
     } catch (error) {
@@ -126,40 +122,34 @@ const saveChatflow = async (req: Request, res: Response, next: NextFunction) => 
         if (!req.body) {
             throw new InternalOsmiError(StatusCodes.PRECONDITION_FAILED, `Error: chatflowsController.saveChatflow - body not provided!`)
         }
+        const orgId = req.user?.activeOrganizationId
+        if (!orgId) {
+            throw new InternalOsmiError(StatusCodes.NOT_FOUND, `Error: chatflowsController.saveChatflow - organization ${orgId} not found!`)
+        }
         const workspaceId = req.user?.activeWorkspaceId
-        
         if (!workspaceId) {
             throw new InternalOsmiError(
                 StatusCodes.NOT_FOUND,
-                `Error: chatflowsController.saveChatflow - workspace ${workspaceId} not found! User: ${JSON.stringify(req.user)}`
+                `Error: chatflowsController.saveChatflow - workspace ${workspaceId} not found!`
             )
         }
-        
-        // Получаем organizationId из workspace если не передан
-        let orgId = req.user?.activeOrganizationId || ''
-        if (!orgId) {
-            const workspace = await getRunningExpressApp().AppDataSource.getRepository(Workspace).findOne({
-                where: { id: workspaceId }
-            })
-            orgId = workspace?.organizationId || ''
-        }
-        
         const subscriptionId = req.user?.activeOrganizationSubscriptionId || ''
         const body = req.body
 
-        // Проверяем лимит чатфлоу для minimal версии (максимум 2)
-        const existingChatflowCount = await chatflowsService.getAllChatflowsCount(body.type, workspaceId)
-        const CHATFLOW_LIMIT = 2
-        
-        if (existingChatflowCount >= CHATFLOW_LIMIT) {
-            throw new InternalOsmiError(
-                StatusCodes.TOO_MANY_REQUESTS,
-                `Достигнут лимит чатфлоу (максимум ${CHATFLOW_LIMIT}). Удалите существующий чатфлоу перед созданием нового.`
-            )
+        // Ограничение на создание чатфлоу: не более 2
+        if (body.type === 'CHATFLOW') {
+            const existingChatflowCount = await chatflowsService.getAllChatflowsCountByOrganization('CHATFLOW', orgId)
+            if (existingChatflowCount >= 2) {
+                throw new InternalOsmiError(
+                    StatusCodes.FORBIDDEN,
+                    'Достигнут лимит на создание чатфлоу. Максимальное количество: 2'
+                )
+            }
         }
-        
-        // Проверка Enterprise лимитов (пропускается для Open Source)
-        await checkUsageLimit('flows', subscriptionId, getRunningExpressApp().usageCacheManager, existingChatflowCount + 1)
+
+        const existingChatflowCount = await chatflowsService.getAllChatflowsCountByOrganization(body.type, orgId)
+        const newChatflowCount = 1
+        await checkUsageLimit('flows', subscriptionId, getRunningExpressApp().usageCacheManager, existingChatflowCount + newChatflowCount)
 
         const newChatFlow = new ChatFlow()
         Object.assign(newChatFlow, body)
@@ -187,6 +177,10 @@ const updateChatflow = async (req: Request, res: Response, next: NextFunction) =
         if (!chatflow) {
             return res.status(404).send(`Chatflow ${req.params.id} not found`)
         }
+        const orgId = req.user?.activeOrganizationId
+        if (!orgId) {
+            throw new InternalOsmiError(StatusCodes.NOT_FOUND, `Error: chatflowsController.saveChatflow - organization ${orgId} not found!`)
+        }
         const workspaceId = req.user?.activeWorkspaceId
         if (!workspaceId) {
             throw new InternalOsmiError(
@@ -194,16 +188,6 @@ const updateChatflow = async (req: Request, res: Response, next: NextFunction) =
                 `Error: chatflowsController.saveChatflow - workspace ${workspaceId} not found!`
             )
         }
-        
-        // Получаем organizationId из workspace если не передан
-        let orgId = req.user?.activeOrganizationId || ''
-        if (!orgId && workspaceId) {
-            const workspace = await getRunningExpressApp().AppDataSource.getRepository(Workspace).findOne({
-                where: { id: workspaceId }
-            })
-            orgId = workspace?.organizationId || ''
-        }
-        
         const subscriptionId = req.user?.activeOrganizationSubscriptionId || ''
         const body = req.body
         const updateChatFlow = new ChatFlow()

@@ -81,6 +81,9 @@ services:
             dockerfile: docker/worker/Dockerfile
         env_file:
             - ../packages/server/.env
+        environment:
+            - DATABASE_HOST=postgres
+            - REDIS_HOST=redis
         depends_on:
             postgres:
                 condition: service_healthy

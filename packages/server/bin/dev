@@ -1,9 +1,18 @@
 #!/usr/bin/env node
 
-const oclif = require('@oclif/core')
-
 const path = require('path')
+const { execute, settings } = require('@oclif/core')
+const fs = require('fs')
+
 const project = path.join(__dirname, '..', 'tsconfig.json')
+const projectRoot = path.join(__dirname, '..', '..')
+const serverRoot = path.join(__dirname, '..')
+const dataDir = path.join(projectRoot, '.osmi-data')
+
+// Создаем директорию если её нет
+if (!fs.existsSync(dataDir)) {
+    fs.mkdirSync(dataDir, { recursive: true })
+}
 
 // In dev mode -> use ts-node and dev plugins
 process.env.NODE_ENV = 'development'
@@ -14,4 +23,5 @@ require('ts-node').register({ project })
 oclif.settings.debug = true
 
 // Start the CLI
+const oclif = require('@oclif/core')
 oclif.run().then(oclif.flush).catch(oclif.Errors.handle)

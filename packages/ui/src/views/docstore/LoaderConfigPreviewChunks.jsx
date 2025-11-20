@@ -216,7 +216,7 @@ const LoaderConfigPreviewChunks = () => {
                 setLoading(false)
                 if (saveResp.data) {
                     enqueueSnackbar({
-                        message: 'Файл отправлен на обработку. Перенаправление в базу документов..',
+                        message: 'Файл отправлен на обработку. Перенаправление в хранилище документов..',
                         options: {
                             key: new Date().getTime() + Math.random(),
                             variant: 'success',

@@ -1,6 +1,6 @@
 import { ClientOptions, OpenAIEmbeddings, OpenAIEmbeddingsParams } from '@langchain/openai'
 import { ICommonObject, INode, INodeData, INodeParams } from '../../../src/Interface'
-import { getBaseClasses, getCredentialData, getCredentialParam } from '../../../src/utils'
+import { attachOpenAIApiKey, getBaseClasses, getCredentialData, getCredentialParam } from '../../../src/utils'
 
 class OpenAIEmbeddingCustom_Embeddings implements INode {
     label: string
@@ -92,10 +92,12 @@ class OpenAIEmbeddingCustom_Embeddings implements INode {
 
         const credentialData = await getCredentialData(nodeData.credential ?? '', options)
         const openAIApiKey = getCredentialParam('openAIApiKey', credentialData, nodeData)
-
-        const obj: Partial<OpenAIEmbeddingsParams> & { openAIApiKey?: string; configuration?: ClientOptions } = {
-            openAIApiKey
+        if (!openAIApiKey) {
+            throw new Error('OpenAI API key is required. Please provide it via credentials.')
         }
+
+        const obj: Partial<OpenAIEmbeddingsParams> & { configuration?: ClientOptions } = {}
+        attachOpenAIApiKey(obj, openAIApiKey)
 
         if (stripNewLines) obj.stripNewLines = stripNewLines
         if (batchSize) obj.batchSize = parseInt(batchSize, 10)

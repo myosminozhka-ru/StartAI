@@ -29,7 +29,7 @@ const createAndStreamInternalPrediction = async (req: Request, res: Response, ne
         res.setHeader('Content-Type', 'text/event-stream')
         res.setHeader('Cache-Control', 'no-cache')
         res.setHeader('Connection', 'keep-alive')
-        res.setHeader('X-Accel-Buffering', 'no')
+        res.setHeader('X-Accel-Buffering', 'no') //nginx config: https://serverfault.com/a/801629
         res.flushHeaders()
 
         if (process.env.MODE === MODE.QUEUE) {
@@ -38,13 +38,13 @@ const createAndStreamInternalPrediction = async (req: Request, res: Response, ne
 
         const apiResponse = await utilBuildChatflow(req, true)
         sseStreamer.streamMetadataEvent(apiResponse.chatId, apiResponse)
+        sseStreamer.removeClient(chatId)
     } catch (error) {
         if (chatId) {
             sseStreamer.streamErrorEvent(chatId, getErrorMessage(error))
         }
-        next(error)
-    } finally {
         sseStreamer.removeClient(chatId)
+        next(error)
     }
 }
 export default {

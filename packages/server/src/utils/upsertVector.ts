@@ -274,10 +274,10 @@ export const upsertVector = async (req: Request, isInternal: boolean = false) =>
             throw new InternalOsmiError(StatusCodes.NOT_FOUND, `Organization ${workspace.organizationId} not found`)
         }
 
-        const orgId = org.id || ''
-        const subscriptionId = org.subscriptionId || ''
+        const orgId = org.id
+        const subscriptionId = org.subscriptionId as string
 
-        const subscriptionDetails = subscriptionId ? await appServer.usageCacheManager.getSubscriptionDataFromCache(subscriptionId) : null
+        const subscriptionDetails = await appServer.usageCacheManager.getSubscriptionDataFromCache(subscriptionId)
         const productId = subscriptionDetails?.productId || ''
 
         const executeData: IExecuteFlowParams = {
@@ -294,9 +294,9 @@ export const upsertVector = async (req: Request, isInternal: boolean = false) =>
             isInternal,
             files,
             isUpsert: true,
-            orgId: orgId || '',
-            workspaceId: workspaceId || '',
-            subscriptionId: subscriptionId || '',
+            orgId,
+            workspaceId,
+            subscriptionId,
             productId
         }
 

@@ -53,7 +53,6 @@ export const checkUsageLimit = async (
     usageCacheManager: UsageCacheManager,
     currentUsage: number
 ) => {
-    // В Open Source режиме нет лимитов - пропускаем проверку
     if (!usageCacheManager || !subscriptionId) return
 
     const quotas = await usageCacheManager.getQuotas(subscriptionId)

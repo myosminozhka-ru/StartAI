@@ -162,7 +162,7 @@ const Tools = () => {
                             onSearchChange={onSearchChange}
                             search={true}
                             searchPlaceholder='Поиск инструментов'
-                            title='Инструменты'
+                            title='Интеграции'
                             description='Внешние функции или API, которые агент может использовать для выполнения действий'
                         >
                             <ToggleButtonGroup

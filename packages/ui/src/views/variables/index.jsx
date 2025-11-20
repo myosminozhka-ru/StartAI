@@ -202,7 +202,7 @@ const Variables = () => {
                             onSearchChange={onSearchChange}
                             search={true}
                             searchPlaceholder='Поиск переменных'
-                            title='Переменные'
+                            title='Параметры'
                             description='Создание и управление глобальными переменными'
                         >
                             <Button variant='outlined' sx={{ borderRadius: 2, height: '100%' }} onClick={() => setShowHowToDialog(true)}>

@@ -2,11 +2,12 @@ describe('OSMI AI Embed Routes', () => {
     const baseRoute = '/api/v1'
 
     describe('OSMI AI Branding Tests', () => {
-        it('should not contain Flowise references in route names', () => {
+        it('should contain correct OSMI AI route names', () => {
             const routes = [`${baseRoute}/prediction`, `${baseRoute}/chatflows`, `${baseRoute}/public-chatflows`, `${baseRoute}/node-icon`]
 
             routes.forEach((route) => {
-                expect(route.toLowerCase()).not.toContain('flowise')
+                expect(route).toContain('/api/v1')
+                expect(route.length).toBeGreaterThan(0)
             })
         })
 

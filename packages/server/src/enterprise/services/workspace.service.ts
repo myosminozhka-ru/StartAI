@@ -144,7 +144,7 @@ export class WorkspaceService {
             this.validateWorkspaceName(newWorkspaceData.name)
         }
         newWorkspaceData.organizationId = oldWorkspaceData.organizationId
-        // createdBy removed for minimal version
+        newWorkspaceData.createdBy = oldWorkspaceData.createdBy
 
         let updateWorkspace = queryRunner.manager.merge(Workspace, oldWorkspaceData, newWorkspaceData)
         try {

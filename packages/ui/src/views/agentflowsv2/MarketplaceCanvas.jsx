@@ -14,7 +14,7 @@ import { useTheme } from '@mui/material/styles'
 import AgentFlowNode from './AgentFlowNode'
 import AgentFlowEdge from './AgentFlowEdge'
 import IterationNode from './IterationNode'
-// import MarketplaceCanvasHeader from '@/views/marketplaces/MarketplaceCanvasHeader' // Закомментировано: файл удален в minimal версии
+import MarketplaceCanvasHeader from '@/views/marketplaces/MarketplaceCanvasHeader'
 import StickyNote from './StickyNote'
 import EditNodeDialog from '@/views/agentflowsv2/EditNodeDialog'
 import { flowContext } from '@/store/context/ReactFlowContext'
@@ -94,10 +94,11 @@ const MarketplaceCanvasV2 = () => {
                     }}
                 >
                     <Toolbar>
-                        {/* MarketplaceCanvasHeader закомментирован: файл удален в minimal версии */}
-                        <Box sx={{ display: 'flex', alignItems: 'center', width: '100%' }}>
-                            <Box sx={{ fontSize: '1.2rem', fontWeight: 500 }}>{name}</Box>
-                        </Box>
+                        <MarketplaceCanvasHeader
+                            flowName={name}
+                            flowData={JSON.parse(flowData)}
+                            onChatflowCopy={(flowData) => onChatflowCopy(flowData)}
+                        />
                     </Toolbar>
                 </AppBar>
                 <Box sx={{ pt: '70px', height: '100vh', width: '100%' }}>

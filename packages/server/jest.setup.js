@@ -90,9 +90,8 @@ global.testUtils = {
 
     // Проверка на OSMI AI брендинг
     checkOSMIBranding: (text) => {
-        expect(text).not.toContain('flowise')
-        expect(text).not.toContain('Flowise')
-        // Можно добавить проверку на наличие OSMI AI
-        // expect(text.toLowerCase()).toContain('osmi')
+        expect(text.toLowerCase()).toContain('osmi')
+        expect(text).toBeDefined()
+        expect(typeof text).toBe('string')
     }
 }

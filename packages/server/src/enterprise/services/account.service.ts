@@ -137,7 +137,8 @@ export class AccountService {
                     // @ts-ignore
                     referral: data.user.referral || ''
                 })
-                // customerId and subscriptionId removed for minimal version
+                data.organization.customerId = customerId
+                data.organization.subscriptionId = subscriptionId
 
                 // if credential exists then the user is signing up with email/password
                 // if not then the user is signing up with oauth/sso
@@ -151,7 +152,7 @@ export class AccountService {
                 } else {
                     data.user.status = UserStatus.ACTIVE
                     data.user.tempToken = ''
-                    data.user.tokenExpiry = undefined
+                    data.user.tokenExpiry = null
                 }
                 data.organization.name = OrganizationName.DEFAULT_ORGANIZATION
                 data.organizationUser.role = await this.roleService.readGeneralRoleByName(GeneralRole.OWNER, queryRunner)
@@ -175,7 +176,7 @@ export class AccountService {
                 if (data.user.tempToken) {
                     const user = await this.userService.readUserByToken(data.user.tempToken, queryRunner)
                     if (!user) throw new InternalOsmiError(StatusCodes.NOT_FOUND, UserErrorMessage.USER_NOT_FOUND)
-                    if (user.email && data.user.email && user.email.toLowerCase() !== data.user.email.toLowerCase())
+                    if (user.email.toLowerCase() !== data.user.email?.toLowerCase())
                         throw new InternalOsmiError(StatusCodes.BAD_REQUEST, UserErrorMessage.INVALID_USER_EMAIL)
                     const name = data.user.name
                     if (data.user.credential) user.credential = this.userService.encryptUserCredential(data.user.credential)
@@ -194,7 +195,7 @@ export class AccountService {
                     const today = new Date()
                     if (today > tokenExpiry) throw new InternalOsmiError(StatusCodes.BAD_REQUEST, UserErrorMessage.EXPIRED_TEMP_TOKEN)
                     data.user.tempToken = ''
-                    data.user.tokenExpiry = undefined
+                    data.user.tokenExpiry = null
                     data.user.name = name
                     data.user.status = UserStatus.ACTIVE
                     data.organizationUser.status = OrganizationUserStatus.ACTIVE
@@ -216,21 +217,19 @@ export class AccountService {
         }
 
         if (!data.organization.id) {
-            if (!data.user.id) {
-                throw new InternalOsmiError(StatusCodes.BAD_REQUEST, 'User ID is required')
-            }
-            data.organization.createdBy = data.user.id
+            data.organization.createdBy = data.user.createdBy
             data.organization = this.organizationservice.createNewOrganization(data.organization, queryRunner, true)
         }
         data.organizationUser.organizationId = data.organization.id
         data.organizationUser.userId = data.user.id
-        data.organizationUser.createdBy = data.user.id
+        data.organizationUser.createdBy = data.user.createdBy
         data.organizationUser = this.organizationUserService.createNewOrganizationUser(data.organizationUser, queryRunner)
         data.workspace.organizationId = data.organization.id
+        data.workspace.createdBy = data.user.createdBy
         data.workspace = this.workspaceService.createNewWorkspace(data.workspace, queryRunner, true)
         data.workspaceUser.workspaceId = data.workspace.id
         data.workspaceUser.userId = data.user.id
-        data.workspaceUser.createdBy = data.user.id
+        data.workspaceUser.createdBy = data.user.createdBy
         data.workspaceUser.status = WorkspaceUserStatus.ACTIVE
         data.workspaceUser = this.workspaceUserService.createNewWorkspaceUser(data.workspaceUser, queryRunner)
 
@@ -318,14 +317,16 @@ export class AccountService {
                 data.organizationUser.userId = data.user.id
                 const roleMember = await this.roleService.readGeneralRoleByName(GeneralRole.MEMBER, queryRunner)
                 data.organizationUser.roleId = roleMember.id
-                data.organizationUser.createdBy = data.user.id
+                data.organizationUser.createdBy = data.user.createdBy
                 data.organizationUser.status = OrganizationUserStatus.INVITED
                 data.organizationUser = await this.organizationUserService.createNewOrganizationUser(data.organizationUser, queryRunner)
+
+                workspace.updatedBy = data.user.createdBy
 
                 data.workspaceUser.workspaceId = data.workspace.id
                 data.workspaceUser.userId = data.user.id
                 data.workspaceUser.roleId = data.role.id
-                data.workspaceUser.createdBy = data.user.id
+                data.workspaceUser.createdBy = data.user.createdBy
                 data.workspaceUser.status = WorkspaceUserStatus.INVITED
                 data.workspaceUser = await this.workspaceUserService.createNewWorkspaceUser(data.workspaceUser, queryRunner)
 
@@ -353,7 +354,7 @@ export class AccountService {
                 data.organizationUser.userId = user.id
                 const roleMember = await this.roleService.readGeneralRoleByName(GeneralRole.MEMBER, queryRunner)
                 data.organizationUser.roleId = roleMember.id
-                data.organizationUser.createdBy = user.id
+                data.organizationUser.createdBy = data.user.createdBy
                 data.organizationUser.status = OrganizationUserStatus.INVITED
                 data.organizationUser = await this.organizationUserService.createNewOrganizationUser(data.organizationUser, queryRunner)
             } else {
@@ -382,9 +383,6 @@ export class AccountService {
                 }
                 if (workspaceUser.length === 1) {
                     oldWorkspaceUser = workspaceUser[0]
-                    if (!oldWorkspaceUser.workspace) {
-                        throw new InternalOsmiError(StatusCodes.NOT_FOUND, 'Workspace not found')
-                    }
                     if (oldWorkspaceUser.workspace.name === WorkspaceName.DEFAULT_PERSONAL_WORKSPACE) {
                         await sendWorkspaceInvite(
                             data.user.email!,
@@ -405,16 +403,18 @@ export class AccountService {
                     await sendWorkspaceInvite(data.user.email!, data.workspace.name!, registerLink, this.identityManager.getPlatformType())
                 }
             } else {
-                data.organizationUser.updatedBy = user.id
+                data.organizationUser.updatedBy = data.user.createdBy
 
                 const dashboardLink = `${process.env.APP_URL}`
                 await sendWorkspaceAdd(data.user.email!, data.workspace.name!, dashboardLink)
             }
 
+            workspace.updatedBy = data.user.createdBy
+
             data.workspaceUser.workspaceId = data.workspace.id
             data.workspaceUser.userId = user.id
             data.workspaceUser.roleId = data.role.id
-            data.workspaceUser.createdBy = user.id
+            data.workspaceUser.createdBy = data.user.createdBy
             data.workspaceUser.status = WorkspaceUserStatus.INVITED
             data.workspaceUser = await this.workspaceUserService.createNewWorkspaceUser(data.workspaceUser, queryRunner)
 
@@ -480,7 +480,7 @@ export class AccountService {
                 }
             }
             if (platform === Platform.ENTERPRISE) {
-                await auditService.recordLoginActivity(user.email || '', LoginActivityCode.LOGIN_SUCCESS, 'Login Success')
+                await auditService.recordLoginActivity(user.email, LoginActivityCode.LOGIN_SUCCESS, 'Login Success')
             }
             return { user, workspaceDetails: wsUserOrUsers }
         } finally {
@@ -499,7 +499,7 @@ export class AccountService {
             if (!user) throw new InternalOsmiError(StatusCodes.NOT_FOUND, UserErrorMessage.USER_NOT_FOUND)
             data.user = user
             data.user.tempToken = ''
-            data.user.tokenExpiry = undefined
+            data.user.tokenExpiry = null
             data.user.status = UserStatus.ACTIVE
             data.user = await this.userService.saveUser(data.user, queryRunner)
             await queryRunner.commitTransaction()

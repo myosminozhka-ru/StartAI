@@ -421,11 +421,6 @@ export const getFileFromStorage = async (file: string, ...paths: string[]): Prom
             return fs.readFileSync(fileInStorage)
         } catch (error) {
             // Fallback: Check if file exists without the first path element (likely orgId)
-            // Только для локального хранилища
-            const storageType = getStorageType()
-            if (storageType === 's3' || storageType === 'gcs') {
-                throw error
-            }
             if (paths.length > 1) {
                 const fallbackPaths = paths.slice(1)
                 const fallbackPath = path.join(getStoragePath(), ...fallbackPaths.map(_sanitizeFilename), sanitizedFilename)
@@ -536,19 +531,9 @@ function getFilePaths(dir: string): FileInfo[] {
  * Prepare storage path
  */
 export const getStoragePath = (): string => {
-    // Если используется S3 или GCS, не создаем локальные папки
-    const storageType = getStorageType()
-    if (storageType === 's3' || storageType === 'gcs') {
-        // Возвращаем временный путь, но не создаем папки
-        return process.env.BLOB_STORAGE_PATH || path.join(getUserHome(), '.OSMI', 'storage')
-    }
-    const storagePath = process.env.BLOB_STORAGE_PATH
+    return process.env.BLOB_STORAGE_PATH
         ? path.join(process.env.BLOB_STORAGE_PATH)
         : path.join(getUserHome(), '.OSMI', 'storage')
-    if (!fs.existsSync(storagePath)) {
-        fs.mkdirSync(storagePath, { recursive: true })
-    }
-    return storagePath
 }
 
 /**
@@ -889,11 +874,7 @@ export const streamStorageFile = async (
         if (fs.existsSync(filePath)) {
             return fs.createReadStream(filePath)
         } else {
-            // Fallback: Check if file exists without orgId (только для локального хранилища)
-            const storageType = getStorageType()
-            if (storageType === 's3' || storageType === 'gcs') {
-                throw new Error(`File ${fileName} not found`)
-            }
+            // Fallback: Check if file exists without orgId
             const fallbackPath = path.join(getStoragePath(), chatflowId, chatId, sanitizedFilename)
 
             if (fs.existsSync(fallbackPath)) {

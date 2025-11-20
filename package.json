@@ -10,9 +10,6 @@
     "bugs": {
         "url": "https://github.com/myosminozhka-ru/StartAI/issues"
     },
-    "workspaces": [
-        "packages/*"
-    ],
     "scripts": {
         "build": "turbo run build",
         "build-force": "pnpm clean && turbo run build --force",

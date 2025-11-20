@@ -57,7 +57,7 @@ export const createFileAttachment = async (req: Request) => {
         if (!workspace) {
             throw new InternalOsmiError(StatusCodes.NOT_FOUND, `Workspace ${chatflowWorkspaceId} not found`)
         }
-        workspaceId = workspace.id || ''
+        workspaceId = workspace.id
 
         const org = await appServer.AppDataSource.getRepository(Organization).findOneBy({
             id: workspace.organizationId
@@ -66,8 +66,8 @@ export const createFileAttachment = async (req: Request) => {
             throw new InternalOsmiError(StatusCodes.NOT_FOUND, `Organization ${workspace.organizationId} not found`)
         }
 
-        orgId = org.id || ''
-        subscriptionId = org.subscriptionId || ''
+        orgId = org.id
+        subscriptionId = org.subscriptionId as string
     }
 
     // Parse chatbot configuration to get file upload settings
@@ -111,9 +111,6 @@ export const createFileAttachment = async (req: Request) => {
 
     // Find FileLoader node
     const fileLoaderComponent = appServer.nodesPool.componentNodes['fileLoader']
-    if (!fileLoaderComponent || !fileLoaderComponent.filePath) {
-        throw new InternalOsmiError(StatusCodes.NOT_FOUND, 'FileLoader node component not found or missing filePath')
-    }
     const fileLoaderNodeInstanceFilePath = fileLoaderComponent.filePath as string
     const fileLoaderNodeModule = await import(fileLoaderNodeInstanceFilePath)
     const fileLoaderNodeInstance = new fileLoaderNodeModule.nodeClass()

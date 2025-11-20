@@ -13,8 +13,7 @@ import { AIMessage, HumanMessage, BaseMessage } from '@langchain/core/messages'
 import { Document } from '@langchain/core/documents'
 import { getFileFromStorage } from './storageUtils'
 import { GetSecretValueCommand, SecretsManagerClient, SecretsManagerClientConfig } from '@aws-sdk/client-secrets-manager'
-// import { customGet } from '../nodes/sequentialagents/commonUtils' // Закомментировано: файл удален в minimal версии
-import { get as customGet } from 'lodash' // Используем lodash.get вместо customGet
+import { customGet } from '../nodes/sequentialagents/commonUtils'
 import { TextSplitter } from 'langchain/text_splitter'
 import { DocumentLoader } from 'langchain/document_loaders/base'
 import { NodeVM } from '@osmi-ai/nodevm'
@@ -654,7 +653,41 @@ export const defaultChain = (...values: any[]): any | undefined => {
 }
 
 export const getCredentialParam = (paramName: string, credentialData: ICommonObject, nodeData: INodeData, defaultValue?: any): any => {
-    return (nodeData.inputs as ICommonObject)[paramName] ?? credentialData[paramName] ?? defaultValue ?? undefined
+    // Попытка получить значение из inputs, credentials, defaultValue
+    const value = (nodeData.inputs as ICommonObject)[paramName] ?? credentialData[paramName] ?? defaultValue
+    
+    // Если значение не найдено, пробуем переменные окружения как fallback
+    if (!value) {
+        // Маппинг имен параметров на переменные окружения
+        const envVarMap: { [key: string]: string } = {
+            'anthropicApiKey': 'ANTHROPIC_API_KEY',
+            'googleApiKey': 'GOOGLE_API_KEY',
+            'cohereApiKey': 'COHERE_API_KEY',
+            'huggingFaceApi': 'HUGGINGFACEHUB_API_KEY',
+            'pineconeApiKey': 'PINECONE_API_KEY',
+            'replicate_api_key': 'REPLICATE_API_TOKEN'
+        }
+        
+        const envVarName = envVarMap[paramName]
+        if (envVarName) {
+            const envValue = getEnvironmentVariable(envVarName)
+            if (envValue) {
+                console.log(`🔑 Using ${envVarName} from environment variables for ${paramName}`)
+                return envValue
+            }
+        }
+    }
+    
+    return value ?? undefined
+}
+
+export const attachOpenAIApiKey = <T>(config: T, apiKey?: string): T => {
+    if (apiKey) {
+        const target = config as Record<string, any>
+        target.openAIApiKey = apiKey
+        target.apiKey = apiKey
+    }
+    return config
 }
 
 // reference https://www.freeformatter.com/json-escape.html
@@ -739,8 +772,24 @@ export const mapChatMessageToBaseMessage = async (chatmessages: any[] = [], orgI
                                 }
                             })
                         } else if (upload.type === 'stored-file:full') {
-                            // File loader не доступен в minimal версии - пропускаем этот тип файла
-                            continue
+                            const fileLoaderNodeModule = await import('../nodes/documentloaders/File/File')
+                            // @ts-ignore
+                            const fileLoaderNodeInstance = new fileLoaderNodeModule.nodeClass()
+                            const options = {
+                                retrieveAttachmentChatId: true,
+                                chatflowid: message.chatflowid,
+                                chatId: message.chatId,
+                                orgId
+                            }
+                            let fileInputFieldFromMimeType = 'txtFile'
+                            fileInputFieldFromMimeType = mapMimeTypeToInputField(upload.mime)
+                            const nodeData = {
+                                inputs: {
+                                    [fileInputFieldFromMimeType]: `FILE-STORAGE::${JSON.stringify([upload.name])}`
+                                }
+                            }
+                            const documents: string = await fileLoaderNodeInstance.init(nodeData, '', options)
+                            messageWithFileUploads += `<doc name='${upload.name}'>${handleEscapeCharacters(documents, true)}</doc>\n\n`
                         }
                     }
                     const messageContent = messageWithFileUploads ? `${messageWithFileUploads}\n\n${message.content}` : message.content

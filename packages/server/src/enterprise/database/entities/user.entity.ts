@@ -1,64 +1,92 @@
-// Заглушка для minimal версии
-import { Entity, Column, PrimaryGeneratedColumn, ManyToOne, JoinColumn } from 'typeorm'
+import { Column, CreateDateColumn, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm'
+import { LoginMethod } from './login-method.entity'
+import { OrganizationUser } from './organization-user.entity'
+import { Organization } from './organization.entity'
+import { Role } from './role.entity'
+import { WorkspaceUser } from './workspace-user.entity'
+import { Workspace } from './workspace.entity'
 
 export enum UserStatus {
-    UNVERIFIED = 'unverified',
-    VERIFIED = 'verified',
-    SUSPENDED = 'suspended',
     ACTIVE = 'active',
-    INVITED = 'invited'
+    INVITED = 'invited',
+    UNVERIFIED = 'unverified',
+    DELETED = 'deleted'
 }
 
 @Entity()
 export class User {
     @PrimaryGeneratedColumn('uuid')
-    id?: string
-    
-    @Column({ nullable: true })
-    email?: string
-    
-    @Column({ nullable: true })
-    credential?: string
-    
-    @Column({ nullable: true })
-    name?: string
-    
-    @Column({ type: 'varchar', nullable: true })
-    status?: UserStatus
-    
-    @Column({ nullable: true })
-    tempToken?: string
-    
-    @Column({ type: 'timestamp', nullable: true })
-    tokenExpiry?: Date
-    
-    @Column({ nullable: true })
-    role?: string
-    
-    @Column({ nullable: true, type: 'uuid' })
-    activeWorkspaceId?: string
-    
-    @Column({ type: 'timestamp', nullable: true })
-    lastLogin?: Date
-    
-    @Column({ nullable: true })
-    user_type?: string
-    
-    @Column({ type: 'timestamp', nullable: true })
+    id: string
+
+    @Column({ type: 'varchar', length: 100 })
+    name: string
+
+    @Column({ type: 'varchar', length: 255, unique: true })
+    email: string
+
+    @Column({ type: 'text', nullable: true })
+    credential?: string | null
+
+    @Column({ type: 'text', nullable: true, unique: true })
+    tempToken?: string | null
+
+    @CreateDateColumn({ nullable: true })
+    tokenExpiry?: Date | null
+
+    @Column({ type: 'varchar', length: 20, default: UserStatus.UNVERIFIED })
+    status: string
+
+    @CreateDateColumn()
     createdDate?: Date
-    
-    @Column({ type: 'timestamp', nullable: true })
+
+    @UpdateDateColumn()
     updatedDate?: Date
-    
-    @Column({ nullable: true })
-    createdBy?: string
-    
-    @Column({ nullable: true })
-    updatedBy?: string
-    
-    @ManyToOne(() => require('./workspace.entity').Workspace, { nullable: true })
-    @JoinColumn({ name: 'activeWorkspaceId' })
-    workspace?: any
+
+    @Column({ nullable: false })
+    createdBy: string
+    @ManyToOne(() => User, (user) => user.id, {})
+    @JoinColumn({ name: 'createdBy' })
+    createdByUser?: User
+
+    @Column({ nullable: false })
+    updatedBy: string
+    @ManyToOne(() => User, (user) => user.id, {})
+    @JoinColumn({ name: 'updatedBy' })
+    updatedByUser?: User
+
+    @OneToMany(() => Organization, (organization) => organization.createdByUser)
+    createdOrganizations?: Organization[]
+
+    @OneToMany(() => Organization, (organization) => organization.updatedByUser)
+    updatedOrganizations?: Organization[]
+
+    @OneToMany(() => Role, (role) => role.createdByUser)
+    createdRoles?: Role[]
+
+    @OneToMany(() => Role, (role) => role.updatedByUser)
+    updatedRoles?: Role[]
+
+    @OneToMany(() => OrganizationUser, (organizationUser) => organizationUser.createdByUser)
+    createdOrganizationUser?: OrganizationUser[]
+
+    @OneToMany(() => OrganizationUser, (organizationUser) => organizationUser.updatedByUser)
+    updatedOrganizationUser?: OrganizationUser[]
+
+    @OneToMany(() => Workspace, (workspace) => workspace.createdByUser)
+    createdWorkspace?: Workspace[]
+
+    @OneToMany(() => Workspace, (workspace) => workspace.updatedByUser)
+    updatedWorkspace?: Workspace[]
+
+    @OneToMany(() => WorkspaceUser, (workspaceUser) => workspaceUser.createdByUser)
+    createdWorkspaceUser?: WorkspaceUser[]
+
+    @OneToMany(() => WorkspaceUser, (workspaceUser) => workspaceUser.updatedByUser)
+    updatedByWorkspaceUser?: WorkspaceUser[]
+
+    @OneToMany(() => LoginMethod, (loginMethod) => loginMethod.createdByUser)
+    createdByLoginMethod?: LoginMethod[]
+
+    @OneToMany(() => LoginMethod, (loginMethod) => loginMethod.updatedByUser)
+    updatedByLoginMethod?: LoginMethod[]
 }
-
-

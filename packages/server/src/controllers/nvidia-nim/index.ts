@@ -1,7 +1,7 @@
 import axios from 'axios'
 import { NextFunction, Request, Response } from 'express'
-// @ts-ignore - OSMI-nim-container-manager не имеет типов
-import { NimContainerManager } from 'OSMI-nim-container-manager'
+// @ts-ignore - nim-container-manager не имеет типов
+import { NimContainerManager } from 'nim-container-manager'
 
 const getToken = async (req: Request, res: Response, next: NextFunction) => {
     try {

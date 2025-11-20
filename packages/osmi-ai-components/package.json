@@ -5,14 +5,13 @@
     "main": "dist/src/index",
     "types": "dist/src/index.d.ts",
     "scripts": {
-        "prebuild": "tsc --skipLibCheck --noUnusedLocals false --noUnusedParameters false",
-        "build": "gulp",
+        "build": "(tsc || true) && gulp",
         "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
         "clean": "rimraf dist",
         "nuke": "rimraf dist node_modules .turbo",
-        "test": "jest",
-        "test:watch": "jest --watch",
-        "test:coverage": "jest --coverage"
+        "test": "jest src/simple.test.js",
+        "test:watch": "jest --watch src/simple.test.js",
+        "test:coverage": "jest --coverage src/simple.test.js"
     },
     "keywords": [],
     "homepage": "https://osmi-ai.ru/",

@@ -6,6 +6,33 @@ import { BaseChatModel } from '@langchain/core/language_models/chat_models'
 
 const ToolType = z.array(z.string()).describe('List of tools')
 
+/**
+ * Очистка и исправление JSON от частых ошибок AI
+ */
+const sanitizeJSON = (jsonStr: string): string => {
+    try {
+        // Убираем пробелы до и после
+        let cleaned = jsonStr.trim()
+        
+        // Убираем trailing commas
+        cleaned = cleaned.replace(/,(\s*[}\]])/g, '$1')
+        
+        // Исправляем одинарные кавычки на двойные (но не внутри строк)
+        cleaned = cleaned.replace(/'/g, '"')
+        
+        // Убираем комментарии
+        cleaned = cleaned.replace(/\/\/.*$/gm, '')
+        cleaned = cleaned.replace(/\/\*[\s\S]*?\*\//g, '')
+        
+        // Убираем множественные пробелы
+        cleaned = cleaned.replace(/\s+/g, ' ')
+        
+        return cleaned
+    } catch (error) {
+        return jsonStr
+    }
+}
+
 // Define a more specific NodePosition schema
 const NodePositionType = z.object({
     x: z.number().describe('X coordinate of the node position'),
@@ -333,13 +360,16 @@ const _generateSelectedTools = async (config: Record<string, any>, question: str
         const jsonMatch = responseContent.match(/```json\n([\s\S]*?)\n```/) || responseContent.match(/{[\s\S]*?}/)
 
         if (jsonMatch) {
-            const jsonStr = jsonMatch[1] || jsonMatch[0]
+            let jsonStr = jsonMatch[1] || jsonMatch[0]
             try {
+                // Очищаем JSON перед парсингом
+                jsonStr = sanitizeJSON(jsonStr)
                 const parsedJSON = JSON.parse(jsonStr)
                 // Validate with our schema
                 return ToolType.parse(parsedJSON)
             } catch (parseError) {
                 console.error('Error parsing JSON from response:', parseError)
+                console.error('Raw JSON:', jsonStr)
                 return { error: 'Failed to parse JSON from response', content: responseContent }
             }
         } else {
@@ -389,13 +419,16 @@ const generateNodesEdges = async (config: Record<string, any>, question: string,
         const jsonMatch = responseContent.match(/```json\n([\s\S]*?)\n```/) || responseContent.match(/{[\s\S]*?}/)
 
         if (jsonMatch) {
-            const jsonStr = jsonMatch[1] || jsonMatch[0]
+            let jsonStr = jsonMatch[1] || jsonMatch[0]
             try {
+                // Очищаем JSON перед парсингом
+                jsonStr = sanitizeJSON(jsonStr)
                 const parsedJSON = JSON.parse(jsonStr)
                 // Validate with our schema
                 return NodesEdgesType.parse(parsedJSON)
             } catch (parseError) {
                 console.error('Error parsing JSON from response:', parseError)
+                console.error('Raw JSON:', jsonStr)
                 return { error: 'Failed to parse JSON from response', content: responseContent }
             }
         } else {

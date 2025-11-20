@@ -55,7 +55,7 @@ function a11yProps(index) {
     }
 }
 
-const blacklistCategoriesForAgentCanvas = ['Agents', 'Memory', 'Record Manager', 'Utilities']
+const blacklistCategoriesForAgentCanvas = ['Agents', 'Memory', 'Record Manager', 'Utilities', 'Graph']
 
 const agentMemoryNodes = ['agentMemory', 'sqliteAgentMemory', 'postgresAgentMemory', 'mySQLAgentMemory']
 
@@ -69,9 +69,6 @@ const exceptionsForAgentCanvas = {
 const blacklistForChatflowCanvas = {
     Memory: agentMemoryNodes
 }
-
-// Скрыть категории для minimal версии
-const blacklistCategoriesForChatflowCanvas = ['LlamaIndex', 'Utilities']
 
 const AddNodes = ({ nodesData, node, isAgentCanvas, isAgentflowv2, onFlowGenerated }) => {
     const theme = useTheme()
@@ -131,12 +128,26 @@ const AddNodes = ({ nodesData, node, isAgentCanvas, isAgentflowv2, onFlowGenerat
             })
             return passed
         }
-        let nodes = nodesData.filter((nd) => nd.category !== 'Multi Agents' && nd.category !== 'Sequential Agents')
+        let nodes = nodesData.filter((nd) => 
+            nd.category !== 'Multi Agents' && 
+            nd.category !== 'Sequential Agents' && 
+            nd.category !== 'Graph' &&
+            nd.category !== 'Utilities' &&
+            (!nd.tags || !nd.tags.includes('LlamaIndex'))
+        )
 
         for (const category in blacklistForChatflowCanvas) {
             const nodeNames = blacklistForChatflowCanvas[category]
             nodes = nodes.filter((nd) => !nodeNames.includes(nd.name))
         }
+
+        // Фильтруем чат модели, оставляем только MWS
+        nodes = nodes.filter((nd) => {
+            if (nd.category === 'Chat Models') {
+                return nd.name === 'chatMWS'
+            }
+            return true
+        })
 
         const passed = nodes.filter((nd) => {
             const passesName = nd.name.toLowerCase().includes(value.toLowerCase())
@@ -162,9 +173,16 @@ const AddNodes = ({ nodesData, node, isAgentCanvas, isAgentflowv2, onFlowGenerat
     }
 
     const groupByTags = (nodes, newTabValue = 0) => {
-        // Только LangChain узлы в minimal версии (без LlamaIndex и Utilities)
-        const langchainNodes = nodes.filter((nd) => !nd.tags || (!nd.tags.includes('LlamaIndex') && !nd.tags.includes('Utilities')))
-        return langchainNodes
+        const langchainNodes = nodes.filter((nd) => !nd.tags)
+        const llmaindexNodes = nodes.filter((nd) => nd.tags && nd.tags.includes('LlamaIndex'))
+        const utilitiesNodes = nodes.filter((nd) => nd.tags && nd.tags.includes('Utilities'))
+        if (newTabValue === 0) {
+            return langchainNodes
+        } else if (newTabValue === 1) {
+            return llmaindexNodes
+        } else {
+            return utilitiesNodes
+        }
     }
 
     const groupByCategory = (nodes, newTabValue, isFilter) => {
@@ -223,24 +241,23 @@ const AddNodes = ({ nodesData, node, isAgentCanvas, isAgentflowv2, onFlowGenerat
                 if (category === 'Agent Flows' || category === 'Multi Agents' || category === 'Sequential Agents') {
                     continue
                 }
-                
-                // Фильтруем узлы с тегами LlamaIndex и Utilities для minimal версии
-                let categoryNodes = result[category]
-                categoryNodes = categoryNodes.filter((nd) => {
-                    const hasLlamaIndexTag = nd.tags && nd.tags.includes('LlamaIndex')
-                    const hasUtilitiesTag = nd.tags && nd.tags.includes('Utilities')
-                    return !hasLlamaIndexTag && !hasUtilitiesTag
-                })
-                
+                if (category === 'Graph') {
+                    continue
+                }
+                if (category === 'Utilities') {
+                    continue
+                }
                 if (Object.keys(blacklistForChatflowCanvas).includes(category)) {
                     const nodes = blacklistForChatflowCanvas[category]
-                    categoryNodes = categoryNodes.filter((nd) => !nodes.includes(nd.name))
+                    result[category] = result[category].filter((nd) => !nodes.includes(nd.name))
                 }
-                
-                // Только добавляем категорию если в ней есть узлы
-                if (categoryNodes.length > 0) {
-                    filteredResult[category] = categoryNodes
+                // Фильтруем LlamaIndex узлы
+                result[category] = result[category].filter((nd) => !nd.tags || !nd.tags.includes('LlamaIndex'))
+                // Фильтруем чат модели, оставляем только MWS
+                if (category === 'Chat Models') {
+                    result[category] = result[category].filter((nd) => nd.name === 'chatMWS')
                 }
+                filteredResult[category] = result[category]
             }
 
             setNodes(filteredResult)
@@ -271,8 +288,13 @@ const AddNodes = ({ nodesData, node, isAgentCanvas, isAgentflowv2, onFlowGenerat
     }
 
     const getImage = (tabValue) => {
-        // Только LangChain в minimal версии
-        return LangChainPNG
+        if (tabValue === 0) {
+            return LangChainPNG
+        } else if (tabValue === 1) {
+            return LlamaindexPNG
+        } else {
+            return utilNodesPNG
+        }
     }
 
     const renderIcon = (node) => {
@@ -555,6 +577,8 @@ const AddNodes = ({ nodesData, node, isAgentCanvas, isAgentflowv2, onFlowGenerat
                                                                             ? 'Типы агентов'
                                                                             : category === 'Record Manager'
                                                                             ? 'БД записей'
+                                                                            : category === 'Utilities'
+                                                                            ? 'Утилиты'
                                                                             : category === 'Document Loaders'
                                                                             ? 'Работа с документами'
                                                                             : category === 'Embeddings'
@@ -575,18 +599,24 @@ const AddNodes = ({ nodesData, node, isAgentCanvas, isAgentflowv2, onFlowGenerat
                                                                             ? 'Модели чата'
                                                                             : category === 'Sequential Agents'
                                                                             ? 'JS агент'
-                                                                            : category === 'Prompts'
-                                                                            ? 'Промты'
                                                                             : category === 'Retrievers'
                                                                             ? 'Ретриверы'
+                                                                            : category === 'Prompts'
+                                                                            ? 'Промты'
+                                                                            : category === 'Chains'
+                                                                            ? 'Цепочки'
                                                                             : category === 'Cache'
                                                                             ? 'Кеш'
+                                                                            : category === 'Graph'
+                                                                            ? 'Граф'
                                                                             : category === 'Multi Agents'
                                                                             ? 'Мульти агенты'
+                                                                            : category === 'Agent Flows'
+                                                                            ? 'Агент потоки'
+                                                                            : category === 'Response Synthesizer'
+                                                                            ? 'Синтезатор ответов'
                                                                             : category === 'Output Parsers'
                                                                             ? 'Парсеры вывода'
-                                                                            : category === 'Utilities'
-                                                                            ? 'Утилиты'
                                                                             : category}
                                                                     </Typography>
                                                                 )}

@@ -112,14 +112,8 @@ export const databaseEntities: IDatabaseEntity = {
  *
  */
 export const getUserHome = (): string => {
-    let variableName = 'HOME'
-    if (process.platform === 'win32') {
-        variableName = 'USERPROFILE'
-    }
-    if (process.env[variableName] === undefined) {
-        return '/root'
-    }
-    return process.env[variableName] as string
+    const projectRoot = path.join(__dirname, '..', '..', '..', '..')
+    return projectRoot
 }
 
 /**
@@ -137,7 +131,7 @@ export const getNodeModulesPackagePath = (packageName: string): string => {
     ]
     for (const checkPath of checkPaths) {
         if (fs.existsSync(checkPath)) {
-            return path.resolve(checkPath)
+            return checkPath
         }
     }
     return ''
@@ -326,10 +320,9 @@ export const getEndingNodes = (
                 endingNodeData.category !== 'Agents' &&
                 endingNodeData.category !== 'Engine' &&
                 endingNodeData.category !== 'Multi Agents' &&
-                endingNodeData.category !== 'Sequential Agents' &&
-                endingNodeData.category !== 'Chat Models'
+                endingNodeData.category !== 'Sequential Agents'
             ) {
-                error = new InternalOsmiError(StatusCodes.INTERNAL_SERVER_ERROR, `Ending node must be either a Chain, Agent, Engine or Chat Model`)
+                error = new InternalOsmiError(StatusCodes.INTERNAL_SERVER_ERROR, `Ending node must be either a Chain or Agent or Engine`)
                 continue
             }
         }
@@ -579,12 +572,7 @@ export const buildFlow = async ({
         if (!reactFlowNode || reactFlowNode === undefined || nodeIndex < 0) continue
 
         try {
-            const nodeComponent = componentNodes[reactFlowNode.data.name]
-            if (!nodeComponent || !nodeComponent.filePath) {
-                logger.error(`[server]: Node component "${reactFlowNode.data.name}" not found or missing filePath`)
-                continue
-            }
-            const nodeInstanceFilePath = nodeComponent.filePath as string
+            const nodeInstanceFilePath = componentNodes[reactFlowNode.data.name].filePath as string
             const nodeModule = await import(nodeInstanceFilePath)
             const newNodeInstance = new nodeModule.nodeClass()
 
@@ -783,12 +771,7 @@ export const clearSessionMemory = async (
         // Only clear specific session memory from View Message Dialog UI
         if (isClearFromViewMessageDialog && memoryType && node.data.label !== memoryType) continue
 
-        const nodeComponent = componentNodes[node.data.name]
-        if (!nodeComponent || !nodeComponent.filePath) {
-            logger.error(`[server]: Node component "${node.data.name}" not found or missing filePath`)
-            continue
-        }
-        const nodeInstanceFilePath = nodeComponent.filePath as string
+        const nodeInstanceFilePath = componentNodes[node.data.name].filePath as string
         const nodeModule = await import(nodeInstanceFilePath)
         const newNodeInstance = new nodeModule.nodeClass()
         const options: ICommonObject = { orgId, chatId, appDataSource, databaseEntities, logger }
@@ -1502,8 +1485,7 @@ export const isFlowValidForStream = (reactFlowNodes: IReactFlowNode[], endingNod
             'chatFireworks',
             'ChatSambanova',
             'chatBaiduWenxin',
-            'chatCometAPI',
-            'chatMWS'
+            'chatCometAPI'
         ],
         LLMs: ['azureOpenAI', 'openAI', 'ollama']
     }
@@ -1544,9 +1526,6 @@ export const isFlowValidForStream = (reactFlowNodes: IReactFlowNode[], endingNod
         // Engines that are available to stream
         const whitelistEngine = ['contextChatEngine', 'simpleChatEngine', 'queryEngine', 'subQuestionQueryEngine']
         isValidChainOrAgent = whitelistEngine.includes(endingNodeData.name)
-    } else if (endingNodeData.category === 'Chat Models') {
-        // Chat Models are always valid for streaming
-        isValidChainOrAgent = true
     }
 
     // If no output parser, flow is available to stream
@@ -1566,8 +1545,10 @@ export const isFlowValidForStream = (reactFlowNodes: IReactFlowNode[], endingNod
  * @returns {Promise<string>}
  */
 export const getEncryptionKey = async (): Promise<string> => {
-    if (process.env.OSMI_SECRETKEY_OVERWRITE !== undefined && process.env.OSMI_SECRETKEY_OVERWRITE !== '') {
-        return process.env.OSMI_SECRETKEY_OVERWRITE
+    // Проверяем обе переменные (OSMI_SECRETKEY_OVERWRITE и OSMI_AI_SECRETKEY_OVERWRITE)
+    const secretKeyOverwrite = process.env.OSMI_SECRETKEY_OVERWRITE || process.env.OSMI_AI_SECRETKEY_OVERWRITE
+    if (secretKeyOverwrite !== undefined && secretKeyOverwrite !== '') {
+        return secretKeyOverwrite
     }
     if (USE_AWS_SECRETS_MANAGER && secretsManagerClient) {
         const secretId = process.env.SECRETKEY_AWS_NAME || 'OSMIEncryptionKey'
@@ -1595,20 +1576,14 @@ export const getEncryptionKey = async (): Promise<string> => {
     try {
         return await fs.promises.readFile(getEncryptionKeyPath(), 'utf8')
     } catch (error) {
-        // Если используется S3/GCS для storage, не создаем локальные файлы
-        // В этом случае нужно использовать OSMI_SECRETKEY_OVERWRITE или AWS Secrets Manager
-        const storageType = process.env.STORAGE_TYPE || 'local'
-        if (storageType === 's3' || storageType === 'gcs') {
-            throw new Error('Encryption key not found and cannot be created locally when using S3/GCS storage. Please set OSMI_SECRETKEY_OVERWRITE environment variable or use AWS Secrets Manager.')
-        }
         const encryptKey = generateEncryptKey()
         const defaultLocation = process.env.SECRETKEY_PATH
             ? path.join(process.env.SECRETKEY_PATH, 'encryption.key')
             : path.join(getUserHome(), '.OSMI', 'encryption.key')
-        // Создаем директорию только если она не существует
-        const dir = path.dirname(defaultLocation)
-        if (!fs.existsSync(dir)) {
-            fs.mkdirSync(dir, { recursive: true })
+        // Создаём директорию, если она не существует
+        const dirPath = path.dirname(defaultLocation)
+        if (!fs.existsSync(dirPath)) {
+            fs.mkdirSync(dirPath, { recursive: true })
         }
         await fs.promises.writeFile(defaultLocation, encryptKey)
         return encryptKey
@@ -1799,11 +1774,7 @@ export const getSessionChatHistory = async (
     logger: any,
     prependMessages?: IMessage[]
 ): Promise<IMessage[]> => {
-    const nodeComponent = componentNodes[memoryNode.data.name]
-    if (!nodeComponent || !nodeComponent.filePath) {
-        throw new Error(`Node component "${memoryNode.data.name}" not found or missing filePath`)
-    }
-    const nodeInstanceFilePath = nodeComponent.filePath as string
+    const nodeInstanceFilePath = componentNodes[memoryNode.data.name].filePath as string
     const nodeModule = await import(nodeInstanceFilePath)
     const newNodeInstance = new nodeModule.nodeClass()
 

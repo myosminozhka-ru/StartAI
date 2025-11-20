@@ -193,11 +193,7 @@ const initEndingNode = async ({
 
     logger.debug(`[server]: Running ${reactFlowNodeData.label} (${reactFlowNodeData.id})`)
 
-    const nodeComponent = componentNodes[reactFlowNodeData.name]
-    if (!nodeComponent || !nodeComponent.filePath) {
-        throw new Error(`Node component "${reactFlowNodeData.name}" not found or missing filePath`)
-    }
-    const nodeInstanceFilePath = nodeComponent.filePath as string
+    const nodeInstanceFilePath = componentNodes[reactFlowNodeData.name].filePath as string
     const nodeModule = await import(nodeInstanceFilePath)
     const nodeInstance = new nodeModule.nodeClass({ sessionId })
 
@@ -654,19 +650,28 @@ export const executeFlow = async ({
             if (agentReasoning?.length) apiMessage.agentReasoning = JSON.stringify(agentReasoning)
             if (finalAction && Object.keys(finalAction).length) apiMessage.action = JSON.stringify(finalAction)
 
+            const chatMessage = await utilAddChatMessage(apiMessage, appDataSource)
+
+            // Генерируем follow-up prompts асинхронно, не блокируя возврат результата
             if (agentflow.followUpPrompts) {
                 const followUpPromptsConfig = JSON.parse(agentflow.followUpPrompts)
-                const generatedFollowUpPrompts = await generateFollowUpPrompts(followUpPromptsConfig, apiMessage.content, {
+                generateFollowUpPrompts(followUpPromptsConfig, apiMessage.content, {
                     chatId,
                     chatflowid: agentflow.id,
                     appDataSource,
                     databaseEntities
                 })
-                if (generatedFollowUpPrompts?.questions) {
-                    apiMessage.followUpPrompts = JSON.stringify(generatedFollowUpPrompts.questions)
-                }
+                    .then(async (generatedFollowUpPrompts) => {
+                        if (generatedFollowUpPrompts?.questions && chatMessage?.id) {
+                            await appDataSource.getRepository(ChatMessage).update(chatMessage.id, {
+                                followUpPrompts: JSON.stringify(generatedFollowUpPrompts.questions)
+                            })
+                        }
+                    })
+                    .catch((error) => {
+                        logger.error(`[server]: Follow-up prompts generation error: ${getErrorMessage(error)}`)
+                    })
             }
-            const chatMessage = await utilAddChatMessage(apiMessage, appDataSource)
 
             await telemetry.sendTelemetry(
                 'agentflow_prediction_sent',
@@ -779,42 +784,7 @@ export const executeFlow = async ({
         }
 
         /*** Run the ending node ***/
-        let result
-        
-        // Для Chat Models инициализируем модель и вызываем с поддержкой streaming
-        if (endingNodeData.category === 'Chat Models') {
-            // Инициализируем модель через init
-            const chatModel = await endingNodeInstance.init(endingNodeData, finalQuestion, runParams)
-            
-            if (isStreamValid && sseStreamer) {
-                // Streaming режим
-                sseStreamer.streamStartEvent(chatId, '')
-                
-                let streamedText = ''
-                const stream = await chatModel.stream(finalQuestion)
-                
-                for await (const chunk of stream) {
-                    const content = typeof chunk === 'string' ? chunk : chunk.content || ''
-                    if (content) {
-                        streamedText += content
-                        sseStreamer.streamTokenEvent(chatId, content)
-                    }
-                }
-                
-                result = { text: streamedText }
-            } else {
-                // Не streaming режим
-                const response = await chatModel.invoke(finalQuestion)
-                result = {
-                    text: typeof response === 'string' ? response : response.content || response.text || JSON.stringify(response)
-                }
-            }
-        } else if (typeof endingNodeInstance.run === 'function') {
-            result = await endingNodeInstance.run(endingNodeData, finalQuestion, runParams)
-            result = typeof result === 'string' ? { text: result } : result
-        } else {
-            throw new InternalOsmiError(StatusCodes.INTERNAL_SERVER_ERROR, `Node ${endingNodeData.name} does not have a valid execution method`)
-        }
+        let result = await endingNodeInstance.run(endingNodeData, finalQuestion, runParams)
 
         result = typeof result === 'string' ? { text: result } : result
 
@@ -844,11 +814,7 @@ export const executeFlow = async ({
             if (chatflowConfig?.postProcessing?.enabled === true) {
                 try {
                     const postProcessingFunction = JSON.parse(chatflowConfig?.postProcessing?.customFunction)
-                    const nodeComponent = componentNodes['customFunction']
-                    if (!nodeComponent || !nodeComponent.filePath) {
-                        throw new Error('CustomFunction node component not found or missing filePath')
-                    }
-                    const nodeInstanceFilePath = nodeComponent.filePath as string
+                    const nodeInstanceFilePath = componentNodes['customFunction'].filePath as string
                     const nodeModule = await import(nodeInstanceFilePath)
                     //set the outputs.output to EndingNode to prevent json escaping of content...
                     const nodeData = {
@@ -951,7 +917,12 @@ export const executeFlow = async ({
                 appDataSource,
                 databaseEntities
             }
-            await generateTTSForResponseStream(result.text, chatflow.textToSpeech, options, chatId, chatMessage?.id, sseStreamer, signal)
+            // Генерируем TTS асинхронно, не блокируя возврат результата
+            generateTTSForResponseStream(result.text, chatflow.textToSpeech, options, chatId, chatMessage?.id, sseStreamer, signal).catch(
+                (error) => {
+                    logger.error(`[server]: TTS generation error: ${getErrorMessage(error)}`)
+                }
+            )
         }
 
         return result
@@ -970,13 +941,16 @@ const checkIfStreamValid = async (
     nodes: IReactFlowNode[],
     streaming: boolean | string | undefined
 ): Promise<boolean> => {
+    // If streaming is undefined, set to false by default
+    if (streaming === undefined) {
+        streaming = false
+    }
+
     // Once custom function ending node exists, flow is always unavailable to stream
     const isCustomFunctionEndingNode = endingNodes.some((node) => node.data?.outputs?.output === 'EndingNode')
     if (isCustomFunctionEndingNode) return false
 
     let isStreamValid = false
-    let hasChatModel = false
-    
     for (const endingNode of endingNodes) {
         const endingNodeData = endingNode.data || {} // Ensure endingNodeData is never undefined
 
@@ -996,18 +970,12 @@ const checkIfStreamValid = async (
             )
         }
 
-        // Для Chat Models всегда разрешаем streaming
-        if (endingNodeData.category === 'Chat Models') {
-            isStreamValid = true
-            hasChatModel = true
-        } else {
-            isStreamValid = isFlowValidForStream(nodes, endingNodeData)
-        }
+        isStreamValid = isFlowValidForStream(nodes, endingNodeData)
     }
-    
-    // Для Chat Models игнорируем параметр streaming из запроса и всегда включаем
-    const finalStreamValid = hasChatModel ? true : ((streaming === 'true' || streaming === true) && isStreamValid)
-    return finalStreamValid
+
+    isStreamValid = (streaming === 'true' || streaming === true) && isStreamValid
+
+    return isStreamValid
 }
 
 /**
@@ -1072,28 +1040,21 @@ export const utilBuildChatflow = async (req: Request, isInternal: boolean = fals
         }
         const workspaceId = workspace.id
 
-        let orgId = ''
-        let subscriptionId = ''
-
-        if (workspace.organizationId) {
-            const org = await appServer.AppDataSource.getRepository(Organization).findOneBy({
-                id: workspace.organizationId
-            })
-            if (org) {
-                orgId = org.id || ''
-                organizationId = orgId
-                // subscriptionId остается пустым для Open Source режима
-            }
+        const org = await appServer.AppDataSource.getRepository(Organization).findOneBy({
+            id: workspace.organizationId
+        })
+        if (!org) {
+            throw new InternalOsmiError(StatusCodes.NOT_FOUND, `Organization ${workspace.organizationId} not found`)
         }
 
-        const subscriptionDetails = subscriptionId 
-            ? await appServer.usageCacheManager.getSubscriptionDataFromCache(subscriptionId)
-            : null
+        const orgId = org.id
+        organizationId = orgId
+        const subscriptionId = org.subscriptionId as string
+
+        const subscriptionDetails = await appServer.usageCacheManager.getSubscriptionDataFromCache(subscriptionId)
         const productId = subscriptionDetails?.productId || ''
 
-        if (orgId && subscriptionId) {
-            await checkPredictions(orgId, subscriptionId, appServer.usageCacheManager)
-        }
+        await checkPredictions(orgId, subscriptionId, appServer.usageCacheManager)
 
         const executeData: IExecuteFlowParams = {
             incomingInput, // Use the defensively created incomingInput variable
@@ -1111,10 +1072,10 @@ export const utilBuildChatflow = async (req: Request, isInternal: boolean = fals
             componentNodes: appServer.nodesPool.componentNodes,
             isTool, // used to disable streaming if incoming request its from ChatflowTool
             usageCacheManager: appServer.usageCacheManager,
-            orgId: orgId || '',
-            workspaceId: workspaceId || '',
-            subscriptionId: subscriptionId || '',
-            productId: productId || ''
+            orgId,
+            workspaceId,
+            subscriptionId,
+            productId
         }
 
         if (process.env.MODE === MODE.QUEUE) {

@@ -40,8 +40,6 @@ import { AddTextToSpeechToChatFlow1754986480347 } from './1754986480347-AddTextT
 import { ModifyChatflowType1755066758601 } from './1755066758601-ModifyChatflowType'
 import { AddTextToSpeechToChatFlow1759419194331 } from './1759419194331-AddTextToSpeechToChatFlow'
 import { AddChatFlowNameIndex1759424903973 } from './1759424903973-AddChatFlowNameIndex'
-import { AddAuditColumns1762783700000 } from './1762783700000-AddAuditColumns'
-import { MinimalVersionSetup1720230151481 } from './1720230151481-MinimalVersionSetup'
 
 import { AddAuthTables1720230151482 } from '../../../enterprise/database/migrations/postgres/1720230151482-AddAuthTables'
 import { AddWorkspace1720230151484 } from '../../../enterprise/database/migrations/postgres/1720230151484-AddWorkspace'
@@ -52,8 +50,7 @@ import { LinkWorkspaceId1729130948686 } from '../../../enterprise/database/migra
 import { LinkOrganizationId1729133111652 } from '../../../enterprise/database/migrations/postgres/1729133111652-LinkOrganizationId'
 import { AddSSOColumns1730519457880 } from '../../../enterprise/database/migrations/postgres/1730519457880-AddSSOColumns'
 import { AddPersonalWorkspace1734074497540 } from '../../../enterprise/database/migrations/postgres/1734074497540-AddPersonalWorkspace'
-// Enterprise миграция отключена в minimal версии
-// import { RefactorEnterpriseDatabase1737076223692 } from '../../../enterprise/database/migrations/postgres/1737076223692-RefactorEnterpriseDatabase'
+import { RefactorEnterpriseDatabase1737076223692 } from '../../../enterprise/database/migrations/postgres/1737076223692-RefactorEnterpriseDatabase'
 import { ExecutionLinkWorkspaceId1746862866554 } from '../../../enterprise/database/migrations/postgres/1746862866554-ExecutionLinkWorkspaceId'
 
 export const postgresMigrations = [
@@ -85,7 +82,6 @@ export const postgresMigrations = [
     AddVectorStoreConfigToDocStore1715861032479,
     AddTypeToChatFlow1716300000000,
     AddApiKey1720230151480,
-    MinimalVersionSetup1720230151481,  // Первой! Создает role для minimal версии
     AddActionToChatMessage1721078251523,
     AddCustomTemplate1725629836652,
     AddArtifactsToChatMessage1726156258465,
@@ -101,7 +97,7 @@ export const postgresMigrations = [
     AddSSOColumns1730519457880,
     AddSeqNoToDatasetRow1733752119696,
     AddPersonalWorkspace1734074497540,
-    // RefactorEnterpriseDatabase1737076223692, // Отключено в minimal версии
+    RefactorEnterpriseDatabase1737076223692,
     AddExecutionEntity1738090872625,
     FixOpenSourceAssistantTable1743758056188,
     AddErrorToEvaluationRun1744964560174,
@@ -110,6 +106,5 @@ export const postgresMigrations = [
     AddTextToSpeechToChatFlow1754986480347,
     ModifyChatflowType1755066758601,
     AddTextToSpeechToChatFlow1759419194331,
-    AddChatFlowNameIndex1759424903973,
-    AddAuditColumns1762783700000
+    AddChatFlowNameIndex1759424903973
 ]

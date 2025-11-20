@@ -472,11 +472,7 @@ const compileMultiAgentsGraph = async (params: MultiAgentsGraphParams) => {
 
     // Init worker nodes
     for (const workerNode of workerNodes) {
-        const nodeComponent = componentNodes[workerNode.data.name]
-        if (!nodeComponent || !nodeComponent.filePath) {
-            throw new Error(`Worker node component "${workerNode.data.name}" not found or missing filePath`)
-        }
-        const nodeInstanceFilePath = nodeComponent.filePath as string
+        const nodeInstanceFilePath = componentNodes[workerNode.data.name].filePath as string
         const nodeModule = await import(nodeInstanceFilePath)
         const newNodeInstance = new nodeModule.nodeClass()
 
@@ -516,11 +512,7 @@ const compileMultiAgentsGraph = async (params: MultiAgentsGraphParams) => {
         const supervisorNode = reactFlowNodes.find((node) => supervisorInputLabel === node.data.inputs?.supervisorName)
         if (!supervisorNode) continue
 
-        const nodeComponent = componentNodes[supervisorNode.data.name]
-        if (!nodeComponent || !nodeComponent.filePath) {
-            throw new Error(`Supervisor node component "${supervisorNode.data.name}" not found or missing filePath`)
-        }
-        const nodeInstanceFilePath = nodeComponent.filePath as string
+        const nodeInstanceFilePath = componentNodes[supervisorNode.data.name].filePath as string
         const nodeModule = await import(nodeInstanceFilePath)
         const newNodeInstance = new nodeModule.nodeClass()
 
@@ -705,11 +697,7 @@ const compileSeqAgentsGraph = async (params: SeqAgentsGraphParams) => {
     const { nodeOverrides, variableOverrides, apiOverrideStatus } = getAPIOverrideConfig(agentflow)
 
     const initiateNode = async (node: IReactFlowNode) => {
-        const nodeComponent = componentNodes[node.data.name]
-        if (!nodeComponent || !nodeComponent.filePath) {
-            throw new Error(`Node component "${node.data.name}" not found or missing filePath`)
-        }
-        const nodeInstanceFilePath = nodeComponent.filePath as string
+        const nodeInstanceFilePath = componentNodes[node.data.name].filePath as string
         const nodeModule = await import(nodeInstanceFilePath)
         const newNodeInstance = new nodeModule.nodeClass()
 

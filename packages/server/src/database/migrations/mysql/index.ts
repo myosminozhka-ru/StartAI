@@ -42,7 +42,17 @@ import { ModifyChatflowType1755066758601 } from './1755066758601-ModifyChatflowT
 import { AddTextToSpeechToChatFlow1759419216034 } from './1759419216034-AddTextToSpeechToChatFlow'
 import { AddChatFlowNameIndex1759424828558 } from './1759424828558-AddChatFlowNameIndex'
 
-// Enterprise миграции отключены в minimal версии
+import { AddAuthTables1720230151482 } from '../../../enterprise/database/migrations/mysql/1720230151482-AddAuthTables'
+import { AddWorkspace1720230151484 } from '../../../enterprise/database/migrations/mysql/1720230151484-AddWorkspace'
+import { AddWorkspaceShared1726654922034 } from '../../../enterprise/database/migrations/mysql/1726654922034-AddWorkspaceShared'
+import { AddWorkspaceIdToCustomTemplate1726655750383 } from '../../../enterprise/database/migrations/mysql/1726655750383-AddWorkspaceIdToCustomTemplate'
+import { AddOrganization1727798417345 } from '../../../enterprise/database/migrations/mysql/1727798417345-AddOrganization'
+import { LinkWorkspaceId1729130948686 } from '../../../enterprise/database/migrations/mysql/1729130948686-LinkWorkspaceId'
+import { LinkOrganizationId1729133111652 } from '../../../enterprise/database/migrations/mysql/1729133111652-LinkOrganizationId'
+import { AddSSOColumns1730519457880 } from '../../../enterprise/database/migrations/mysql/1730519457880-AddSSOColumns'
+import { AddPersonalWorkspace1734074497540 } from '../../../enterprise/database/migrations/mysql/1734074497540-AddPersonalWorkspace'
+import { RefactorEnterpriseDatabase1737076223692 } from '../../../enterprise/database/migrations/mysql/1737076223692-RefactorEnterpriseDatabase'
+import { ExecutionLinkWorkspaceId1746862866554 } from '../../../enterprise/database/migrations/mysql/1746862866554-ExecutionLinkWorkspaceId'
 
 export const mysqlMigrations = [
     Init1693840429259,
@@ -78,11 +88,22 @@ export const mysqlMigrations = [
     AddArtifactsToChatMessage1726156258465,
     AddFollowUpPrompts1726666302024,
     AddTypeToAssistant1733011290987,
+    AddAuthTables1720230151482,
+    AddWorkspace1720230151484,
+    AddWorkspaceShared1726654922034,
+    AddWorkspaceIdToCustomTemplate1726655750383,
+    AddOrganization1727798417345,
+    LinkWorkspaceId1729130948686,
+    LinkOrganizationId1729133111652,
+    AddSSOColumns1730519457880,
     AddSeqNoToDatasetRow1733752119696,
+    AddPersonalWorkspace1734074497540,
+    RefactorEnterpriseDatabase1737076223692,
     FixOpenSourceAssistantTable1743758056188,
     AddExecutionEntity1738090872625,
     AddErrorToEvaluationRun1744964560174,
     FixErrorsColumnInEvaluationRun1746437114935,
+    ExecutionLinkWorkspaceId1746862866554,
     ModifyExecutionDataColumnType1747902489801,
     AddTextToSpeechToChatFlow1754986468397,
     ModifyChatflowType1755066758601,

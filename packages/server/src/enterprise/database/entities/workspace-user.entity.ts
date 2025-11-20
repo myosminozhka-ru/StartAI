@@ -1,50 +1,55 @@
-// Заглушка для minimal версии
-import { Entity, Column, PrimaryColumn, ManyToOne, JoinColumn } from 'typeorm'
-import { Workspace } from './workspace.entity'
-import { Role } from './role.entity'
+import { Column, CreateDateColumn, Entity, JoinColumn, ManyToOne, PrimaryColumn, UpdateDateColumn } from 'typeorm'
 import { User } from './user.entity'
+import { Role } from './role.entity'
+import { Workspace } from './workspace.entity'
 
 export enum WorkspaceUserStatus {
     ACTIVE = 'active',
-    INACTIVE = 'inactive',
-    INVITED = 'invited',
-    SUSPENDED = 'suspended'
+    DISABLE = 'disable',
+    INVITED = 'invited'
 }
 
-@Entity()
+@Entity({ name: 'workspace_user' })
 export class WorkspaceUser {
-    @PrimaryColumn({ type: 'uuid' })
-    workspaceId?: string
-    
-    @PrimaryColumn({ type: 'uuid' })
-    userId?: string
-    
-    @Column({ nullable: true, type: 'uuid' })
-    roleId?: string
-    
-    @Column({ nullable: true })
-    status?: string
-    
-    @Column({ type: 'timestamp', nullable: true })
-    lastLogin?: Date
-    
-    @Column({ nullable: true })
-    updatedBy?: string
-    
-    @Column({ nullable: true })
-    createdBy?: string
-    
-    @ManyToOne(() => Workspace, { nullable: true })
+    @PrimaryColumn()
+    workspaceId: string
+    @ManyToOne(() => Workspace, (workspace) => workspace.id)
     @JoinColumn({ name: 'workspaceId' })
-    workspace?: Workspace
-    
-    @ManyToOne(() => Role, { nullable: true, eager: true })
+    workspace: Workspace
+
+    @PrimaryColumn()
+    userId: string
+    @ManyToOne(() => User, (user) => user.id)
+    @JoinColumn({ name: 'userId' })
+    user: User
+
+    @Column({ type: 'uuid', nullable: false })
+    roleId: string
+    @ManyToOne(() => Role, (role) => role.id)
     @JoinColumn({ name: 'roleId' })
     role?: Role
-    
-    @ManyToOne(() => User, { nullable: true })
-    @JoinColumn({ name: 'userId' })
-    user?: User
+
+    @Column({ type: 'varchar', length: 20, default: WorkspaceUserStatus.INVITED })
+    status?: string
+
+    @CreateDateColumn()
+    lastLogin?: string
+
+    @CreateDateColumn()
+    createdDate?: Date
+
+    @UpdateDateColumn()
+    updatedDate?: Date
+
+    @Column({ nullable: false })
+    createdBy?: string
+    @ManyToOne(() => User, (user) => user.createdWorkspaceUser)
+    @JoinColumn({ name: 'createdBy' })
+    createdByUser?: User
+
+    @Column({ nullable: false })
+    updatedBy?: string
+    @ManyToOne(() => User, (user) => user.updatedByWorkspaceUser)
+    @JoinColumn({ name: 'updatedBy' })
+    updatedByUser?: User
 }
-
-

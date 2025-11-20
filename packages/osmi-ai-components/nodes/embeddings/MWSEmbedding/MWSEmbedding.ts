@@ -1,6 +1,6 @@
 import { ClientOptions, OpenAIEmbeddings, OpenAIEmbeddingsParams } from '@langchain/openai'
 import { ICommonObject, INode, INodeData, INodeOptionsValue, INodeParams } from '../../../src/Interface'
-import { getBaseClasses, getCredentialData, getCredentialParam } from '../../../src/utils'
+import { attachOpenAIApiKey, getBaseClasses, getCredentialData, getCredentialParam } from '../../../src/utils'
 import { MODEL_TYPE, getModels } from '../../../src/modelLoader'
 import { getMWSModels, getDefaultMWSEmbeddingModels } from '../../../src/mwsModelLoader'
 
@@ -37,7 +37,7 @@ class MWSEmbedding_Embeddings implements INode {
                 name: 'modelName',
                 type: 'asyncOptions',
                 loadMethod: 'listModels',
-                default: 'bge-m3'
+                default: 'cotype-2-pro'
             },
             {
                 label: 'Удалить переносы строк',
@@ -76,21 +76,38 @@ class MWSEmbedding_Embeddings implements INode {
             try {
                 // Пытаемся получить API ключ для динамической загрузки моделей
                 if (nodeData?.credential) {
-                    const credentialData = await getCredentialData(nodeData.credential, options)
-                    const mwsApiKey = getCredentialParam('mwsApiKey', credentialData, nodeData)
-                    if (mwsApiKey) {
-                        // Фильтруем только embedding модели
-                        const allModels = await getMWSModels(mwsApiKey)
-                        return allModels.filter(model => 
-                            model.name.includes('embedding') || 
-                            model.name.includes('embed')
-                        )
+                    try {
+                        const credentialData = await getCredentialData(nodeData.credential, options)
+                        const mwsApiKey = getCredentialParam('mwsApiKey', credentialData, nodeData)
+                        if (mwsApiKey) {
+                            // Фильтруем только cotype и bge-m3 модели
+                            const allModels = await getMWSModels(mwsApiKey)
+                            const embeddingModels = allModels.filter(model => 
+                                model.name.toLowerCase().includes('cotype') ||
+                                model.name.toLowerCase() === 'bge-m3'
+                            )
+                            if (embeddingModels && embeddingModels.length > 0) {
+                                return embeddingModels
+                            }
+                        }
+                    } catch (apiError) {
+                        console.warn('Не удалось загрузить embedding модели через MWS API:', apiError)
                     }
                 }
                 // Fallback к статическим моделям из models.json
-                return await getModels(MODEL_TYPE.EMBEDDING, 'mwsEmbeddings')
+                try {
+                    const models = await getModels(MODEL_TYPE.EMBEDDING, 'mwsEmbeddings')
+                    if (models && models.length > 0) {
+                        return models
+                    }
+                } catch (jsonError) {
+                    console.warn('Не удалось загрузить embedding модели из models.json:', jsonError)
+                }
+                // Последний fallback к дефолтным моделям
+                console.info('Используем дефолтные MWS embedding модели')
+                return getDefaultMWSEmbeddingModels()
             } catch (error) {
-                console.warn('Ошибка при загрузке MWS embedding моделей, используем дефолтные:', error)
+                console.error('Критическая ошибка при загрузке MWS embedding моделей:', error)
                 return getDefaultMWSEmbeddingModels()
             }
         }
@@ -109,13 +126,13 @@ class MWSEmbedding_Embeddings implements INode {
         const credentialData = await getCredentialData(nodeData.credential ?? '', options)
         const mwsApiKey = getCredentialParam('mwsApiKey', credentialData, nodeData)
 
-        const obj: Partial<OpenAIEmbeddingsParams> & { openAIApiKey?: string; configuration?: ClientOptions } = {
-            openAIApiKey: mwsApiKey,
+        const obj: Partial<OpenAIEmbeddingsParams> & { configuration?: ClientOptions } = {
             modelName,
             configuration: {
                 baseURL: 'https://api.gpt.mws.ru/v1'
             }
         }
+        attachOpenAIApiKey(obj, mwsApiKey)
 
         if (stripNewLines) obj.stripNewLines = stripNewLines
         if (batchSize) obj.batchSize = parseInt(batchSize, 10)

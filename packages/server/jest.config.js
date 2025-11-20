@@ -5,21 +5,12 @@ module.exports = {
     testEnvironment: 'node',
 
     // Define the root directory for tests and modules
-    roots: ['<rootDir>/test'],
+    roots: ['<rootDir>/test', '<rootDir>/src'],
 
     // Use ts-jest to transform TypeScript files
     transform: {
         '^.+\\.tsx?$': 'ts-jest'
     },
-
-    // Regular expression to find test files
-    testRegex: '((\\.|/).*\\.test)\\.tsx?$',
-
-    // File extensions to recognize in module resolution
-    moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx', 'json', 'node'],
-
-    // Display individual test results with the test suite hierarchy.
-    verbose: true,
 
     // TypeScript configuration for tests
     globals: {
@@ -32,7 +23,8 @@ module.exports = {
                     skipLibCheck: true,
                     strict: false,
                     noImplicitAny: false,
-                    strictNullChecks: false
+                    strictNullChecks: false,
+                    esModuleInterop: true
                 }
             },
             // Игнорируем TypeScript ошибки в тестах
@@ -40,6 +32,24 @@ module.exports = {
             diagnostics: false
         }
     },
+
+    // Regular expression to find test files
+    testRegex: '((\\.|/).*\\.test)\\.tsx?$',
+
+    // File extensions to recognize in module resolution
+    moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx', 'json', 'node'],
+
+    // Display individual test results with the test suite hierarchy.
+    verbose: true,
+
+    // Coverage settings
+    collectCoverageFrom: [
+        'src/**/*.{js,ts}',
+        '!src/**/*.d.ts',
+        '!src/**/*.test.{js,ts}'
+    ],
+    coverageDirectory: '<rootDir>/coverage',
+    coverageReporters: ['text', 'lcov', 'html', 'json'],
 
     // Настройки для стабильности
     testTimeout: 30000,

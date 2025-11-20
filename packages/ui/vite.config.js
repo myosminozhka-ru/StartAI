@@ -3,38 +3,6 @@ import react from '@vitejs/plugin-react'
 import { resolve } from 'path'
 import dotenv from 'dotenv'
 
-// Плагин для разрешения osmi-ai-embed-react
-const resolveOsmiEmbedPlugin = () => {
-    return {
-        name: 'resolve-osmi-embed-react',
-        resolveId(id) {
-            if (id === 'osmi-ai-embed-react') {
-                // Пытаемся найти пакет в node_modules
-                const packagePath = resolve(__dirname, '../../node_modules/osmi-ai-embed-react')
-                try {
-                    const fs = require('fs')
-                    const packageJson = require(resolve(packagePath, 'package.json'))
-                    // Используем exports из package.json
-                    if (packageJson.exports && packageJson.exports['.'] && packageJson.exports['.'].import) {
-                        return resolve(packagePath, packageJson.exports['.'].import)
-                    }
-                    // Fallback на module или main
-                    if (packageJson.module) {
-                        return resolve(packagePath, packageJson.module)
-                    }
-                    if (packageJson.main) {
-                        return resolve(packagePath, packageJson.main)
-                    }
-                } catch (e) {
-                    // Если не нашли, возвращаем null - Vite попробует сам
-                    return null
-                }
-            }
-            return null
-        }
-    }
-}
-
 export default defineConfig(async ({ mode }) => {
     let proxy = undefined
     if (mode === 'development') {
@@ -51,10 +19,23 @@ export default defineConfig(async ({ mode }) => {
         }
     }
 
-    dotenv.config()
+    // Загружаем переменные окружения из .env файла UI и сервера
+    const uiEnv = dotenv.config({ path: '.env' }).parsed || {}
+    const serverEnv = dotenv.config({ path: '../server/.env' }).parsed || {}
+    const env = { ...serverEnv, ...uiEnv }
+    
+    // Устанавливаем переменные окружения для Vite (Vite автоматически подхватит переменные с префиксом VITE_)
+    // Приоритет: process.env (из Docker build args/Kubernetes) > .env файлы
+    // Это позволяет передавать переменные через docker-compose или Kubernetes
+    if (!process.env.VITE_CDN_URL && env.VITE_CDN_URL) {
+        process.env.VITE_CDN_URL = env.VITE_CDN_URL
+    }
+    if (!process.env.VITE_CDN_URL_NPM && env.VITE_CDN_URL_NPM) {
+        process.env.VITE_CDN_URL_NPM = env.VITE_CDN_URL_NPM
+    }
+    
     return {
-        plugins: [react(), resolveOsmiEmbedPlugin()],
-        root: resolve(__dirname),
+        plugins: [react()],
         resolve: {
             alias: {
                 '@': resolve(__dirname, 'src'),
@@ -70,11 +51,9 @@ export default defineConfig(async ({ mode }) => {
                 '@lezer/highlight': resolve(__dirname, '../../node_modules/@lezer/highlight')
             }
         },
+        root: resolve(__dirname),
         build: {
-            outDir: './build',
-            rollupOptions: {
-                external: ['osmi-ai-embed-react']
-            }
+            outDir: './build'
         },
         server: {
             open: true,

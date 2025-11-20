@@ -97,13 +97,8 @@ if (process.env.STORAGE_TYPE === 'gcs') {
     })
 }
 // expect the log dir be relative to the projects root
-const logDir = config.logging.dir
-
-// Create the log directory if it doesn't exist (только для локального хранилища)
-const storageType = process.env.STORAGE_TYPE || 'local'
-if (storageType === 'local' && !fs.existsSync(logDir)) {
-    fs.mkdirSync(logDir, { recursive: true })
-}
+// Директория уже создана в bin/run на основе LOG_PATH из .env
+let logDir = config.logging.dir
 
 const logger = createLogger({
     format: combine(

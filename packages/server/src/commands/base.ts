@@ -1,20 +1,6 @@
 ﻿import { Command, Flags } from '@oclif/core'
-import dotenv from 'dotenv'
 import path from 'path'
-import * as fs from 'fs'
 import logger from '../utils/logger'
-
-dotenv.config({ path: path.join(__dirname, '..', '..', '.env'), override: true })
-
-// Создаем директорию для логов oclif, если она не существует
-const oclifLogDir = path.join(process.env.HOME || process.env.USERPROFILE || '/root', '.osmi-ai', 'logs')
-if (!fs.existsSync(oclifLogDir)) {
-    try {
-        fs.mkdirSync(oclifLogDir, { recursive: true })
-    } catch (error) {
-        // Игнорируем ошибки создания директории, если она уже существует или нет прав
-    }
-}
 
 enum EXIT_CODE {
     SUCCESS = 0,

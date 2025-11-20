@@ -24,10 +24,6 @@ export const headerHeight = 80
 export const maxScroll = 100000
 export const baseURL = import.meta.env.VITE_API_BASE_URL || window.location.origin
 export const uiBaseURL = import.meta.env.VITE_UI_BASE_URL || window.location.origin
-// Полная ссылка на CDN библиотеку OSMIChatEmbed (GitHub версия)
-export const cdnURL = import.meta.env.VITE_CDN_URL || 'https://cdn.jsdelivr.net/gh/artstyleplaystyle/OSMIChatEmbed@main/dist/web.js'
-// Полная ссылка на CDN библиотеку OSMIChatEmbed (NPM версия)
-export const cdnURLNpm = import.meta.env.VITE_CDN_URL_NPM || ''
 export const OSMI_CREDENTIAL_ID = 'OSMI_CREDENTIAL_ID'
 export const REDACTED_CREDENTIAL_VALUE = '_OSMI_BLANK_07167752-1a71-43b1-bf8f-4f32252165db'
 export const ErrorMessage = {
