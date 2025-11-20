@@ -10,6 +10,10 @@ import { CheckboxInput } from '@/ui-component/checkbox/Checkbox'
 // Const
 import { baseURL } from '@/store/constant'
 
+// CDN URLs from environment variables (with fallbacks)
+const CDN_URL = import.meta.env.VITE_CDN_URL || "https://cdn.jsdelivr.net/gh/artstyleplaystyle/OSMIChatEmbed@main/dist/web.js"
+const CDN_URL_NPM = import.meta.env.VITE_CDN_URL_NPM || "https://cdn.jsdelivr.net/npm/OSMI-embed@<version>/dist/web.js"
+
 function TabPanel(props) {
     const { children, value, index, ...other } = props
     return (
@@ -41,9 +45,8 @@ function a11yProps(index) {
 const codes = ['Всплывающий Html', 'Полноэкранный Html', 'Всплывающий React', 'Полноэкранный React']
 
 const embedPopupHtmlCode = (chatflowid) => {
-    const cdnUrl = import.meta.env.VITE_CDN_URL || "https://cdn.jsdelivr.net/gh/artstyleplaystyle/OSMIChatEmbed@main/dist/web.js"
     return `<script type="module">
-    import Chatbot from "${cdnUrl}"
+    import Chatbot from "${CDN_URL}"
     Chatbot.init({
         chatflowid: "${chatflowid}",
         apiHost: "${baseURL}",
@@ -65,10 +68,9 @@ const App = () => {
 }
 
 const embedFullpageHtmlCode = (chatflowid) => {
-    const cdnUrl = import.meta.env.VITE_CDN_URL || "https://cdn.jsdelivr.net/gh/artstyleplaystyle/OSMIChatEmbed@main/dist/web.js"
     return `<osmi-ai-fullchatbot></osmi-ai-fullchatbot>
 <script type="module">
-    import Chatbot from "${cdnUrl}"
+    import Chatbot from "${CDN_URL}"
     Chatbot.initFull({
         chatflowid: "${chatflowid}",
         apiHost: "${baseURL}",
@@ -197,9 +199,8 @@ const customStringify = (obj) => {
 }
 
 const embedPopupHtmlCodeCustomization = (chatflowid) => {
-    const cdnUrl = import.meta.env.VITE_CDN_URL || "https://cdn.jsdelivr.net/gh/artstyleplaystyle/OSMIChatEmbed@main/dist/web.js"
     return `<script type="module">
-    import Chatbot from "${cdnUrl}"
+    import Chatbot from "${CDN_URL}"
     Chatbot.init({
         chatflowid: "${chatflowid}",
         apiHost: "${baseURL}",
@@ -250,10 +251,9 @@ const getFullPageThemeConfig = () => {
 }
 
 const embedFullpageHtmlCodeCustomization = (chatflowid) => {
-    const cdnUrl = import.meta.env.VITE_CDN_URL || "https://cdn.jsdelivr.net/gh/artstyleplaystyle/OSMIChatEmbed@main/dist/web.js"
     return `<osmi-ai-fullchatbot></osmi-ai-fullchatbot>
 <script type="module">
-    import Chatbot from "${cdnUrl}"
+    import Chatbot from "${CDN_URL}"
     Chatbot.initFull({
         chatflowid: "${chatflowid}",
         apiHost: "${baseURL}",
@@ -357,7 +357,7 @@ const EmbedChat = ({ chatflowid }) => {
                                     <a rel='noreferrer' target='_blank' href='https://www.npmjs.com/package/OSMI-embed?activeTab=versions'>
                                         версию
                                     </a>
-                                    :&nbsp;<code>{import.meta.env.VITE_CDN_URL_NPM || `https://cdn.jsdelivr.net/npm/OSMI-embed@<version>/dist/web.js`}</code>
+                                    :&nbsp;<code>{CDN_URL_NPM}</code>
                                 </p>
                             </span>
                             <div style={{ height: 10 }}></div>

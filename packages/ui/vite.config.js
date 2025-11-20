@@ -19,7 +19,21 @@ export default defineConfig(async ({ mode }) => {
         }
     }
 
-    dotenv.config()
+    // Загружаем переменные окружения из .env файла UI и сервера
+    const uiEnv = dotenv.config({ path: '.env' }).parsed || {}
+    const serverEnv = dotenv.config({ path: '../server/.env' }).parsed || {}
+    const env = { ...serverEnv, ...uiEnv }
+    
+    // Устанавливаем переменные окружения для Vite (Vite автоматически подхватит переменные с префиксом VITE_)
+    // Приоритет: process.env (из Docker build args/Kubernetes) > .env файлы
+    // Это позволяет передавать переменные через docker-compose или Kubernetes
+    if (!process.env.VITE_CDN_URL && env.VITE_CDN_URL) {
+        process.env.VITE_CDN_URL = env.VITE_CDN_URL
+    }
+    if (!process.env.VITE_CDN_URL_NPM && env.VITE_CDN_URL_NPM) {
+        process.env.VITE_CDN_URL_NPM = env.VITE_CDN_URL_NPM
+    }
+    
     return {
         plugins: [react()],
         resolve: {
