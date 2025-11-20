@@ -1545,8 +1545,10 @@ export const isFlowValidForStream = (reactFlowNodes: IReactFlowNode[], endingNod
  * @returns {Promise<string>}
  */
 export const getEncryptionKey = async (): Promise<string> => {
-    if (process.env.OSMI_SECRETKEY_OVERWRITE !== undefined && process.env.OSMI_SECRETKEY_OVERWRITE !== '') {
-        return process.env.OSMI_SECRETKEY_OVERWRITE
+    // Проверяем обе переменные (OSMI_SECRETKEY_OVERWRITE и OSMI_AI_SECRETKEY_OVERWRITE)
+    const secretKeyOverwrite = process.env.OSMI_SECRETKEY_OVERWRITE || process.env.OSMI_AI_SECRETKEY_OVERWRITE
+    if (secretKeyOverwrite !== undefined && secretKeyOverwrite !== '') {
+        return secretKeyOverwrite
     }
     if (USE_AWS_SECRETS_MANAGER && secretsManagerClient) {
         const secretId = process.env.SECRETKEY_AWS_NAME || 'OSMIEncryptionKey'
@@ -1578,6 +1580,11 @@ export const getEncryptionKey = async (): Promise<string> => {
         const defaultLocation = process.env.SECRETKEY_PATH
             ? path.join(process.env.SECRETKEY_PATH, 'encryption.key')
             : path.join(getUserHome(), '.OSMI', 'encryption.key')
+        // Создаём директорию, если она не существует
+        const dirPath = path.dirname(defaultLocation)
+        if (!fs.existsSync(dirPath)) {
+            fs.mkdirSync(dirPath, { recursive: true })
+        }
         await fs.promises.writeFile(defaultLocation, encryptKey)
         return encryptKey
     }

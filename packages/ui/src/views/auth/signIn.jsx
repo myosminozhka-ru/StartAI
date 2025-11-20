@@ -61,8 +61,6 @@ const SignInPage = () => {
     const [loading, setLoading] = useState(false)
     const [showResendButton, setShowResendButton] = useState(false)
     const [successMessage, setSuccessMessage] = useState('')
-    const [eulaAccepted, setEulaAccepted] = useState(false)
-    const [isDemoRole, setIsDemoRole] = useState(true) // Показываем для всех пользователей
 
     const loginApi = useApi(authApi.login)
     const ssoLoginApi = useApi(ssoApi.ssoLogin)
@@ -73,12 +71,6 @@ const SignInPage = () => {
 
     const doLogin = (event) => {
         event.preventDefault()
-
-        // Проверяем согласие с EULA
-        if (!eulaAccepted) {
-            setAuthError('Необходимо принять условия Лицензионного соглашения для продолжения')
-            return
-        }
 
         setLoading(true)
         const body = {
@@ -267,86 +259,6 @@ const SignInPage = () => {
                                     </Typography>
                                 )}
                             </Box>
-
-                            {/* Чекбокс согласия с EULA для роли "Демо" */}
-                            {isDemoRole && (
-                                <Box sx={{ p: 0 }}>
-                                    <Box
-                                        sx={{
-                                            display: 'flex',
-                                            alignItems: 'flex-start',
-                                            gap: '12px',
-                                            width: '371px',
-                                            minHeight: '18px'
-                                        }}
-                                    >
-                                        <Box
-                                            sx={{
-                                                width: '18px',
-                                                height: '18px',
-                                                border: '2px solid #9E9E9E',
-                                                borderRadius: '2px',
-                                                display: 'flex',
-                                                alignItems: 'center',
-                                                justifyContent: 'center',
-                                                cursor: 'pointer',
-                                                backgroundColor: eulaAccepted ? '#2196F3' : 'transparent',
-                                                borderColor: eulaAccepted ? '#2196F3' : '#9E9E9E',
-                                                marginTop: '-1px',
-                                                flexShrink: 0
-                                            }}
-                                            onClick={() => setEulaAccepted(!eulaAccepted)}
-                                        >
-                                            {eulaAccepted && (
-                                                <svg
-                                                    width='12'
-                                                    height='10'
-                                                    viewBox='0 0 12 10'
-                                                    fill='none'
-                                                    xmlns='http://www.w3.org/2000/svg'
-                                                    style={{ marginTop: '1px' }}
-                                                >
-                                                    <path
-                                                        d='M10.5 1.5L4.5 7.5L1.5 4.5'
-                                                        stroke='white'
-                                                        strokeWidth='2'
-                                                        strokeLinecap='round'
-                                                        strokeLinejoin='round'
-                                                    />
-                                                </svg>
-                                            )}
-                                        </Box>
-                                        <Typography
-                                            sx={{
-                                                fontFamily: 'Inter',
-                                                fontWeight: 400,
-                                                fontSize: '14px',
-                                                lineHeight: '17px',
-                                                color: '#212121',
-                                                width: '341px',
-                                                height: '17px'
-                                            }}
-                                        >
-                                            Я принимаю условия{' '}
-                                            <a
-                                                href='/soglashenie'
-                                                target='_blank'
-                                                rel='noopener noreferrer'
-                                                style={{
-                                                    color: '#2196F3',
-                                                    textDecoration: 'underline',
-                                                    fontFamily: 'Inter',
-                                                    fontWeight: 400,
-                                                    fontSize: '14px',
-                                                    lineHeight: '17px'
-                                                }}
-                                            >
-                                                Лицензионного соглашения
-                                            </a>
-                                        </Typography>
-                                    </Box>
-                                </Box>
-                            )}
 
                             <LoadingButton
                                 loading={loading}
