@@ -29,14 +29,6 @@ RUN pnpm install
 
 RUN pnpm build
 
-# # Fix: add appuser and fix runtime permissions
-# ARG UID=1023
-# ARG GID=1023
-# ARG USERNAME=appuser
-# RUN addgroup -g ${GID} ${USERNAME} && adduser -D -u ${UID} -G ${USERNAME} ${USERNAME}
-# RUN mkdir -p /home/${USERNAME}/.osmi-ai && chown -R ${USERNAME}:${USERNAME} /home/${USERNAME}/.osmi-ai
-# USER ${USERNAME}
-
 EXPOSE 3000
 
 CMD [ "pnpm", "start" ]
